@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN // Protocol</title>
+
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="shortcut icon" href="/favicon.ico?v=2">
+<meta name="theme-color" content="#0a0a0a">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap');
+
+:root {
+  --void:#080808;
+  --stone:#1a1a1a;
+  --ink:#e8e4dc;
+  --muted:#6b6b6b;
+  --accent:#c8b89a;
+  --border:#2c2c2c;
+}
+
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:'DM Mono', monospace;
+  padding:48px 32px;
+  max-width:900px;
+  margin:auto;
+}
+
+h1{
+  font-family:'Syne', sans-serif;
+  font-weight:800;
+  font-size:2rem;
+  margin-bottom:32px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  background:#111;
+  border:1px solid var(--border);
+  color:var(--ink);
+  margin-bottom:20px;
+}
+
+.task{
+  border-bottom:1px solid #141414;
+  padding:12px 0;
+  display:flex;
+  justify-content:space-between;
+}
+
+button{
+  background:none;
+  border:1px solid var(--border);
+  color:var(--muted);
+  padding:4px 10px;
+  font-family:'DM Mono', monospace;
+  cursor:pointer;
+}
+
+button:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+#undoBar{
+  margin-top:14px;
+  font-size:11px;
+  color:var(--accent);
+}
+
+.timer{
+  margin-top:40px;
+  border-top:1px solid var(--border);
+  padding-top:20px;
+}
+
+.timer-display{
+  font-size:28px;
+  font-family:'Syne', sans-serif;
+  margin-bottom:12px;
+}
+
+#nullScreen{
+  position:fixed;
+  inset:0;
+  background:black;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  font-size:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>MA-ZEN // Protocol</h1>
+
+<input id="taskInput" placeholder="Type. Press Enter.">
+
+<div id="taskList"></div>
+<div id="undoBar"></div>
+
+<div class="timer">
+  <div class="timer-display" id="timerDisplay">25:00</div>
+  <button onclick="startTimer()">Start</button>
+  <button onclick="pauseTimer()">Pause</button>
+  <button onclick="resetTimer()">Reset</button>
+  <button onclick="launchNull()">Null</button>
+</div>
+
+<div id="nullScreen">Silence. Press Esc.</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("mazen_tasks") || "[]");
+let undoItem=null;
+let undoTimeout=null;
+
+function save(){
+  localStorage.setItem("mazen_tasks",JSON.stringify(tasks));
+}
+
+function render(){
+  const list=document.getElementById("taskList");
+  list.innerHTML="";
+  tasks.forEach((t,i)=>{
+    const div=document.createElement("div");
+    div.className="task";
+    div.innerHTML=`<span>${t}</span><button onclick="complete(${i})">Complete</button>`;
+    list.appendChild(div);
+  });
+}
+
+function complete(i){
+  undoItem=tasks[i];
+  tasks.splice(i,1);
+  save();
+  render();
+  showUndo();
+}
+
+function showUndo(){
+  const bar=document.getElementById("undoBar");
+  let sec=8;
+  bar.textContent=`Released: "${undoItem}" | Undo ${sec}s`;
+  undoTimeout=setInterval(()=>{
+    sec--;
+    bar.textContent=`Released: "${undoItem}" | Undo ${sec}s`;
+    if(sec<=0){
+      clearInterval(undoTimeout);
+      bar.textContent="";
+      undoItem=null;
+    }
+  },1000);
+}
+
+document.getElementById("taskInput").addEventListener("keypress",e=>{
+  if(e.key==="Enter"){
+    tasks.push(e.target.value);
+    e.target.value="";
+    save();
+    render();
+  }
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    document.getElementById("nullScreen").style.display="none";
+  }
+});
+
+function launchNull(){
+  document.getElementById("nullScreen").style.display="flex";
+}
+
+let timerSec=1500;
+let interval=null;
+
+function startTimer(){
+  if(interval) return;
+  interval=setInterval(()=>{
+    timerSec--;
+    updateTimer();
+    if(timerSec<=0){
+      clearInterval(interval);
+      interval=null;
+    }
+  },1000);
+}
+
+function pauseTimer(){
+  clearInterval(interval);
+  interval=null;
+}
+
+function resetTimer(){
+  pauseTimer();
+  timerSec=1500;
+  updateTimer();
+}
+
+function updateTimer(){
+  let m=Math.floor(timerSec/60);
+  let s=timerSec%60;
+  document.getElementById("timerDisplay").textContent=
+    `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+render();
+updateTimer();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN: Public Awareness // Blackbox Protocol</title>
+
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="shortcut icon" href="/favicon.ico?v=2">
+<meta name="theme-color" content="#0a0a0a">
+
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --void: #080808;
+    --stone: #1a1a1a;
+    --paper: #2c2c2c;
+    --ink: #e8e4dc;
+    --muted: #6b6b6b;
+    --accent: #c8b89a;
+    --signal: #4a9eff;
+    --warn: #d4884a;
+    --gone: #7a4a6a;
+    --gap: 2px solid #2c2c2c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 48px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .header {
+    border-bottom: 1px solid #2c2c2c;
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .header h1 span { color: var(--accent); }
+
+  .header p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 12px;
+    max-width: 720px;
+    line-height: 1.8;
+  }
+
+  .principle-strip {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+    background: #1a1a1a;
+    margin-bottom: 48px;
+    border: 1px solid #2c2c2c;
+  }
+
+  .principle-tile {
+    background: var(--void);
+    padding: 16px 14px;
+  }
+
+  .principle-tile .label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .principle-tile .desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .domain-block {
+    margin-bottom: 48px;
+  }
+
+  .domain-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .domain-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--ink);
+  }
+
+  .domain-tag {
+    font-size: 10px;
+    color: var(--muted);
+    background: #1a1a1a;
+    padding: 2px 8px;
+    border: 1px solid #2c2c2c;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+  }
+
+  thead tr {
+    background: #111;
+  }
+
+  th {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #2c2c2c;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #161616;
+    vertical-align: top;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  tr:hover td { background: #0f0f0f; }
+
+  .rank {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: #2c2c2c;
+    width: 30px;
+  }
+
+  .rank.r1 { color: var(--accent); }
+  .rank.r2 { color: #8a7a6a; }
+  .rank.r3 { color: #4a4a4a; }
+
+  .alternative-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .alternative-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .principle-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border: 1px solid;
+  }
+
+  .tag.absence { border-color: #3a3a5a; color: #8a8ab0; }
+  .tag.silence { border-color: #2a4a3a; color: #6a9a7a; }
+  .tag.nonguidance { border-color: #4a3a2a; color: #9a7a5a; }
+  .tag.neutral { border-color: #3a3a3a; color: #7a7a7a; }
+  .tag.impermanence { border-color: #5a2a4a; color: #9a5a7a; }
+  .tag.infra { border-color: #2a4a5a; color: #5a8a9a; }
+
+  .how-it-works {
+    font-size: 11.5px;
+    color: #aaa;
+    line-height: 1.7;
+  }
+
+  .how-it-works code {
+    background: #1a1a1a;
+    color: var(--signal);
+    padding: 1px 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+  }
+
+  .translation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: #1a1a1a;
+    margin-bottom: 48px;
+    border: 1px solid #2c2c2c;
+  }
+
+  .trans-cell {
+    background: var(--void);
+    padding: 20px;
+  }
+
+  .trans-cell .from {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .trans-cell .audio-principle {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .trans-cell .arrow {
+    font-size: 10px;
+    color: #3a3a3a;
+    margin-bottom: 8px;
+  }
+
+  .trans-cell .to {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .trans-cell .tech-principle {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .void-bar {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #2c2c2c, transparent);
+    margin: 48px 0;
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: #3a3a3a;
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid #1a1a1a;
+    letter-spacing: 0.08em;
+  }
+
+  .global-rank-section {
+    margin-bottom: 64px;
+  }
+
+  .global-table tr td:first-child { width: 40px; }
+
+  .domain-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid #2c2c2c;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .mazen-fit-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border: 1px solid;
+  }
+  .fit-perfect { border-color: var(--accent); color: var(--accent); }
+  .fit-strong  { border-color: #6a8a6a; color: #6a8a6a; }
+  .fit-moderate { border-color: #5a5a4a; color: #8a8a6a; }
+  .fit-partial { border-color: #3a3a3a; color: #5a5a5a; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>MA-ZEN <span>//</span> Public Awareness<br>&amp; Blackbox Boundary</h1>
+  <p>
+    This page is the public layer. It explains what MA-ZEN is, what you may experience, and what we openly commit to.
+    The enforcement mechanisms remain inside a blackbox by design — because impermanence collapses if the exit logic is public.
+  </p>
+</div>
+
+<!-- TRANSLATION FRAMEWORK -->
+<div class="section-title">Part 1 — Public Translation: What It Means (Not How It Works)</div>
+
+<div class="translation-grid">
+  <div class="trans-cell">
+    <div class="from">PUBLIC IDEA</div>
+    <div class="audio-principle">94% Silence</div>
+    <div class="arrow">▼ translates to</div>
+    <div class="to">USER EXPERIENCE</div>
+    <div class="tech-principle">Most sessions contain no prompts, no nudges, no “keep going.” Silence is a valid outcome.</div>
+  </div>
+  <div class="trans-cell">
+    <div class="from">PUBLIC IDEA</div>
+    <div class="audio-principle">Neutral Material</div>
+    <div class="arrow">▼ translates to</div>
+    <div class="to">USER EXPERIENCE</div>
+    <div class="tech-principle">No emotional UI tricks. No urgency colors. No reward loops. You read reality as data, not mood.</div>
+  </div>
+  <div class="trans-cell">
+    <div class="from">PUBLIC IDEA</div>
+    <div class="audio-principle">Abrupt Edges</div>
+    <div class="arrow">▼ translates to</div>
+    <div class="to">USER EXPERIENCE</div>
+    <div class="tech-principle">Sessions may end cleanly without “soft landing.” Completion can be sudden and final.</div>
+  </div>
+  <div class="trans-cell">
+    <div class="from">PUBLIC IDEA</div>
+    <div class="audio-principle">No Pattern</div>
+    <div class="arrow">▼ translates to</div>
+    <div class="to">USER EXPERIENCE</div>
+    <div class="tech-principle">No predictable cadence. No daily streaks. No scheduled pings. If it repeats, it is not MA-ZEN.</div>
+  </div>
+  <div class="trans-cell">
+    <div class="from">PUBLIC IDEA</div>
+    <div class="audio-principle">Non-Guidance</div>
+    <div class="arrow">▼ translates to</div>
+    <div class="to">USER EXPERIENCE</div>
+    <div class="tech-principle">We do not teach you how to use it inside the interface. The interface refuses to persuade.</div>
+  </div>
+  <div class="trans-cell">
+    <div class="from">PUBLIC IDEA</div>
+    <div class="audio-principle">Self-Termination</div>
+    <div class="arrow">▼ translates to</div>
+    <div class="to">USER EXPERIENCE</div>
+    <div class="tech-principle">Some things expire. Some things disappear. Some access ends. Not as punishment — as structure.</div>
+  </div>
+</div>
+
+<!-- PRINCIPLE STRIP -->
+<div class="section-title">6 MA-ZEN Principles (Public Commitments)</div>
+<div class="principle-strip">
+  <div class="principle-tile">
+    <div class="label">① Absence</div>
+    <div class="desc">We remove events. The empty state is intentional.</div>
+  </div>
+  <div class="principle-tile">
+    <div class="label">② Silence as Structure</div>
+    <div class="desc">Silence is allowed. Sometimes it is the correct output.</div>
+  </div>
+  <div class="principle-tile">
+    <div class="label">③ Non-Guidance</div>
+    <div class="desc">No persuasion, no onboarding theater, no motivational scripts.</div>
+  </div>
+  <div class="principle-tile">
+    <div class="label">④ Neutrality</div>
+    <div class="desc">No emotional palette. No gamification. No artificial urgency.</div>
+  </div>
+  <div class="principle-tile">
+    <div class="label">⑤ Impermanence</div>
+    <div class="desc">Some artifacts do not persist. Completion can include disappearance.</div>
+  </div>
+  <div class="principle-tile">
+    <div class="label">⑥ Infrastructure</div>
+    <div class="desc">A protocol, not a feed. A tool, not content. Exit is part of the design.</div>
+  </div>
+</div>
+
+<div class="void-bar"></div>
+
+<!-- PUBLIC AWARENESS TABLES -->
+<div class="section-title">Part 2 — What You May Experience</div>
+
+<div class="domain-block">
+  <div class="domain-header">
+    <div class="domain-name">01 — Observable Behaviors</div>
+    <div class="domain-tag">WHAT USERS SEE · WHAT USERS FEEL · WHAT IS NORMAL</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Behavior</th>
+        <th>Principles</th>
+        <th>Meaning</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="rank r1">1</td>
+        <td>
+          <div class="alternative-name">Silence / No Response</div>
+          <div class="alternative-sub">You receive nothing when nothing is required.</div>
+        </td>
+        <td class="principle-tags">
+          <span class="tag silence">Silence</span>
+          <span class="tag absence">Absence</span>
+          <span class="tag neutral">Neutrality</span>
+        </td>
+        <td class="how-it-works">Not a crash. Not neglect. Silence is treated as a valid completion state.</td>
+        <td><span class="mazen-fit-label fit-perfect">NORMAL</span></td>
+      </tr>
+      <tr>
+        <td class="rank r2">2</td>
+        <td>
+          <div class="alternative-name">Blank / Zero-State Screen</div>
+          <div class="alternative-sub">The page appears empty, with minimal cues.</div>
+        </td>
+        <td class="principle-tags">
+          <span class="tag absence">Absence</span>
+          <span class="tag nonguidance">Non-Guidance</span>
+          <span class="tag neutral">Neutrality</span>
+        </td>
+        <td class="how-it-works">Empty does not mean “missing content.” Empty is the surface where you return to baseline.</td>
+        <td><span class="mazen-fit-label fit-strong">NORMAL</span></td>
+      </tr>
+      <tr>
+        <td class="rank r3">3</td>
+        <td>
+          <div class="alternative-name">Abrupt End / Clean Exit</div>
+          <div class="alternative-sub">A session stops without transition, warning, or “try again.”</div>
+        </td>
+        <td class="principle-tags">
+          <span class="tag impermanence">Impermanence</span>
+          <span class="tag silence">Silence</span>
+          <span class="tag infra">Infrastructure</span>
+        </td>
+        <td class="how-it-works">No “one more step.” No retention tricks. Endpoints exist and they can be final.</td>
+        <td><span class="mazen-fit-label fit-strong">NORMAL</span></td>
+      </tr>
+      <tr>
+        <td class="rank">4</td>
+        <td>
+          <div class="alternative-name">No Memory / No History</div>
+          <div class="alternative-sub">You may not be able to retrieve prior sessions or logs.</div>
+        </td>
+        <td class="principle-tags">
+          <span class="tag impermanence">Impermanence</span>
+          <span class="tag absence">Absence</span>
+        </td>
+        <td class="how-it-works">This is a boundary: the system avoids becoming a diary, feed, or archive.</td>
+        <td><span class="mazen-fit-label fit-moderate">EXPECTED</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-title">Part 3 — What We Reveal vs What Stays Blackbox</div>
+
+<div class="domain-block">
+  <div class="domain-header">
+    <div class="domain-name">02 — Disclosure Policy</div>
+    <div class="domain-tag">TRANSPARENCY OF INTENT · OPACITY OF ENFORCEMENT</div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Category</th>
+        <th>We Reveal</th>
+        <th>We Do Not Reveal</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="rank r1">1</td>
+        <td>
+          <div class="alternative-name">Intent</div>
+          <div class="alternative-sub">Why MA-ZEN exists.</div>
+        </td>
+        <td class="how-it-works">Our principles, our ethics, our refusal to optimize for addiction.</td>
+        <td class="how-it-works">—</td>
+        <td class="how-it-works">Intent must be public or it becomes mysticism.</td>
+      </tr>
+      <tr>
+        <td class="rank r2">2</td>
+        <td>
+          <div class="alternative-name">User-Facing Behavior</div>
+          <div class="alternative-sub">What you will notice.</div>
+        </td>
+        <td class="how-it-works">Silence, blank states, clean exits, impermanence.</td>
+        <td class="how-it-works">The triggers and rules that decide them.</td>
+        <td class="how-it-works">If triggers are public, behavior becomes a game and loses integrity.</td>
+      </tr>
+      <tr>
+        <td class="rank r3">3</td>
+        <td>
+          <div class="alternative-name">Mechanisms</div>
+          <div class="alternative-sub">How enforcement is implemented.</div>
+        </td>
+        <td class="how-it-works">Only the boundary: “some mechanisms are blackbox.”</td>
+        <td class="how-it-works">Termination logic, lifecycle rules, expiry conditions, enforcement pathways.</td>
+        <td class="how-it-works">Impermanence requires opacity or it becomes bypassable.</td>
+      </tr>
+      <tr>
+        <td class="rank">4</td>
+        <td>
+          <div class="alternative-name">Roadmap</div>
+          <div class="alternative-sub">Expectations of future features.</div>
+        </td>
+        <td class="how-it-works">We do not promise infinite expansion. MA-ZEN resists “forever growth.”</td>
+        <td class="how-it-works">Precise release timing and internal build sequence.</td>
+        <td class="how-it-works">Prevent hype cycles; keep attention low; preserve quiet.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="void-bar"></div>
+
+<!-- GLOBAL RANKING TABLE (REPURPOSED) -->
+<div class="global-rank-section">
+  <div class="section-title">Part 4 — Public Commitments (Non-Negotiables)</div>
+  <table class="global-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Commitment</th>
+        <th>Scope</th>
+        <th>Principles</th>
+        <th>What This Means</th>
+        <th>Guarantee</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="rank r1">1</td>
+        <td>
+          <div class="alternative-name">No Engagement Farming</div>
+          <div class="alternative-sub">No streaks, no retention loops, no “come back” hooks.</div>
+        </td>
+        <td><span class="domain-badge">PUBLIC</span></td>
+        <td class="principle-tags">
+          <span class="tag neutral">Neutrality</span>
+          <span class="tag absence">Absence</span>
+        </td>
+        <td class="how-it-works">If a design choice increases compulsion, we treat it as a failure.</td>
+        <td><span class="mazen-fit-label fit-perfect">YES</span></td>
+      </tr>
+      <tr>
+        <td class="rank r1">2</td>
+        <td>
+          <div class="alternative-name">Silence Is Allowed</div>
+          <div class="alternative-sub">The system may output nothing.</div>
+        </td>
+        <td><span class="domain-badge">PUBLIC</span></td>
+        <td class="principle-tags">
+          <span class="tag silence">Silence</span>
+          <span class="tag absence">Absence</span>
+        </td>
+        <td class="how-it-works">Not all questions deserve answers. Not all moments deserve intervention.</td>
+        <td><span class="mazen-fit-label fit-perfect">YES</span></td>
+      </tr>
+      <tr>
+        <td class="rank r1">3</td>
+        <td>
+          <div class="alternative-name">Exit Is Part of the Product</div>
+          <div class="alternative-sub">Completion can be sudden. Access can expire.</div>
+        </td>
+        <td><span class="domain-badge">PUBLIC</span></td>
+        <td class="principle-tags">
+          <span class="tag impermanence">Impermanence</span>
+          <span class="tag infra">Infrastructure</span>
+        </td>
+        <td class="how-it-works">We do not design infinite continuation. We design clean endings.</td>
+        <td><span class="mazen-fit-label fit-strong">YES</span></td>
+      </tr>
+      <tr>
+        <td class="rank r1">4</td>
+        <td>
+          <div class="alternative-name">Blackbox Enforcement</div>
+          <div class="alternative-sub">Mechanisms remain undisclosed.</div>
+        </td>
+        <td><span class="domain-badge">BOUNDARY</span></td>
+        <td class="principle-tags">
+          <span class="tag impermanence">Impermanence</span>
+          <span class="tag nonguidance">Non-Guidance</span>
+        </td>
+        <td class="how-it-works">We disclose intent and observable behavior — not the bypass map.</td>
+        <td><span class="mazen-fit-label fit-strong">YES</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="void-bar"></div>
+
+<!-- VALIDATION TEST (REPURPOSED) -->
+<div class="section-title">Part 5 — Public Validation: How To Interpret MA-ZEN Correctly</div>
+<table>
+  <thead>
+    <tr>
+      <th>Question</th>
+      <th>If “YES”</th>
+      <th>If “NO”</th>
+      <th>Why It Matters</th>
+      <th>Verdict</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Does it reduce events instead of adding features?</strong></td>
+      <td style="color:#6a9a7a">It is aligned.</td>
+      <td style="color:#d4884a">It is drifting into normal product behavior.</td>
+      <td class="how-it-works">MA-ZEN is subtraction-first.</td>
+      <td><span class="mazen-fit-label fit-strong">CHECK</span></td>
+    </tr>
+    <tr>
+      <td><strong>Does it work without persuasion?</strong></td>
+      <td style="color:#6a9a7a">It respects autonomy.</td>
+      <td style="color:#d4884a">It is trying to control your behavior.</td>
+      <td class="how-it-works">Non-guidance is a core boundary.</td>
+      <td><span class="mazen-fit-label fit-strong">CHECK</span></td>
+    </tr>
+    <tr>
+      <td><strong>Can it end without “one more thing”?</strong></td>
+      <td style="color:#6a9a7a">It is honest about completion.</td>
+      <td style="color:#d4884a">It is optimized to keep you inside.</td>
+      <td class="how-it-works">Exit is not a bug.</td>
+      <td><span class="mazen-fit-label fit-perfect">CHECK</span></td>
+    </tr>
+    <tr>
+      <td><strong>Is the interface emotionally neutral?</strong></td>
+      <td style="color:#6a9a7a">It avoids manipulation.</td>
+      <td style="color:#d4884a">It is shaping mood for compliance.</td>
+      <td class="how-it-works">Neutrality protects cognition.</td>
+      <td><span class="mazen-fit-label fit-strong">CHECK</span></td>
+    </tr>
+    <tr>
+      <td><strong>Are the enforcement mechanisms undisclosed?</strong></td>
+      <td style="color:#6a9a7a">Impermanence stays enforceable.</td>
+      <td style="color:#d4884a">Users can game the system; integrity collapses.</td>
+      <td class="how-it-works">Blackbox is structural, not marketing.</td>
+      <td><span class="mazen-fit-label fit-strong">CHECK</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="void-bar"></div>
+
+<div class="footer-note">
+  MA-ZEN · PUBLIC AWARENESS LAYER · INTENT IS PUBLIC · ENFORCEMENT IS BLACKBOX<br>
+  <span style="opacity:0.3">[ ]</span>
+</div>
+
+</body>
+</html>
