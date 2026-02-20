@@ -1,1 +1,105 @@
+/* RESET */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
+:root {
+  --ink:#0a0906;
+  --ash:#e8e4dc;
+  --paper:#f2ede4;
+  --void:#1a1714;
+  --gold:#b89a6a;
+  --fade:#5a5248;
+}
+
+body{
+  background:var(--ink);
+  color:var(--ash);
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;
+  font-size:18px;
+  line-height:1.8;
+}
+
+nav{
+  display:flex;
+  justify-content:space-between;
+  padding:32px 56px;
+}
+
+.nav-logo{
+  font-family:'Syne Mono',monospace;
+  letter-spacing:.3em;
+  text-decoration:none;
+  color:var(--gold);
+  font-size:13px;
+}
+
+.nav-links{
+  list-style:none;
+  display:flex;
+  gap:36px;
+}
+
+.nav-links a{
+  font-family:'Syne Mono',monospace;
+  font-size:10px;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  text-decoration:none;
+  color:var(--fade);
+}
+
+.nav-links a.active,
+.nav-links a:hover{
+  color:var(--ash);
+}
+
+section{
+  padding:120px 56px;
+  min-height:100vh;
+}
+
+.section-eyebrow{
+  font-family:'Syne Mono',monospace;
+  font-size:10px;
+  letter-spacing:.4em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:24px;
+}
+
+h1{
+  font-size:clamp(52px,8vw,110px);
+  font-weight:300;
+  color:var(--paper);
+}
+
+h2{
+  font-size:clamp(32px,4vw,58px);
+  font-weight:300;
+  color:var(--paper);
+  margin-bottom:48px;
+}
+
+p{
+  max-width:580px;
+  color:var(--fade);
+  margin-bottom:24px;
+}
+
+.button{
+  display:inline-block;
+  padding:14px 28px;
+  border:1px solid var(--gold);
+  font-family:'Syne Mono',monospace;
+  font-size:11px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--gold);
+  text-decoration:none;
+  transition:.3s;
+}
+
+.button:hover{
+  background:var(--gold);
+  color:var(--ink);
+}
