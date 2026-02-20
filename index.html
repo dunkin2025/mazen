@@ -1,40 +1,975 @@
-<!DOCTYPE html>
+
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MA-ZEN</title>
+  
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Syne+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #0a0906;
+    --ash: #e8e4dc;
+    --paper: #f2ede4;
+    --void: #1a1714;
+    --gold: #b89a6a;
+    --fade: #5a5248;
+    --glimmer: rgba(184,154,106,0.15);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--ash);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 1.8;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, opacity 0.3s ease;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(184,154,106,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.25s ease;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 56px;
+    mix-blend-mode: normal;
+  }
+
+  .nav-logo {
+    font-family: 'Syne Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeIn 1.2s ease 0.4s forwards;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+    opacity: 0;
+    animation: fadeIn 1.2s ease 0.7s forwards;
+  }
+
+  .nav-links a {
+    font-family: 'Syne Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--fade);
+    text-decoration: none;
+    transition: color 0.4s ease;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .nav-links a:hover { color: var(--ash); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-kanji {
+    position: absolute;
+    right: 8vw;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: clamp(200px, 22vw, 340px);
+    font-family: 'Cormorant Garamond', serif;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(184,154,106,0.12);
+    writing-mode: vertical-rl;
+    letter-spacing: 0.05em;
+    user-select: none;
+    opacity: 0;
+    animation: fadeIn 2s ease 1.5s forwards;
+    line-height: 1;
+  }
+
+  .hero-label {
+    font-family: 'Syne Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: slideUp 1s ease 0.5s forwards;
+  }
+
+  h1 {
+    font-size: clamp(52px, 8vw, 110px);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--paper);
+    opacity: 0;
+    animation: slideUp 1s ease 0.7s forwards;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    margin-top: 40px;
+    max-width: 480px;
+    font-size: 16px;
+    line-height: 2;
+    color: var(--fade);
+    opacity: 0;
+    animation: slideUp 1s ease 1s forwards;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    margin-top: 60px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.4s forwards;
+  }
+
+  /* ── SECTIONS GENERAL ── */
+  section {
+    min-height: 100vh;
+    padding: 120px 56px;
+    position: relative;
+  }
+
+  .section-eyebrow {
+    font-family: 'Syne Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  h2 {
+    font-size: clamp(32px, 4vw, 58px);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    margin-bottom: 48px;
+    line-height: 1.15;
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+
+  p {
+    color: var(--fade);
+    max-width: 580px;
+    margin-bottom: 24px;
+    font-size: 17px;
+  }
+
+  /* ── PUBLIC ── */
+  #public { background: var(--void); }
+
+  .triad {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: rgba(184,154,106,0.1);
+    margin-top: 64px;
+    max-width: 1000px;
+  }
+
+  .triad-card {
+    background: var(--void);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.5s ease;
+  }
+  .triad-card:hover { background: rgba(184,154,106,0.04); }
+  .triad-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.6s ease;
+  }
+  .triad-card:hover::after { transform: scaleX(1); }
+
+  .triad-kanji {
+    font-size: 56px;
+    color: rgba(184,154,106,0.25);
+    line-height: 1;
+    margin-bottom: 20px;
+    display: block;
+    transition: color 0.4s ease;
+  }
+  .triad-card:hover .triad-kanji { color: rgba(184,154,106,0.6); }
+
+  .triad-title {
+    font-family: 'Syne Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .triad-card p {
+    font-size: 15px;
+    color: var(--fade);
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  /* ── PROTOCOL ── */
+  #protocol {
+    background: var(--ink);
+  }
+
+  .protocol-list {
+    margin-top: 64px;
+    counter-reset: step;
+    max-width: 680px;
+  }
+
+  .protocol-item {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 32px;
+    padding: 40px 0;
+    border-bottom: 1px solid rgba(184,154,106,0.1);
+    transition: border-color 0.4s ease;
+    position: relative;
+  }
+  .protocol-item:hover { border-color: rgba(184,154,106,0.35); }
+
+  .protocol-num {
+    font-family: 'Syne Mono', monospace;
+    font-size: 11px;
+    color: rgba(184,154,106,0.4);
+    padding-top: 4px;
+    letter-spacing: 0.2em;
+  }
+
+  .protocol-title {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--paper);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+  .protocol-item p { font-size: 15px; margin-bottom: 0; max-width: none; }
+
+  /* ── RESEARCH ── */
+  #research { background: var(--void); }
+
+  .research-quote {
+    max-width: 800px;
+    margin-top: 80px;
+    padding: 0 0 0 40px;
+    border-left: 1px solid var(--gold);
+  }
+  .research-quote blockquote {
+    font-size: clamp(20px, 2.5vw, 30px);
+    font-style: italic;
+    color: var(--paper);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+  .research-quote cite {
+    font-family: 'Syne Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    font-style: normal;
+  }
+
+  .research-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(184,154,106,0.08);
+    margin-top: 80px;
+    max-width: 900px;
+  }
+
+  .research-cell {
+    background: var(--void);
+    padding: 40px 36px;
+  }
+  .research-cell-label {
+    font-family: 'Syne Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .research-cell p { font-size: 15px; margin-bottom: 0; max-width: none; }
+
+  /* ── LAB ── */
+  #lab { background: var(--ink); }
+
+  .lab-diagram {
+    margin-top: 64px;
+    max-width: 700px;
+    position: relative;
+  }
+
+  .lab-arc {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .arc-step {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 24px;
+    align-items: start;
+    padding: 32px 0;
+    border-bottom: 1px solid rgba(184,154,106,0.08);
+  }
+
+  .arc-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    margin-top: 8px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .arc-dot::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 3px;
+    width: 1px;
+    height: calc(100% + 48px);
+    background: linear-gradient(to bottom, rgba(184,154,106,0.3), transparent);
+  }
+  .arc-step:last-child .arc-dot::before { display: none; }
+
+  .arc-content-title {
+    font-size: 19px;
+    color: var(--paper);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .arc-content p { font-size: 15px; margin-bottom: 0; max-width: none; }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--void);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-left { padding-top: 0; }
+  .about-right {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-top: 120px;
+  }
+
+  .about-stat {
+    border-left: 1px solid rgba(184,154,106,0.3);
+    padding-left: 24px;
+  }
+  .about-stat-num {
+    font-family: 'Syne Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    margin-bottom: 8px;
+  }
+  .about-stat-text {
+    font-size: 16px;
+    color: var(--fade);
+    line-height: 1.7;
+  }
+
+  /* ── BOUNDARY ── */
+  #boundary { background: var(--ink); }
+
+  .boundary-statement {
+    margin-top: 64px;
+    max-width: 860px;
+  }
+
+  .boundary-line {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(184,154,106,0.08);
+    transition: all 0.3s ease;
+    cursor: default;
+  }
+  .boundary-line:hover { padding-left: 16px; border-color: rgba(184,154,106,0.3); }
+
+  .bl-symbol {
+    font-family: 'Syne Mono', monospace;
+    font-size: 12px;
+    color: rgba(184,154,106,0.4);
+    flex-shrink: 0;
+    width: 20px;
+  }
+  .bl-text {
+    font-size: clamp(18px, 2vw, 26px);
+    color: var(--paper);
+    font-style: italic;
+    font-weight: 300;
+  }
+  .bl-note {
+    margin-left: auto;
+    font-family: 'Syne Mono', monospace;
+    font-size: 10px;
+    color: rgba(184,154,106,0.35);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--void);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 120px 56px;
+  }
+
+  .contact-large {
+    font-size: clamp(40px, 6vw, 90px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--paper);
+    margin-bottom: 64px;
+    max-width: 800px;
+  }
+  .contact-large em { font-style: italic; color: var(--gold); }
+
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    font-family: 'Syne Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(184,154,106,0.3);
+    padding-bottom: 8px;
+    transition: all 0.4s ease;
+  }
+  .contact-link:hover {
+    gap: 32px;
+    border-color: var(--gold);
+    color: var(--paper);
+  }
+  .contact-link span {
+    display: inline-block;
+    transition: transform 0.4s ease;
+  }
+  .contact-link:hover span { transform: translateX(8px); }
+
+  .contact-footer {
+    position: absolute;
+    bottom: 48px;
+    right: 56px;
+    font-family: 'Syne Mono', monospace;
+    font-size: 10px;
+    color: rgba(90,82,72,0.5);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+  }
+
+  /* ── FLOATING MA ── */
+  .floating-ma {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    font-size: 12px;
+    font-family: 'Syne Mono', monospace;
+    color: rgba(184,154,106,0.2);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    z-index: 50;
+    writing-mode: vertical-rl;
+    pointer-events: none;
+  }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-line {
+    position: fixed;
+    left: 56px;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    z-index: 50;
+  }
+  .scroll-line-text {
+    font-family: 'Syne Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: rgba(184,154,106,0.3);
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+  }
+  .scroll-line-bar {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 0.8; transform: scaleY(1.1); }
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 24px 28px; }
+    .nav-links { gap: 20px; }
+    section { padding: 100px 28px; }
+    #home { padding: 0 28px; }
+    .triad { grid-template-columns: 1fr; }
+    .research-grid { grid-template-columns: 1fr; }
+    #about { grid-template-columns: 1fr; min-height: unset; padding: 100px 28px; }
+    .about-right { padding-top: 0; }
+    h1 { font-size: 52px; }
+    .hero-kanji { display: none; }
+    .contact-footer { display: none; }
+    .scroll-line { display: none; }
+    #contact { padding: 100px 28px; }
+    .contact-large { font-size: 36px; }
+    .bl-note { display: none; }
+  }
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+  }
+</style>
 </head>
 <body>
 
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Fixed elements -->
+<div class="floating-ma">間　空　無為</div>
+<div class="scroll-line">
+  <span class="scroll-line-text">scroll</span>
+  <div class="scroll-line-bar"></div>
+</div>
+
+<!-- Navigation -->
 <nav>
-  <a class="nav-logo" href="index.html">MA-ZEN</a>
+  <a class="nav-logo" href="#home">MA-ZEN</a>
   <ul class="nav-links">
-    <li><a href="public.html">Public</a></li>
-    <li><a href="protocol.html">Protocol</a></li>
-    <li><a href="research.html">Research</a></li>
-    <li><a href="lab.html">Lab</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="boundary.html">Boundary</a></li>
-    <li><a href="contact.html">Contact</a></li>
+    <li><a href="#public">Public</a></li>
+    <li><a href="#protocol">Protocol</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#lab">Lab</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#boundary">Boundary</a></li>
+    <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
 
-<section>
-  <div class="section-eyebrow">Finite Silence Architecture</div>
-  <h1>The interval<br>is the material.</h1>
-  <p>
-    A framework for creating structured absence that induces perceptual shift — then exits without trace.
+<!-- ── HOME ── -->
+<section id="home">
+  <div class="hero-kanji">間空無</div>
+  <div class="hero-label">A Design Philosophy</div>
+  <h1>The interval<br>is the <em>material.</em></h1>
+  <p class="hero-sub">
+    A synthesis of Ma, Sunyata, and Wu Wei — a framework
+    for creating finite silences that open onto the infinite.
   </p>
-  <a href="protocol.html" class="button">Enter Protocol</a>
+  <div class="hero-divider"></div>
 </section>
 
-<script src="js/main.js"></script>
+<!-- ── PUBLIC ── -->
+<section id="public">
+  <div class="section-eyebrow">Public</div>
+  <h2>Three forces.<br><em>One void.</em></h2>
+  <p>MA-ZEN draws from three ancient streams: the Japanese aesthetics of Ma, the Buddhist heart of Sunyata, and the Taoist effortlessness of Wu Wei. Together, they describe a single motion — the act of creating presence through absence.</p>
+
+  <div class="triad reveal">
+    <div class="triad-card">
+      <span class="triad-kanji">間</span>
+      <div class="triad-title">Ma · The Interval</div>
+      <p>The gap is not a lack. It is a tension-filled space that requires presence to be felt. In the pause between sounds, the whole becomes audible.</p>
+    </div>
+    <div class="triad-card">
+      <span class="triad-kanji">空</span>
+      <div class="triad-title">Sunyata · Emptiness</div>
+      <p>Form is emptiness, emptiness is form. The artifact points beyond itself — then dissolves. No grasping. No residue. The finger points; look at the moon.</p>
+    </div>
+    <div class="triad-card">
+      <span class="triad-kanji">無為</span>
+      <div class="triad-title">Wu Wei · No Forcing</div>
+      <p>Effortless action. Do not act against the grain of reality. Trust the user to discover. Set the stage, embody the emptiness — the outcome arrives of itself.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROTOCOL ── -->
+<section id="protocol">
+  <div class="section-eyebrow">Protocol</div>
+  <h2>How the<br><em>practice works.</em></h2>
+
+  <div class="protocol-list">
+    <div class="protocol-item reveal">
+      <span class="protocol-num">01</span>
+      <div>
+        <div class="protocol-title">Create the interval deliberately.</div>
+        <p>Every pause is a decision. Every whitespace is load-bearing. Structure silence the way an architect structures light — as form, not as absence of form.</p>
+      </div>
+    </div>
+    <div class="protocol-item reveal">
+      <span class="protocol-num">02</span>
+      <div>
+        <div class="protocol-title">Let the artifact point beyond itself.</div>
+        <p>The work succeeds when it dissolves into use. A door handle that induces the right grip without instruction. A sentence that opens a room. Do not cling to the vessel.</p>
+      </div>
+    </div>
+    <div class="protocol-item reveal">
+      <span class="protocol-num">03</span>
+      <div>
+        <div class="protocol-title">Do not force the discovery.</div>
+        <p>Wu Wei is invisible design. The system operates so naturally that the user believes they are acting alone. The designer recedes. The experience remains.</p>
+      </div>
+    </div>
+    <div class="protocol-item reveal">
+      <span class="protocol-num">04</span>
+      <div>
+        <div class="protocol-title">Exit without trace.</div>
+        <p>Once the perceptual shift has occurred, the work is done. The user is not thinking about how beautiful the design was. The form has served its purpose and is no longer clung to. This is completion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESEARCH ── -->
+<section id="research">
+  <div class="section-eyebrow">Research</div>
+  <h2>Roots in<br><em>deep history.</em></h2>
+
+  <div class="research-quote reveal">
+    <blockquote>
+      "MA-ZEN is a finite silence architecture that induces perceptual shift through structured absence — then exits without trace."
+    </blockquote>
+    <cite>Core Definition</cite>
+  </div>
+
+  <div class="research-grid reveal">
+    <div class="research-cell">
+      <div class="research-cell-label">Historical Basis</div>
+      <p>When Buddhism traveled from India to China, it merged with native Taoism to create Chan — later Zen in Japan. MA-ZEN taps directly into this centuries-old synergy. The philosophy is historically grounded; only the label is new.</p>
+    </div>
+    <div class="research-cell">
+      <div class="research-cell-label">Sunyata · Swollen with Possibility</div>
+      <p>The Sanskrit root <em>su</em> in Sunyata conveys being swollen with possibility. Emptiness is not a dead end. It is the very ground from which all meaningful form can emerge.</p>
+    </div>
+    <div class="research-cell">
+      <div class="research-cell-label">Ma · The Light Through the Gate</div>
+      <p>The kanji 間 combines sun (日) and gate (門): the space through which light enters. Ma is not lack — it is the active, framing element that allows essence to be perceived.</p>
+    </div>
+    <div class="research-cell">
+      <div class="research-cell-label">Mazu Daoyi (709–788)</div>
+      <p>Three stages: "This very mind is Buddha." Then: "No mind, no Buddha." Then: "The ordinary mind is the Way." Affirmation, negation, return. The arc MA-ZEN follows in every artifact.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── LAB ── -->
+<section id="lab">
+  <div class="section-eyebrow">Lab</div>
+  <h2>The three-step<br><em>arc in practice.</em></h2>
+  <p>The lab applies MA-ZEN to interaction, architecture, and language. Each project passes through a single arc: perceptual shift, dissolution, effortless return.</p>
+
+  <div class="lab-diagram reveal">
+    <div class="lab-arc">
+      <div class="arc-step">
+        <div class="arc-dot"></div>
+        <div class="arc-content">
+          <div class="arc-content-title">Affirmation — "This very mind is Buddha."</div>
+          <p>An initial clarity. The artifact creates a perceptual opening. Whitespace, an unexpected pause, a single focal element — something shifts. The user feels it without knowing why.</p>
+        </div>
+      </div>
+      <div class="arc-step">
+        <div class="arc-dot"></div>
+        <div class="arc-content">
+          <div class="arc-content-title">Negation — "No mind, no Buddha."</div>
+          <p>Prevent attachment to the first clarity. The artifact dissolves before it can become self-congratulatory. No branding moment. No lingering signature. The form exits.</p>
+        </div>
+      </div>
+      <div class="arc-step">
+        <div class="arc-dot"></div>
+        <div class="arc-content">
+          <div class="arc-content-title">Return — "The ordinary mind is the Way."</div>
+          <p>The user is returned to themselves, clarified. They have navigated effortlessly. The lab's work is complete when it is forgotten — and the user simply moves through their day, changed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="about-left">
+    <div class="section-eyebrow">About</div>
+    <h2>A framework<br>for the<br><em>barely visible.</em></h2>
+    <p>MA-ZEN is not a brand. It is a discipline for those who believe the most powerful design is the kind no one notices. Not because it is invisible — but because it has become the air.</p>
+    <p>Applied to UX, architecture, language, and leadership. Wherever a system touches a human being and then releases them, MA-ZEN is the governing principle.</p>
+  </div>
+  <div class="about-right reveal">
+    <div class="about-stat">
+      <div class="about-stat-num">Ma (間)</div>
+      <div class="about-stat-text">The interval is the material. Space is not a background — it is a structural element equal in weight to any object.</div>
+    </div>
+    <div class="about-stat">
+      <div class="about-stat-num">Sunyata (空)</div>
+      <div class="about-stat-text">Dynamic, non-substantial, interdependent. Phenomena arise and dissolve in relation to one another. Meaning is relational, not fixed.</div>
+    </div>
+    <div class="about-stat">
+      <div class="about-stat-num">Wu Wei (無為)</div>
+      <div class="about-stat-text">The state of effortlessness cannot be achieved through effort. The designer sets the stage and then trusts. The discovery belongs to the user.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BOUNDARY ── -->
+<section id="boundary">
+  <div class="section-eyebrow">Boundary</div>
+  <h2>What MA-ZEN<br><em>refuses.</em></h2>
+  <p>A philosophy without limits is not a philosophy. Boundaries are themselves a form of Ma — they define the shape of the space within.</p>
+
+  <div class="boundary-statement reveal">
+    <div class="boundary-line">
+      <span class="bl-symbol">—</span>
+      <span class="bl-text">We do not force meaning onto the observer.</span>
+      <span class="bl-note">Wu Wei</span>
+    </div>
+    <div class="boundary-line">
+      <span class="bl-symbol">—</span>
+      <span class="bl-text">We do not design for attention. We design for release.</span>
+      <span class="bl-note">Sunyata</span>
+    </div>
+    <div class="boundary-line">
+      <span class="bl-symbol">—</span>
+      <span class="bl-text">Noise is never a substitute for content.</span>
+      <span class="bl-note">Ma</span>
+    </div>
+    <div class="boundary-line">
+      <span class="bl-symbol">—</span>
+      <span class="bl-text">The designer does not remain in the room after the work is done.</span>
+      <span class="bl-note">Dissolve</span>
+    </div>
+    <div class="boundary-line">
+      <span class="bl-symbol">—</span>
+      <span class="bl-text">Cultural depth is not aesthetic decoration.</span>
+      <span class="bl-note">Integrity</span>
+    </div>
+    <div class="boundary-line">
+      <span class="bl-symbol">—</span>
+      <span class="bl-text">Complexity is not sophistication. Silence is not emptiness.</span>
+      <span class="bl-note">Distinction</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="section-eyebrow">Contact</div>
+  <div class="contact-large reveal">
+    Enter the<br><em>interval.</em>
+  </div>
+  <a class="contact-link" href="mailto:hello@ma-zen.io">
+    hello@ma-zen.io <span>→</span>
+  </a>
+  <div class="contact-footer">MA-ZEN · 間空無為 · A finite silence architecture</div>
+</section>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.1;
+    ry += (my - ry) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .triad-card, .protocol-item, .boundary-line').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '48px';
+      ring.style.height = '48px';
+      ring.style.borderColor = 'rgba(184,154,106,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(184,154,106,0.4)';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, i * 80);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // Active nav link
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id');
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current
+        ? 'var(--ash)' : '';
+    });
+  });
+</script>
 </body>
 </html>
