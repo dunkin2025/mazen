@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MA-ZEN Field Console (Simulation)</title>
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  
+  <!-- Favicon: keep yours in repo root OR change to ./assets/favicon.ico -->
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="shortcut icon" href="/favicon.ico?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Syne+Mono&display=swap" rel="stylesheet">
   <style>
@@ -383,17 +383,45 @@
     </section>
   </div>
 
+
 <script>
 (() => {
+  // ============================================================
+  // MA-ZEN Field Console (Simulation) — v2.1 "Make it actually work"
+  // Preserves the original UI/visual style, but fixes:
+  // - Real state machine (Calibrate → Generate → Run → Report)
+  // - Deterministic seeded RNG (reproducibility)
+  // - Field recipe object derived from calibration + generation
+  // - Session engine references Field (OU drift model + event processes)
+  // - Silence ratio computed from simulated stimulus envelope
+  // - Export generates an immutable report object
+  // ============================================================
+
   // ---------- Helpers ----------
   const $ = (id) => document.getElementById(id);
   const pad2 = (n) => String(n).padStart(2, "0");
-  const clamp = (n,a,b)=>Math.min(b,Math.max(a,n));
-  const ts = ()=>new Date().toLocaleString();
+  const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+
+  // Deterministic RNG (Park–Miller)
+  function RNG(seed){
+    this.seed = (seed|0) % 2147483647;
+    if (this.seed <= 0) this.seed += 2147483646;
+  }
+  RNG.prototype.next = function(){ return this.seed = (this.seed * 16807) % 2147483647; };
+  RNG.prototype.random = function(){ return (this.next() - 1) / 2147483646; };
+  RNG.prototype.randn = function(){ // Box-Muller
+    let u = 0, v = 0;
+    while (u === 0) u = this.random();
+    while (v === 0) v = this.random();
+    return Math.sqrt(-2.0*Math.log(u)) * Math.cos(2.0*Math.PI*v);
+  };
+
+  const ts = () => new Date().toLocaleString();
+  const fmtPct = (x) => `${Math.round(x*100)}%`;
 
   // ---------- Elements ----------
   const status = $("status");
-  const phase = $("phase");
+  const phaseEl = $("phase");
   const journeyPill = $("journeyPill");
   const tabs = [...document.querySelectorAll(".tab")];
 
@@ -446,94 +474,7 @@
   const metrics=$("metrics");
   const eventsEl=$("events");
 
-  // ---------- State ----------
-  const S = {
-    step: 0, // 0 idle, 1 calibrated, 2 generated, 3 session done
-    calibrated:false,
-    generated:false,
-    running:false,
-    paused:false,
-
-    // profile
-    profile: { name:"", intent:"deep-work", load:55, silenceTol:70, jitter:18, breath:6 },
-
-    // field recipe
-    recipe: { arch:"narrow", pacing:"mid", reg:25, pulse:30, silenceGoal:78, mins:10 },
-
-    // run config
-    run: { ritual:"one-breath", edge:"clean", drift:40, marks:12 },
-
-    // session
-    session: {
-      totalMs: 10*60*1000,
-      startT: null,
-      elapsedMs: 0,
-      // simulated metrics
-      silenceRatio: 0.78,
-      stability: 0.0,
-      driftEvents: 0,
-      markers: 0,
-      loadCurve: [],
-      driftCurve: [],
-      eventLog: []
-    }
-  };
-
-  // ---------- UI helpers ----------
-  function setPhase(text){ phase.textContent = text; }
-  function setStatus(text){ status.textContent = text; }
-
-  function addSideLog(kind, text){
-    const item = document.createElement("div");
-    item.className="item";
-    item.innerHTML = `<div class="a"><span>${kind}</span><span>${ts()}</span></div><div class="b">${text}</div>`;
-    sideLog.prepend(item);
-  }
-
-  function setStep(n){
-    S.step = n;
-    journeyPill.textContent = `step ${n}/3`;
-
-    // progress bars
-    pProfile.style.width = `${n>=1 ? 100 : 10}%`;
-    pRecipe.style.width = `${n>=2 ? 100 : 10}%`;
-    pSession.style.width = `${n>=3 ? 100 : 10}%`;
-
-    // right-side summaries
-    const nm = (S.profile.name || "Unnamed");
-    mProfile.textContent = nm;
-    mIntent.textContent = {
-      "deep-work":"Deep Work",
-      "calm-focus":"Calm Focus",
-      "reset":"Reset (short)",
-      "study":"Study"
-    }[S.profile.intent] || "—";
-
-    mRecipe.textContent = S.generated
-      ? `${S.recipe.arch} · ${S.recipe.pacing}`
-      : "—";
-    mSilenceGoal.textContent = `Silence goal: ${S.generated ? S.recipe.silenceGoal + "%" : "—"}`;
-
-    mSession.textContent = S.running ? "active" : (S.step>=3 ? "complete" : "—");
-    mState.textContent = S.running ? (S.paused ? "Paused" : "Running") : (S.step>=3 ? "Ended" : "Idle");
-  }
-
-  function switchTab(name){
-    tabs.forEach(t=>t.classList.toggle("active", t.dataset.tab===name));
-    panelCal.style.display = name==="calibrate" ? "block" : "none";
-    panelGen.style.display = name==="generate" ? "block" : "none";
-    panelRun.style.display = name==="run" ? "block" : "none";
-    panelRep.style.display = name==="report" ? "block" : "none";
-
-    if (name==="calibrate") { hudTitle.textContent="Signal View"; hudSub.textContent="calibration preview · neutral"; }
-    if (name==="generate") { hudTitle.textContent="Field Preview"; hudSub.textContent="recipe preview · neutral"; }
-    if (name==="run") { hudTitle.textContent="Session View"; hudSub.textContent="live drift + stabilization · simulated"; }
-    if (name==="report") { hudTitle.textContent="Report View"; hudSub.textContent="session metrics only"; }
-
-    draw(); // redraw
-  }
-
-  // ---------- Bind labels ----------
+  // ---------- UI label binding ----------
   function bindRange(r, labelEl, fmt=(v)=>v){
     const update=()=>labelEl.textContent = fmt(r.value);
     r.addEventListener("input", update);
@@ -550,152 +491,523 @@
   bindRange(drift, labDrift);
   bindRange(marks, labMarks);
 
-  // ---------- Canvas drawing ----------
+  // ---------- State machine ----------
+  const STATE = {
+    IDLE: "idle",
+    CALIBRATED: "calibrated",
+    GENERATED: "generated",
+    RUNNING: "running",
+    PAUSED: "paused",
+    ENDED: "ended",
+  };
+
+  const S = {
+    state: STATE.IDLE,
+    step: 0,            // 0/3 journey
+    rngSeed: null,
+    rng: null,
+
+    profile: null,      // produced by calibration
+    field: null,        // produced by generation (depends on profile)
+    runCfg: null,       // set at run start
+    session: null,      // runtime state + timeseries
+    report: null,       // immutable at end
+  };
+
+  function setPhase(text){ phaseEl.textContent = text; }
+  function setStatus(text){ status.textContent = text; }
+
+  function addSideLog(kind, text){
+    const item = document.createElement("div");
+    item.className="item";
+    item.innerHTML = `<div class="a"><span>${kind}</span><span>${ts()}</span></div><div class="b">${text}</div>`;
+    sideLog.prepend(item);
+  }
+
+  function setStep(n){
+    S.step = n;
+    journeyPill.textContent = `step ${n}/3`;
+
+    pProfile.style.width = `${n>=1 ? 100 : 10}%`;
+    pRecipe.style.width = `${n>=2 ? 100 : 10}%`;
+    pSession.style.width = `${n>=3 ? 100 : 10}%`;
+
+    // right-side summaries
+    const profName = S.profile?.name || "—";
+    mProfile.textContent = profName;
+    mIntent.textContent = S.profile?.intentLabel || "—";
+
+    mRecipe.textContent = S.field ? `${S.field.archLabel} · ${S.field.pacingLabel}` : "—";
+    mSilenceGoal.textContent = `Silence goal: ${S.field ? (S.field.silenceGoalPct + "%") : "—"}`;
+
+    mSession.textContent = (S.state===STATE.RUNNING || S.state===STATE.PAUSED) ? "active" : (S.state===STATE.ENDED ? "complete" : "—");
+    mState.textContent =
+      (S.state===STATE.RUNNING) ? "Running" :
+      (S.state===STATE.PAUSED) ? "Paused" :
+      (S.state===STATE.ENDED) ? "Ended" : "Idle";
+  }
+
+  function setTabEnabled(tabName, enabled){
+    const el = tabs.find(t=>t.dataset.tab===tabName);
+    if (!el) return;
+    el.style.opacity = enabled ? "1" : "0.45";
+    el.style.pointerEvents = enabled ? "auto" : "none";
+  }
+
+  function enforceWorkflowUI(){
+    // Tabs
+    setTabEnabled("calibrate", true);
+    setTabEnabled("generate", S.state!==STATE.IDLE);
+    setTabEnabled("run", S.state===STATE.GENERATED || S.state===STATE.RUNNING || S.state===STATE.PAUSED || S.state===STATE.ENDED);
+    setTabEnabled("report", S.state===STATE.ENDED);
+
+    // Buttons
+    btnStart.disabled = !(S.state===STATE.GENERATED || S.state===STATE.ENDED); // allow rerun after ended
+    btnPause.disabled = !(S.state===STATE.RUNNING || S.state===STATE.PAUSED);
+    btnExport.disabled = (S.state!==STATE.ENDED);
+
+    // Start label
+    btnStart.textContent = (S.state===STATE.ENDED) ? "Start Session" : "Start Session";
+    btnPause.textContent = (S.state===STATE.PAUSED) ? "Resume" : "Pause";
+  }
+
+  function switchTab(name){
+    tabs.forEach(t=>t.classList.toggle("active", t.dataset.tab===name));
+    panelCal.style.display = name==="calibrate" ? "block" : "none";
+    panelGen.style.display = name==="generate" ? "block" : "none";
+    panelRun.style.display = name==="run" ? "block" : "none";
+    panelRep.style.display = name==="report" ? "block" : "none";
+
+    if (name==="calibrate") { hudTitle.textContent="Signal View"; hudSub.textContent="calibration preview · neutral"; }
+    if (name==="generate") { hudTitle.textContent="Field Preview"; hudSub.textContent="recipe preview · neutral"; }
+    if (name==="run") { hudTitle.textContent="Session View"; hudSub.textContent="live drift + stabilization · simulated"; }
+    if (name==="report") { hudTitle.textContent="Report View"; hudSub.textContent="session metrics only"; }
+
+    drawFrame(performance.now());
+  }
+
+  tabs.forEach(t => t.addEventListener("click", () => {
+    // prevent entering disabled tabs
+    if (t.style.pointerEvents==="none") return;
+    switchTab(t.dataset.tab);
+  }));
+
+  // ---------- Read inputs ----------
+  function readProfileInputs(){
+    const name = (profileName.value || "").trim() || "Unnamed";
+    const intentVal = intent.value;
+    const intentLabel = {
+      "deep-work":"Deep Work",
+      "calm-focus":"Calm Focus",
+      "reset":"Reset (short)",
+      "study":"Study"
+    }[intentVal] || intentVal;
+
+    return {
+      name,
+      intent: intentVal,
+      intentLabel,
+      cognitiveLoad: Number(load.value)/100,     // 0..1
+      silenceTol: Number(silenceTol.value)/100,  // 0..1
+      jitter: Number(jitter.value)/100,          // 0..1
+      breathSec: Number(breath.value),           // 3..12
+    };
+  }
+
+  function readGenerateInputs(){
+    return {
+      arch: arch.value,
+      archLabel: {narrow:"Narrow", steady:"Steady", wave:"Wave"}[arch.value] || arch.value,
+      pacing: pacing.value,
+      pacingLabel: {slow:"Slow", mid:"Medium", fast:"Fast"}[pacing.value] || pacing.value,
+      regulation: Number(reg.value)/100,
+      pulseDepth: Number(pulse.value)/100,
+      silenceGoalPct: Number(silenceGoal.value),
+      silenceGoal: Number(silenceGoal.value)/100, // 0.5..0.95
+      mins: Number(mins.value),
+    };
+  }
+
+  function readRunInputs(){
+    return {
+      ritual: ritual.value,
+      edge: edge.value,
+      driftSensitivity: Number(drift.value)/100, // 0..1
+      markerDensity: Number(marks.value),        // 0..30
+    };
+  }
+
+  // ---------- Calibration (build Profile) ----------
+  // IMPORTANT: This is still simulated. But now it actually influences the model.
+  function calibrate(){
+    const p = readProfileInputs();
+
+    // Reproducible seed from profile + settings (no extra UI control needed)
+    // (Stable if same name+intent+sliders)
+    let seed = 0;
+    const seedStr = `${p.name}|${p.intent}|${load.value}|${silenceTol.value}|${jitter.value}|${breath.value}`;
+    for (let i=0;i<seedStr.length;i++) seed = (seed*31 + seedStr.charCodeAt(i)) >>> 0;
+    if (seed === 0) seed = 42;
+
+    S.rngSeed = seed;
+    S.rng = new RNG(seed);
+
+    // Derive baseline parameters (operational definitions)
+    // baseline drift mean μ0 ∈ [0.15, 0.60], increases with load & jitter, decreases with silence tolerance
+    const mu0 = clamp(0.22 + 0.22*p.cognitiveLoad + 0.18*p.jitter - 0.10*p.silenceTol + (S.rng.randn()*0.03), 0.10, 0.85);
+
+    // noise sigma σ0 ∈ [0.03, 0.20], increases with jitter & load
+    const sigma0 = clamp(0.04 + 0.10*p.jitter + 0.06*p.cognitiveLoad + Math.abs(S.rng.randn())*0.01, 0.02, 0.22);
+
+    // baseline stability proxy ∈ [0,1]
+    const baselineStability = clamp(1.0 - (0.55*p.jitter + 0.25*p.cognitiveLoad) + 0.10*p.silenceTol, 0, 1);
+
+    S.profile = {
+      ...p,
+      seed,
+      mu0,
+      sigma0,
+      baselineStability,
+      calibratedAt: new Date().toISOString(),
+    };
+
+    // Simulate "20s calibration" as a visible countdown, but result is already computed and stored.
+    setPhase("calibrating");
+    setStatus("Calibrating (20s) · establishing baseline");
+    addSideLog("calibrate", `Profile "${p.name}" · μ0=${mu0.toFixed(3)} σ0=${sigma0.toFixed(3)} seed=${seed}`);
+
+    const start = performance.now();
+    const dur = 20000;
+
+    function tick(now){
+      const frac = clamp((now-start)/dur, 0, 1);
+      // Update HUD time during calibration as a countdown-like feel
+      const left = Math.max(0, Math.round((1-frac)*20));
+      hudTime.textContent = `00:${pad2(left)}`;
+      drawFrame(now);
+
+      if (frac < 1){
+        requestAnimationFrame(tick);
+      } else {
+        S.state = STATE.CALIBRATED;
+        setPhase("calibrated");
+        setStatus("Calibrated · proceed to Generate");
+        setStep(1);
+        enforceWorkflowUI();
+        switchTab("generate");
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- Field Generation (build Field recipe) ----------
+  // Field depends on Profile + Generate controls + RNG seed
+  function generateField(){
+    if (!S.profile){
+      addSideLog("warn", "Run calibration first.");
+      setStatus("Calibration required · go to Calibrate");
+      return;
+    }
+
+    const g = readGenerateInputs();
+
+    // Translate "architecture" to model params (mean reversion α, target drift mean μ, marker rate λ, stimulus gate)
+    // α: mean reversion speed (higher = more stable)
+    const archAlpha = { narrow: 0.85, steady: 0.65, wave: 0.45 }[g.arch] ?? 0.65;
+
+    // pacing affects temporal frequency of stimulus "pulses"
+    const paceHz = { slow: 0.08, mid: 0.11, fast: 0.15 }[g.pacing] ?? 0.11;
+
+    // shift drift mean based on regulation and pulse depth; strong regulation reduces drift mean a bit
+    const mu = clamp(
+      S.profile.mu0
+        + (0.08 * g.pulseDepth)
+        - (0.12 * g.regulation)
+        + (g.arch==="wave" ? 0.03 : 0)
+        + (S.rng.randn()*0.01),
+      0.05, 0.90
+    );
+
+    // sigma scales with baseline sigma and pulse depth (more pulse depth can be more stimulating)
+    const sigma = clamp(
+      S.profile.sigma0 * (0.85 + 0.55*g.pulseDepth) * (1.05 - 0.30*g.regulation),
+      0.015, 0.30
+    );
+
+    // Marker base rate λ (events per second) derived from density slider
+    const lambda = clamp((Number(marks.value) / 100), 0, 0.30); // 0..0.30/s roughly
+
+    // Session duration
+    const totalMs = clamp(g.mins, 3, 60) * 60 * 1000;
+
+    // Silence gating: a stimulus envelope is considered "active" when env >= gateThreshold
+    const gateThreshold = 0.18 + (0.20 * (1 - g.silenceGoal)); // higher silence goal -> lower threshold? keep modest
+    const silenceGoal = g.silenceGoal;
+
+    S.field = {
+      ...g,
+      totalMs,
+      alpha: archAlpha,
+      paceHz,
+      mu,
+      sigma,
+      lambda,
+      silenceGoal,
+      gateThreshold,
+      generatedAt: new Date().toISOString(),
+    };
+
+    S.state = STATE.GENERATED;
+    setPhase("generated");
+    setStatus("Generated · proceed to Run");
+    setStep(2);
+    enforceWorkflowUI();
+    addSideLog("generate", `Field: μ=${mu.toFixed(3)} σ=${sigma.toFixed(3)} α=${archAlpha.toFixed(2)} pace=${paceHz.toFixed(2)}Hz silence=${Math.round(silenceGoal*100)}%`);
+    switchTab("run");
+  }
+
+  // ---------- Session Engine ----------
+  // OU drift + stimulus envelope derived from field recipe + drift state
+  // Also generates events deterministically from seed via RNG
   let raf = null;
 
-  function clear(){
-    ctx.clearRect(0,0,cv.width,cv.height);
+  function makeSession(){
+    return {
+      startPerf: null,
+      lastPerf: null,
+      elapsedMs: 0,
+
+      drift: S.field ? S.field.mu : 0.3,
+      stability: S.profile ? S.profile.baselineStability : 0.5,
+      env: 0, // stimulus envelope 0..1
+
+      // accounting
+      activeTimeMs: 0,
+      silenceTimeMs: 0,
+
+      // logs
+      driftCurve: [],
+      stabilityCurve: [],
+      envCurve: [],
+      eventLog: [],
+      driftEvents: 0,
+      markers: 0,
+    };
   }
+
+  function startSession(){
+    if (!S.field || !S.profile){
+      addSideLog("warn", "Generate a field first.");
+      setStatus("Generate required · go to Generate");
+      return;
+    }
+
+    S.runCfg = readRunInputs();
+
+    // reset report/session
+    S.report = null;
+    S.session = makeSession();
+
+    // ritual cue (UI only)
+    const cue = {
+      "one-breath":"One breath…",
+      "three-breaths":"Three breaths…",
+      "no-cue":""
+    }[S.runCfg.ritual] || "";
+
+    setPhase("running");
+    setStatus(cue ? `${cue} then begin.` : "Begin.");
+    addSideLog("run", `Session started (${S.field.mins}m) · edge=${S.runCfg.edge} · seed=${S.profile.seed}`);
+
+    S.state = STATE.RUNNING;
+    enforceWorkflowUI();
+    setStep(2);
+
+    S.session.startPerf = performance.now();
+    S.session.lastPerf = S.session.startPerf;
+
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+  }
+
+  function pauseSession(){
+    if (S.state !== STATE.RUNNING && S.state !== STATE.PAUSED) return;
+    if (S.state === STATE.RUNNING){
+      S.state = STATE.PAUSED;
+      setPhase("paused");
+      setStatus("Paused · no rush");
+      addSideLog("pause", "Session paused.");
+    } else {
+      // resume: re-anchor lastPerf so dt doesn't jump
+      S.state = STATE.RUNNING;
+      setPhase("running");
+      setStatus("Running · return");
+      addSideLog("resume", "Session resumed.");
+      if (S.session) S.session.lastPerf = performance.now();
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    }
+    enforceWorkflowUI();
+    setStep(2);
+    drawFrame(performance.now());
+  }
+
+  function endSession(completed){
+    if (!S.session) return;
+
+    S.state = STATE.ENDED;
+    setPhase("ended");
+    setStatus(completed ? "Ended · report ready" : "Ended early · report ready");
+    addSideLog("end", completed ? "Session completed." : "Session ended early.");
+
+    cancelAnimationFrame(raf);
+
+    // finalize report
+    S.report = compileReport(completed);
+
+    // render report UI
+    buildReportUI(S.report);
+
+    setStep(3);
+    enforceWorkflowUI();
+    switchTab("report");
+    drawFrame(performance.now());
+  }
+
+  function resetAll(){
+    cancelAnimationFrame(raf);
+    S.state = S.profile ? (S.field ? STATE.GENERATED : STATE.CALIBRATED) : STATE.IDLE;
+    setPhase(S.state);
+    setStatus("Idle · calibrate → generate → run → report");
+
+    S.session = null;
+    S.report = null;
+
+    metrics.innerHTML = "";
+    eventsEl.innerHTML = "";
+
+    setStep(S.profile ? (S.field ? 2 : 1) : 0);
+    enforceWorkflowUI();
+    switchTab(S.profile ? (S.field ? "run" : "generate") : "calibrate");
+  }
+
+  // Simulation clock + model update
+  function loop(now){
+    if (S.state !== STATE.RUNNING) return;
+
+    const sess = S.session;
+    const field = S.field;
+    const rng = S.rng;
+
+    // dt in seconds
+    const dt = clamp((now - sess.lastPerf) / 1000, 0, 0.050);
+    sess.lastPerf = now;
+
+    // update elapsed
+    sess.elapsedMs = clamp(now - sess.startPerf, 0, field.totalMs);
+
+    // --- OU drift update: x_{t+dt} = x + α(μ-x)dt + σ sqrt(dt) N(0,1)
+    // Drift sensitivity affects effective sigma + event thresholding
+    const sens = S.runCfg.driftSensitivity;
+    const alpha = field.alpha;
+    const mu = field.mu;
+    const sigma = field.sigma * (0.85 + 0.70*sens);
+
+    sess.drift = clamp(
+      sess.drift + alpha*(mu - sess.drift)*dt + sigma*Math.sqrt(dt)*rng.randn(),
+      0, 1
+    );
+
+    // --- stability proxy: improves when drift low and silence high
+    // (still simulated, but operationally defined)
+    const targetSil = field.silenceGoal;
+    const jit = S.profile.jitter;
+    const base = clamp(0.55 + (targetSil-0.70)*0.25 - (jit*0.20) - (sess.drift*0.30), 0, 1);
+    sess.stability = clamp(base + 0.02*Math.sin(now/1400), 0, 1);
+
+    // --- stimulus envelope: pulse train gated to meet silence goal
+    // Create a pulse value in 0..1, then probabilistically gate it off to achieve silence.
+    const pulseWave = (Math.sin(2*Math.PI*field.paceHz*(sess.elapsedMs/1000)) + 1) / 2; // 0..1
+    const depth = field.pulseDepth;       // 0..1
+    const reg = field.regulation;         // 0..1
+    const rawEnv = clamp((0.15 + depth*0.85) * (0.35 + 0.65*pulseWave) * (0.85 + 0.15*(1-sess.drift)), 0, 1);
+
+    // Gate: with probability pSilence, silence the envelope.
+    // pSilence is close to silenceGoal but nudged by regulation/stability.
+    const pSilence = clamp(
+      targetSil + 0.06*reg + 0.05*(sess.stability-0.5) - 0.04*(depth-0.5),
+      0.50, 0.98
+    );
+
+    sess.env = (rng.random() < pSilence) ? 0 : rawEnv;
+
+    // Time accounting
+    const dtMs = dt*1000;
+    if (sess.env < field.gateThreshold) sess.silenceTimeMs += dtMs;
+    else sess.activeTimeMs += dtMs;
+
+    // --- Event processes ---
+    // Drift spike event when drift crosses threshold; threshold depends on sensitivity
+    const driftThresh = clamp(0.78 - 0.18*sens, 0.55, 0.85);
+    if (sess.drift > driftThresh && rng.random() < 0.06){
+      sess.eventLog.push({ type:"drift", t: sess.elapsedMs, note:"drift spike" });
+      sess.driftEvents++;
+    }
+
+    // Micro-markers: Poisson-ish using lambda scaled by markerDensity and env activity
+    const md = S.runCfg.markerDensity; // 0..30
+    const lambda = clamp((md/30) * (0.06 + 0.24*(1-targetSil)) * (0.35 + 0.65*(sess.env>0?1:0)), 0, 0.30); // per second
+    if (rng.random() < lambda*dt){
+      sess.eventLog.push({ type:"marker", t: sess.elapsedMs, note:"micro-marker" });
+      sess.markers++;
+    }
+
+    // store curves (cap to keep browser happy)
+    if (sess.driftCurve.length < 5000){
+      sess.driftCurve.push(sess.drift);
+      sess.stabilityCurve.push(sess.stability);
+      sess.envCurve.push(sess.env);
+    }
+
+    // HUD
+    hudTime.textContent = formatMs(sess.elapsedMs);
+    const currentSilenceRatio = sess.silenceTimeMs / Math.max(1, sess.silenceTimeMs + sess.activeTimeMs);
+    hudSilence.textContent = fmtPct(currentSilenceRatio);
+
+    // draw
+    drawFrame(now);
+
+    // end?
+    if (sess.elapsedMs >= field.totalMs){
+      endSession(true);
+      return;
+    }
+
+    raf = requestAnimationFrame(loop);
+  }
+
+  function formatMs(ms){
+    const s = Math.floor(ms/1000);
+    const m = Math.floor(s/60);
+    const r = s%60;
+    return `${pad2(m)}:${pad2(r)}`;
+  }
+
+  // ---------- Drawing (maps to real state now) ----------
+  function clear(){ ctx.clearRect(0,0,cv.width,cv.height); }
 
   function drawGrid(){
     const w=cv.width, h=cv.height;
     ctx.globalAlpha = 1;
     ctx.lineWidth = 1;
-
-    // faint grid
     ctx.strokeStyle = "rgba(26,23,20,0.08)";
     const step = 60;
-    for(let x=0;x<=w;x+=step){
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
-    }
-    for(let y=0;y<=h;y+=step){
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
-    }
+    for(let x=0;x<=w;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+    for(let y=0;y<=h;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
   }
 
-  function drawCirclePulse(t){
+  function drawDriftMeter(driftVal){
     const w=cv.width, h=cv.height;
-    const cx=w*0.5, cy=h*0.48;
-
-    const breathSec = Number(S.profile.breath);
-    const b = (Math.sin((t/1000)*(Math.PI*2)/breathSec)+1)/2; // 0..1
-
-    const intensity = Number(S.recipe.reg)/100; // 0..1
-    const jitterAmt = Number(S.profile.jitter)/100;
-
-    const r0 = 110 + b*70 + intensity*50;
-    const wobble = (Math.sin(t/170)+Math.cos(t/240))*jitterAmt*22;
-
-    // ring
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.globalAlpha = 0.9;
-
-    // outer ring
-    ctx.strokeStyle = "rgba(184,154,106,0.55)";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(0,0, r0 + wobble, 0, Math.PI*2);
-    ctx.stroke();
-
-    // inner ring
-    ctx.strokeStyle = "rgba(26,23,20,0.14)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(0,0, (r0*0.62) - wobble*0.3, 0, Math.PI*2);
-    ctx.stroke();
-
-    ctx.restore();
-  }
-
-  function drawWave(t){
-    const w=cv.width, h=cv.height;
-    const baseY = h*0.72;
-
-    const pulseDepth = Number(S.recipe.pulse)/100;
-    const jitterAmt = Number(S.profile.jitter)/100;
-    const driftSens = Number(S.run.drift)/100;
-
-    ctx.save();
-    ctx.translate(0,0);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgba(26,23,20,0.50)";
-    ctx.beginPath();
-
-    const amp = 18 + pulseDepth*52;
-    const freq = 0.010 + (driftSens*0.020);
-
-    for(let x=0; x<=w; x+=8){
-      const n = Math.sin((x*freq) + (t/280));
-      const j = Math.sin((x*0.020) + (t/150))*jitterAmt*1.2;
-      const y = baseY + n*amp + j*amp*0.6;
-      if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-
-    // baseline
-    ctx.strokeStyle = "rgba(26,23,20,0.10)";
-    ctx.beginPath(); ctx.moveTo(0,baseY); ctx.lineTo(w,baseY); ctx.stroke();
-
-    ctx.restore();
-  }
-
-  function drawMarkers(t){
-    const w=cv.width, h=cv.height;
-    if (!S.running) return;
-
-    const density = Number(S.run.marks); // 0..30
-    const sil = Number(S.recipe.silenceGoal)/100; // 0.5..0.95
-    const chance = (density/30) * (1 - sil) * 0.22; // marker chance per frame-ish
-
-    // occasionally add marker events
-    if (!S.paused && Math.random() < chance){
-      const x = Math.random() * w;
-      const y = h*0.15 + Math.random()*h*0.55;
-      S.session.eventLog.push({ type:"marker", t: S.session.elapsedMs, x, y, note:"micro-marker" });
-      S.session.markers++;
-    }
-
-    // draw recent markers
-    const windowMs = 8000;
-    ctx.save();
-    ctx.globalAlpha = 0.9;
-    for (let i=S.session.eventLog.length-1; i>=0; i--){
-      const e = S.session.eventLog[i];
-      if (e.type!=="marker") continue;
-      const age = S.session.elapsedMs - e.t;
-      if (age > windowMs) break;
-      const a = 1 - (age/windowMs);
-      ctx.globalAlpha = a*0.9;
-      ctx.fillStyle = "rgba(184,154,106,0.85)";
-      ctx.beginPath();
-      ctx.arc(e.x, e.y, 3 + a*2.5, 0, Math.PI*2);
-      ctx.fill();
-    }
-    ctx.restore();
-  }
-
-  function drawDrift(t){
-    const w=cv.width, h=cv.height;
-    if (!S.running) return;
-
-    const driftSens = Number(S.run.drift)/100;
-    const jitterAmt = Number(S.profile.jitter)/100;
-    const loadTarget = Number(S.profile.load)/100;
-
-    // simulate drift as a wandering value
-    const base = 0.5 + Math.sin(t/1200)*0.08;
-    const noise = (Math.random()*2-1) * (0.06 + jitterAmt*0.10);
-    const driftVal = clamp(base + noise + (loadTarget-0.5)*0.10, 0, 1);
-
-    // event trigger: drift spike
-    const spike = driftVal > (0.82 - driftSens*0.20);
-    if (!S.paused && spike && Math.random() < 0.06){
-      S.session.eventLog.push({ type:"drift", t: S.session.elapsedMs, note:"drift spike" });
-      S.session.driftEvents++;
-    }
-
-    // draw drift bar
     const x0 = w*0.06, x1 = w*0.94;
     const y = h*0.12;
 
@@ -708,318 +1020,214 @@
     ctx.strokeStyle = "rgba(184,154,106,0.75)";
     ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x0 + (x1-x0)*driftVal, y); ctx.stroke();
 
+    // threshold line
+    if (S.runCfg && S.field){
+      const thresh = clamp(0.78 - 0.18*S.runCfg.driftSensitivity, 0.55, 0.85);
+      ctx.strokeStyle = "rgba(26,23,20,0.25)";
+      ctx.lineWidth = 2;
+      const xt = x0 + (x1-x0)*thresh;
+      ctx.beginPath(); ctx.moveTo(xt, y-12); ctx.lineTo(xt, y+12); ctx.stroke();
+    }
+
     ctx.fillStyle = "rgba(26,23,20,0.55)";
     ctx.font = "16px 'Syne Mono', monospace";
     ctx.fillText("drift", x0, y-18);
 
     ctx.restore();
-
-    // store curve (for report)
-    if (!S.paused){
-      S.session.driftCurve.push(driftVal);
-      if (S.session.driftCurve.length > 600) S.session.driftCurve.shift();
-    }
   }
 
-  function draw(){
+  function drawCirclePulse(now, stability){
+    const w=cv.width, h=cv.height;
+    const cx=w*0.5, cy=h*0.48;
+
+    const breathSec = S.profile ? S.profile.breathSec : 6;
+    const b = (Math.sin((now/1000)*(Math.PI*2)/breathSec)+1)/2; // 0..1
+
+    const intensity = S.field ? S.field.regulation : 0.25; // 0..1
+    const jit = S.profile ? S.profile.jitter : 0.18;
+
+    // map stability to opacity/thickness (clearer feedback than before)
+    const op = 0.35 + 0.55*stability;
+    const thick = 2 + 3*stability;
+
+    const r0 = 110 + b*70 + intensity*50;
+    const wobble = (Math.sin(now/170)+Math.cos(now/240))*jit*22;
+
+    ctx.save();
+    ctx.translate(cx,cy);
+
+    ctx.globalAlpha = op;
+    ctx.strokeStyle = "rgba(184,154,106,0.75)";
+    ctx.lineWidth = thick + 2;
+    ctx.beginPath(); ctx.arc(0,0, r0 + wobble, 0, Math.PI*2); ctx.stroke();
+
+    ctx.globalAlpha = 0.25 + 0.35*stability;
+    ctx.strokeStyle = "rgba(26,23,20,0.20)";
+    ctx.lineWidth = thick;
+    ctx.beginPath(); ctx.arc(0,0, (r0*0.62) - wobble*0.3, 0, Math.PI*2); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawWave(now, env){
+    const w=cv.width, h=cv.height;
+    const baseY = h*0.72;
+
+    const depth = S.field ? S.field.pulseDepth : 0.30;
+    const jit = S.profile ? S.profile.jitter : 0.18;
+    const sens = S.runCfg ? S.runCfg.driftSensitivity : 0.40;
+
+    ctx.save();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(26,23,20,0.50)";
+    ctx.beginPath();
+
+    // Map envelope to amplitude so wave is informational
+    const amp = (10 + depth*45) * (0.35 + 0.95*env);
+    const freq = 0.010 + (sens*0.020);
+
+    for(let x=0; x<=w; x+=8){
+      const n = Math.sin((x*freq) + (now/280));
+      const j = Math.sin((x*0.020) + (now/150))*jit*1.2;
+      const y = baseY + n*amp + j*amp*0.6;
+      if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(26,23,20,0.10)";
+    ctx.beginPath(); ctx.moveTo(0,baseY); ctx.lineTo(w,baseY); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawEventTimeline(){
+    if (!S.session) return;
+    const w=cv.width, h=cv.height;
+    const y = h*0.92;
+    const x0 = w*0.06, x1 = w*0.94;
+    const span = x1-x0;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(26,23,20,0.12)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+
+    const total = S.field ? S.field.totalMs : (S.session.elapsedMs||1);
+
+    // draw last ~60 events max for clarity
+    const evs = S.session.eventLog.slice(-60);
+    for (const e of evs){
+      const x = x0 + span * (e.t / Math.max(1,total));
+      if (e.type==="marker"){
+        ctx.fillStyle = "rgba(184,154,106,0.80)";
+        ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fill();
+      } else if (e.type==="drift"){
+        ctx.fillStyle = "rgba(26,23,20,0.55)";
+        ctx.beginPath();
+        ctx.moveTo(x, y-7); ctx.lineTo(x-5, y+4); ctx.lineTo(x+5, y+4);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawFrame(now){
     clear();
     drawGrid();
 
-    const t = performance.now();
+    const driftVal = S.session ? S.session.drift : (S.profile ? S.profile.mu0 : 0.35);
+    const stability = S.session ? S.session.stability : (S.profile ? S.profile.baselineStability : 0.55);
+    const env = S.session ? S.session.env : 0;
 
-    // base visuals always
-    drawCirclePulse(t);
-    drawWave(t);
+    drawDriftMeter(driftVal);
+    drawCirclePulse(now, stability);
+    drawWave(now, env);
+    drawEventTimeline();
 
-    // running visuals
-    drawDrift(t);
-    drawMarkers(t);
-
-    // HUD
-    if (S.generated){
-      hudSilence.textContent = `${S.recipe.silenceGoal}%`;
-    } else {
-      hudSilence.textContent = "—";
+    // HUD fallback when not running
+    if (!S.session){
+      hudTime.textContent = "00:00";
+      hudSilence.textContent = (S.field ? (S.field.silenceGoalPct+"%") : "—");
     }
-    hudTime.textContent = formatMs(S.session.elapsedMs);
-
-    if (S.running && !S.paused){
-      raf = requestAnimationFrame(draw);
-    }
-  }
-
-  function formatMs(ms){
-    const s = Math.floor(ms/1000);
-    const m = Math.floor(s/60);
-    const r = s%60;
-    return `${pad2(m)}:${pad2(r)}`;
-  }
-
-  // ---------- Workflow actions ----------
-  function readProfile(){
-    S.profile.name = (profileName.value || "").trim();
-    S.profile.intent = intent.value;
-    S.profile.load = Number(load.value);
-    S.profile.silenceTol = Number(silenceTol.value);
-    S.profile.jitter = Number(jitter.value);
-    S.profile.breath = Number(breath.value);
-  }
-
-  function readRecipe(){
-    S.recipe.arch = arch.value;
-    S.recipe.pacing = pacing.value;
-    S.recipe.reg = Number(reg.value);
-    S.recipe.pulse = Number(pulse.value);
-    S.recipe.silenceGoal = Number(silenceGoal.value);
-    S.recipe.mins = Number(mins.value);
-    S.session.totalMs = S.recipe.mins * 60 * 1000;
-    // baseline simulated silence ratio tracks the goal
-    S.session.silenceRatio = S.recipe.silenceGoal / 100;
-  }
-
-  function readRun(){
-    S.run.ritual = ritual.value;
-    S.run.edge = edge.value;
-    S.run.drift = Number(drift.value);
-    S.run.marks = Number(marks.value);
-  }
-
-  function calibrate(){
-    readProfile();
-    setPhase("calibrating");
-    setStatus("Calibrating (20s) · establishing baseline");
-    addSideLog("calibrate", `Baseline captured: load ${S.profile.load}, jitter ${S.profile.jitter}, silence tol ${S.profile.silenceTol}.`);
-
-    // Simulate 20s calibration without blocking
-    const start = performance.now();
-    const dur = 20000;
-    const tick = () => {
-      const p = clamp((performance.now()-start)/dur, 0, 1);
-      // mild animation
-      if (p < 1){
-        raf = requestAnimationFrame(tick);
-      } else {
-        S.calibrated = true;
-        setPhase("calibrated");
-        setStatus("Calibrated · proceed to Generate");
-        setStep(1);
-        switchTab("generate");
-      }
-      draw();
-    };
-    raf = requestAnimationFrame(tick);
-  }
-
-  function randomizeDemo(){
-    profileName.value = ["Night focus","Morning study","Reset window","Deep work block"][Math.floor(Math.random()*4)];
-    intent.value = ["deep-work","study","calm-focus","reset"][Math.floor(Math.random()*4)];
-    load.value = String(40 + Math.floor(Math.random()*45));
-    silenceTol.value = String(45 + Math.floor(Math.random()*45));
-    jitter.value = String(8 + Math.floor(Math.random()*35));
-    breath.value = String(4 + Math.floor(Math.random()*6));
-    labLoad.textContent=load.value; labSilenceTol.textContent=silenceTol.value; labJitter.textContent=jitter.value; labBreath.textContent=breath.value;
-
-    arch.value = ["narrow","steady","wave"][Math.floor(Math.random()*3)];
-    pacing.value = ["slow","mid","fast"][Math.floor(Math.random()*3)];
-    reg.value = String(10 + Math.floor(Math.random()*45));
-    pulse.value = String(10 + Math.floor(Math.random()*55));
-    silenceGoal.value = String(65 + Math.floor(Math.random()*25));
-    mins.value = String(5 + Math.floor(Math.random()*20));
-    labReg.textContent=reg.value; labPulse.textContent=pulse.value; labSilenceGoal.textContent=silenceGoal.value; labMins.textContent=mins.value;
-
-    drift.value = String(25 + Math.floor(Math.random()*50));
-    marks.value = String(6 + Math.floor(Math.random()*18));
-    labDrift.textContent=drift.value; labMarks.textContent=marks.value;
-
-    addSideLog("demo", "Randomized parameters for quick exploration.");
-    draw();
-  }
-
-  function generateField(){
-    if (!S.calibrated){
-      addSideLog("warn", "Run calibration first (for the journey).");
-      setStatus("Calibration required · go to Calibrate");
-      return;
-    }
-    readRecipe();
-    setPhase("generated");
-    setStatus("Generated · proceed to Run");
-    S.generated = true;
-    setStep(2);
-    addSideLog("generate", `Recipe: ${S.recipe.arch}/${S.recipe.pacing}, silence ${S.recipe.silenceGoal}%, intensity ${S.recipe.reg}.`);
-    switchTab("run");
-    draw();
-  }
-
-  function preview(){
-    setStatus("Previewing visual feedback (no session)");
-    draw();
-  }
-
-  function resetAll(){
-    cancelAnimationFrame(raf);
-    S.running=false; S.paused=false;
-    S.session.elapsedMs=0;
-    S.session.eventLog=[];
-    S.session.driftCurve=[];
-    S.session.driftEvents=0;
-    S.session.markers=0;
-    S.session.stability=0;
-
-    btnPause.disabled = true;
-    btnStart.disabled = false;
-    btnExport.disabled = true;
-
-    setPhase("idle");
-    setStatus("Idle · calibrate → generate → run → report");
-    setStep(S.generated ? 2 : (S.calibrated ? 1 : 0));
-    draw();
-  }
-
-  function startSession(){
-    if (!S.generated){
-      setStatus("Generate required · go to Generate");
-      addSideLog("warn", "Generate a field recipe before running a session.");
-      return;
-    }
-    readRun();
-
-    // ritual cue (visual-only)
-    const cue = {
-      "one-breath":"One breath…",
-      "three-breaths":"Three breaths…",
-      "no-cue":""
-    }[S.run.ritual];
-
-    setPhase("running");
-    setStatus(cue ? `${cue} then begin.` : "Begin.");
-    addSideLog("run", `Session started (${S.recipe.mins}m) · edge: ${S.run.edge} · markers: ${S.run.marks}.`);
-
-    S.running=true; S.paused=false;
-    btnPause.disabled = false;
-    btnStart.disabled = true;
-    btnExport.disabled = true;
-
-    setStep(2); // still pre-report
-    S.session.startT = performance.now();
-    S.session.elapsedMs = 0;
-
-    // run loop
-    const loop = () => {
-      if (!S.running) return;
-      if (!S.paused){
-        const now = performance.now();
-        S.session.elapsedMs = clamp(now - S.session.startT, 0, S.session.totalMs);
-        // simulated stability (higher silence + lower jitter + lower drift)
-        const sil = S.session.silenceRatio;
-        const jit = S.profile.jitter/100;
-        const drf = S.run.drift/100;
-        const base = 0.55 + sil*0.35 - jit*0.25 - drf*0.15;
-        S.session.stability = clamp(base + Math.sin(now/1800)*0.03, 0, 1);
-
-        if (S.session.elapsedMs >= S.session.totalMs){
-          endSession(true);
-          return;
-        }
-      }
-      draw();
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    setStep(2);
-  }
-
-  function pauseSession(){
-    if (!S.running) return;
-    S.paused = !S.paused;
-    if (S.paused){
-      setPhase("paused");
-      setStatus("Paused · no rush");
-      btnPause.textContent = "Resume";
-      addSideLog("pause", "Session paused.");
-      setStep(2);
-    } else {
-      setPhase("running");
-      setStatus("Running · return");
-      btnPause.textContent = "Pause";
-      // re-anchor startT so elapsed continues correctly
-      S.session.startT = performance.now() - S.session.elapsedMs;
-      addSideLog("resume", "Session resumed.");
-    }
-    setStep(2);
-    draw();
-  }
-
-  function endSession(completed){
-    S.running=false; S.paused=false;
-    btnPause.disabled=true;
-    btnPause.textContent="Pause";
-    btnStart.disabled=false;
-    btnExport.disabled=false;
-
-    setPhase("ended");
-    setStatus(completed ? "Ended · report ready" : "Ended early · report ready");
-    addSideLog("end", completed ? "Session completed." : "Session ended early.");
-
-    // lock in report
-    setStep(3);
-    buildReport();
-    switchTab("report");
-    draw();
-  }
-
-  function exportReport(){
-    // basic JSON export (download)
-    const report = makeReportObject();
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type:"application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `MAZEN_report_${Date.now()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    addSideLog("export", "Report exported as JSON (local download).");
   }
 
   // ---------- Report ----------
-  function makeReportObject(){
-    const name = S.profile.name || "Unnamed";
-    const driftAvg = avg(S.session.driftCurve);
-    const stability = S.session.stability;
+  function compileReport(completed){
+    const sess = S.session;
+    const field = S.field;
+    const prof = S.profile;
+    const run = S.runCfg;
 
-    return {
-      product: "MA-ZEN Field Console (simulation)",
+    const silenceRatio = sess.silenceTimeMs / Math.max(1, sess.silenceTimeMs + sess.activeTimeMs);
+
+    const driftAvg = avg(sess.driftCurve);
+    const stabilityAvg = avg(sess.stabilityCurve);
+    const envAvg = avg(sess.envCurve);
+
+    return Object.freeze({
+      product: "MA-ZEN Field Console (Simulation)",
+      version: "v2.1",
       generated_at: new Date().toISOString(),
-      profile: { ...S.profile, name },
-      recipe: { ...S.recipe },
-      run: { ...S.run },
+      completed: !!completed,
+      seed: prof.seed,
+
+      profile: {
+        name: prof.name,
+        intent: prof.intent,
+        cognitive_load: round(prof.cognitiveLoad,3),
+        silence_tolerance: round(prof.silenceTol,3),
+        jitter: round(prof.jitter,3),
+        breath_sec: prof.breathSec,
+        mu0: round(prof.mu0,3),
+        sigma0: round(prof.sigma0,3),
+      },
+
+      field: {
+        arch: field.arch,
+        pacing: field.pacing,
+        regulation: round(field.regulation,3),
+        pulse_depth: round(field.pulseDepth,3),
+        silence_goal: round(field.silenceGoal,3),
+        minutes: field.mins,
+        alpha: round(field.alpha,3),
+        mu: round(field.mu,3),
+        sigma: round(field.sigma,3),
+        pace_hz: round(field.paceHz,3),
+        gate_threshold: round(field.gateThreshold,3),
+      },
+
+      run: {
+        ritual: run.ritual,
+        edge: run.edge,
+        drift_sensitivity: round(run.driftSensitivity,3),
+        marker_density: run.markerDensity,
+      },
+
       results: {
-        duration_min: S.recipe.mins,
-        silence_ratio: round(S.session.silenceRatio, 3),
-        focus_stability: round(stability, 3),
-        drift_events: S.session.driftEvents,
-        micro_markers: S.session.markers,
-        drift_avg: round(driftAvg, 3),
+        duration_ms: Math.round(sess.elapsedMs),
+        silence_ratio: round(silenceRatio,3),
+        drift_avg: round(driftAvg,3),
+        stability_avg: round(stabilityAvg,3),
+        env_avg: round(envAvg,3),
+        drift_events: sess.driftEvents,
+        micro_markers: sess.markers,
         notes: "All values are simulated. No medical or diagnostic claims."
       },
-      events: S.session.eventLog.slice(-50) // last 50
-    };
+
+      events: sess.eventLog.slice(-200)
+    });
   }
 
-  function buildReport(){
-    const r = makeReportObject();
-
+  function buildReportUI(report){
     metrics.innerHTML = "";
     eventsEl.innerHTML = "";
 
     const cards = [
-      ["Silence tolerance (profile)", `${r.profile.silenceTol}/100`, r.profile.silenceTol/100],
-      ["Silence ratio (session)", `${Math.round(r.results.silence_ratio*100)}%`, r.results.silence_ratio],
-      ["Focus stability (sim)", `${Math.round(r.results.focus_stability*100)}%`, r.results.focus_stability],
-      ["Drift events", String(r.results.drift_events), clamp(r.results.drift_events/12,0,1)],
-      ["Micro-markers", String(r.results.micro_markers), clamp(r.results.micro_markers/20,0,1)],
+      ["Silence ratio (measured)", `${Math.round(report.results.silence_ratio*100)}%`, report.results.silence_ratio],
+      ["Stability avg (sim)", `${Math.round(report.results.stability_avg*100)}%`, report.results.stability_avg],
+      ["Drift avg", report.results.drift_avg.toFixed(3), clamp(report.results.drift_avg,0,1)],
+      ["Drift events", String(report.results.drift_events), clamp(report.results.drift_events/14,0,1)],
+      ["Micro-markers", String(report.results.micro_markers), clamp(report.results.micro_markers/24,0,1)],
     ];
 
     for (const [title, val, p] of cards){
@@ -1033,7 +1241,7 @@
       metrics.appendChild(el);
     }
 
-    const evs = r.events.slice().reverse();
+    const evs = report.events.slice().reverse();
     if (evs.length === 0){
       const el = document.createElement("div");
       el.className="item";
@@ -1063,10 +1271,54 @@
     return Math.round(x*p)/p;
   }
 
-  // ---------- Tab events ----------
-  tabs.forEach(t => t.addEventListener("click", () => switchTab(t.dataset.tab)));
+  // ---------- Export ----------
+  function exportReport(){
+    if (!S.report) return;
+    const blob = new Blob([JSON.stringify(S.report, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `MAZEN_report_${S.report.seed}_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    addSideLog("export", "Report exported as JSON (local download).");
+  }
 
-  // ---------- Button events ----------
+  // ---------- Preview ----------
+  function preview(){
+    setStatus("Previewing (visual-only) · no session running");
+    drawFrame(performance.now());
+  }
+
+  // ---------- Demo randomize (still here, but now deterministic per seed when calibrated) ----------
+  function randomizeDemo(){
+    profileName.value = ["Night focus","Morning study","Reset window","Deep work block"][Math.floor(Math.random()*4)];
+    intent.value = ["deep-work","study","calm-focus","reset"][Math.floor(Math.random()*4)];
+    load.value = String(40 + Math.floor(Math.random()*45));
+    silenceTol.value = String(45 + Math.floor(Math.random()*45));
+    jitter.value = String(8 + Math.floor(Math.random()*35));
+    breath.value = String(4 + Math.floor(Math.random()*6));
+    labLoad.textContent=load.value; labSilenceTol.textContent=silenceTol.value; labJitter.textContent=jitter.value; labBreath.textContent=breath.value;
+
+    arch.value = ["narrow","steady","wave"][Math.floor(Math.random()*3)];
+    pacing.value = ["slow","mid","fast"][Math.floor(Math.random()*3)];
+    reg.value = String(10 + Math.floor(Math.random()*45));
+    pulse.value = String(10 + Math.floor(Math.random()*55));
+    silenceGoal.value = String(65 + Math.floor(Math.random()*25));
+    mins.value = String(5 + Math.floor(Math.random()*20));
+    labReg.textContent=reg.value; labPulse.textContent=pulse.value; labSilenceGoal.textContent=silenceGoal.value; labMins.textContent=mins.value;
+
+    drift.value = String(25 + Math.floor(Math.random()*50));
+    marks.value = String(6 + Math.floor(Math.random()*18));
+    labDrift.textContent=drift.value; labMarks.textContent=marks.value;
+
+    addSideLog("demo", "Randomized parameters for quick exploration.");
+    drawFrame(performance.now());
+  }
+
+  // ---------- Button wiring ----------
   btnCalibrate.addEventListener("click", calibrate);
   btnRandomize.addEventListener("click", randomizeDemo);
   btnGenerate.addEventListener("click", generateField);
@@ -1074,21 +1326,27 @@
 
   btnStart.addEventListener("click", startSession);
   btnPause.addEventListener("click", pauseSession);
-  btnReset.addEventListener("click", resetAll);
+  btnReset.addEventListener("click", () => endSession(false)); // keep reset as "end early" to preserve journal
   btnExport.addEventListener("click", exportReport);
 
-  // allow end by leaving run tab? keep simple: not included
+  // NOTE: If you want Reset to fully reset, swap to resetAll()
+  // btnReset.addEventListener("click", resetAll);
 
   // ---------- Init ----------
   function init(){
     setPhase("idle");
+    setStatus("Idle · calibrate → generate → run → report");
     setStep(0);
-    switchTab("calibrate");
-    draw();
-  }
-  init();
+    S.state = STATE.IDLE;
 
+    enforceWorkflowUI();
+    switchTab("calibrate");
+    drawFrame(performance.now());
+  }
+
+  init();
 })();
 </script>
+
 </body>
 </html>
