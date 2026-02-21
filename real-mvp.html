@@ -4,15 +4,19 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0e0d0c">
+<meta name="description" content="MA-ZEN — silence-dominant guided sessions and intentional sound architecture." />
 <title>MA-ZEN // Guided Silence • B2B Audio Branding • Soundscape Library</title>
-
+<link rel="icon" href="/favicon.ico?v=2" sizes="any">
+<link rel="shortcut icon" href="/favicon.ico?v=2">
+  
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Syne+Mono&display=swap" rel="stylesheet">
 
 <style>
   /* =========================================================
      MA-ZEN Launchable HTML Product (Static SPA)
-     v1.1 — clarity, efficiency, publication-quality hygiene
+     v1.2 — launch edition hardening (coherence, UX, safety)
      - Single-file, GitHub Pages friendly
      - Local-first persistence (localStorage)
      - Web Audio generated texture (no asset files)
@@ -418,8 +422,10 @@
   .ritual{
     position: fixed;
     inset: 0;
-    background: radial-gradient(1200px 700px at 30% 10%, rgba(184,154,106,0.10), transparent 60%),
-                #0e0d0c;
+    background:
+      radial-gradient(1200px 700px at 30% 10%, rgba(184,154,106,0.07), transparent 60%),
+      radial-gradient(800px 500px at 70% 90%, rgba(184,154,106,0.04), transparent 60%),
+      #0c0b0a;
     color: rgba(244,239,230,0.92);
     display:none;
     z-index: 100;
@@ -428,7 +434,7 @@
     padding: 16px;
   }
   .ritual.on{ display:flex; }
-  .ritualInner{ width: min(860px, 92vw); text-align:center; }
+  .ritualInner{ width: min(860px, 92vw); text-align:center; animation: breathe 18s ease-in-out infinite; }
   .ritual .mono{ color: rgba(244,239,230,0.72); letter-spacing: 2px; font-size: 12px; }
   .ritualTime{
     margin-top: 16px;
@@ -448,6 +454,11 @@
     font-size: 11px;
     color: rgba(244,239,230,0.55);
     letter-spacing: 1.4px;
+  }
+
+  @keyframes breathe {
+    0%,100% { opacity: 0.92; }
+    50% { opacity: 1; }
   }
 
   /* Toast */
@@ -613,7 +624,6 @@
     routeTimers: new Set(),
     routeRAFs: new Set(),
     reset(){
-      for(const id of cleanup.routeTimers) clearInterval(id);
       for(const id of cleanup.routeTimers) clearTimeout(id);
       cleanup.routeTimers.clear();
       for(const rafId of cleanup.routeRAFs) cancelAnimationFrame(rafId);
@@ -710,6 +720,25 @@
   function clamp01(x){ return Math.max(0, Math.min(1, x)); }
   function dbToGain(db){ return Math.pow(10, db/20); }
 
+  // Deterministic RNG (session-coherent field). Avoids "pure randomness" feel.
+  function hash32(str){
+    let h = 2166136261;
+    for(let i=0;i<str.length;i++){
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h >>> 0) || 1;
+  }
+  function createRNG(seed){
+    let s = (seed >>> 0) % 2147483647;
+    if(s <= 0) s += 2147483646;
+    return function(){
+      s = (s * 16807) % 2147483647;
+      return (s - 1) / 2147483646;
+    };
+  }
+
+
   /* =========================================================
      Audio Engine (Web Audio API)
      - Generates a quiet, colored-noise bed (looped buffer)
@@ -729,7 +758,8 @@
     // metrics
     lastEventAt: 0,
     eventsInWindow: 0,
-    activity: 0 // 0..1 (smoothed)
+    activity: 0, // 0..1 (smoothed)
+    rng: null
   };
 
   function ensureAudio(){
@@ -757,7 +787,7 @@
     const noiseBuf = audio.ctx.createBuffer(1, noiseLen, audio.ctx.sampleRate);
     const data = noiseBuf.getChannelData(0);
     for(let i = 0; i < data.length; i++){
-      data[i] = (Math.random()*2 - 1) * 0.22;
+      data[i] = (rand()*2 - 1) * 0.22;
     }
 
     const src = audio.ctx.createBufferSource();
@@ -812,6 +842,8 @@
     ensureAudio();
     resumeAudioContext(); // best effort
     audio.running = true;
+    // If not in a guided session, seed engine RNG for coherent playback.
+    if(!session?.running) audio.rng = createRNG(hash32(`ENGINE|${Date.now()}|${state.prefs.texture}`));
 
     if(audio.tickTimer) clearInterval(audio.tickTimer);
     audio.tickTimer = setInterval(engineTick, 650);
@@ -828,6 +860,14 @@
     }
   }
 
+
+  function rand(){
+    // Prefer session RNG; fall back to engine RNG; then rand()
+    if(session?.rng) return session.rng();
+    if(audio.rng) return audio.rng();
+    return rand();
+  }
+
   function engineTick(){
     if(!audio.running || !audio.ctx) return;
 
@@ -838,7 +878,7 @@
 
     // Bed presence probability: more silenceBias = less bed
     const bedOnChance = 0.70 * (1 - silenceBias) + 0.05;
-    const bedOn = Math.random() < bedOnChance;
+    const bedOn = rand() < bedOnChance;
 
     const bedTarget = bedOn ? (0.010 + 0.020 * (1 - silenceBias) * (0.3 + warmth)) : 0.0001;
     audio.bedGain.gain.setTargetAtTime(bedTarget, now, 0.20);
@@ -847,7 +887,7 @@
     const baseEventChance = 0.12 * (1 - silenceBias) + 0.02;
     const eventChance = baseEventChance * (0.6 + motion);
 
-    if(Math.random() < eventChance){
+    if(rand() < eventChance){
       spawnEvent(now, warmth, silenceBias);
       audio.eventsInWindow++;
       audio.lastEventAt = performance.now();
@@ -866,14 +906,34 @@
     }
   }
 
+
+  function startupPing(level=0.010, freq=440, dur=0.35){
+    if(!audio.ctx) return;
+    const t0 = audio.ctx.currentTime;
+    const osc = audio.ctx.createOscillator();
+    const gain = audio.ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, level), t0 + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + Math.max(0.12, dur));
+
+    osc.connect(gain);
+    gain.connect(audio.master);
+    osc.start(t0);
+    osc.stop(t0 + Math.max(0.2, dur) + 0.05);
+  }
+
+
   function spawnEvent(now, warmth, silenceBias){
     // Neutral micro-event: short sine + decay, filtered bandpass.
     const osc = audio.ctx.createOscillator();
     const gain = audio.ctx.createGain();
     const filt = audio.ctx.createBiquadFilter();
 
-    const base = 180 + Math.random()*900;
-    const det = (Math.random()*2 - 1) * 12;
+    const base = 180 + rand()*900;
+    const det = (rand()*2 - 1) * 12;
 
     osc.type = "sine";
     osc.frequency.value = base + det;
@@ -883,7 +943,7 @@
     filt.Q.value = 0.7 + warmth*4;
 
     const peak = 0.010 + (0.018 * (1 - silenceBias)) * (0.2 + warmth);
-    const dur = 0.8 + Math.random()*1.4;
+    const dur = 0.8 + rand()*1.4;
 
     gain.gain.setValueAtTime(0.0001, now);
     gain.gain.exponentialRampToValueAtTime(peak, now + 0.08);
@@ -916,7 +976,8 @@
     presetId: "S88",
     phases: [],
     phaseIndex: 0,
-    pureSilence: true
+    pureSilence: true,
+    rng: null
   };
 
   document.getElementById("btnQuickRitual").addEventListener("click", () => {
@@ -1034,8 +1095,16 @@
     session.startAtMs = performance.now();
     session.pureSilence = p.pureSilence;
 
-    if(!session.pureSilence) startAmbientEngine();
-    else stopAmbientEngine();
+    // Seed RNG by preset + start time for a coherent field.
+    session.rng = createRNG(hash32(`${session.presetId}|${Date.now()}`));
+
+    if(!session.pureSilence){
+      startAmbientEngine();
+      // Perceptual confirmation (prevents "is it working?" confusion).
+      startupPing(0.010, 440, 0.32);
+    }else{
+      stopAmbientEngine();
+    }
 
     toast("Session started");
   }
@@ -1050,6 +1119,8 @@
     const preset = sessionPresets().find(x => x.id === session.presetId);
     const report = {
       schema: "MAZEN_SESSION_REPORT_V1",
+      productVersion: "MAZEN_LAUNCH_v1.2",
+      engineVersion: "WAUDIO_MINIMAL_v1",
       endedAt: new Date().toISOString(),
       presetId: session.presetId,
       presetName: preset?.name ?? session.presetId,
@@ -1575,8 +1646,10 @@
 
         if(remaining <= 0){
           ritualTime.textContent = "00:00";
-          ritualPhase.textContent = state.prefs.labels ? "Complete" : "";
+          ritualPhase.textContent = state.prefs.labels ? "Boundary Reached" : "";
           stopSession("ended");
+          if(!session.pureSilence) startupPing(0.008, 392, 0.28);
+
         }
       }
 
@@ -1912,6 +1985,10 @@
     function collectBrief(){
       return {
         schema: "MAZEN_B2B_BRIEF_V1",
+      productVersion: "MAZEN_LAUNCH_v1.2",
+      engineVersion: "WAUDIO_MINIMAL_v1",
+        productVersion: "MAZEN_LAUNCH_v1.2",
+        engineVersion: "WAUDIO_MINIMAL_v1",
         createdAt: new Date().toISOString(),
         company: $("c_company").value.trim(),
         contact: $("c_contact").value.trim(),
@@ -2101,7 +2178,7 @@ ${brief.nextStep}
                 </div>
                 <div class="hr"></div>
                 <div class="small muted">
-                  Data is stored locally in your browser (localStorage). For real accounts, replace with server sync + encryption.
+                  Data is stored locally in your browser (localStorage). For real accounts, replace with server sync + encryption.<br><br><span class="mono">Safety:</span> Audio output is low-level. Do not use while driving or operating machinery.
                 </div>
               </div>
             </div>
@@ -2121,6 +2198,7 @@ ${brief.nextStep}
     document.getElementById("exportAll").onclick = () => {
       const payload = {
         schema: "MAZEN_EXPORT_ALL_V1",
+        productVersion: "MAZEN_LAUNCH_v1.2",
         exportedAt: new Date().toISOString(),
         state: {
           plan: state.plan,
