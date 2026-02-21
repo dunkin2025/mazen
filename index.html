@@ -1,792 +1,1037 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="light dark" />
-
-  <!-- Better title for communication/public-facing layer -->
-  <title>MA-ZEN — Public Communication Layer</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MA-ZEN — Finite Silence Architecture</title>
+<meta name="description" content="MA-ZEN is a design and research studio building finite silence architectures: structured absence that induces perceptual shift — then exits without trace." />
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+JP:wght@100;300;400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <meta name="description" content="MA-ZEN public communication layer: what it is, what you may experience, and what we openly commit to — without exposing enforcement logic." />
+<style>
+  :root {
+    /* MA‑ZEN corporate palette (quiet, engineered) */
+    --ink: #0a0906;
+    --void: #12100d;
+    --paper: #f2ede4;
+    --ash: #e8e4dc;
+    --stone: #8c8378;
+    --gold: #b89a6a;
+    --mist: rgba(184,154,106,0.10);
+    --shadow: rgba(0,0,0,0.18);
+    --hairline: rgba(232,228,220,0.12);
+    --hairline-2: rgba(232,228,220,0.18);
+    --radius: 18px;
+  }
 
-  <!-- Fonts (keep the spirit of your original Claude index: serif ritual + mono instrumentation) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne+Mono&display=swap" rel="stylesheet">
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: radial-gradient(1200px 800px at 18% 20%, rgba(184,154,106,0.08), transparent 55%),
+                radial-gradient(900px 700px at 78% 10%, rgba(184,154,106,0.05), transparent 60%),
+                var(--ink);
+    color: var(--ash);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
 
-  <style>
-    /* =========================================================
-       MA-ZEN Theme v1 (12-month stable)
-       Rules:
-       - No urgency colors
-       - No infinite pulsing animations
-       - One primary CTA per section
-       - Whitespace is content (Ma)
-       - Silence is a valid outcome
-       - Public: what it means, not how it works
-    ========================================================== */
+  /* subtle paper/noise overlay (kept from blueprint, reduced) */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    opacity:.45;
+    pointer-events:none;
+    z-index:999;
+    mix-blend-mode:overlay;
+  }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+  a { color: inherit; }
+  .container { max-width: 1220px; margin: 0 auto; padding: 0 5vw; }
 
-    :root{
-      --ink:#0a0906;
-      --void:#14110e;
-      --paper:#f2ede4;
-      --ash:#e8e4dc;
-      --fade:#5a5248;
-      --gold:#b89a6a;
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,9,6,0.72);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.15rem 0;
+    gap: 1rem;
+  }
+  .brand {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: .55rem;
+    letter-spacing: .25em;
+  }
+  .brand .mark {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 100;
+    font-size: 1.05rem;
+    letter-spacing: .35em;
+  }
+  .brand .dot {
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  .nav-links {
+    display:flex; align-items:center; gap: 2.2rem;
+    list-style:none;
+  }
+  .nav-links a {
+    text-decoration:none;
+    font-family: 'Space Mono', monospace;
+    font-size: .66rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(232,228,220,0.72);
+    transition: color .25s ease;
+    outline-offset: 6px;
+  }
+  .nav-links a:hover,
+  .nav-links a:focus-visible { color: var(--ash); }
 
-      --glimmer: rgba(184,154,106,.14);
-      --grain: rgba(10,9,6,.06);
-      --hair: rgba(10,9,6,.14);
-      --hair-strong: rgba(10,9,6,.22);
+  .nav-cta {
+    text-decoration:none;
+    font-family:'Space Mono', monospace;
+    font-size:.66rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    padding:.85rem 1.15rem;
+    border: 1px solid rgba(184,154,106,0.55);
+    border-radius: 999px;
+    color: var(--ash);
+    background: rgba(184,154,106,0.08);
+    transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { transform: translateY(-1px); background: rgba(184,154,106,0.14); border-color: rgba(184,154,106,0.78); }
 
-      --r-lg: 22px;
-      --r-md: 14px;
+  /* Mobile nav */
+  .nav-toggle {
+    display:none;
+    border: 1px solid var(--hairline-2);
+    background: rgba(18,16,13,0.55);
+    color: var(--ash);
+    border-radius: 999px;
+    padding: .7rem .9rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .mobile-panel{
+    display:none;
+    border-top: 1px solid var(--hairline);
+    background: rgba(10,9,6,0.88);
+  }
+  .mobile-panel .container{
+    padding-top: .9rem;
+    padding-bottom: 1.1rem;
+  }
+  .mobile-panel a{
+    display:block;
+    padding: .8rem 0;
+    text-decoration:none;
+    font-family:'Space Mono', monospace;
+    font-size:.72rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color: rgba(232,228,220,0.78);
+  }
+  .mobile-panel a:hover{ color: var(--ash); }
 
-      --s-1: 6px; --s-2: 10px; --s-3: 16px; --s-4: 24px;
-      --s-5: 34px; --s-6: 48px; --s-7: 72px;
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    padding-top: 6.2rem;
+    display: grid;
+    align-items: center;
+    position: relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.25fr .75fr;
+    gap: 4.25rem;
+    align-items: start;
+    padding: 7.5rem 0 5rem;
+    position: relative;
+  }
+  .hero-grid::after{
+    content: "間";
+    position: absolute;
+    right: -3vw;
+    top: 50%;
+    transform: translateY(-52%);
+    font-size: 40vw;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 100;
+    color: rgba(232,228,220,0.035);
+    line-height: 1;
+    pointer-events:none;
+    z-index:0;
+  }
+  .hero-left, .hero-right { position: relative; z-index: 1; }
 
-      --serif: "Cormorant Garamond", ui-serif, Georgia, serif;
-      --mono: "Syne Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  .overline{
+    display:flex; align-items:center; gap: 1rem;
+    font-family:'Space Mono', monospace;
+    font-size:.62rem;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    color: rgba(184,154,106,0.92);
+    margin-bottom: 2rem;
+  }
+  .overline::before{
+    content:"";
+    width: 2.25rem;
+    height: 1px;
+    background: rgba(184,154,106,0.9);
+  }
 
-      --shadow: 0 18px 60px rgba(10,9,6,.16);
-    }
+  h1{
+    font-size: clamp(3.0rem, 5.4vw, 6.2rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+    margin-bottom: 1.9rem;
+  }
+  h1 em{ font-style: italic; color: rgba(232,228,220,0.72); }
 
-    body{
-      background: var(--paper);
-      color: var(--ink);
-      font-family: var(--sans);
-      line-height: 1.55;
-      overflow-x: hidden;
-    }
+  .hero-sub{
+    font-size: 1.12rem;
+    color: rgba(232,228,220,0.70);
+    max-width: 52ch;
+    line-height: 1.95;
+    margin-bottom: 2.8rem;
+  }
 
-    /* Subtle paper grain (static; no pulsing / no loops) */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      pointer-events:none;
-      background:
-        radial-gradient(circle at 20% 10%, rgba(184,154,106,.05), transparent 55%),
-        radial-gradient(circle at 80% 70%, rgba(10,9,6,.035), transparent 55%),
-        repeating-linear-gradient(0deg, rgba(10,9,6,.02) 0, rgba(10,9,6,.02) 1px, transparent 1px, transparent 7px);
-      mix-blend-mode: multiply;
-      opacity: .55;
-      z-index: 0;
-    }
+  .cta-row{
+    display:flex; flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap: .85rem;
+    text-decoration:none;
+    font-family:'Space Mono', monospace;
+    font-size:.66rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    padding: .95rem 1.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(232,228,220,0.18);
+    background: rgba(18,16,13,0.55);
+    color: var(--ash);
+    transition: transform .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .btn:hover{ transform: translateY(-1px); border-color: rgba(232,228,220,0.30); background: rgba(18,16,13,0.70); }
+  .btn.primary{
+    border-color: rgba(184,154,106,0.65);
+    background: rgba(184,154,106,0.16);
+  }
+  .btn.primary:hover{
+    border-color: rgba(184,154,106,0.88);
+    background: rgba(184,154,106,0.22);
+  }
+  .btn .arrow{ font-size: 1rem; font-family: serif; }
 
-    a{ color: inherit; text-decoration: none; }
-    a:focus-visible, button:focus-visible{
-      outline: 2px solid rgba(184,154,106,.55);
-      outline-offset: 3px;
-      border-radius: 10px;
-    }
+  .hero-right{
+    display:flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1.1rem;
+    padding-top: .4rem;
+  }
+  .hero-card{
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: rgba(18,16,13,0.55);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    padding: 1.6rem 1.6rem 1.4rem;
+  }
+  .hero-card .label{
+    font-family:'Space Mono', monospace;
+    font-size:.60rem;
+    letter-spacing:.26em;
+    text-transform: uppercase;
+    color: rgba(184,154,106,0.92);
+    margin-bottom: .9rem;
+    display:flex; align-items:center; gap:.8rem;
+  }
+  .hero-card .label::after{
+    content:"";
+    height: 1px;
+    flex:1;
+    background: rgba(184,154,106,0.35);
+  }
+  .hero-card p{
+    color: rgba(232,228,220,0.72);
+    font-size: .98rem;
+    line-height: 1.85;
+  }
+  .hero-card p strong{ color: rgba(232,228,220,0.92); font-weight: 400; }
 
-    /* =========================================================
-       Frame: monolithic void slab
-    ========================================================== */
-    .wrap{
-      position: relative;
-      z-index: 1;
-      max-width: 1160px;
-      margin: 0 auto;
-      padding: clamp(18px, 3vw, 34px);
-    }
+  .micro-list{
+    margin-top: 1.05rem;
+    list-style: none;
+    display:flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+  .micro-list li{
+    color: rgba(232,228,220,0.66);
+    font-size: .95rem;
+    display:flex;
+    gap: .65rem;
+    align-items:flex-start;
+    line-height: 1.55;
+  }
+  .micro-list li::before{
+    content:"·";
+    color: rgba(184,154,106,0.95);
+    font-size: 1.6rem;
+    line-height: 1;
+    flex-shrink:0;
+    margin-top: -0.12rem;
+  }
 
-    .slab{
-      background: linear-gradient(180deg, rgba(20,17,14,.98), rgba(20,17,14,.92));
-      color: var(--ash);
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(242,237,228,.08);
-      overflow: hidden;
-    }
+  .divider{
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    padding: 1.4rem 0;
+    background: rgba(18,16,13,0.28);
+  }
+  .divider-inner{
+    display:flex; align-items:center; gap: 1.4rem;
+  }
+  .divider-inner .line{ flex:1; height:1px; background: var(--hairline-2); }
+  .divider-inner .text{
+    font-family:'Space Mono', monospace;
+    font-size:.60rem;
+    letter-spacing:.30em;
+    text-transform: uppercase;
+    color: rgba(232,228,220,0.62);
+    text-align:center;
+    white-space: nowrap;
+  }
 
-    .slab-inner{
-      padding: clamp(18px, 3.2vw, 44px);
-    }
+  /* SECTIONS */
+  section { padding: 6.75rem 0; position: relative; }
+  .section-head{
+    display:flex; flex-direction: column; gap: .8rem;
+    margin-bottom: 3.25rem;
+  }
+  .section-label{
+    font-family:'Space Mono', monospace;
+    font-size:.62rem;
+    letter-spacing:.30em;
+    text-transform: uppercase;
+    color: rgba(184,154,106,0.92);
+    display:flex; align-items:center; gap: .9rem;
+  }
+  .section-label::after{
+    content:"";
+    width: 2.25rem;
+    height: 1px;
+    background: rgba(184,154,106,0.75);
+  }
+  h2{
+    font-size: clamp(2.2rem, 3.7vw, 4.2rem);
+    font-weight: 300;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+  .lead{
+    color: rgba(232,228,220,0.70);
+    font-size: 1.08rem;
+    max-width: 68ch;
+    line-height: 1.95;
+  }
 
-    /* Top hairline accent */
-    .slab::before{
-      content:"";
-      display:block;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(184,154,106,.45), transparent);
-      opacity: .85;
-    }
+  /* cards grid */
+  .grid-3{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .card{
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: rgba(18,16,13,0.45);
+    padding: 2.1rem 2rem 1.85rem;
+    transition: transform .25s ease, border-color .25s ease, background .25s ease;
+    position: relative;
+    overflow:hidden;
+  }
+  .card:hover{
+    transform: translateY(-3px);
+    border-color: rgba(184,154,106,0.34);
+    background: rgba(18,16,13,0.62);
+  }
+  .card .kicker{
+    font-family:'Space Mono', monospace;
+    font-size:.60rem;
+    letter-spacing:.26em;
+    text-transform: uppercase;
+    color: rgba(184,154,106,0.92);
+    margin-bottom: .85rem;
+  }
+  .card h3{
+    font-size: 1.55rem;
+    font-weight: 400;
+    margin-bottom: .55rem;
+  }
+  .card p{
+    color: rgba(232,228,220,0.68);
+    font-size: .98rem;
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+  }
+  .card a{
+    font-family:'Space Mono', monospace;
+    font-size:.62rem;
+    letter-spacing:.22em;
+    text-transform: uppercase;
+    color: rgba(232,228,220,0.78);
+    text-decoration:none;
+    border-bottom: 1px solid rgba(232,228,220,0.22);
+    padding-bottom: .15rem;
+    display:inline-flex;
+    align-items:center;
+    gap: .55rem;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .card a:hover{
+    color: var(--ash);
+    border-color: rgba(184,154,106,0.55);
+  }
 
-    /* =========================================================
-       Header / Nav
-    ========================================================== */
-    header{
-      display:flex;
-      align-items:flex-start;
-      justify-content: space-between;
-      gap: var(--s-5);
-      padding-bottom: var(--s-6);
-      border-bottom: 1px solid rgba(242,237,228,.10);
-      margin-bottom: var(--s-6);
-    }
+  /* triad */
+  .triad{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--hairline-2);
+    border: 1px solid var(--hairline-2);
+    border-radius: calc(var(--radius) + 2px);
+    overflow:hidden;
+  }
+  .pillar{
+    background: rgba(18,16,13,0.40);
+    padding: 3.2rem 2.4rem 2.6rem;
+    transition: background .35s ease;
+    position: relative;
+    overflow:hidden;
+  }
+  .pillar:hover{ background: rgba(18,16,13,0.70); }
+  .kanji{
+    font-family:'Noto Sans JP', sans-serif;
+    font-weight: 100;
+    font-size: 4.6rem;
+    color: rgba(232,228,220,0.20);
+    display:block;
+    margin-bottom: 1.1rem;
+    line-height: 1;
+  }
+  .pillar h3{
+    font-size: 1.55rem;
+    font-weight: 400;
+    margin-bottom: .35rem;
+  }
+  .tag{
+    display:inline-block;
+    font-family:'Space Mono', monospace;
+    font-size:.60rem;
+    letter-spacing:.22em;
+    text-transform: uppercase;
+    color: rgba(184,154,106,0.92);
+    margin-bottom: 1.1rem;
+  }
+  .pillar p{
+    color: rgba(232,228,220,0.70);
+    font-size: .98rem;
+    line-height: 1.9;
+    max-width: 52ch;
+  }
 
-    .brand{
-      display:flex;
-      flex-direction: column;
-      gap: var(--s-2);
-      max-width: 68ch;
-    }
+  /* Method strip */
+  .method-strip{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.1rem;
+  }
+  .method-item{
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: rgba(18,16,13,0.40);
+    padding: 1.8rem 1.6rem 1.5rem;
+  }
+  .method-item h4{
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-bottom: .35rem;
+  }
+  .method-item p{
+    color: rgba(232,228,220,0.68);
+    font-size: .95rem;
+    line-height: 1.8;
+    margin-bottom: .9rem;
+  }
 
-    .kicker{
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: rgba(232,228,220,.78);
-    }
+  /* Featured work */
+  .feature{
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: rgba(18,16,13,0.50);
+    padding: 2.2rem 2.2rem 1.9rem;
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 2.2rem;
+    align-items: start;
+  }
+  .feature h3{
+    font-size: 1.75rem;
+    font-weight: 400;
+    margin-bottom: .55rem;
+  }
+  .feature p{
+    color: rgba(232,228,220,0.70);
+    font-size: 1rem;
+    line-height: 1.9;
+  }
+  .meta{
+    margin-top: 1.1rem;
+    display:flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+  }
+  .chip{
+    font-family:'Space Mono', monospace;
+    font-size:.58rem;
+    letter-spacing:.18em;
+    text-transform: uppercase;
+    color: rgba(232,228,220,0.70);
+    border: 1px solid rgba(232,228,220,0.18);
+    background: rgba(184,154,106,0.07);
+    padding: .25rem .55rem;
+    border-radius: 999px;
+  }
 
-    h1{
-      font-family: var(--serif);
-      font-weight: 300;
-      letter-spacing: .02em;
-      font-size: clamp(38px, 5vw, 64px);
-      line-height: 1.05;
-      color: rgba(242,237,228,.96);
-    }
+  /* Contact */
+  .contact-wrap{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  form{
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    background: rgba(18,16,13,0.45);
+    padding: 2rem;
+  }
+  label{
+    display:block;
+    font-family:'Space Mono', monospace;
+    font-size:.60rem;
+    letter-spacing:.22em;
+    text-transform: uppercase;
+    color: rgba(232,228,220,0.72);
+    margin-bottom: .55rem;
+  }
+  input, textarea, select{
+    width: 100%;
+    background: rgba(10,9,6,0.55);
+    color: var(--ash);
+    border: 1px solid rgba(232,228,220,0.18);
+    border-radius: 12px;
+    padding: .85rem .9rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .82rem;
+    letter-spacing: .02em;
+    outline: none;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  input:focus, textarea:focus, select:focus{
+    border-color: rgba(184,154,106,0.55);
+    background: rgba(10,9,6,0.72);
+  }
+  textarea{ min-height: 150px; resize: vertical; }
+  .form-row{ display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field{ margin-bottom: 1.1rem; }
+  .hint{
+    color: rgba(232,228,220,0.55);
+    font-size: .95rem;
+    line-height: 1.8;
+  }
 
-    .subhead{
-      color: rgba(232,228,220,.82);
-      font-size: 16px;
-    }
+  /* Footer */
+  footer{
+    border-top: 1px solid var(--hairline);
+    padding: 3.4rem 0 2.2rem;
+    background: rgba(18,16,13,0.25);
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .footer-tagline{
+    color: rgba(232,228,220,0.68);
+    font-style: italic;
+    max-width: 60ch;
+    line-height: 1.9;
+  }
+  .footer-links{
+    display:flex;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+    gap: 1.2rem;
+  }
+  .footer-links a{
+    text-decoration:none;
+    font-family:'Space Mono', monospace;
+    font-size:.60rem;
+    letter-spacing:.22em;
+    text-transform: uppercase;
+    color: rgba(232,228,220,0.60);
+  }
+  .footer-links a:hover{ color: var(--ash); }
+  .copyright{
+    margin-top: 1.6rem;
+    font-family:'Space Mono', monospace;
+    font-size:.56rem;
+    letter-spacing:.18em;
+    text-transform: uppercase;
+    color: rgba(232,228,220,0.45);
+  }
 
-    .nav{
-      display:flex;
-      flex-direction: column;
-      gap: var(--s-2);
-      min-width: 270px;
-    }
+  /* Reveal animation */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity: 1; transform: none; }
 
-    .nav a{
-      display:flex;
-      justify-content: space-between;
-      align-items:center;
-      gap: var(--s-3);
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(242,237,228,.10);
-      background: rgba(242,237,228,.03);
-      transition: transform 200ms ease, background 200ms ease, border-color 200ms ease;
-    }
+  /* Accessibility: reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal{ transition:none; opacity:1; transform:none; }
+    .btn, .card{ transition:none; }
+  }
 
-    /* No pulsing. Only subtle hover shift. */
-    .nav a:hover{
-      transform: translateY(-1px);
-      background: rgba(242,237,228,.055);
-      border-color: rgba(184,154,106,.22);
-    }
-
-    .nav .left{
-      display:flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .nav .title{
-      font-family: var(--mono);
-      letter-spacing: .08em;
-      font-size: 12px;
-      text-transform: uppercase;
-      color: rgba(242,237,228,.90);
-    }
-    .nav .desc{
-      font-size: 12px;
-      color: rgba(232,228,220,.72);
-    }
-    .nav .arrow{
-      font-family: var(--mono);
-      color: rgba(184,154,106,.9);
-      opacity: .9;
-    }
-
-    /* =========================================================
-       Sections
-    ========================================================== */
-    section{
-      padding: var(--s-6) 0;
-      border-bottom: 1px solid rgba(242,237,228,.10);
-    }
-    section:last-of-type{ border-bottom: none; padding-bottom: 0; }
-
-    .section-title{
-      display:flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: var(--s-4);
-      margin-bottom: var(--s-4);
-    }
-
-    h2{
-      font-family: var(--serif);
-      font-weight: 300;
-      font-size: clamp(24px, 3vw, 34px);
-      color: rgba(242,237,228,.96);
-      line-height: 1.15;
-    }
-
-    .tag{
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: rgba(184,154,106,.95);
-      opacity: .9;
-      white-space: nowrap;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: var(--s-6);
-    }
-
-    @media (max-width: 980px){
-      header{ flex-direction: column; }
-      .nav{ min-width: 0; width: 100%; flex-direction: row; flex-wrap: wrap; }
-      .nav a{ flex: 1 1 220px; }
-      .grid{ grid-template-columns: 1fr; }
-    }
-
-    .copy{
-      color: rgba(232,228,220,.82);
-      max-width: 72ch;
-    }
-
-    .copy p{ margin-bottom: var(--s-4); }
-    .copy p:last-child{ margin-bottom: 0; }
-
-    .card{
-      border: 1px solid rgba(242,237,228,.10);
-      background: rgba(242,237,228,.03);
-      border-radius: var(--r-lg);
-      overflow:hidden;
-    }
-    .card-inner{ padding: var(--s-5); }
-
-    .hair{
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(184,154,106,.40), transparent);
-      opacity: .75;
-    }
-
-    /* Translation block rows */
-    .xlate{
-      display:flex;
-      flex-direction: column;
-      gap: var(--s-3);
-      margin-top: var(--s-4);
-    }
-
-    .row{
-      display:grid;
-      grid-template-columns: 1fr 36px 1fr;
-      gap: var(--s-3);
-      align-items: start;
-      padding: var(--s-3);
-      border-radius: var(--r-md);
-      border: 1px solid rgba(242,237,228,.10);
-      background: rgba(242,237,228,.02);
-    }
-    .row .label{
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: rgba(184,154,106,.92);
-      margin-bottom: 6px;
-    }
-    .row .text{
-      color: rgba(232,228,220,.80);
-      font-size: 14px;
-    }
-    .row .arrow{
-      font-family: var(--mono);
-      text-align:center;
-      color: rgba(184,154,106,.9);
-      opacity: .9;
-      padding-top: 18px;
-    }
-
-    @media (max-width: 720px){
-      .row{ grid-template-columns: 1fr; }
-      .row .arrow{ display:none; }
-    }
-
-    /* =========================================================
-       Actions (one primary per section)
-    ========================================================== */
-    .actions{
-      display:flex;
-      flex-wrap: wrap;
-      gap: var(--s-3);
-      margin-top: var(--s-5);
-    }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(242,237,228,.14);
-      background: rgba(242,237,228,.04);
-      color: rgba(242,237,228,.94);
-      transition: transform 200ms ease, background 200ms ease, border-color 200ms ease;
-      font-family: var(--mono);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-size: 12px;
-      user-select: none;
-    }
-    .btn:hover{
-      transform: translateY(-1px);
-      background: rgba(242,237,228,.06);
-      border-color: rgba(184,154,106,.24);
-    }
-
-    .btn.primary{
-      background: rgba(242,237,228,.92);
-      color: var(--void);
-      border-color: rgba(242,237,228,.40);
-    }
-    .btn.primary:hover{
-      background: rgba(242,237,228,.96);
-      border-color: rgba(184,154,106,.32);
-    }
-
-    .btn .mark{ color: rgba(184,154,106,.92); }
-    .btn.primary .mark{ color: rgba(184,154,106,.90); }
-
-    /* =========================================================
-       Footer
-    ========================================================== */
-    footer{
-      margin-top: var(--s-7);
-      padding-top: var(--s-6);
-      border-top: 1px solid rgba(242,237,228,.10);
-      display:flex;
-      flex-wrap: wrap;
-      gap: var(--s-4);
-      justify-content: space-between;
-      align-items: center;
-      color: rgba(232,228,220,.72);
-      font-size: 12px;
-    }
-
-    .foot-left{
-      display:flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .foot-left .mono{
-      font-family: var(--mono);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .toggles{
-      display:flex;
-      flex-wrap: wrap;
-      gap: var(--s-2);
-      align-items: center;
-    }
-
-    .toggle{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(242,237,228,.12);
-      background: rgba(242,237,228,.03);
-      cursor: pointer;
-      user-select:none;
-      transition: transform 200ms ease, background 200ms ease, border-color 200ms ease;
-    }
-    .toggle:hover{
-      transform: translateY(-1px);
-      background: rgba(242,237,228,.05);
-      border-color: rgba(184,154,106,.20);
-    }
-    .toggle input{ accent-color: var(--gold); }
-
-    /* =========================================================
-       Optional Cursor Ritual (ACCESSIBLE + OFF by default)
-       - disabled on touch
-       - disabled if prefers-reduced-motion
-       - user can toggle
-    ========================================================== */
-    body.cursor-ritual{ cursor: none; }
-    .cursor-dot, .cursor-ring{
-      position: fixed;
-      left: 0; top: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-    }
-    body.cursor-ritual .cursor-dot,
-    body.cursor-ritual .cursor-ring{ opacity: 1; }
-
-    .cursor-dot{
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(242,237,228,.88);
-      mix-blend-mode: difference;
-    }
-    .cursor-ring{
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: 1px solid rgba(184,154,106,.62);
-      background: radial-gradient(circle, rgba(184,154,106,.12), transparent 60%);
-      box-shadow: 0 0 22px rgba(184,154,106,.10);
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      html{ scroll-behavior: auto; }
-      .nav a, .btn, .toggle{ transition: none !important; }
-      .cursor-dot, .cursor-ring{ display:none !important; }
-      body.cursor-ritual{ cursor: auto !important; }
-    }
-  </style>
+  /* Responsive */
+  @media (max-width: 980px){
+    .hero-grid{ grid-template-columns: 1fr; gap: 2.4rem; padding: 6rem 0 4.2rem; }
+    .hero-right{ align-items: flex-start; }
+    .hero-grid::after{ display:none; }
+    .grid-3{ grid-template-columns: 1fr; }
+    .triad{ grid-template-columns: 1fr; }
+    .method-strip{ grid-template-columns: 1fr; }
+    .feature{ grid-template-columns: 1fr; }
+    .contact-wrap{ grid-template-columns: 1fr; }
+    .footer-grid{ grid-template-columns: 1fr; }
+    .footer-links{ justify-content:flex-start; }
+    .nav-links{ display:none; }
+    .nav-toggle{ display:inline-flex; }
+    .mobile-panel.show{ display:block; }
+  }
+</style>
 </head>
 
 <body>
-  <!-- Optional cursor ritual (safe + toggleable) -->
-  <div class="cursor-dot" aria-hidden="true"></div>
-  <div class="cursor-ring" aria-hidden="true"></div>
+  <!-- NAV -->
+  <nav aria-label="Primary">
+    <div class="container nav-inner">
+      <a class="brand" href="#top" aria-label="MA-ZEN Home">
+        <span class="mark">MA<span class="dot">·</span>ZEN</span>
+      </a>
 
-  <div class="wrap">
-    <main class="slab" role="main">
-      <div class="slab-inner">
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobilePanel">
+        Menu
+      </button>
 
-        <header>
-          <div class="brand">
-            <div class="kicker">MA-ZEN // Public Communication Layer</div>
-            <h1>Blackbox Boundary</h1>
-            <p class="subhead">
-              This page is the public layer: what MA-ZEN is, what you may experience, and what we openly commit to.
-              Enforcement logic remains inside a blackbox by design.
-            </p>
+      <ul class="nav-links" aria-label="Site">
+        <li><a href="#solutions">Solutions</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#method">Method</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
 
-            <!-- Header: one primary CTA -->
-            <div class="actions">
-              <!-- Change "app.html" to your actual app file if different -->
-              <a class="btn primary" href="app.html#home" aria-label="Enter MA-ZEN">
-                <span class="mark">◎</span> Enter
-              </a>
-              <a class="btn" href="#translation" aria-label="Read public translation">
-                <span class="mark">↘</span> Translation
-              </a>
-            </div>
-          </div>
+      <a class="nav-cta" href="#contact">Request Consultation</a>
+    </div>
 
-          <nav class="nav" aria-label="Primary navigation">
-            <!-- Rename these to match your final site filenames -->
-            <a href="proof.html">
-              <span class="left">
-                <span class="title">THE PROOF</span>
-                <span class="desc">Guided sessions</span>
-              </span>
-              <span class="arrow">→</span>
-            </a>
-
-            <a href="floor.html">
-              <span class="left">
-                <span class="title">THE FLOOR</span>
-                <span class="desc">Subscription library</span>
-              </span>
-              <span class="arrow">→</span>
-            </a>
-
-            <a href="cash.html">
-              <span class="left">
-                <span class="title">THE CASH</span>
-                <span class="desc">B2B audio branding</span>
-              </span>
-              <span class="arrow">→</span>
-            </a>
-
-            <a href="#commitments">
-              <span class="left">
-                <span class="title">PUBLIC COMMITMENTS</span>
-                <span class="desc">What we guarantee</span>
-              </span>
-              <span class="arrow">↓</span>
-            </a>
-          </nav>
-        </header>
-
-        <!-- ===================================================== -->
-        <section id="translation">
-          <div class="section-title">
-            <h2>Public Translation</h2>
-            <span class="tag">What it means — not how it works</span>
-          </div>
-
-          <div class="grid">
-            <div class="copy">
-              <p>
-                MA-ZEN is engineered around controlled absence. Most systems add guidance, prompts, rewards, and
-                predictable loops. We do the opposite: we leave room for reality to appear.
-              </p>
-              <p>
-                This page describes the user experience you can expect. The enforcement mechanisms remain private
-                by design — because impermanence collapses if the exit logic becomes performative.
-              </p>
-
-              <div class="xlate" aria-label="Public idea translation table">
-                <div class="row">
-                  <div>
-                    <div class="label">Public idea</div>
-                    <div class="text">94% Silence</div>
-                  </div>
-                  <div class="arrow">▼</div>
-                  <div>
-                    <div class="label">User experience</div>
-                    <div class="text">Most sessions contain no prompts, no nudges. Silence is a valid outcome.</div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div>
-                    <div class="label">Public idea</div>
-                    <div class="text">Neutral material</div>
-                  </div>
-                  <div class="arrow">▼</div>
-                  <div>
-                    <div class="label">User experience</div>
-                    <div class="text">No emotional UI tricks. No urgency colors. No reward loops.</div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div>
-                    <div class="label">Public idea</div>
-                    <div class="text">Abrupt edges</div>
-                  </div>
-                  <div class="arrow">▼</div>
-                  <div>
-                    <div class="label">User experience</div>
-                    <div class="text">Sessions may end cleanly. Completion can be sudden and final.</div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div>
-                    <div class="label">Public idea</div>
-                    <div class="text">No pattern</div>
-                  </div>
-                  <div class="arrow">▼</div>
-                  <div>
-                    <div class="label">User experience</div>
-                    <div class="text">No predictable cadence. No daily streaks. No scheduled pings.</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="actions">
-                <a class="btn primary" href="app.html#sessions" aria-label="Begin a session in the app">
-                  <span class="mark">◎</span> Begin session
-                </a>
-              </div>
-            </div>
-
-            <aside class="card" aria-label="Boundary notes">
-              <div class="hair" aria-hidden="true"></div>
-              <div class="card-inner">
-                <div class="kicker">Boundary note</div>
-                <h2 style="margin-top:10px;">Exit Without Trace</h2>
-                <p class="subhead" style="margin-top:10px;">
-                  MA-ZEN avoids habit traps. It does not optimize for retention. It optimizes for clarity.
-                </p>
-
-                <div class="hair" style="margin: 18px 0;" aria-hidden="true"></div>
-
-                <p style="color: rgba(232,228,220,.78); font-size: 14px;">
-                  If you want a soothing companion voice, predictable progress bars, or motivational streaks,
-                  you may find MA-ZEN unfamiliar. That unfamiliarity is the point.
-                </p>
-
-                <div class="actions">
-                  <a class="btn" href="#commitments" aria-label="Read public commitments">
-                    <span class="mark">↘</span> Commitments
-                  </a>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </section>
-
-        <!-- ===================================================== -->
-        <section id="products">
-          <div class="section-title">
-            <h2>Three Product Triangle</h2>
-            <span class="tag">Proof → Floor → Cash</span>
-          </div>
-
-          <div class="grid">
-            <div class="copy">
-              <p>
-                These three channels form the public, sustainable structure:
-                sessions demonstrate the philosophy, the library builds recurring stability,
-                and B2B projects create enterprise-scale case studies.
-              </p>
-              <p style="color: rgba(232,228,220,.76); font-size: 14px;">
-                Each layer is designed to stand alone. No forced funnel. No artificial dependence.
-              </p>
-
-              <div class="actions">
-                <a class="btn primary" href="proof.html" aria-label="Open guided sessions">
-                  <span class="mark">◎</span> Open Proof
-                </a>
-              </div>
-            </div>
-
-            <aside class="card">
-              <div class="hair" aria-hidden="true"></div>
-              <div class="card-inner">
-                <div class="kicker">Short map</div>
-                <div style="margin-top: 12px; display:grid; gap: 12px;">
-                  <div style="padding: 12px; border: 1px solid rgba(242,237,228,.10); border-radius: 14px; background: rgba(242,237,228,.02);">
-                    <div class="label" style="margin-bottom:6px;">THE PROOF</div>
-                    <div style="color: rgba(232,228,220,.82); font-size: 14px;">Guided sessions. Public demonstration.</div>
-                  </div>
-
-                  <div style="padding: 12px; border: 1px solid rgba(242,237,228,.10); border-radius: 14px; background: rgba(242,237,228,.02);">
-                    <div class="label" style="margin-bottom:6px;">THE FLOOR</div>
-                    <div style="color: rgba(232,228,220,.82); font-size: 14px;">Subscription soundscape library. Recurring stability.</div>
-                  </div>
-
-                  <div style="padding: 12px; border: 1px solid rgba(242,237,228,.10); border-radius: 14px; background: rgba(242,237,228,.02);">
-                    <div class="label" style="margin-bottom:6px;">THE CASH</div>
-                    <div style="color: rgba(232,228,220,.82); font-size: 14px;">B2B audio branding. Enterprise case studies.</div>
-                  </div>
-                </div>
-
-                <div class="actions">
-                  <a class="btn" href="floor.html" aria-label="Open subscription library page"><span class="mark">→</span> Open Floor</a>
-                  <a class="btn" href="cash.html" aria-label="Open B2B audio branding page"><span class="mark">→</span> Open Cash</a>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </section>
-
-        <!-- ===================================================== -->
-        <section id="commitments">
-          <div class="section-title">
-            <h2>Public Commitments</h2>
-            <span class="tag">What we guarantee</span>
-          </div>
-
-          <div class="grid">
-            <div class="copy">
-              <p><strong style="color: rgba(242,237,228,.94); font-weight: 600;">No coercion.</strong> No streaks, no guilt loops, no manipulation UI.</p>
-              <p><strong style="color: rgba(242,237,228,.94); font-weight: 600;">No urgency.</strong> No alarm colors, no countdown pressure, no “limited time” prompts.</p>
-              <p><strong style="color: rgba(242,237,228,.94); font-weight: 600;">No dependency.</strong> Sessions can end cleanly. Silence is allowed.</p>
-              <p><strong style="color: rgba(242,237,228,.94); font-weight: 600;">Privacy by default.</strong> Local-first behavior wherever possible.</p>
-
-              <div class="actions">
-                <a class="btn primary" href="app.html#home" aria-label="Enter MA-ZEN app">
-                  <span class="mark">◎</span> Enter the app
-                </a>
-              </div>
-            </div>
-
-            <aside class="card">
-              <div class="hair" aria-hidden="true"></div>
-              <div class="card-inner">
-                <div class="kicker">FAQ (public)</div>
-                <h2 style="margin-top:10px;">Is this meditation?</h2>
-                <p class="subhead" style="margin-top:10px;">
-                  It can be used for meditation, deep work, or decompression. The method is neutral.
-                </p>
-
-                <div class="hair" style="margin: 18px 0;" aria-hidden="true"></div>
-
-                <h2 style="margin-top:10px;">Will it guide me?</h2>
-                <p style="color: rgba(232,228,220,.78); font-size: 14px; margin-top:10px;">
-                  Sometimes, minimally. Often, not. MA-ZEN is designed so silence remains a valid outcome.
-                </p>
-
-                <div class="actions">
-                  <a class="btn" href="#translation"><span class="mark">↑</span> Back to translation</a>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </section>
-
-        <footer>
-          <div class="foot-left">
-            <div class="mono">MA-ZEN // PUBLIC COMMUNICATION</div>
-            <div>Public layer only. Enforcement logic stays blackboxed.</div>
-          </div>
-
-          <div class="toggles">
-            <label class="toggle" title="Optional: cursor ritual (off by default)">
-              <input id="cursorToggle" type="checkbox" />
-              <span style="font-family: var(--mono); letter-spacing:.08em; text-transform:uppercase; font-size:12px;">Cursor Ritual</span>
-            </label>
-          </div>
-        </footer>
-
+    <div class="mobile-panel" id="mobilePanel">
+      <div class="container">
+        <a href="#solutions">Solutions</a>
+        <a href="#work">Work</a>
+        <a href="#method">Method</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
       </div>
-    </main>
-  </div>
+    </div>
+  </nav>
 
-  <script>
-    (function(){
-      // Cursor Ritual: accessible, opt-in, and disabled on touch / reduced-motion
-      const toggle = document.getElementById('cursorToggle');
-      const dot = document.querySelector('.cursor-dot');
-      const ring = document.querySelector('.cursor-ring');
+  <!-- HERO -->
+  <main id="top" class="hero">
+    <div class="container hero-grid">
+      <div class="hero-left">
+        <div class="overline reveal">Finite Silence Architecture</div>
+        <h1 class="reveal">Silence as <em>structure</em>, not content.</h1>
+        <p class="hero-sub reveal">
+          MA-ZEN is a design and research studio developing acoustic environments where interval, onset,
+          and restraint function as compositional material — then exit without trace.
+        </p>
 
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const isTouch = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+        <div class="cta-row reveal">
+          <a class="btn primary" href="#solutions">Explore Solutions <span class="arrow">→</span></a>
+          <a class="btn" href="#method">View Method</a>
+        </div>
+      </div>
 
-      // Start OFF, and hard-disable if touch/reduced motion
-      if (reduce || isTouch){
-        toggle.disabled = true;
-        toggle.checked = false;
-      } else {
-        // Restore previous choice
-        const saved = localStorage.getItem('mazen_cursor_ritual');
-        toggle.checked = saved === '1';
-        document.body.classList.toggle('cursor-ritual', toggle.checked);
-      }
+      <div class="hero-right">
+        <div class="hero-card reveal">
+          <div class="label">Definition</div>
+          <p>
+            <strong>MA-ZEN</strong> is a finite silence architecture that induces perceptual shift through structured absence — then exits without trace.
+          </p>
+          <ul class="micro-list" aria-label="Operating posture">
+            <li>Ma — the interval is load-bearing.</li>
+            <li>Sunyata — form points beyond itself, then dissolves.</li>
+            <li>Wu Wei — no forcing; discovery remains with the user.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-      toggle.addEventListener('change', () => {
-        document.body.classList.toggle('cursor-ritual', toggle.checked);
-        localStorage.setItem('mazen_cursor_ritual', toggle.checked ? '1' : '0');
+    <div class="divider" aria-hidden="true">
+      <div class="container divider-inner">
+        <div class="line"></div>
+        <div class="text">Corporate clarity • minimal claims • engineered restraint</div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="container" style="padding: 2.8rem 0 2.2rem;">
+      <p class="hint reveal" style="max-width: 72ch;">
+        We do not provide medical treatment and do not make therapeutic claims. We design perceptual environments.
+      </p>
+    </div>
+  </main>
+
+  <!-- SOLUTIONS -->
+  <section id="solutions">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">Solutions</div>
+        <h2>Three offerings. One posture.</h2>
+        <p class="lead">
+          MA-ZEN presents sound as architecture: enough structure to hold attention, enough absence to release it.
+        </p>
+      </div>
+
+      <div class="grid-3 reveal">
+        <article class="card">
+          <div class="kicker">Individuals</div>
+          <h3>Structured Sessions</h3>
+          <p>Finite listening architectures for focus and transition — minimal prompts, neutral material, clean endings.</p>
+          <a href="#contact">Discuss use case <span class="arrow">→</span></a>
+        </article>
+
+        <article class="card">
+          <div class="kicker">Enterprise</div>
+          <h3>Audio Branding</h3>
+          <p>Sonic identity systems and ambient frameworks for products, spaces, and organizations requiring precision without noise.</p>
+          <a href="#contact">Request a proposal <span class="arrow">→</span></a>
+        </article>
+
+        <article class="card">
+          <div class="kicker">Recurring</div>
+          <h3>Sound Field Library</h3>
+          <p>Ongoing access to structured environments — built for work sessions, studios, and long-form attention.</p>
+          <a href="#contact">Ask about pilots <span class="arrow">→</span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">Work</div>
+        <h2>Proof is built, not claimed.</h2>
+        <p class="lead">Early work is presented as prototypes and pilots: what was tested, what changed, what remained.</p>
+      </div>
+
+      <div class="feature reveal" role="region" aria-label="Featured work">
+        <div>
+          <h3>Onset Field Prototype (v0.x)</h3>
+          <p>
+            A controlled demonstration exploring perceptual entry: sparse anchors, silence gates, and neutral textures — designed to remain present without becoming entertainment.
+          </p>
+          <div class="meta" aria-label="Tags">
+            <span class="chip">Onset protocol</span>
+            <span class="chip">Sparse anchors</span>
+            <span class="chip">No reward loops</span>
+            <span class="chip">Finite sessions</span>
+          </div>
+        </div>
+        <div>
+          <div class="hero-card" style="box-shadow:none; padding: 1.35rem 1.35rem 1.15rem;">
+            <div class="label">Deliverable format</div>
+            <p style="margin-bottom:.85rem;">Prototype packages can be delivered as:</p>
+            <ul class="micro-list">
+              <li>Web session demo (lab build)</li>
+              <li>WAV stems + spec sheet</li>
+              <li>Brand sonic system draft</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHOD -->
+  <section id="method">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">Method</div>
+        <h2>Interval. Dissolution. Non-forcing.</h2>
+        <p class="lead">
+          The method page will expand over time. This is the public layer: what it means, not the blackbox mechanics.
+        </p>
+      </div>
+
+      <div class="triad reveal" aria-label="MA-ZEN pillars">
+        <div class="pillar">
+          <span class="kanji">間</span>
+          <h3>Ma</h3>
+          <div class="tag">Interval as substance</div>
+          <p>Whitespace and silence are structured elements. The gap is engineered; the gap carries meaning.</p>
+        </div>
+        <div class="pillar">
+          <span class="kanji">空</span>
+          <h3>Sunyata</h3>
+          <div class="tag">Form dissolves</div>
+          <p>The artifact points beyond itself, then recedes. The interface serves the task, then disappears.</p>
+        </div>
+        <div class="pillar">
+          <span class="kanji">無為</span>
+          <h3>Wu Wei</h3>
+          <div class="tag">No forcing</div>
+          <p>Guidance is restraint. The system does not coerce attention. It allows discovery.</p>
+        </div>
+      </div>
+
+      <div style="height: 2.4rem;"></div>
+
+      <div class="method-strip reveal" aria-label="Method modules">
+        <div class="method-item">
+          <h4>Onset Protocol</h4>
+          <p>Defines perceptual entry, gating, anchors, and constraints (no hooks, no reward cues).</p>
+          <a href="#contact" class="btn" style="padding:.75rem 1rem; font-size:.62rem;">Ask for spec</a>
+        </div>
+        <div class="method-item">
+          <h4>Research</h4>
+          <p>Focus areas: interval perception, cognitive load modulation, and attention architecture.</p>
+          <a href="#contact" class="btn" style="padding:.75rem 1rem; font-size:.62rem;">Discuss collaboration</a>
+        </div>
+        <div class="method-item">
+          <h4>Lab</h4>
+          <p>Experimental builds and controlled prototypes. Public notes; no stability claims.</p>
+          <a href="#contact" class="btn" style="padding:.75rem 1rem; font-size:.62rem;">Request preview</a>
+        </div>
+        <div class="method-item">
+          <h4>Standards</h4>
+          <p>QA + safety constraints, loudness discipline, minimal data posture, accessibility basics.</p>
+          <a href="#contact" class="btn" style="padding:.75rem 1rem; font-size:.62rem;">See checklist</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">About</div>
+        <h2>A studio posture.</h2>
+        <p class="lead">
+          MA-ZEN exists to build environments where attention can settle without persuasion — a counter-architecture to overstimulation.
+        </p>
+      </div>
+
+      <div class="grid-3 reveal">
+        <article class="card">
+          <div class="kicker">What</div>
+          <h3>Perceptual environments</h3>
+          <p>We design intervals and onsets that shape perception through restraint, not spectacle.</p>
+          <a href="#method">Read the method <span class="arrow">→</span></a>
+        </article>
+        <article class="card">
+          <div class="kicker">How</div>
+          <h3>Design + research</h3>
+          <p>Prototypes, pilots, and iterative standards. The work is measured, not mythologized.</p>
+          <a href="#work">View work <span class="arrow">→</span></a>
+        </article>
+        <article class="card">
+          <div class="kicker">Boundary</div>
+          <h3>No medical claims</h3>
+          <p>We do not claim to treat trauma, anxiety, or medical conditions. We build listening architectures.</p>
+          <a href="#contact">Talk to us <span class="arrow">→</span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">Contact</div>
+        <h2>Tell us your use case.</h2>
+        <p class="lead">A short message is enough. If you’re enterprise, include context and timeline.</p>
+      </div>
+
+      <div class="contact-wrap reveal">
+        <form id="contactForm" action="#" method="post" aria-label="Contact form">
+          <div class="form-row">
+            <div class="field">
+              <label for="name">Name</label>
+              <input id="name" name="name" autocomplete="name" placeholder="Your name" required />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="type">Inquiry</label>
+            <select id="type" name="type">
+              <option>Enterprise (Audio Branding)</option>
+              <option>Individuals (Structured Sessions)</option>
+              <option>Subscription / Library</option>
+              <option>Research / Collaboration</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Briefly: what you want to build, who it is for, and what success looks like." required></textarea>
+          </div>
+
+          <button class="btn primary" type="submit">Send <span class="arrow">→</span></button>
+          <p class="hint" style="margin-top: 1rem;">
+            Tip: on GitHub Pages, this form needs a backend (Formspree / Netlify Forms) to actually deliver email.
+          </p>
+        </form>
+
+        <div class="hero-card" style="box-shadow:none;">
+          <div class="label">Direct</div>
+          <p style="margin-bottom: .95rem;">
+            Prefer direct contact? Use a dedicated inbox for MA-ZEN inquiries.
+          </p>
+          <ul class="micro-list">
+            <li>Email: <strong>contact@mazen.audio</strong> (replace with your real address)</li>
+            <li>Response: typically within 1–2 business days</li>
+            <li>Location: Thailand (optional)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand" style="margin-bottom: .9rem;">
+            <span class="mark">MA<span class="dot">·</span>ZEN</span>
+          </div>
+          <p class="footer-tagline">
+            “The interval is the material. The form dissolves. The user discovers.”
+          </p>
+          <div class="copyright">© <span id="year"></span> MA‑ZEN Studio</div>
+        </div>
+
+        <div class="footer-links" aria-label="Footer">
+          <a href="#solutions">Solutions</a>
+          <a href="#work">Work</a>
+          <a href="#method">Method</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  // Mobile menu toggle
+  (function(){
+    const btn = document.getElementById('navToggle');
+    const panel = document.getElementById('mobilePanel');
+    if (!btn || !panel) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = panel.classList.toggle('show');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    panel.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        panel.classList.remove('show');
+        btn.setAttribute('aria-expanded', 'false');
       });
+    });
+  })();
 
-      // Simple cursor follow (no looping animation; just direct positioning)
-      let x = window.innerWidth/2, y = window.innerHeight/2;
-      window.addEventListener('mousemove', (e) => {
-        x = e.clientX; y = e.clientY;
-        if (document.body.classList.contains('cursor-ritual')){
-          dot.style.left = x + 'px';
-          dot.style.top = y + 'px';
-          ring.style.left = x + 'px';
-          ring.style.top = y + 'px';
-        }
-      }, { passive: true });
-    })();
-  </script>
+  // Scroll reveal (kept minimal)
+  (function(){
+    const els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('visible'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+
+    els.forEach(el => io.observe(el));
+  })();
+
+  // Footer year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Prevent empty form submission (static site)
+  document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('This is a static demo form. Connect a form backend (Formspree / Netlify Forms) to receive messages.');
+  });
+</script>
 </body>
 </html>
