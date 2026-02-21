@@ -1,0 +1,2266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark">
+<title>MA-ZEN // Guided Silence • B2B Audio Branding • Soundscape Library</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Syne+Mono&display=swap" rel="stylesheet">
+
+<style>
+  /* =========================================================
+     MA-ZEN Launchable HTML Product (Static SPA)
+     v1.1 — clarity, efficiency, publication-quality hygiene
+     - Single-file, GitHub Pages friendly
+     - Local-first persistence (localStorage)
+     - Web Audio generated texture (no asset files)
+     ========================================================= */
+
+  :root{
+    --ink:#0a0906;
+    --ash:#e8e4dc;
+    --paper:#f2ede4;
+    --void:#1a1714;
+    --gold:#b89a6a;
+    --fade:#5a5248;
+    --glimmer: rgba(184,154,106,0.15);
+    --ring: rgba(184,154,106,0.33);
+    --card: rgba(242,237,228,0.78);
+    --line: rgba(10,9,6,0.09);
+    --soft: rgba(10,9,6,0.06);
+    --danger: rgba(120,30,30,0.9);
+    --radius: 22px;
+    --shadow: 0 14px 40px rgba(10,9,6,0.06);
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce){
+    * { scroll-behavior: auto !important; }
+    .meter > div { transition: none !important; }
+    button { transition: none !important; }
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 650px at 20% 0%, rgba(184,154,106,0.10), transparent 60%),
+      radial-gradient(900px 520px at 90% 10%, rgba(26,23,20,0.06), transparent 55%),
+      var(--paper);
+    color: var(--ink);
+    font-family: "Cormorant Garamond", serif;
+    letter-spacing: 0.2px;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  .mono{ font-family:"Syne Mono", monospace; }
+
+  .app{
+    min-height:100%;
+    display:grid;
+    grid-template-columns: 300px 1fr;
+  }
+  @media (max-width: 980px){
+    .app{ grid-template-columns: 1fr; }
+  }
+
+  /* Sidebar */
+  .side{
+    border-right: 1px solid var(--line);
+    background: rgba(242,237,228,0.55);
+    backdrop-filter: blur(8px);
+    padding: 18px 14px;
+    position: sticky;
+    top:0;
+    height: 100vh;
+  }
+  @media (max-width: 980px){
+    .side{ position: relative; height:auto; border-right:none; border-bottom:1px solid var(--line); }
+  }
+
+  .brand{
+    padding: 10px 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+  .brand .top{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  }
+  .brand .name{
+    font-family:"Syne Mono", monospace;
+    font-size: 14px;
+    letter-spacing: 1.2px;
+    color: var(--void);
+  }
+  .brand .tag{
+    margin-top: 8px;
+    color: var(--fade);
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid rgba(184,154,106,0.35);
+    background: rgba(184,154,106,0.08);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-family:"Syne Mono", monospace;
+    font-size: 11px;
+    color: var(--fade);
+    white-space:nowrap;
+    user-select:none;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:999px;
+    background: rgba(184,154,106,0.95);
+    box-shadow: 0 0 0 4px rgba(184,154,106,0.18);
+  }
+
+  .nav{
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(242,237,228,0.55);
+  }
+  .nav a{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 10px 10px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    color: rgba(10,9,6,0.86);
+    transition: background .15s ease, border-color .15s ease, transform .08s ease;
+  }
+  .nav a:hover{ background: rgba(242,237,228,0.92); border-color: var(--line); }
+  .nav a:active{ transform: scale(0.99); }
+  .nav a.active{
+    background: rgba(184,154,106,0.10);
+    border-color: rgba(184,154,106,0.45);
+  }
+  .nav small{ color: var(--fade); font-size: 12px; }
+
+  .sideFooter{
+    margin-top: 12px;
+    padding: 12px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(242,237,228,0.55);
+  }
+  .sideFooter .row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  /* Main */
+  .main{ padding: 18px 16px 40px; }
+  .page{ max-width: 1040px; margin: 0 auto; }
+  .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
+
+  .card{
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card .head{
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap: 10px;
+    flex-wrap:wrap;
+  }
+  .title{
+    font-family:"Syne Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--fade);
+    margin:0;
+  }
+  h1{
+    margin: 10px 0 0;
+    font-weight: 500;
+    font-size: 34px;
+    color: var(--void);
+    letter-spacing: 0.2px;
+  }
+  h2{
+    margin: 0;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--void);
+  }
+  .sub{
+    color: var(--fade);
+    font-size: 15px;
+    line-height: 1.45;
+    margin-top: 8px;
+  }
+  .body{ padding: 16px; }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 8px;
+    align-items:center;
+  }
+  button, .btn{
+    appearance:none;
+    border: 1px solid rgba(10,9,6,0.12);
+    background: rgba(232,228,220,0.65);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 10px 12px;
+    font-size: 13px;
+    cursor:pointer;
+    transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    font-family:"Syne Mono", monospace;
+    letter-spacing: .4px;
+  }
+  button:hover{ background: rgba(232,228,220,0.95); border-color: rgba(10,9,6,0.18); }
+  button:active{ transform: scale(0.985); }
+  button.primary{
+    border-color: rgba(184,154,106,0.55);
+    background: rgba(184,154,106,0.14);
+  }
+  button.ghost{ background: transparent; border-color: rgba(10,9,6,0.10); }
+  button.danger{
+    border-color: rgba(120,30,30,0.28);
+    background: rgba(120,30,30,0.06);
+    color: var(--danger);
+  }
+  button:disabled{
+    opacity: .55;
+    cursor:not-allowed;
+  }
+  button:focus{
+    outline:none;
+    box-shadow: 0 0 0 4px var(--ring);
+  }
+
+  .kv{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 720px){ .kv{ grid-template-columns: 1fr; } }
+
+  .field{
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 12px 12px;
+    background: rgba(242,237,228,0.62);
+  }
+  label{
+    display:block;
+    font-family:"Syne Mono", monospace;
+    font-size: 11px;
+    color: var(--fade);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  input[type="text"], input[type="email"], textarea, select, input[type="range"]{
+    width:100%;
+    border-radius: 14px;
+    border: 1px solid rgba(10,9,6,0.10);
+    background: rgba(232,228,220,0.55);
+    padding: 10px 10px;
+    outline:none;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--void);
+  }
+  textarea{ min-height: 120px; resize: vertical; }
+  input[type="range"]{ padding: 10px 0; background: transparent; border:none; }
+  .help{
+    margin-top: 8px;
+    color: rgba(90,82,72,0.92);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .libraryGrid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 980px){ .libraryGrid{ grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px){ .libraryGrid{ grid-template-columns: 1fr; } }
+
+  .tile{
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(242,237,228,0.62);
+    padding: 12px;
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    min-height: 160px;
+  }
+  .tile .name{ font-size: 18px; color: var(--void); }
+  .tile .meta{ color: var(--fade); font-size: 13px; line-height: 1.4; }
+  .tagRow{ display:flex; flex-wrap:wrap; gap: 6px; }
+  .tag{
+    display:inline-flex;
+    border: 1px solid rgba(10,9,6,0.10);
+    background: rgba(232,228,220,0.55);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-family:"Syne Mono", monospace;
+    font-size: 11px;
+    color: rgba(10,9,6,0.72);
+  }
+  .tile .row{
+    margin-top:auto;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  /* Session display */
+  .sessionDisplay{
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(242,237,228,0.62);
+    padding: 14px;
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+  .timeBig{
+    font-family:"Syne Mono", monospace;
+    font-size: 40px;
+    letter-spacing: 1px;
+    color: var(--void);
+  }
+  .phaseLine{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    color: var(--fade);
+    font-size: 14px;
+  }
+  .meter{
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(10,9,6,0.08);
+    overflow:hidden;
+  }
+  .meter > div{
+    height:100%;
+    width:0%;
+    background: rgba(184,154,106,0.85);
+    transition: width .25s ease;
+  }
+
+  /* Timeline + activity */
+  .viz{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .spark{
+    width:100%;
+    height: 62px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: rgba(242,237,228,0.62);
+    overflow:hidden;
+  }
+  .vizRow{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid rgba(10,9,6,0.10);
+    background: rgba(232,228,220,0.45);
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-family:"Syne Mono", monospace;
+    font-size: 11px;
+    color: rgba(10,9,6,0.72);
+  }
+  .miniBar{
+    width: 120px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(10,9,6,0.08);
+    overflow:hidden;
+  }
+  .miniBar > div{
+    height:100%;
+    width:0%;
+    background: rgba(184,154,106,0.85);
+    transition: width .25s ease;
+  }
+
+  /* Fullscreen Ritual Mode */
+  .ritual{
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(1200px 700px at 30% 10%, rgba(184,154,106,0.10), transparent 60%),
+                #0e0d0c;
+    color: rgba(244,239,230,0.92);
+    display:none;
+    z-index: 100;
+    align-items:center;
+    justify-content:center;
+    padding: 16px;
+  }
+  .ritual.on{ display:flex; }
+  .ritualInner{ width: min(860px, 92vw); text-align:center; }
+  .ritual .mono{ color: rgba(244,239,230,0.72); letter-spacing: 2px; font-size: 12px; }
+  .ritualTime{
+    margin-top: 16px;
+    font-family:"Syne Mono", monospace;
+    font-size: 72px;
+    letter-spacing: 2px;
+  }
+  .ritualPhase{
+    margin-top: 12px;
+    font-size: 16px;
+    color: rgba(244,239,230,0.72);
+    min-height: 22px;
+  }
+  .ritualHint{
+    margin-top: 30px;
+    font-family:"Syne Mono", monospace;
+    font-size: 11px;
+    color: rgba(244,239,230,0.55);
+    letter-spacing: 1.4px;
+  }
+
+  /* Toast */
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    border: 1px solid rgba(184,154,106,0.35);
+    background: rgba(10,9,6,0.78);
+    color: rgba(244,239,230,0.9);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-family:"Syne Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    display:none;
+    z-index: 120;
+  }
+  .toast.on{ display:block; }
+
+  .muted{ color: rgba(90,82,72,0.88); }
+  .hr{ height:1px; background: var(--line); margin: 12px 0; }
+  .small{ font-size: 13px; color: rgba(90,82,72,0.92); line-height: 1.5; }
+
+  /* Focus outline improvements for links */
+  a:focus{ outline:none; box-shadow: 0 0 0 4px var(--ring); border-radius: 10px; }
+</style>
+</head>
+
+<body>
+<div class="app" role="application" aria-label="MA-ZEN app">
+  <aside class="side" aria-label="Sidebar">
+    <div class="brand">
+      <div class="top">
+        <div>
+          <div class="name">MA-ZEN</div>
+          <div class="tag">Guided silence, intentional soundscapes, and enterprise audio identity.</div>
+        </div>
+        <div class="pill" id="planPill" aria-label="Plan badge"><span class="dot" aria-hidden="true"></span><span id="planText">FREE</span></div>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav" aria-label="Primary navigation">
+      <a href="#home" data-route="home"><span>Home</span><small>Portfolio</small></a>
+      <a href="#sessions" data-route="sessions"><span>Guided Silence</span><small>THE PROOF</small></a>
+      <a href="#library" data-route="library"><span>Soundscape Library</span><small>THE FLOOR</small></a>
+      <a href="#b2b" data-route="b2b"><span>B2B Audio Branding</span><small>THE CASH</small></a>
+      <a href="#account" data-route="account"><span>Account</span><small>Plan & export</small></a>
+    </nav>
+
+    <div class="sideFooter">
+      <div class="row">
+        <div class="small">
+          <span class="mono">No streaks</span>. No coercion.<br>
+          Silence is a valid outcome.
+        </div>
+        <button class="ghost" id="btnQuickRitual" type="button">Ritual</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page" id="page" aria-live="polite"></div>
+  </main>
+</div>
+
+<!-- Ritual Mode -->
+<div class="ritual" id="ritual" aria-hidden="true">
+  <div class="ritualInner">
+    <div class="mono">MA-ZEN // RITUAL MODE</div>
+    <div class="ritualTime" id="ritualTime">--:--</div>
+    <div class="ritualPhase" id="ritualPhase"></div>
+    <div class="ritualHint">ESC — exit • SPACE — play/pause • M — mute labels</div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* =========================================================
+     Principles for publication-grade code:
+     - Deterministic state boundaries (single store key)
+     - Deep-merge defaults to prevent schema drift
+     - Route-level cleanup (no orphaned intervals/RAF)
+     - Audio context resume handled (browser autoplay policy)
+     - Minimal globals (IIFE encapsulation)
+     ========================================================= */
+
+  /* ---------------------------
+     Storage + State
+  --------------------------- */
+  const STORE_KEY = "mazen_launch_v1_1";
+
+  const DEFAULT_STATE = Object.freeze({
+    plan: "free", // "free" | "pro"
+    favorites: {}, // soundscapeId -> true
+    lastSessionReport: null,
+    prefs: {
+      labels: true,
+      masterDb: -22,
+      silenceBias: 0.88,  // 0..1 (higher = more silence)
+      texture: "paper",   // "paper" | "air" | "stone"
+      warmth: 0.35,       // 0..1
+      motion: 0.25        // 0..1 (event probability scaling)
+    },
+    b2bDrafts: [],
+    _ui: {
+      filterFavs: false
+    }
+  });
+
+  /** Deep merge plain objects. Arrays are replaced. */
+  function deepMerge(base, patch){
+    const out = Array.isArray(base) ? base.slice() : { ...base };
+    if(!patch || typeof patch !== "object") return out;
+    for(const k of Object.keys(patch)){
+      const bv = base?.[k];
+      const pv = patch[k];
+      if(bv && typeof bv === "object" && !Array.isArray(bv) && pv && typeof pv === "object" && !Array.isArray(pv)){
+        out[k] = deepMerge(bv, pv);
+      }else{
+        out[k] = pv;
+      }
+    }
+    return out;
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return deepMerge(DEFAULT_STATE, {});
+      const parsed = JSON.parse(raw);
+      return deepMerge(DEFAULT_STATE, parsed);
+    }catch{
+      return deepMerge(DEFAULT_STATE, {});
+    }
+  }
+
+  const state = loadState();
+
+  function saveState(){
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    }catch{
+      // If storage quota fails, app still works; just won't persist.
+      toast("Storage unavailable");
+    }
+  }
+
+  /* ---------------------------
+     Routing with cleanup
+  --------------------------- */
+  const page = document.getElementById("page");
+  const nav = document.getElementById("nav");
+  const planText = document.getElementById("planText");
+  const planPill = document.getElementById("planPill");
+
+  const cleanup = {
+    routeTimers: new Set(),
+    routeRAFs: new Set(),
+    reset(){
+      for(const id of cleanup.routeTimers) clearInterval(id);
+      for(const id of cleanup.routeTimers) clearTimeout(id);
+      cleanup.routeTimers.clear();
+      for(const rafId of cleanup.routeRAFs) cancelAnimationFrame(rafId);
+      cleanup.routeRAFs.clear();
+    },
+    setInterval(fn, ms){
+      const id = window.setInterval(fn, ms);
+      cleanup.routeTimers.add(id);
+      return id;
+    },
+    setTimeout(fn, ms){
+      const id = window.setTimeout(fn, ms);
+      cleanup.routeTimers.add(id);
+      return id;
+    },
+    requestAnimationFrame(fn){
+      const id = window.requestAnimationFrame(fn);
+      cleanup.routeRAFs.add(id);
+      return id;
+    }
+  };
+
+  function route(){
+    return (location.hash || "#home").replace("#","");
+  }
+
+  function setNavActive(){
+    const r = route();
+    [...nav.querySelectorAll("a")].forEach(a => {
+      a.classList.toggle("active", a.dataset.route === r);
+    });
+  }
+
+  window.addEventListener("hashchange", renderRoute);
+  renderRoute();
+  syncPlanUI();
+
+  function renderRoute(){
+    cleanup.reset();
+    setNavActive();
+    const r = route();
+    if(r === "home") renderHome();
+    else if(r === "sessions") renderSessions();
+    else if(r === "library") renderLibrary();
+    else if(r === "b2b") renderB2B();
+    else if(r === "account") renderAccount();
+    else renderHome();
+  }
+
+  /* ---------------------------
+     UI Helpers
+  --------------------------- */
+  const toastEl = document.getElementById("toast");
+  let toastTimer = null;
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("on"), 1700);
+  }
+
+  function fmtTime(sec){
+    sec = Math.max(0, Math.floor(sec));
+    const m = String(Math.floor(sec/60)).padStart(2,"0");
+    const s = String(sec%60).padStart(2,"0");
+    return `${m}:${s}`;
+  }
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function safeFile(s){
+    return String(s).trim().replace(/[^a-z0-9_\-]+/gi,"_").slice(0,40) || "CLIENT";
+  }
+
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+  function dbToGain(db){ return Math.pow(10, db/20); }
+
+  /* =========================================================
+     Audio Engine (Web Audio API)
+     - Generates a quiet, colored-noise bed (looped buffer)
+     - Sparse neutral events (short sine bursts, filtered)
+     - Tracks activity for meaningful visualizations
+     - Autoplay-safe: resumes only on user gesture
+     ========================================================= */
+  const audio = {
+    ctx: null,
+    master: null,
+    bedGain: null,
+    bedSrc: null,
+    bedFilter: null,
+    running: false,
+    tickTimer: null,
+    muted: false,
+    // metrics
+    lastEventAt: 0,
+    eventsInWindow: 0,
+    activity: 0 // 0..1 (smoothed)
+  };
+
+  function ensureAudio(){
+    if(audio.ctx) return;
+
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    audio.ctx = new Ctx({ latencyHint: "interactive" });
+
+    audio.master = audio.ctx.createGain();
+    audio.master.gain.value = dbToGain(state.prefs.masterDb);
+    audio.master.connect(audio.ctx.destination);
+
+    audio.bedGain = audio.ctx.createGain();
+    audio.bedGain.gain.value = 0.0001;
+
+    audio.bedFilter = audio.ctx.createBiquadFilter();
+    audio.bedFilter.type = "lowpass";
+    audio.bedFilter.frequency.value = 900;
+
+    audio.bedGain.connect(audio.bedFilter);
+    audio.bedFilter.connect(audio.master);
+
+    // Noise buffer (2s loop). For “colored” feel, we apply lowpass later.
+    const noiseLen = Math.floor(audio.ctx.sampleRate * 2);
+    const noiseBuf = audio.ctx.createBuffer(1, noiseLen, audio.ctx.sampleRate);
+    const data = noiseBuf.getChannelData(0);
+    for(let i = 0; i < data.length; i++){
+      data[i] = (Math.random()*2 - 1) * 0.22;
+    }
+
+    const src = audio.ctx.createBufferSource();
+    src.buffer = noiseBuf;
+    src.loop = true;
+    src.connect(audio.bedGain);
+    src.start();
+
+    audio.bedSrc = src;
+    setTexture(state.prefs.texture);
+  }
+
+  async function resumeAudioContext(){
+    ensureAudio();
+    if(!audio.ctx) return;
+    if(audio.ctx.state === "suspended"){
+      try{
+        await audio.ctx.resume();
+      }catch{
+        // Ignore; browser policy can still block in rare cases.
+      }
+    }
+  }
+
+  // One-time user-gesture hook to satisfy autoplay restrictions
+  const gestureResume = async () => {
+    await resumeAudioContext();
+    window.removeEventListener("pointerdown", gestureResume);
+    window.removeEventListener("keydown", gestureResume);
+  };
+  window.addEventListener("pointerdown", gestureResume, { once: false, passive: true });
+  window.addEventListener("keydown", gestureResume, { once: false });
+
+  function setMasterDb(db){
+    state.prefs.masterDb = db;
+    saveState();
+    if(audio.master) audio.master.gain.value = dbToGain(db);
+  }
+
+  function setTexture(kind){
+    state.prefs.texture = kind;
+    saveState();
+    if(!audio.ctx) return;
+    const t = audio.ctx.currentTime;
+
+    // texture => filter profile
+    const f = (kind === "paper") ? 1100 : (kind === "air") ? 2400 : 680;
+    audio.bedFilter.frequency.setTargetAtTime(f, t, 0.15);
+  }
+
+  function startAmbientEngine(){
+    ensureAudio();
+    resumeAudioContext(); // best effort
+    audio.running = true;
+
+    if(audio.tickTimer) clearInterval(audio.tickTimer);
+    audio.tickTimer = setInterval(engineTick, 650);
+  }
+
+  function stopAmbientEngine(){
+    audio.running = false;
+    if(audio.tickTimer) clearInterval(audio.tickTimer);
+    audio.tickTimer = null;
+
+    if(audio.ctx){
+      const t = audio.ctx.currentTime;
+      audio.bedGain.gain.setTargetAtTime(0.0001, t, 0.12);
+    }
+  }
+
+  function engineTick(){
+    if(!audio.running || !audio.ctx) return;
+
+    const now = audio.ctx.currentTime;
+    const silenceBias = clamp01(state.prefs.silenceBias);
+    const motion = clamp01(state.prefs.motion);
+    const warmth = clamp01(state.prefs.warmth);
+
+    // Bed presence probability: more silenceBias = less bed
+    const bedOnChance = 0.70 * (1 - silenceBias) + 0.05;
+    const bedOn = Math.random() < bedOnChance;
+
+    const bedTarget = bedOn ? (0.010 + 0.020 * (1 - silenceBias) * (0.3 + warmth)) : 0.0001;
+    audio.bedGain.gain.setTargetAtTime(bedTarget, now, 0.20);
+
+    // Sparse tonal event probability
+    const baseEventChance = 0.12 * (1 - silenceBias) + 0.02;
+    const eventChance = baseEventChance * (0.6 + motion);
+
+    if(Math.random() < eventChance){
+      spawnEvent(now, warmth, silenceBias);
+      audio.eventsInWindow++;
+      audio.lastEventAt = performance.now();
+    }
+
+    // Activity metric (meaningful, real-world: "how much audio is being emitted right now")
+    // Approx: combine bed target + recent events, smoothed.
+    const bedNorm = Math.min(1, bedTarget / 0.03);
+    const recentEvent = (performance.now() - audio.lastEventAt) < 1200 ? 0.6 : 0;
+    const target = clamp01(0.65*bedNorm + recentEvent);
+    audio.activity = audio.activity*0.82 + target*0.18;
+
+    // Decay event count window
+    if(audio.eventsInWindow > 0 && (performance.now() - audio.lastEventAt) > 3000){
+      audio.eventsInWindow = 0;
+    }
+  }
+
+  function spawnEvent(now, warmth, silenceBias){
+    // Neutral micro-event: short sine + decay, filtered bandpass.
+    const osc = audio.ctx.createOscillator();
+    const gain = audio.ctx.createGain();
+    const filt = audio.ctx.createBiquadFilter();
+
+    const base = 180 + Math.random()*900;
+    const det = (Math.random()*2 - 1) * 12;
+
+    osc.type = "sine";
+    osc.frequency.value = base + det;
+
+    filt.type = "bandpass";
+    filt.frequency.value = 400 + warmth*1200;
+    filt.Q.value = 0.7 + warmth*4;
+
+    const peak = 0.010 + (0.018 * (1 - silenceBias)) * (0.2 + warmth);
+    const dur = 0.8 + Math.random()*1.4;
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(peak, now + 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+    osc.connect(gain);
+    gain.connect(filt);
+    filt.connect(audio.master);
+
+    osc.start(now);
+    osc.stop(now + dur + 0.05);
+  }
+
+  /* =========================================================
+     Guided Silence Sessions (THE PROOF)
+     - Timer with phases
+     - Fullscreen ritual mode
+     - Visualization: phase timeline + activity
+     ========================================================= */
+  const ritual = document.getElementById("ritual");
+  const ritualTime = document.getElementById("ritualTime");
+  const ritualPhase = document.getElementById("ritualPhase");
+
+  const session = {
+    running: false,
+    paused: false,
+    startAtMs: 0,
+    elapsedSec: 0,
+    durationSec: 8*60,
+    presetId: "S88",
+    phases: [],
+    phaseIndex: 0,
+    pureSilence: true
+  };
+
+  document.getElementById("btnQuickRitual").addEventListener("click", () => {
+    location.hash = "#sessions";
+    cleanup.setTimeout(() => enterRitual(), 50);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if(!ritual.classList.contains("on")) return;
+
+    if(e.key === "Escape") exitRitual();
+
+    if(e.code === "Space"){
+      e.preventDefault();
+      if(session.running && !session.paused) pauseSession();
+      else if(session.running && session.paused) resumeSession();
+    }
+
+    if(e.key.toLowerCase() === "m"){
+      state.prefs.labels = !state.prefs.labels;
+      saveState();
+      toast("Labels: " + (state.prefs.labels ? "ON" : "OFF"));
+      // reflect in ritual immediately
+      ritualPhase.textContent = state.prefs.labels ? (session.phases[session.phaseIndex]?.label || "") : "";
+    }
+  });
+
+  function enterRitual(){
+    ritual.classList.add("on");
+    ritual.setAttribute("aria-hidden", "false");
+    if(document.documentElement.requestFullscreen){
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  }
+
+  function exitRitual(){
+    ritual.classList.remove("on");
+    ritual.setAttribute("aria-hidden", "true");
+    if(document.fullscreenElement && document.exitFullscreen){
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  function sessionPresets(){
+    return [
+      {
+        id:"S88",
+        name:"88 — Pure Ma",
+        seconds: 88,
+        pureSilence: true,
+        phases: [
+          ["Arrive", 22],
+          ["Hold", 44],
+          ["Release", 22]
+        ],
+        note:"The smallest complete ritual. No sound required."
+      },
+      {
+        id:"S8",
+        name:"8 — Demonstration",
+        seconds: 8*60,
+        pureSilence: true,
+        phases: [
+          ["Settle", 120],
+          ["Field", 240],
+          ["Dissolve", 120]
+        ],
+        note:"Structured absence. Labels optional."
+      },
+      {
+        id:"S18",
+        name:"18 — Deep Reset",
+        seconds: 18*60,
+        pureSilence: false,
+        phases: [
+          ["Settle", 240],
+          ["Field", 660],
+          ["Dissolve", 180]
+        ],
+        note:"Silence-dominant with optional minimal texture."
+      },
+      {
+        id:"S40",
+        name:"40 — Work Boundary",
+        seconds: 40*60,
+        pureSilence: false,
+        phases: [
+          ["Settle", 420],
+          ["Field", 1380],
+          ["Dissolve", 600]
+        ],
+        note:"Designed as a boundary for deep work: begin, work, exit."
+      }
+    ];
+  }
+
+  function buildPhases(preset){
+    let t = 0;
+    return preset.phases.map(([label, sec]) => {
+      const start = t;
+      t += sec;
+      return { label, start, end: t, sec };
+    });
+  }
+
+  function startSession(presetId){
+    const p = sessionPresets().find(x => x.id === presetId) || sessionPresets()[0];
+    session.presetId = p.id;
+    session.durationSec = p.seconds;
+    session.phases = buildPhases(p);
+    session.phaseIndex = 0;
+    session.elapsedSec = 0;
+    session.running = true;
+    session.paused = false;
+    session.startAtMs = performance.now();
+    session.pureSilence = p.pureSilence;
+
+    if(!session.pureSilence) startAmbientEngine();
+    else stopAmbientEngine();
+
+    toast("Session started");
+  }
+
+  function stopSession(reason="ended"){
+    if(!session.running) return;
+
+    session.running = false;
+    session.paused = false;
+    stopAmbientEngine();
+
+    const preset = sessionPresets().find(x => x.id === session.presetId);
+    const report = {
+      schema: "MAZEN_SESSION_REPORT_V1",
+      endedAt: new Date().toISOString(),
+      presetId: session.presetId,
+      presetName: preset?.name ?? session.presetId,
+      reason,
+      durationSec: session.durationSec,
+      elapsedSec: Math.round(session.elapsedSec),
+      labels: state.prefs.labels,
+      pureSilence: session.pureSilence,
+      enginePrefs: { ...state.prefs }
+    };
+
+    state.lastSessionReport = report;
+    saveState();
+
+    toast(reason === "ended" ? "Complete" : "Stopped");
+  }
+
+  function pauseSession(){
+    if(!session.running || session.paused) return;
+    session.paused = true;
+    session.elapsedSec = sessionElapsed();
+    stopAmbientEngine();
+    toast("Paused");
+  }
+
+  function resumeSession(){
+    if(!session.running || !session.paused) return;
+    session.paused = false;
+    session.startAtMs = performance.now() - session.elapsedSec*1000;
+    if(!session.pureSilence) startAmbientEngine();
+    toast("Resume");
+  }
+
+  function sessionElapsed(){
+    return (performance.now() - session.startAtMs)/1000;
+  }
+
+  /* =========================================================
+     Visualization helpers (phase timeline + activity spark)
+     - Phase timeline is deterministic (good for papers)
+     - Activity reflects actual engine output (real-world meaning)
+     ========================================================= */
+  function phaseTimelineSvg(phases){
+    const total = phases.at(-1)?.end || 1;
+    const W = 860, H = 44, pad = 10;
+    const y = 16, h = 12;
+
+    const bars = phases.map((p, i) => {
+      const x = pad + (p.start/total)*(W-2*pad);
+      const w = Math.max(2, (p.sec/total)*(W-2*pad));
+      const alpha = 0.18 + i*0.06;
+      return `<rect x="${x.toFixed(2)}" y="${y}" width="${w.toFixed(2)}" height="${h}" rx="8" fill="rgba(184,154,106,${alpha.toFixed(2)})" />`;
+    }).join("");
+
+    const ticks = phases.slice(0, -1).map(p => {
+      const x = pad + (p.end/total)*(W-2*pad);
+      return `<line x1="${x.toFixed(2)}" y1="${y-5}" x2="${x.toFixed(2)}" y2="${y+h+5}" stroke="rgba(10,9,6,0.12)" />`;
+    }).join("");
+
+    return `
+      <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" aria-label="Phase timeline">
+        <rect x="0" y="0" width="${W}" height="${H}" fill="rgba(242,237,228,0.0)"></rect>
+        ${bars}
+        ${ticks}
+        <rect id="tl_progress" x="${pad}" y="${y}" width="0" height="${h}" rx="8" fill="rgba(184,154,106,0.55)"></rect>
+      </svg>
+    `;
+  }
+
+  function updateTimelineProgress(svgEl, elapsed, duration){
+    if(!svgEl) return;
+    const W = 860, pad = 10;
+    const innerW = (W - 2*pad);
+    const w = Math.max(0, Math.min(innerW, (elapsed/duration)*innerW));
+    const bar = svgEl.querySelector("#tl_progress");
+    if(bar) bar.setAttribute("width", String(w));
+  }
+
+  /* =========================================================
+     Pages
+     ========================================================= */
+  function syncPlanUI(){
+    const p = (state.plan || "free").toUpperCase();
+    planText.textContent = p;
+    planPill.style.borderColor = state.plan === "pro" ? "rgba(184,154,106,0.65)" : "rgba(184,154,106,0.35)";
+  }
+
+  function renderHome(){
+    page.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div>
+            <p class="title">Launchable Portfolio</p>
+            <h1>MA-ZEN in three products</h1>
+            <div class="sub">Proof (guided silence) • Floor (subscription library) • Cash (B2B audio identity).</div>
+          </div>
+          <div class="controls">
+            <button class="primary" id="goProof" type="button">Start a Silence Session</button>
+            <button class="ghost" id="goLibrary" type="button">Browse Library</button>
+            <button class="ghost" id="goB2B" type="button">B2B Inquiry</button>
+          </div>
+        </div>
+        <div class="body">
+          <div class="grid">
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">THE PROOF</p>
+                  <h2>Guided Silence Sessions</h2>
+                  <div class="sub">The product is the demonstration. No explanation required.</div>
+                </div>
+                <span class="pill"><span class="dot" aria-hidden="true"></span>Zero production assets</span>
+              </div>
+              <div class="body">
+                <div class="small">
+                  Structured phases (settle → field → dissolve), labels optional, fullscreen ritual mode.
+                  Silence is the core output. Optional minimal texture exists only as support.
+                </div>
+                <div class="hr"></div>
+                <div class="controls">
+                  <button class="primary" id="homeStart88" type="button">Start 88</button>
+                  <button class="ghost" id="homeStart8" type="button">Start 8</button>
+                  <button class="ghost" id="homeRitual" type="button">Ritual Mode</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">THE FLOOR</p>
+                  <h2>Subscription Soundscape Library</h2>
+                  <div class="sub">Stable recurring base. Minimal friction.</div>
+                </div>
+                <span class="pill"><span class="dot" aria-hidden="true"></span>Free → Pro upgrade path</span>
+              </div>
+              <div class="body">
+                <div class="small">
+                  Intentional soundscapes generated in-browser. Favorites, search, and Pro gating.
+                  Ready to connect payments later without rewriting UX.
+                </div>
+                <div class="hr"></div>
+                <div class="controls">
+                  <button class="primary" id="homeBrowse" type="button">Open Library</button>
+                  <button class="ghost" id="homeFavs" type="button">View Favorites</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">THE CASH</p>
+                  <h2>B2B Audio Branding</h2>
+                  <div class="sub">High revenue per unit time. Funds system development.</div>
+                </div>
+                <span class="pill"><span class="dot" aria-hidden="true"></span>Brief → proposal-ready</span>
+              </div>
+              <div class="body">
+                <div class="small">
+                  A precise inquiry form that produces a downloadable brief (JSON) and a mail-ready message.
+                  No backend required to start getting leads.
+                </div>
+                <div class="hr"></div>
+                <div class="controls">
+                  <button class="primary" id="homeB2B" type="button">Create Inquiry</button>
+                  <button class="ghost" id="homeCase" type="button">Export Sample Brief</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">No manipulation policy</p>
+                  <h2>Anti-gamification by design</h2>
+                  <div class="sub">No streaks. No guilt UI. No reward loops.</div>
+                </div>
+              </div>
+              <div class="body">
+                <div class="small">
+                  MA-ZEN is not “more guidance”. It is a reduction engine: fewer prompts, fewer claims, fewer hooks.
+                  The value is the boundary.
+                </div>
+                <div class="hr"></div>
+                <div class="small muted mono">
+                  Built to run on GitHub Pages. Stored locally. Replace stubs with your backend when ready.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("goProof").onclick = () => location.hash="#sessions";
+    document.getElementById("goLibrary").onclick = () => location.hash="#library";
+    document.getElementById("goB2B").onclick = () => location.hash="#b2b";
+
+    document.getElementById("homeStart88").onclick = () => {
+      location.hash="#sessions";
+      cleanup.setTimeout(() => { startSession("S88"); enterRitual(); }, 40);
+    };
+    document.getElementById("homeStart8").onclick = () => {
+      location.hash="#sessions";
+      cleanup.setTimeout(() => { startSession("S8"); }, 40);
+    };
+    document.getElementById("homeRitual").onclick = () => {
+      location.hash="#sessions";
+      cleanup.setTimeout(() => enterRitual(), 40);
+    };
+
+    document.getElementById("homeBrowse").onclick = () => location.hash="#library";
+    document.getElementById("homeFavs").onclick = () => {
+      location.hash="#library";
+      state._ui.filterFavs = true;
+      saveState();
+      cleanup.setTimeout(() => renderLibrary(), 30);
+    };
+
+    document.getElementById("homeB2B").onclick = () => location.hash="#b2b";
+    document.getElementById("homeCase").onclick = () => {
+      const sample = sampleB2BBrief();
+      downloadBlob(new Blob([JSON.stringify(sample, null, 2)], {type:"application/json"}), "MAZEN_B2B_SAMPLE_BRIEF.json");
+      toast("Sample exported");
+    };
+  }
+
+  function renderSessions(){
+    const presets = sessionPresets();
+    const presetOptions = presets.map(p => `<option value="${p.id}" ${p.id===session.presetId?"selected":""}>${escapeHtml(p.name)}</option>`).join("");
+
+    const last = state.lastSessionReport;
+    const lastBlock = last ? `
+      <div class="field">
+        <label>Last session</label>
+        <div class="small">
+          <span class="mono">${escapeHtml(last.presetName)}</span> • ${fmtTime(last.elapsedSec)} / ${fmtTime(last.durationSec)} • ${escapeHtml(last.reason)}<br>
+          ${new Date(last.endedAt).toLocaleString()}
+        </div>
+        <div class="controls" style="margin-top:10px;">
+          <button class="ghost" id="dlReport" type="button">Download report</button>
+          <button class="ghost" id="dlReportCsv" type="button">Download CSV</button>
+        </div>
+      </div>
+    ` : `
+      <div class="field">
+        <label>Last session</label>
+        <div class="small muted">No sessions yet.</div>
+      </div>
+    `;
+
+    page.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div>
+            <p class="title">THE PROOF</p>
+            <h1>Guided Silence Sessions</h1>
+            <div class="sub">A live demonstration of MA-ZEN. The boundary is the product.</div>
+          </div>
+          <div class="controls">
+            <button class="primary" id="btnStart" type="button">Start</button>
+            <button class="ghost" id="btnPause" type="button">Pause</button>
+            <button class="danger" id="btnStop" type="button">Stop</button>
+            <button class="ghost" id="btnRitual" type="button">Ritual Mode</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="grid">
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">Session</p>
+                  <h2>Structure without narration</h2>
+                  <div class="sub">No voice. No “keep going.” Labels optional.</div>
+                </div>
+              </div>
+
+              <div class="body">
+                <div class="kv">
+                  <div class="field">
+                    <label for="presetSel">Preset</label>
+                    <select id="presetSel">${presetOptions}</select>
+                    <div class="help muted">Presets define phase architecture. Sound remains optional.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="labelsSel">Labels</label>
+                    <select id="labelsSel">
+                      <option value="on" ${state.prefs.labels?"selected":""}>On (minimal)</option>
+                      <option value="off" ${!state.prefs.labels?"selected":""}>Off (pure)</option>
+                    </select>
+                    <div class="help muted">Turn off labels to make it pure Ma.</div>
+                  </div>
+
+                  <div class="field">
+                    <label>Ritual mode</label>
+                    <div class="small">Fullscreen. No controls on screen. Only time.</div>
+                    <div class="controls" style="margin-top:10px;">
+                      <button class="primary" id="enterRitual" type="button">Enter Ritual</button>
+                      <button class="ghost" id="exitRitual" type="button">Exit</button>
+                    </div>
+                  </div>
+
+                  ${lastBlock}
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="sessionDisplay" aria-label="Session display">
+                  <div class="timeBig"><span id="tLeft">--:--</span></div>
+                  <div class="phaseLine">
+                    <div><span class="mono">Phase:</span> <span id="phaseTxt">${state.prefs.labels ? "—" : ""}</span></div>
+                    <div><span class="mono">Mode:</span> <span id="modeTxt">—</span></div>
+                  </div>
+                  <div class="meter" aria-hidden="true"><div id="meterFill"></div></div>
+
+                  <div class="viz" aria-label="Session visualizations">
+                    <div class="spark" id="timelineBox"></div>
+                    <div class="vizRow">
+                      <span class="badge"><span class="mono">Silence bias</span>: <span id="silTxt">${Math.round(state.prefs.silenceBias*100)}%</span></span>
+                      <span class="badge"><span class="mono">Engine activity</span></span>
+                      <span class="miniBar" aria-hidden="true"><div id="actFill"></div></span>
+                      <span class="badge"><span class="mono">Events</span>: <span id="evTxt">0</span></span>
+                    </div>
+                  </div>
+
+                  <div class="small muted">
+                    Session is valid even if nothing “happens”. This is not performance tracking.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">Optional support layer</p>
+                  <h2>Intentional texture (not music)</h2>
+                  <div class="sub">Silence-dominant field. Sparse neutral events.</div>
+                </div>
+                <span class="pill"><span class="dot" aria-hidden="true"></span>Web Audio</span>
+              </div>
+
+              <div class="body">
+                <div class="kv">
+                  <div class="field">
+                    <label for="silBias">Silence bias</label>
+                    <input id="silBias" type="range" min="0" max="1" step="0.01" value="${state.prefs.silenceBias}">
+                    <div class="help"><span class="mono" id="silBiasTxt">${Math.round(state.prefs.silenceBias*100)}%</span> silence tendency.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="texSel">Texture</label>
+                    <select id="texSel">
+                      <option value="paper" ${state.prefs.texture==="paper"?"selected":""}>Paper</option>
+                      <option value="air" ${state.prefs.texture==="air"?"selected":""}>Air</option>
+                      <option value="stone" ${state.prefs.texture==="stone"?"selected":""}>Stone</option>
+                    </select>
+                    <div class="help muted">Texture is a filter profile, not an audio file.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="warm">Warmth</label>
+                    <input id="warm" type="range" min="0" max="1" step="0.01" value="${state.prefs.warmth}">
+                    <div class="help muted">More warmth = softer, lower-center events.</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="motion">Motion</label>
+                    <input id="motion" type="range" min="0" max="1" step="0.01" value="${state.prefs.motion}">
+                    <div class="help muted">More motion = slightly more sparse events (still silence-dominant).</div>
+                  </div>
+
+                  <div class="field">
+                    <label for="masterDb">Master level</label>
+                    <input id="masterDb" type="range" min="-40" max="-10" step="1" value="${state.prefs.masterDb}">
+                    <div class="help"><span class="mono" id="dbTxt">${state.prefs.masterDb} dB</span> (safe low).</div>
+                  </div>
+
+                  <div class="field">
+                    <label>Engine</label>
+                    <div class="small">For pure sessions, engine can be off. For texture sessions, engine runs quietly.</div>
+                    <div class="controls" style="margin-top:10px;">
+                      <button class="ghost" id="audTest" type="button">Test texture (10s)</button>
+                      <button class="danger" id="audStop" type="button">Stop audio</button>
+                    </div>
+                    <div class="help muted">Browsers require a click to start audio.</div>
+                  </div>
+                </div>
+
+                <div class="hr"></div>
+                <div class="small">
+                  <span class="mono">Principle:</span> Silence first. Texture only supports the boundary.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const tLeft = document.getElementById("tLeft");
+    const phaseTxt = document.getElementById("phaseTxt");
+    const modeTxt = document.getElementById("modeTxt");
+    const meterFill = document.getElementById("meterFill");
+    const actFill = document.getElementById("actFill");
+    const evTxt = document.getElementById("evTxt");
+    const silTxt = document.getElementById("silTxt");
+    const timelineBox = document.getElementById("timelineBox");
+
+    const presetSel = document.getElementById("presetSel");
+    const labelsSel = document.getElementById("labelsSel");
+
+    // Setup timeline template based on current preset selection
+    function rebuildTimeline(){
+      const p = presets.find(x => x.id === presetSel.value) || presets[0];
+      const phases = buildPhases(p);
+      timelineBox.innerHTML = phaseTimelineSvg(phases);
+    }
+    rebuildTimeline();
+
+    presetSel.onchange = () => {
+      session.presetId = presetSel.value;
+      rebuildTimeline();
+      toast("Preset set");
+    };
+
+    labelsSel.onchange = () => {
+      state.prefs.labels = labelsSel.value === "on";
+      saveState();
+      toast("Labels: " + (state.prefs.labels ? "ON" : "OFF"));
+    };
+
+    document.getElementById("btnStart").onclick = async () => {
+      await resumeAudioContext();
+      startSession(presetSel.value);
+    };
+
+    document.getElementById("btnPause").onclick = () => {
+      if(!session.running) return;
+      if(session.paused) resumeSession();
+      else pauseSession();
+    };
+
+    document.getElementById("btnStop").onclick = () => stopSession("stopped");
+    document.getElementById("btnRitual").onclick = () => enterRitual();
+    document.getElementById("enterRitual").onclick = () => enterRitual();
+    document.getElementById("exitRitual").onclick = () => exitRitual();
+
+    // Audio prefs
+    const silBias = document.getElementById("silBias");
+    const silBiasTxt = document.getElementById("silBiasTxt");
+    silBias.oninput = () => {
+      state.prefs.silenceBias = parseFloat(silBias.value);
+      saveState();
+      const pct = Math.round(state.prefs.silenceBias*100) + "%";
+      silBiasTxt.textContent = pct;
+      silTxt.textContent = pct;
+    };
+
+    const texSel = document.getElementById("texSel");
+    texSel.onchange = () => { setTexture(texSel.value); toast("Texture: " + texSel.value); };
+
+    const warm = document.getElementById("warm");
+    warm.oninput = () => { state.prefs.warmth = parseFloat(warm.value); saveState(); };
+
+    const motion = document.getElementById("motion");
+    motion.oninput = () => { state.prefs.motion = parseFloat(motion.value); saveState(); };
+
+    const masterDb = document.getElementById("masterDb");
+    const dbTxt = document.getElementById("dbTxt");
+    masterDb.oninput = () => {
+      const v = parseInt(masterDb.value, 10);
+      dbTxt.textContent = v + " dB";
+      setMasterDb(v);
+    };
+
+    document.getElementById("audTest").onclick = async () => {
+      await resumeAudioContext();
+      startAmbientEngine();
+      toast("Texture test");
+      cleanup.setTimeout(() => { stopAmbientEngine(); toast("Test ended"); }, 10000);
+    };
+
+    document.getElementById("audStop").onclick = () => { stopAmbientEngine(); toast("Audio stopped"); };
+
+    // Report downloads
+    const dl = document.getElementById("dlReport");
+    if(dl){
+      dl.onclick = () => {
+        const blob = new Blob([JSON.stringify(state.lastSessionReport, null, 2)], {type:"application/json"});
+        downloadBlob(blob, "MAZEN_SESSION_REPORT.json");
+      };
+    }
+    const dlCsv = document.getElementById("dlReportCsv");
+    if(dlCsv){
+      dlCsv.onclick = () => {
+        const r = state.lastSessionReport;
+        if(!r) return;
+        const header = ["endedAt","presetId","presetName","reason","durationSec","elapsedSec","labels","pureSilence","masterDb","silenceBias","texture","warmth","motion"];
+        const row = [
+          r.endedAt, r.presetId, r.presetName, r.reason, r.durationSec, r.elapsedSec, r.labels, r.pureSilence,
+          r.enginePrefs.masterDb, r.enginePrefs.silenceBias, r.enginePrefs.texture, r.enginePrefs.warmth, r.enginePrefs.motion
+        ].map(v => `"${String(v).replaceAll('"','""')}"`).join(",");
+        downloadBlob(new Blob([header.join(",") + "\n" + row + "\n"], {type:"text/csv"}), "MAZEN_SESSION_REPORT.csv");
+      };
+    }
+
+    // Live UI loop (low-cost: 5Hz)
+    function update(){
+      // session time + progress
+      if(session.running && !session.paused){
+        session.elapsedSec = sessionElapsed();
+
+        const remaining = session.durationSec - session.elapsedSec;
+
+        // Phase index
+        let idx = 0;
+        while(idx < session.phases.length && session.elapsedSec >= session.phases[idx].end) idx++;
+        session.phaseIndex = Math.min(idx, Math.max(0, session.phases.length-1));
+
+        if(remaining <= 0){
+          ritualTime.textContent = "00:00";
+          ritualPhase.textContent = state.prefs.labels ? "Complete" : "";
+          stopSession("ended");
+        }
+      }
+
+      const remaining = session.running ? (session.durationSec - session.elapsedSec) : session.durationSec;
+      tLeft.textContent = session.running ? fmtTime(remaining) : "--:--";
+
+      phaseTxt.textContent = state.prefs.labels
+        ? (session.running ? (session.phases[session.phaseIndex]?.label || "—") : "—")
+        : "";
+
+      modeTxt.textContent = session.running
+        ? (session.pureSilence ? "Pure Silence" : "Silence + Texture")
+        : "—";
+
+      const pct = session.running ? (session.elapsedSec / session.durationSec) : 0;
+      meterFill.style.width = Math.max(0, Math.min(100, pct*100)) + "%";
+
+      // Timeline progress
+      const svg = timelineBox.querySelector("svg");
+      updateTimelineProgress(svg, session.running ? session.elapsedSec : 0, session.durationSec);
+
+      // Ritual overlay updates
+      if(ritual.classList.contains("on")){
+        ritualTime.textContent = session.running ? fmtTime(remaining) : "--:--";
+        ritualPhase.textContent = state.prefs.labels ? (session.phases[session.phaseIndex]?.label || "") : "";
+      }
+
+      // Engine metrics
+      actFill.style.width = Math.round(audio.activity*100) + "%";
+      evTxt.textContent = String(audio.eventsInWindow);
+
+      // Re-schedule
+      cleanup.setTimeout(update, 200);
+    }
+    update();
+  }
+
+  function renderLibrary(){
+    const catalog = soundscapeCatalog();
+    const onlyFavs = !!state._ui.filterFavs;
+    state._ui.filterFavs = false;
+    saveState();
+
+    page.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div>
+            <p class="title">THE FLOOR</p>
+            <h1>Subscription Soundscape Library</h1>
+            <div class="sub">Intentional sound. Silence-dominant. No gamification clutter.</div>
+          </div>
+          <div class="controls">
+            <input id="q" type="text" placeholder="Search..." style="min-width:220px;" aria-label="Search soundscapes"/>
+            <button class="ghost" id="showFavs" type="button">${onlyFavs ? "All" : "Favorites"}</button>
+            <button class="primary" id="playSelected" type="button">Play</button>
+            <button class="danger" id="stopAudio" type="button">Stop</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="kv" style="margin-bottom:12px;">
+            <div class="field">
+              <label>Quick mix</label>
+              <div class="small">This library uses the same engine (generated in-browser). Choose a card and press Play.</div>
+            </div>
+            <div class="field">
+              <label>Plan boundary</label>
+              <div class="small">
+                Free includes a few foundational fields. Pro unlocks the full library and longer boundaries.
+              </div>
+            </div>
+          </div>
+
+          <div class="libraryGrid" id="grid"></div>
+          <div class="hr"></div>
+          <div class="small muted">
+            Note: This MVP is static + local. To ship paid subscriptions, connect your payment + account system in <span class="mono">Account</span>.
+          </div>
+        </div>
+      </div>
+    `;
+
+    const q = document.getElementById("q");
+    const grid = document.getElementById("grid");
+    const showFavsBtn = document.getElementById("showFavs");
+    const playSelectedBtn = document.getElementById("playSelected");
+    const stopAudioBtn = document.getElementById("stopAudio");
+
+    let selected = catalog[0]?.id || null;
+
+    function allowed(item){
+      return item.tier === "free" || state.plan === "pro";
+    }
+
+    function applySoundscape(item){
+      state.prefs.texture = item.engine.texture;
+      state.prefs.silenceBias = item.engine.silenceBias;
+      state.prefs.warmth = item.engine.warmth;
+      state.prefs.motion = item.engine.motion;
+      saveState();
+      if(audio.ctx) setTexture(state.prefs.texture);
+    }
+
+    function renderTiles(){
+      const query = (q.value || "").trim().toLowerCase();
+      const filtered = catalog.filter(item => {
+        if(onlyFavs && !state.favorites[item.id]) return false;
+        if(query && !(item.name.toLowerCase().includes(query) || item.tags.join(" ").toLowerCase().includes(query))) return false;
+        return true;
+      });
+
+      grid.innerHTML = "";
+      if(!filtered.length){
+        grid.innerHTML = `<div class="small muted">No results.</div>`;
+        return;
+      }
+
+      for(const item of filtered){
+        const isFav = !!state.favorites[item.id];
+        const canUse = allowed(item);
+
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.style.borderColor = (item.id===selected) ? "rgba(184,154,106,0.55)" : "var(--line)";
+        tile.style.background = (item.id===selected) ? "rgba(184,154,106,0.08)" : "rgba(242,237,228,0.62)";
+
+        tile.innerHTML = `
+          <div class="name">${escapeHtml(item.name)} ${item.tier==="pro" ? `<span class="tag">PRO</span>` : ``}</div>
+          <div class="meta">${escapeHtml(item.desc)}</div>
+          <div class="tagRow">${item.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
+          <div class="row">
+            <button class="ghost" type="button" data-act="select">${item.id===selected?"Selected":"Select"}</button>
+            <div class="controls" style="gap:6px;">
+              <button class="ghost" type="button" data-act="fav" aria-label="Toggle favorite">${isFav ? "★" : "☆"}</button>
+              <button class="${canUse ? "ghost" : "primary"}" type="button" data-act="use">${canUse ? "Use" : "Unlock"}</button>
+            </div>
+          </div>
+        `;
+
+        tile.querySelector('[data-act="select"]').onclick = () => { selected = item.id; renderTiles(); };
+        tile.querySelector('[data-act="fav"]').onclick = () => {
+          state.favorites[item.id] = !state.favorites[item.id];
+          if(!state.favorites[item.id]) delete state.favorites[item.id];
+          saveState();
+          renderTiles();
+        };
+        tile.querySelector('[data-act="use"]').onclick = () => {
+          if(!canUse){
+            toast("Upgrade for PRO");
+            location.hash = "#account";
+            return;
+          }
+          applySoundscape(item);
+          selected = item.id;
+          renderTiles();
+          toast("Loaded: " + item.name);
+        };
+
+        grid.appendChild(tile);
+      }
+    }
+
+    playSelectedBtn.onclick = async () => {
+      const item = catalog.find(x => x.id === selected);
+      if(!item) return;
+      if(item.tier==="pro" && state.plan!=="pro"){
+        toast("PRO required");
+        location.hash="#account";
+        return;
+      }
+      applySoundscape(item);
+      await resumeAudioContext();
+      startAmbientEngine();
+      toast("Playing");
+    };
+
+    stopAudioBtn.onclick = () => { stopAmbientEngine(); toast("Stopped"); };
+
+    showFavsBtn.onclick = () => {
+      state._ui.filterFavs = !onlyFavs;
+      saveState();
+      renderLibrary();
+    };
+
+    q.oninput = renderTiles;
+    renderTiles();
+  }
+
+  function renderB2B(){
+    page.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div>
+            <p class="title">THE CASH</p>
+            <h1>B2B Audio Branding</h1>
+            <div class="sub">High revenue per unit time. Produce enterprise case studies for credibility.</div>
+          </div>
+          <div class="controls">
+            <button class="ghost" id="btnSample" type="button">Download sample brief</button>
+            <button class="primary" id="btnExportBrief" type="button">Export brief</button>
+            <button class="ghost" id="btnMail" type="button">Email draft</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="grid">
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">Inquiry</p>
+                  <h2>Collect only essentials</h2>
+                  <div class="sub">Short form. No theatre. Generates a proposal-ready brief.</div>
+                </div>
+              </div>
+              <div class="body">
+                <div class="kv">
+                  <div class="field">
+                    <label for="c_company">Company</label>
+                    <input id="c_company" type="text" placeholder="Company name" autocomplete="organization" />
+                  </div>
+                  <div class="field">
+                    <label for="c_contact">Contact</label>
+                    <input id="c_contact" type="text" placeholder="Name + role" autocomplete="name" />
+                  </div>
+                  <div class="field">
+                    <label for="c_email">Email</label>
+                    <input id="c_email" type="email" placeholder="contact@company.com" autocomplete="email" />
+                  </div>
+                  <div class="field">
+                    <label for="c_industry">Industry</label>
+                    <input id="c_industry" type="text" placeholder="e.g., Hospitality, Tech, Wellness" />
+                  </div>
+                  <div class="field" style="grid-column: 1 / -1;">
+                    <label for="c_use">Use case</label>
+                    <textarea id="c_use" placeholder="Where will the audio identity live? (lobby, app, on-hold, events, product, retail, meditation rooms...)"></textarea>
+                  </div>
+                  <div class="field" style="grid-column: 1 / -1;">
+                    <label for="c_constraints">Constraints</label>
+                    <textarea id="c_constraints" placeholder="Legal, brand tone, duration, platforms, loudness requirements, safe-list, must-avoid..."></textarea>
+                  </div>
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="kv">
+                  <div class="field">
+                    <label for="c_deliv">Deliverable</label>
+                    <select id="c_deliv">
+                      <option>Audio Logo (2–6s)</option>
+                      <option>On-Hold Identity Loop (2–5m)</option>
+                      <option>Space Ambience (10–30m)</option>
+                      <option>App Soundscape Set</option>
+                      <option>Full System Identity (multi-format)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="c_timeline">Timeline</label>
+                    <select id="c_timeline">
+                      <option>2 weeks</option>
+                      <option>4 weeks</option>
+                      <option>6 weeks</option>
+                      <option>Flexible</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="c_budget">Budget band</label>
+                    <select id="c_budget">
+                      <option>Under $2k</option>
+                      <option>$2k–$8k</option>
+                      <option>$8k–$20k</option>
+                      <option>$20k+</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="c_dm">Decision maker</label>
+                    <select id="c_dm">
+                      <option>Yes</option>
+                      <option>No</option>
+                      <option>Not sure</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="hr"></div>
+                <div class="small muted">
+                  This MVP stores drafts locally and exports a brief. Add your CRM webhook later.
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">Positioning</p>
+                  <h2>Why MA-ZEN wins B2B</h2>
+                  <div class="sub">Not “mood music”. It’s boundary design and sonic identity.</div>
+                </div>
+                <span class="pill"><span class="dot" aria-hidden="true"></span>Case-study ready</span>
+              </div>
+              <div class="body">
+                <div class="small">
+                  <span class="mono">Deliverables you can sell immediately:</span><br>
+                  • Audio logo (minimal, non-melodic) for brand recall without cheap jingles.<br>
+                  • Quiet space ambience (silence-dominant) for hospitality, clinics, studios, executive rooms.<br>
+                  • App sound layer that reduces cognitive load (no gamified pings).<br><br>
+
+                  <span class="mono">Proof mechanism:</span><br>
+                  Use the Guided Silence product as your “system demo” during discovery calls.
+                </div>
+
+                <div class="hr"></div>
+
+                <div class="small">
+                  <span class="mono">This page can launch today:</span><br>
+                  Press <span class="mono">Export brief</span> to generate a proposal-ready JSON to send or store.
+                </div>
+
+                <div class="hr"></div>
+                <div class="controls">
+                  <button class="ghost" id="saveDraft" type="button">Save draft</button>
+                  <button class="ghost" id="viewDrafts" type="button">View saved</button>
+                </div>
+                <div id="draftList" class="small muted" style="margin-top:10px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const $ = (id) => document.getElementById(id);
+
+    function collectBrief(){
+      return {
+        schema: "MAZEN_B2B_BRIEF_V1",
+        createdAt: new Date().toISOString(),
+        company: $("c_company").value.trim(),
+        contact: $("c_contact").value.trim(),
+        email: $("c_email").value.trim(),
+        industry: $("c_industry").value.trim(),
+        useCase: $("c_use").value.trim(),
+        constraints: $("c_constraints").value.trim(),
+        deliverable: $("c_deliv").value,
+        timeline: $("c_timeline").value,
+        budgetBand: $("c_budget").value,
+        decisionMaker: $("c_dm").value,
+        mazenAngle: "Silence-dominant boundary design. Non-gamified. Identity without manipulation.",
+        nextStep: "Discovery call + reference playlist + draft identity sketch."
+      };
+    }
+
+    function exportBrief(){
+      const brief = collectBrief();
+      state.b2bDrafts.unshift(brief);
+      state.b2bDrafts = state.b2bDrafts.slice(0, 20);
+      saveState();
+
+      downloadBlob(
+        new Blob([JSON.stringify(brief, null, 2)], {type:"application/json"}),
+        `MAZEN_B2B_BRIEF_${safeFile(brief.company || "CLIENT")}.json`
+      );
+      toast("Brief exported");
+      renderDrafts();
+    }
+
+    function mailDraft(){
+      const brief = collectBrief();
+      const subject = encodeURIComponent(`MA-ZEN Audio Branding Inquiry — ${brief.company || "Client"}`);
+      const body = encodeURIComponent(
+`Company: ${brief.company}
+Contact: ${brief.contact}
+Email: ${brief.email}
+Industry: ${brief.industry}
+
+Deliverable: ${brief.deliverable}
+Timeline: ${brief.timeline}
+Budget: ${brief.budgetBand}
+Decision maker: ${brief.decisionMaker}
+
+Use case:
+${brief.useCase}
+
+Constraints:
+${brief.constraints}
+
+MA-ZEN angle:
+${brief.mazenAngle}
+
+Next step:
+${brief.nextStep}
+`
+      );
+      window.location.href = `mailto:${brief.email || ""}?subject=${subject}&body=${body}`;
+    }
+
+    function sample(){
+      const s = sampleB2BBrief();
+      downloadBlob(new Blob([JSON.stringify(s, null, 2)], {type:"application/json"}), "MAZEN_B2B_SAMPLE_BRIEF.json");
+      toast("Sample exported");
+    }
+
+    function renderDrafts(){
+      const box = $("draftList");
+      if(!state.b2bDrafts.length){
+        box.textContent = "No drafts saved.";
+        return;
+      }
+
+      const items = state.b2bDrafts.slice(0,5).map((d,i) => {
+        const label = `${d.company || "Client"} • ${d.deliverable} • ${new Date(d.createdAt).toLocaleDateString()}`;
+        return `
+          <div style="padding:6px 0; border-bottom:1px solid var(--soft);">
+            <span class="mono">${escapeHtml(label)}</span>
+            <button class="ghost" style="margin-left:8px; padding:6px 10px;" type="button" data-i="${i}">Download</button>
+          </div>
+        `;
+      }).join("");
+
+      box.innerHTML = items;
+      [...box.querySelectorAll("button[data-i]")].forEach(btn => {
+        btn.onclick = () => {
+          const i = parseInt(btn.dataset.i, 10);
+          const d = state.b2bDrafts[i];
+          downloadBlob(
+            new Blob([JSON.stringify(d, null, 2)], {type:"application/json"}),
+            `MAZEN_B2B_BRIEF_${safeFile(d.company || "CLIENT")}.json`
+          );
+          toast("Downloaded");
+        };
+      });
+    }
+
+    $("btnExportBrief").onclick = exportBrief;
+    $("btnMail").onclick = mailDraft;
+    $("btnSample").onclick = sample;
+
+    $("saveDraft").onclick = () => {
+      const d = collectBrief();
+      state.b2bDrafts.unshift(d);
+      state.b2bDrafts = state.b2bDrafts.slice(0, 20);
+      saveState();
+      toast("Draft saved");
+      renderDrafts();
+    };
+    $("viewDrafts").onclick = renderDrafts;
+
+    renderDrafts();
+  }
+
+  function renderAccount(){
+    const isPro = state.plan === "pro";
+    page.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div>
+            <p class="title">Account</p>
+            <h1>Plan & Export</h1>
+            <div class="sub">This is where you connect payments later. For now: a clean plan boundary + exports.</div>
+          </div>
+          <div class="controls">
+            <button class="${isPro ? "ghost" : "primary"}" id="togglePlan" type="button">${isPro ? "Switch to FREE" : "Mock Upgrade to PRO"}</button>
+            <button class="ghost" id="exportAll" type="button">Export data</button>
+            <button class="danger" id="wipe" type="button">Wipe local data</button>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="grid">
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">Plan</p>
+                  <h2>${isPro ? "PRO" : "FREE"}</h2>
+                  <div class="sub">${isPro ? "Full library + longer boundaries." : "Core sessions + limited library."}</div>
+                </div>
+                <span class="pill"><span class="dot" aria-hidden="true"></span>Boundary-based pricing</span>
+              </div>
+              <div class="body">
+                <div class="small">
+                  <span class="mono">Free</span>: Guided Silence (88s, 8-min demo), a few foundational soundscapes.<br>
+                  <span class="mono">Pro</span>: Full library presets + longer sessions + additional boundaries.
+                </div>
+                <div class="hr"></div>
+                <div class="small muted">
+                  Replace this mock toggle with Stripe Checkout / Lemonsqueezy / App Store later.
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="head">
+                <div>
+                  <p class="title">Exports</p>
+                  <h2>Portable & audit-friendly</h2>
+                  <div class="sub">Session reports + B2B briefs + preferences.</div>
+                </div>
+              </div>
+              <div class="body">
+                <div class="kv">
+                  <div class="field">
+                    <label>Last session report</label>
+                    <div class="small">${state.lastSessionReport ? escapeHtml(state.lastSessionReport.presetName) + " • " + fmtTime(state.lastSessionReport.elapsedSec) : "None"}</div>
+                    <div class="controls" style="margin-top:10px;">
+                      <button class="ghost" id="dlLast" type="button" ${state.lastSessionReport ? "" : "disabled"}>Download</button>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>B2B drafts</label>
+                    <div class="small">${state.b2bDrafts.length} stored locally</div>
+                    <div class="controls" style="margin-top:10px;">
+                      <button class="ghost" id="dlB2B" type="button" ${state.b2bDrafts.length ? "" : "disabled"}>Download all</button>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Favorites</label>
+                    <div class="small">${Object.keys(state.favorites).length} favorites</div>
+                  </div>
+                  <div class="field">
+                    <label>Engine preferences</label>
+                    <div class="small muted mono">${escapeHtml(JSON.stringify(state.prefs))}</div>
+                  </div>
+                </div>
+                <div class="hr"></div>
+                <div class="small muted">
+                  Data is stored locally in your browser (localStorage). For real accounts, replace with server sync + encryption.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("togglePlan").onclick = () => {
+      state.plan = (state.plan === "pro") ? "free" : "pro";
+      saveState();
+      syncPlanUI();
+      toast("Plan: " + state.plan.toUpperCase());
+      renderAccount();
+    };
+
+    document.getElementById("exportAll").onclick = () => {
+      const payload = {
+        schema: "MAZEN_EXPORT_ALL_V1",
+        exportedAt: new Date().toISOString(),
+        state: {
+          plan: state.plan,
+          favorites: state.favorites,
+          prefs: state.prefs,
+          lastSessionReport: state.lastSessionReport,
+          b2bDrafts: state.b2bDrafts
+        }
+      };
+      downloadBlob(new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"}), "MAZEN_EXPORT_ALL.json");
+      toast("Exported");
+    };
+
+    document.getElementById("wipe").onclick = () => {
+      const ok = confirm("Wipe all local data for MA-ZEN on this browser? This cannot be undone.");
+      if(!ok) return;
+
+      localStorage.removeItem(STORE_KEY);
+      stopAmbientEngine();
+
+      // Reset in-place (keep object reference)
+      const fresh = deepMerge(DEFAULT_STATE, {});
+      for(const k of Object.keys(state)) delete state[k];
+      Object.assign(state, fresh);
+
+      saveState();
+      syncPlanUI();
+      toast("Wiped");
+      renderAccount();
+    };
+
+    const dlLast = document.getElementById("dlLast");
+    if(dlLast){
+      dlLast.onclick = () => {
+        if(!state.lastSessionReport) return;
+        downloadBlob(new Blob([JSON.stringify(state.lastSessionReport, null, 2)], {type:"application/json"}), "MAZEN_SESSION_REPORT.json");
+        toast("Downloaded");
+      };
+    }
+
+    const dlB2B = document.getElementById("dlB2B");
+    if(dlB2B){
+      dlB2B.onclick = () => {
+        downloadBlob(new Blob([JSON.stringify(state.b2bDrafts, null, 2)], {type:"application/json"}), "MAZEN_B2B_DRAFTS.json");
+        toast("Downloaded");
+      };
+    }
+  }
+
+  /* =========================================================
+     Catalog
+  ========================================================= */
+  function soundscapeCatalog(){
+    return [
+      {
+        id:"FND-PAPER-QUIET",
+        tier:"free",
+        name:"Paper Quiet",
+        desc:"A light paper-like bed that often disappears. Sparse neutral events.",
+        tags:["silence-dominant","neutral","work"],
+        engine:{ texture:"paper", silenceBias:0.88, warmth:0.32, motion:0.22 }
+      },
+      {
+        id:"FND-STONE-BOUNDARY",
+        tier:"free",
+        name:"Stone Boundary",
+        desc:"Lower, denser texture. A boundary that feels physical without melody.",
+        tags:["boundary","low","grounded"],
+        engine:{ texture:"stone", silenceBias:0.86, warmth:0.46, motion:0.18 }
+      },
+      {
+        id:"FND-AIR-OPEN",
+        tier:"free",
+        name:"Air Open",
+        desc:"Higher filter profile with frequent gaps. Clear, quiet, empty-first.",
+        tags:["open","clean","minimal"],
+        engine:{ texture:"air", silenceBias:0.90, warmth:0.28, motion:0.20 }
+      },
+
+      // PRO set
+      {
+        id:"PRO-MA-94",
+        tier:"pro",
+        name:"MA 94",
+        desc:"Silence-first architecture. Events are rare and short. Designed as proof.",
+        tags:["proof","94% silence","ritual"],
+        engine:{ texture:"paper", silenceBias:0.94, warmth:0.25, motion:0.12 }
+      },
+      {
+        id:"PRO-FOCUS-FIELD",
+        tier:"pro",
+        name:"Focus Field",
+        desc:"For deep work blocks. Silence-dominant but steady enough to hold attention.",
+        tags:["deep work","field","steady"],
+        engine:{ texture:"stone", silenceBias:0.84, warmth:0.40, motion:0.28 }
+      },
+      {
+        id:"PRO-EXIT-WITHOUT-TRACE",
+        tier:"pro",
+        name:"Exit Without Trace",
+        desc:"Almost nothing. A boundary that dissolves. Not relaxation—release.",
+        tags:["dissolve","impermanence","minimal"],
+        engine:{ texture:"air", silenceBias:0.96, warmth:0.18, motion:0.08 }
+      },
+      {
+        id:"PRO-SOFT-NEUTRAL",
+        tier:"pro",
+        name:"Soft Neutral",
+        desc:"Gentle warmth with long gaps. For users who still want a human-safe edge.",
+        tags:["gentle","neutral","safe"],
+        engine:{ texture:"paper", silenceBias:0.88, warmth:0.55, motion:0.18 }
+      }
+    ];
+  }
+
+  /* =========================================================
+     B2B sample brief
+  ========================================================= */
+  function sampleB2BBrief(){
+    return {
+      schema: "MAZEN_B2B_BRIEF_V1",
+      createdAt: new Date().toISOString(),
+      company: "Example Hotel Group",
+      contact: "Head of Guest Experience",
+      email: "experience@example.com",
+      industry: "Hospitality",
+      useCase: "Lobby ambience + in-room app sound layer + on-hold identity loop.",
+      constraints: "No melody. No nature clichés. Loudness must be low (-24 LUFS target). Must avoid anxiety triggers.",
+      deliverable: "Space Ambience (10–30m)",
+      timeline: "4 weeks",
+      budgetBand: "$8k–$20k",
+      decisionMaker: "Yes",
+      mazenAngle: "Silence-dominant boundary design. Non-gamified. Identity without manipulation.",
+      nextStep: "Discovery call + reference set + first identity sketch + revision loop."
+    };
+  }
+
+  // Final: reflect plan badge
+  syncPlanUI();
+})();
+</script>
+</body>
+</html>
