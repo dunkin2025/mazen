@@ -5,21 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#0e0d0c">
-<meta name="description" content="MA-ZEN — silence-dominant guided sessions and intentional sound architecture." />
-<title>MA-ZEN // Boundary Sessions • B2B Audio Branding • Soundscape Library</title>
-<link rel="icon" href="favicon.ico">
-<link rel="icon" href="/favicon.ico?v=2" sizes="any">
-<link rel="shortcut icon" href="/favicon.ico?v=2">
+<meta name="description" content="MA-ZEN — silence-dominant guided sessions, intentional sound architecture, and enterprise audio identity." />
+<title>MA-ZEN // Guided Silence • Soundscape Library • B2B Audio Branding</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Syne+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Syne+Mono&display=swap" rel="stylesheet">
 
 <style>
   /* =========================================================
-     MA-ZEN Launchable HTML Product (Static SPA)
-     v1.2 — launch edition hardening (coherence, UX, safety)
-     - Single-file, GitHub Pages friendly
+     MA-ZEN Unified Product — Single-file Static SPA
+     Combined: ChatGPT architecture + Claude content + unified design
+     - GitHub Pages friendly
      - Local-first persistence (localStorage)
      - Web Audio generated texture (no asset files)
+     - Full SPA routing with cleanup
      ========================================================= */
 
   :root{
@@ -39,7 +38,6 @@
     --shadow: 0 14px 40px rgba(10,9,6,0.06);
   }
 
-  /* Respect reduced motion preferences */
   @media (prefers-reduced-motion: reduce){
     * { scroll-behavior: auto !important; }
     .meter > div { transition: none !important; }
@@ -81,6 +79,8 @@
     position: sticky;
     top:0;
     height: 100vh;
+    display:flex;
+    flex-direction:column;
   }
   @media (max-width: 980px){
     .side{ position: relative; height:auto; border-right:none; border-bottom:1px solid var(--line); }
@@ -134,6 +134,8 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     background: rgba(242,237,228,0.55);
+    flex:1;
+    overflow-y:auto;
   }
   .nav a{
     display:flex;
@@ -169,7 +171,7 @@
   }
 
   /* Main */
-  .main{ padding: 18px 16px 40px; }
+  .main{ padding: 18px 16px 40px; overflow-y:auto; }
   .page{ max-width: 1040px; margin: 0 auto; }
   .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media (max-width: 980px){ .grid{ grid-template-columns: 1fr; } }
@@ -211,6 +213,7 @@
     font-size: 22px;
     color: var(--void);
   }
+  h1 em, h2 em{ font-style:italic; font-weight:inherit; }
   .sub{
     color: var(--fade);
     font-size: 15px;
@@ -310,6 +313,7 @@
     flex-direction:column;
     gap: 10px;
     min-height: 160px;
+    transition: border-color .2s, background .2s;
   }
   .tile .name{ font-size: 18px; color: var(--void); }
   .tile .meta{ color: var(--fade); font-size: 13px; line-height: 1.4; }
@@ -371,67 +375,44 @@
     transition: width .25s ease;
   }
 
-  /* Timeline + activity */
-  .viz{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
+  /* Viz */
+  .viz{ display:grid; grid-template-columns: 1fr; gap: 10px; }
   .spark{
-    width:100%;
-    height: 62px;
-    border-radius: 16px;
+    width:100%; height: 62px; border-radius: 16px;
     border: 1px solid var(--line);
     background: rgba(242,237,228,0.62);
     overflow:hidden;
   }
   .vizRow{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    align-items:center;
-    justify-content:space-between;
+    display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
   }
   .badge{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
+    display:inline-flex; align-items:center; gap:8px;
     border:1px solid rgba(10,9,6,0.10);
     background: rgba(232,228,220,0.45);
-    padding: 7px 10px;
-    border-radius: 999px;
-    font-family:"Syne Mono", monospace;
-    font-size: 11px;
-    color: rgba(10,9,6,0.72);
+    padding: 7px 10px; border-radius: 999px;
+    font-family:"Syne Mono", monospace; font-size: 11px; color: rgba(10,9,6,0.72);
   }
   .miniBar{
-    width: 120px;
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(10,9,6,0.08);
-    overflow:hidden;
+    width: 120px; height: 8px; border-radius: 999px;
+    background: rgba(10,9,6,0.08); overflow:hidden;
   }
   .miniBar > div{
-    height:100%;
-    width:0%;
+    height:100%; width:0%;
     background: rgba(184,154,106,0.85);
     transition: width .25s ease;
   }
 
   /* Fullscreen Ritual Mode */
   .ritual{
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background:
       radial-gradient(1200px 700px at 30% 10%, rgba(184,154,106,0.07), transparent 60%),
       radial-gradient(800px 500px at 70% 90%, rgba(184,154,106,0.04), transparent 60%),
       #0c0b0a;
     color: rgba(244,239,230,0.92);
-    display:none;
-    z-index: 100;
-    align-items:center;
-    justify-content:center;
-    padding: 16px;
+    display:none; z-index: 100;
+    align-items:center; justify-content:center; padding: 16px;
   }
   .ritual.on{ display:flex; }
   .ritualInner{ width: min(860px, 92vw); text-align:center; animation: breathe 18s ease-in-out infinite; }
@@ -443,10 +424,8 @@
     letter-spacing: 2px;
   }
   .ritualPhase{
-    margin-top: 12px;
-    font-size: 16px;
-    color: rgba(244,239,230,0.72);
-    min-height: 22px;
+    margin-top: 12px; font-size: 16px;
+    color: rgba(244,239,230,0.72); min-height: 22px;
   }
   .ritualHint{
     margin-top: 30px;
@@ -463,20 +442,13 @@
 
   /* Toast */
   .toast{
-    position: fixed;
-    left: 50%;
-    bottom: 18px;
-    transform: translateX(-50%);
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
     border: 1px solid rgba(184,154,106,0.35);
     background: rgba(10,9,6,0.78);
     color: rgba(244,239,230,0.9);
-    border-radius: 999px;
-    padding: 10px 14px;
-    font-family:"Syne Mono", monospace;
-    font-size: 12px;
-    letter-spacing: 0.5px;
-    display:none;
-    z-index: 120;
+    border-radius: 999px; padding: 10px 14px;
+    font-family:"Syne Mono", monospace; font-size: 12px; letter-spacing: 0.5px;
+    display:none; z-index: 120;
   }
   .toast.on{ display:block; }
 
@@ -484,7 +456,54 @@
   .hr{ height:1px; background: var(--line); margin: 12px 0; }
   .small{ font-size: 13px; color: rgba(90,82,72,0.92); line-height: 1.5; }
 
-  /* Focus outline improvements for links */
+  /* Pillar cards (Claude philosophy content) */
+  .pillarGrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+  @media(max-width:720px){ .pillarGrid{ grid-template-columns:1fr; } }
+  .pillar{
+    padding:20px 16px;
+    border-right:1px solid var(--line);
+    text-align:center;
+  }
+  .pillar:last-child{ border-right:none; }
+  .pillarChar{ font-size:36px; margin-bottom:8px; opacity:0.35; }
+  .pillarName{
+    font-family:"Syne Mono",monospace; font-size:10px;
+    letter-spacing:2px; text-transform:uppercase;
+    color:var(--gold); margin-bottom:8px;
+  }
+  .pillar p{ font-size:13px; color:var(--fade); margin:0; line-height:1.4; }
+
+  /* Services pricing (Claude B2B content) */
+  .serviceGrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  @media(max-width:720px){ .serviceGrid{ grid-template-columns:1fr; } }
+  .serviceCard{
+    border:1px solid var(--line); border-radius:18px;
+    padding:16px; background:rgba(242,237,228,0.62);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .serviceCard.featured{ border-color:rgba(184,154,106,0.55); background:rgba(184,154,106,0.08); }
+  .servicePrice{
+    font-family:"Syne Mono",monospace; font-size:20px; color:var(--gold);
+  }
+
+  /* FAQ (Claude content) */
+  .faqItem{ border-bottom:1px solid var(--line); }
+  .faqQ{
+    width:100%; background:none; border:none; border-radius:0;
+    color:var(--void); font-family:"Cormorant Garamond",serif;
+    font-size:18px; font-weight:500; text-align:left;
+    padding:16px 0; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+  }
+  .faqQ:hover{ background:none; }
+  .faqToggle{ font-size:20px; color:var(--gold); transition:transform .3s; flex-shrink:0; }
+  .faqItem.open .faqToggle{ transform:rotate(45deg); }
+  .faqA{
+    font-size:14px; color:var(--fade); line-height:1.6;
+    max-height:0; overflow:hidden; transition:max-height .4s ease, padding .3s;
+  }
+  .faqItem.open .faqA{ max-height:300px; padding-bottom:16px; }
+
   a:focus{ outline:none; box-shadow: 0 0 0 4px var(--ring); border-radius: 10px; }
 </style>
 </head>
@@ -504,13 +523,13 @@
 
     <nav class="nav" id="nav" aria-label="Primary navigation">
       <a href="#home" data-route="home"><span>Home</span><small>Portfolio</small></a>
-      <a href="#why" data-route="why"><span>Why MA-ZEN</span><small>Focus boundary</small></a>
+      <a href="#why" data-route="why"><span>Why MA-ZEN</span><small>Philosophy</small></a>
       <a href="#sessions" data-route="sessions"><span>Guided Silence</span><small>THE PROOF</small></a>
       <a href="#library" data-route="library"><span>Soundscape Library</span><small>THE FLOOR</small></a>
       <a href="#b2b" data-route="b2b"><span>B2B Audio Branding</span><small>THE CASH</small></a>
       <a href="#account" data-route="account"><span>Account</span><small>Plan & export</small></a>
-          <a href="#quality" data-route="quality"><span>Quality</span><small>Testing</small></a>
-</nav>
+      <a href="#quality" data-route="quality"><span>Quality</span><small>Testing</small></a>
+    </nav>
 
     <div class="sideFooter">
       <div class="row">
@@ -537,7 +556,7 @@
     <div class="mono">MA-ZEN // RITUAL MODE</div>
     <div class="ritualTime" id="ritualTime" aria-label="Remaining session time">--:--</div>
     <div class="ritualPhase" id="ritualPhase"></div>
-    <div class="ritualHint">ESC — exit • SPACE — play/pause • M — mute labels</div>
+    <div class="ritualHint">ESC — exit · SPACE — play/pause · M — mute labels</div>
     <button id="ritualA11yExit" type="button" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Exit Ritual</button>
   </div>
 </div>
@@ -549,38 +568,26 @@
   "use strict";
 
   /* =========================================================
-     Principles for publication-grade code:
-     - Deterministic state boundaries (single store key)
-     - Deep-merge defaults to prevent schema drift
-     - Route-level cleanup (no orphaned intervals/RAF)
-     - Audio context resume handled (browser autoplay policy)
-     - Minimal globals (IIFE encapsulation)
-     ========================================================= */
-
-  /* ---------------------------
      Storage + State
-  --------------------------- */
-  const STORE_KEY = "mazen_launch_v1_2_3";
+  ========================================================= */
+  const STORE_KEY = "mazen_v3";
 
   const DEFAULT_STATE = Object.freeze({
-    plan: "free", // "free" | "pro"
-    favorites: {}, // soundscapeId -> true
+    plan: "free",
+    favorites: {},
     lastSessionReport: null,
     prefs: {
       labels: true,
-      masterDb: -14,
-      silenceBias: 0.82,  // 0..1 (higher = more silence)
-      texture: "paper",   // "paper" | "air" | "stone"
-      warmth: 0.35,       // 0..1
-      motion: 0.25        // 0..1 (event probability scaling)
+      masterDb: 0,
+      silenceBias: 0.82,
+      texture: "paper",
+      warmth: 0.35,
+      motion: 0.25
     },
     b2bDrafts: [],
-    _ui: {
-      filterFavs: false
-    }
+    _ui: { filterFavs: false }
   });
 
-  /** Deep merge plain objects. Arrays are replaced. */
   function deepMerge(base, patch){
     const out = Array.isArray(base) ? base.slice() : { ...base };
     if(!patch || typeof patch !== "object") return out;
@@ -589,7 +596,7 @@
       const pv = patch[k];
       if(bv && typeof bv === "object" && !Array.isArray(bv) && pv && typeof pv === "object" && !Array.isArray(pv)){
         out[k] = deepMerge(bv, pv);
-      }else{
+      } else {
         out[k] = pv;
       }
     }
@@ -600,27 +607,20 @@
     try{
       const raw = localStorage.getItem(STORE_KEY);
       if(!raw) return deepMerge(DEFAULT_STATE, {});
-      const parsed = JSON.parse(raw);
-      return deepMerge(DEFAULT_STATE, parsed);
-    }catch{
-      return deepMerge(DEFAULT_STATE, {});
-    }
+      return deepMerge(DEFAULT_STATE, JSON.parse(raw));
+    } catch{ return deepMerge(DEFAULT_STATE, {}); }
   }
 
   const state = loadState();
 
   function saveState(){
-    try{
-      localStorage.setItem(STORE_KEY, JSON.stringify(state));
-    }catch{
-      // If storage quota fails, app still works; just won't persist.
-      toast("Storage unavailable");
-    }
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+    catch{ toast("Storage unavailable"); }
   }
 
-  /* ---------------------------
+  /* =========================================================
      Routing with cleanup
-  --------------------------- */
+  ========================================================= */
   const page = document.getElementById("page");
   const nav = document.getElementById("nav");
   const planText = document.getElementById("planText");
@@ -635,32 +635,16 @@
       for(const rafId of cleanup.routeRAFs) cancelAnimationFrame(rafId);
       cleanup.routeRAFs.clear();
     },
-    setInterval(fn, ms){
-      const id = window.setInterval(fn, ms);
-      cleanup.routeTimers.add(id);
-      return id;
-    },
-    setTimeout(fn, ms){
-      const id = window.setTimeout(fn, ms);
-      cleanup.routeTimers.add(id);
-      return id;
-    },
-    requestAnimationFrame(fn){
-      const id = window.requestAnimationFrame(fn);
-      cleanup.routeRAFs.add(id);
-      return id;
-    }
+    setInterval(fn, ms){ const id = window.setInterval(fn, ms); cleanup.routeTimers.add(id); return id; },
+    setTimeout(fn, ms){ const id = window.setTimeout(fn, ms); cleanup.routeTimers.add(id); return id; },
+    requestAnimationFrame(fn){ const id = window.requestAnimationFrame(fn); cleanup.routeRAFs.add(id); return id; }
   };
 
-  function route(){
-    return (location.hash || "#home").replace("#","");
-  }
+  function route(){ return (location.hash || "#home").replace("#",""); }
 
   function setNavActive(){
     const r = route();
-    [...nav.querySelectorAll("a")].forEach(a => {
-      a.classList.toggle("active", a.dataset.route === r);
-    });
+    [...nav.querySelectorAll("a")].forEach(a => a.classList.toggle("active", a.dataset.route === r));
   }
 
   window.addEventListener("hashchange", renderRoute);
@@ -681,338 +665,121 @@
     else renderHome();
   }
 
-  /* ---------------------------
+  /* =========================================================
      UI Helpers
-  --------------------------- */
+  ========================================================= */
   const toastEl = document.getElementById("toast");
   let toastTimer = null;
-
   function toast(msg){
-    toastEl.textContent = msg;
-    toastEl.classList.add("on");
+    toastEl.textContent = msg; toastEl.classList.add("on");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove("on"), 1700);
   }
 
   function fmtTime(sec){
     sec = Math.max(0, Math.floor(sec));
-    const m = String(Math.floor(sec/60)).padStart(2,"0");
-    const s = String(sec%60).padStart(2,"0");
-    return `${m}:${s}`;
+    return String(Math.floor(sec/60)).padStart(2,"0") + ":" + String(sec%60).padStart(2,"0");
   }
 
   function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
+    return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
 
-  function safeFile(s){
-    return String(s).trim().replace(/[^a-z0-9_\-]+/gi,"_").slice(0,40) || "CLIENT";
-  }
+  function safeFile(s){ return String(s).trim().replace(/[^a-z0-9_\-]+/gi,"_").slice(0,40) || "CLIENT"; }
 
   function downloadBlob(blob, filename){
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
   }
 
   function clamp01(x){ return Math.max(0, Math.min(1, x)); }
   function dbToGain(db){ return Math.pow(10, db/20); }
 
-  // Deterministic RNG (session-coherent field). Avoids "pure randomness" feel.
   function hash32(str){
     let h = 2166136261;
-    for(let i=0;i<str.length;i++){
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
+    for(let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
     return (h >>> 0) || 1;
   }
   function createRNG(seed){
     let s = (seed >>> 0) % 2147483647;
     if(s <= 0) s += 2147483646;
-    return function(){
-      s = (s * 16807) % 2147483647;
-      return (s - 1) / 2147483646;
-    };
+    return function(){ s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
   }
-
-
-
-
-/* =========================================================
-   Onset Audio Renderer (File export)
-   - Generates REAL audible WAV without presets/assets
-   - Deterministic per seed + prefs
-   - Used to build your audio library later
-   ========================================================= */
-
-function rngFromSeed(seed){
-  return createRNG((seed >>> 0) || 1);
-}
-
-function textureCutoffHz(kind){
-  return (kind === "air") ? 2400 : (kind === "stone") ? 680 : 1100; // paper default
-}
-
-function onePoleLP(x, cutoffHz, sr){
-  const c = Math.max(10, Math.min(cutoffHz, sr*0.45));
-  const a = Math.exp(-2*Math.PI*c/sr);
-  let y0 = 0;
-  for(let i=0;i<x.length;i++){
-    y0 = (1-a)*x[i] + a*y0;
-    x[i] = y0;
-  }
-  return x;
-}
-
-function renderOnsetStereoWav({ seconds, seed, prefs }){
-  // Stereo render: small differences per channel for width
-  const sr = 48000;
-  const n = Math.max(1, Math.floor(seconds * sr));
-
-  const sil = clamp01(prefs.silenceBias);
-  const warmth = clamp01(prefs.warmth);
-  const motion = clamp01(prefs.motion);
-
-  const masterDb = prefs.masterDb ?? -14;
-  const masterGain = dbToGain(masterDb);
-
-  const rL = rngFromSeed(hash32("L|" + seed));
-  const rR = rngFromSeed(hash32("R|" + seed));
-
-  function chan(rng, phaseOff){
-    // Base anchor (prevents "empty")
-    const lowFreq = 58 + warmth*18;
-    const lowAmp  = 0.010 + (1 - sil)*0.006;
-
-    // Noise bed
-    const noise = new Float32Array(n);
-    for(let i=0;i<n;i++){
-      noise[i] = (rng()*2 - 1) * 0.16;
-    }
-    onePoleLP(noise, textureCutoffHz(prefs.texture), sr);
-
-    // Bed level (always > 0)
-    const bedBase = 0.012 + (1 - sil)*0.035;
-    for(let i=0;i<n;i++){
-      // Slow macro breathing (very subtle)
-      const t = i / sr;
-      const macro = 0.88 + 0.12 * Math.sin(2*Math.PI*(0.045 + motion*0.06)*t);
-      noise[i] = noise[i] * bedBase * macro;
-    }
-
-    // Pulse layer
-    const pFreq = 90 + warmth*140;
-    const pulseAmp = 0.006 + (1 - sil)*0.020;
-    const out = new Float32Array(n);
-
-    for(let i=0;i<n;i++){
-      const t = i / sr;
-      const low = lowAmp * Math.sin(2*Math.PI*lowFreq*t + phaseOff);
-      const am  = 0.45 + 0.55 * (0.5 + 0.5*Math.sin(2*Math.PI*(0.05 + motion*0.06)*t));
-      const pulse = Math.sin(2*Math.PI*pFreq*t + phaseOff*0.5) * am * pulseAmp;
-      out[i] = low + noise[i] + pulse;
-    }
-
-    // Sparse marker events
-    // pacing-like density driven by motion + silenceBias
-    const tick = Math.floor(sr * 0.65);
-    const baseDensity = 0.00070 * (0.55 + motion) * (0.7 + 0.8*(1 - sil));
-    let i = 0;
-    while(i < n){
-      if(rng() < baseDensity){
-        const idx = i + Math.floor(rng()*tick);
-        if(idx < n){
-          const dur = 0.22 + rng()*0.70;
-          const length = Math.min(n - idx, Math.floor(dur*sr));
-          const f = (220 + rng()*880) * (1 - 0.10*sil);
-          const atk = 0.015;
-          const dec = 0.16 + 0.40*(0.4 + warmth);
-          const peak = 0.014 + 0.030*(1 - sil)*(0.25 + warmth);
-
-          const atkN = Math.max(1, Math.floor(atk*sr));
-          for(let k=0;k<length;k++){
-            const tt = k / sr;
-            let env;
-            if(k < atkN) env = k/atkN;
-            else env = Math.exp(-(tt - atk)/Math.max(1e-4, dec));
-            const s = Math.sin(2*Math.PI*f*tt) * env * peak;
-            out[idx + k] += s;
-          }
-        }
-      }
-      i += tick;
-    }
-
-    // Master + soft clip
-    for(let i=0;i<n;i++){
-      const v = out[i] * masterGain;
-      out[i] = Math.tanh(v);
-    }
-    return out;
-  }
-
-  const L = chan(rL, 0.0);
-  const R = chan(rR, 0.7);
-
-  // Normalize safely
-  let mx = 1e-9;
-  for(let i=0;i<n;i++){
-    const a = Math.max(Math.abs(L[i]), Math.abs(R[i]));
-    if(a > mx) mx = a;
-  }
-  if(mx > 0.98){
-    const g = 0.98/mx;
-    for(let i=0;i<n;i++){ L[i]*=g; R[i]*=g; }
-  }
-
-  const wav = encodeWav16Stereo(L, R, sr);
-  return wav;
-}
-
-function encodeWav16Stereo(L, R, sr){
-  const n = Math.min(L.length, R.length);
-  const bytesPerSample = 2;
-  const numCh = 2;
-  const blockAlign = numCh * bytesPerSample;
-  const byteRate = sr * blockAlign;
-  const dataSize = n * blockAlign;
-  const buffer = new ArrayBuffer(44 + dataSize);
-  const view = new DataView(buffer);
-
-  function writeStr(off, s){
-    for(let i=0;i<s.length;i++) view.setUint8(off+i, s.charCodeAt(i));
-  }
-  function clamp16(x){
-    x = Math.max(-1, Math.min(1, x));
-    return x < 0 ? (x * 32768) : (x * 32767);
-  }
-
-  writeStr(0, "RIFF");
-  view.setUint32(4, 36 + dataSize, true);
-  writeStr(8, "WAVE");
-  writeStr(12, "fmt ");
-  view.setUint32(16, 16, true);      // PCM header size
-  view.setUint16(20, 1, true);       // PCM
-  view.setUint16(22, numCh, true);
-  view.setUint32(24, sr, true);
-  view.setUint32(28, byteRate, true);
-  view.setUint16(32, blockAlign, true);
-  view.setUint16(34, 16, true);      // bits
-  writeStr(36, "data");
-  view.setUint32(40, dataSize, true);
-
-  let o = 44;
-  for(let i=0;i<n;i++){
-    view.setInt16(o, clamp16(L[i]), true); o += 2;
-    view.setInt16(o, clamp16(R[i]), true); o += 2;
-  }
-  return new Blob([buffer], { type: "audio/wav" });
-}
 
   /* =========================================================
-     Audio Engine (Web Audio API)
-     - Generates a quiet, colored-noise bed (looped buffer)
-     - Sparse neutral events (short sine bursts, filtered)
-     - Tracks activity for meaningful visualizations
-     - Autoplay-safe: resumes only on user gesture
-     ========================================================= */
+     Audio Engine — GAIN MATH:
+     White noise (amp 1.0) → lowpass (passes ~22% RMS) → bedGain → master → speakers
+     Effective noise floor after filter: ~0.22 RMS
+     For -18dBFS output at master=1.0: need bedGain ≈ 0.22/0.22 × 0.12 ≈ 0.55
+     Bed gain range: 0.30 (quiet) to 0.70 (present) when ON, 0.001 when OFF
+     Ping/events bypass the bed chain → direct gain 0.15–0.30
+  ========================================================= */
   const audio = {
-    ctx: null,
-    master: null,
-    bedGain: null,
-    bedSrc: null,
-    bedFilter: null,
-    running: false,
-    tickTimer: null,
-    muted: false,
-    // metrics
-    lastEventAt: 0,
-    eventsInWindow: 0,
-    activity: 0, // 0..1 (smoothed)
-    rng: null
+    ctx: null, master: null, bedGain: null, bedSrc: null, bedFilter: null,
+    forceOnUntil: 0,
+    running: false, tickTimer: null, muted: false,
+    lastEventAt: 0, eventsInWindow: 0, activity: 0, rng: null
   };
 
   function ensureAudio(){
     if(audio.ctx) return;
-
     const Ctx = window.AudioContext || window.webkitAudioContext;
     audio.ctx = new Ctx({ latencyHint: "interactive" });
 
+    // Master output
     audio.master = audio.ctx.createGain();
-    audio.master.gain.value = dbToGain(state.prefs.masterDb);
-    audio.comp = audio.ctx.createDynamicsCompressor();
-    audio.comp.threshold.value = -28;
-    audio.comp.knee.value = 24;
-    audio.comp.ratio.value = 4;
-    audio.comp.attack.value = 0.003;
-    audio.comp.release.value = 0.18;
-    audio.master.connect(audio.comp);
-    audio.comp.connect(audio.ctx.destination);
+    audio.master.gain.value = dbToGain(Number(state.prefs.masterDb) || 0);
+    audio.master.connect(audio.ctx.destination);
 
-    // Low anchor (prevents perceived silence)
-    audio.anchorOsc = audio.ctx.createOscillator();
-    audio.anchorGain = audio.ctx.createGain();
-    audio.anchorOsc.type = "sine";
-    audio.anchorOsc.frequency.value = 58;
-    audio.anchorGain.gain.value = 0.0001;
-    audio.anchorOsc.connect(audio.anchorGain);
-    audio.anchorGain.connect(audio.master);
-    audio.anchorOsc.start();
-
-
+    // Noise bed chain: noiseBuffer → bedGain → lowpass → master
     audio.bedGain = audio.ctx.createGain();
-    audio.bedGain.gain.value = 0.0001;
-
+    audio.bedGain.gain.value = 0.001; // silent until engine starts
     audio.bedFilter = audio.ctx.createBiquadFilter();
     audio.bedFilter.type = "lowpass";
     audio.bedFilter.frequency.value = 900;
-
     audio.bedGain.connect(audio.bedFilter);
     audio.bedFilter.connect(audio.master);
 
-    // Noise buffer (2s loop). For “colored” feel, we apply lowpass later.
+    // Generate 2 seconds of white noise at FULL amplitude
     const noiseLen = Math.floor(audio.ctx.sampleRate * 2);
     const noiseBuf = audio.ctx.createBuffer(1, noiseLen, audio.ctx.sampleRate);
     const data = noiseBuf.getChannelData(0);
-    for(let i = 0; i < data.length; i++){
-      data[i] = (rand()*2 - 1) * 0.22;
-    }
-
+    for(let i = 0; i < data.length; i++) data[i] = (Math.random()*2 - 1); // full ±1.0
     const src = audio.ctx.createBufferSource();
-    src.buffer = noiseBuf;
-    src.loop = true;
-    src.connect(audio.bedGain);
-    src.start();
-
+    src.buffer = noiseBuf; src.loop = true;
+    src.connect(audio.bedGain); src.start();
     audio.bedSrc = src;
+
     setTexture(state.prefs.texture);
+    console.log("[MA-ZEN] Audio context created, sample rate:", audio.ctx.sampleRate);
   }
 
   async function resumeAudioContext(){
     ensureAudio();
     if(!audio.ctx) return false;
     if(audio.ctx.state === "suspended"){
-      try{
-        await audio.ctx.resume();
-      }catch{
-        // Ignore; browser policy can still block in rare cases.
-      }
+      try{ await audio.ctx.resume(); } catch(e){ console.warn("[MA-ZEN] Resume failed:", e); }
     }
+    console.log("[MA-ZEN] AudioContext state:", audio.ctx.state);
     return audio.ctx.state === "running";
   }
 
-  // One-time user-gesture hook to satisfy autoplay restrictions
+  async function unlockAudio(reason="manual"){
+    const ok = await resumeAudioContext();
+    if(!ok){
+      toast("Audio still blocked — try click once, then retry");
+      return false;
+    }
+    // A clearly-audible confirmation tone
+    startupPing(0.35, 523.25, 0.45); // C5
+    console.log("[MA-ZEN] Audio unlocked ("+reason+"), state:", audio.ctx?.state);
+    toast("Audio unlocked");
+    return true;
+  }
+
   const gestureResume = async () => {
     await resumeAudioContext();
     window.removeEventListener("pointerdown", gestureResume);
@@ -1022,48 +789,49 @@ function encodeWav16Stereo(L, R, sr){
   window.addEventListener("keydown", gestureResume, { once: false });
 
   function setMasterDb(db){
-    state.prefs.masterDb = db;
-    saveState();
-    if(audio.master) audio.master.gain.value = dbToGain(db);
+    state.prefs.masterDb = db; saveState();
+    if(audio.master) audio.master.gain.value = dbToGain(Number(db) || 0);
   }
 
   function setTexture(kind){
-    state.prefs.texture = kind;
-    saveState();
+    state.prefs.texture = kind; saveState();
     if(!audio.ctx) return;
     const t = audio.ctx.currentTime;
-
-    // texture => filter profile
-    const f = (kind === "paper") ? 1100 : (kind === "air") ? 2400 : 680;
+    // Higher cutoff = brighter/airier; lower = darker/warmer
+    const f = (kind === "paper") ? 1400 : (kind === "air") ? 3200 : 800;
     audio.bedFilter.frequency.setTargetAtTime(f, t, 0.15);
   }
 
-  function startAmbientEngine(){
+  async function startAmbientEngine(){
     ensureAudio();
-    resumeAudioContext(); // best effort
+    const ok = await resumeAudioContext();
+    if(!ok) console.warn("[MA-ZEN] AudioContext not running!");
     audio.running = true;
-    // If not in a guided session, seed engine RNG for coherent playback.
     if(!session?.running) audio.rng = createRNG(hash32(`ENGINE|${Date.now()}|${state.prefs.texture}`));
+
+    // Ramp bed to an immediately audible level (and hold ON briefly so users always hear it)
+    if(audio.ctx && audio.bedGain){
+      const now = audio.ctx.currentTime;
+      audio.forceOnUntil = now + 2.5; // guarantee audible bed for first 2.5s
+      audio.bedGain.gain.cancelScheduledValues(now);
+      audio.bedGain.gain.setTargetAtTime(0.55, now, 0.05); // louder initial bed
+    }
 
     if(audio.tickTimer) clearInterval(audio.tickTimer);
     audio.tickTimer = setInterval(engineTick, 650);
+    console.log("[MA-ZEN] Ambient engine started, master:", audio.master?.gain.value.toFixed(3));
   }
 
   function stopAmbientEngine(){
     audio.running = false;
     if(audio.tickTimer) clearInterval(audio.tickTimer);
     audio.tickTimer = null;
-
-    if(audio.ctx){
-      const t = audio.ctx.currentTime;
-      audio.bedGain.gain.setTargetAtTime(0.00015, t, 0.12);
-      if(audio.anchorGain) audio.anchorGain.gain.setTargetAtTime(0.00015, t, 0.12);
+    if(audio.ctx && audio.bedGain){
+      audio.bedGain.gain.setTargetAtTime(0.001, audio.ctx.currentTime, 0.15);
     }
   }
 
-
   function rand(){
-    // Prefer session RNG; fall back to engine RNG; then Math.random()
     if(session?.rng) return session.rng();
     if(audio.rng) return audio.rng();
     return Math.random();
@@ -1071,120 +839,80 @@ function encodeWav16Stereo(L, R, sr){
 
   function engineTick(){
     if(!audio.running || !audio.ctx) return;
-
     const now = audio.ctx.currentTime;
     const silenceBias = clamp01(state.prefs.silenceBias);
     const motion = clamp01(state.prefs.motion);
     const warmth = clamp01(state.prefs.warmth);
 
-    // Bed presence probability: more silenceBias = less bed
-    const bedOnChance = 0.70 * (1 - silenceBias) + 0.05;
-    const bedOn = rand() < bedOnChance;
+    // Bed ON/OFF probability: at 82% silence bias, ~22% chance bed is on per tick
+    const bedOnChance = 0.75 * (1 - silenceBias) + 0.12;
+    const bedOn = (now < audio.forceOnUntil) ? true : (rand() < bedOnChance);
 
-    const bedTarget = bedOn ? (0.018 + 0.030 * (1 - silenceBias) * (0.35 + warmth)) : 0.00015;
-    audio.bedGain.gain.setTargetAtTime(bedTarget, now, 0.20);
-    // Anchor follows bed slightly (still subtle)
-    if(audio.anchorGain){
-      const aTarget = 0.004 + 0.006*(1 - silenceBias);
-      audio.anchorGain.gain.setTargetAtTime(aTarget, now, 0.35);
-      audio.anchorOsc.frequency.setTargetAtTime(58 + warmth*18, now, 0.35);
-    }
+    // Bed gain: 0.30–0.70 when ON (audible through lowpass), 0.001 when OFF
+    const bedTarget = bedOn
+      ? (0.30 + 0.40 * (1 - silenceBias) * (0.3 + warmth * 0.7))
+      : 0.001;
+    audio.bedGain.gain.setTargetAtTime(bedTarget, now, 0.25);
 
     // Sparse tonal event probability
-    const baseEventChance = 0.12 * (1 - silenceBias) + 0.02;
+    const baseEventChance = 0.14 * (1 - silenceBias) + 0.03;
     const eventChance = baseEventChance * (0.6 + motion);
-
     if(rand() < eventChance){
       spawnEvent(now, warmth, silenceBias);
       audio.eventsInWindow++;
       audio.lastEventAt = performance.now();
     }
 
-    // Activity metric (meaningful, real-world: "how much audio is being emitted right now")
-    // Approx: combine bed target + recent events, smoothed.
-    const bedNorm = Math.min(1, bedTarget / 0.03);
+    // Activity metric for UI
+    const bedNorm = Math.min(1, bedTarget / 0.50);
     const recentEvent = (performance.now() - audio.lastEventAt) < 1200 ? 0.6 : 0;
     const target = clamp01(0.65*bedNorm + recentEvent);
     audio.activity = audio.activity*0.82 + target*0.18;
-
-    // Decay event count window
-    if(audio.eventsInWindow > 0 && (performance.now() - audio.lastEventAt) > 3000){
-      audio.eventsInWindow = 0;
-    }
+    if(audio.eventsInWindow > 0 && (performance.now() - audio.lastEventAt) > 3000) audio.eventsInWindow = 0;
   }
 
-
-  function startupPing(level=0.010, freq=440, dur=0.35){
+  function startupPing(level=0.25, freq=440, dur=0.45){
     if(!audio.ctx) return;
     const t0 = audio.ctx.currentTime;
     const osc = audio.ctx.createOscillator();
     const gain = audio.ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = freq;
-
+    osc.type = "sine"; osc.frequency.value = freq;
     gain.gain.setValueAtTime(0.0001, t0);
-    gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, level), t0 + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + Math.max(0.12, dur));
-
-    osc.connect(gain);
-    gain.connect(audio.master);
-    osc.start(t0);
-    osc.stop(t0 + Math.max(0.2, dur) + 0.05);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.001, level), t0 + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + Math.max(0.15, dur));
+    osc.connect(gain); gain.connect(audio.master);
+    osc.start(t0); osc.stop(t0 + Math.max(0.25, dur) + 0.08);
+    console.log("[MA-ZEN] Ping:", level, "@ ", freq, "Hz, master:", audio.master.gain.value.toFixed(3));
   }
 
-
   function spawnEvent(now, warmth, silenceBias){
-    // Neutral micro-event: short sine + decay, filtered bandpass.
     const osc = audio.ctx.createOscillator();
     const gain = audio.ctx.createGain();
     const filt = audio.ctx.createBiquadFilter();
-
     const base = 180 + rand()*900;
-    const det = (rand()*2 - 1) * 12;
-
-    osc.type = "sine";
-    osc.frequency.value = base + det;
-
-    filt.type = "bandpass";
-    filt.frequency.value = 400 + warmth*1200;
-    filt.Q.value = 0.7 + warmth*4;
-
-    const peak = 0.016 + (0.030 * (1 - silenceBias)) * (0.25 + warmth);
+    osc.type = "sine"; osc.frequency.value = base + (rand()*2 - 1) * 12;
+    filt.type = "bandpass"; filt.frequency.value = 400 + warmth*1200; filt.Q.value = 0.7 + warmth*4;
+    // Event peak: 0.10–0.22 — clearly audible sine tones
+    const peak = 0.10 + (0.12 * (1 - silenceBias)) * (0.2 + warmth);
     const dur = 0.8 + rand()*1.4;
-
     gain.gain.setValueAtTime(0.0001, now);
     gain.gain.exponentialRampToValueAtTime(peak, now + 0.08);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-    osc.connect(gain);
-    gain.connect(filt);
-    filt.connect(audio.master);
-
-    osc.start(now);
-    osc.stop(now + dur + 0.05);
+    osc.connect(gain); gain.connect(filt); filt.connect(audio.master);
+    osc.start(now); osc.stop(now + dur + 0.05);
   }
 
   /* =========================================================
-     Guided Silence Sessions (THE PROOF)
-     - Timer with phases
-     - Fullscreen ritual mode
-     - Visualization: phase timeline + activity
-     ========================================================= */
+     Guided Silence Sessions
+  ========================================================= */
   const ritual = document.getElementById("ritual");
   const ritualTime = document.getElementById("ritualTime");
   const ritualPhase = document.getElementById("ritualPhase");
 
   const session = {
-    running: false,
-    paused: false,
-    startAtMs: 0,
-    elapsedSec: 0,
-    durationSec: 8*60,
-    presetId: "S88",
-    phases: [],
-    phaseIndex: 0,
-    pureSilence: true,
-    rng: null
+    running: false, paused: false, startAtMs: 0, elapsedSec: 0,
+    durationSec: 8*60, presetId: "S88", phases: [], phaseIndex: 0,
+    pureSilence: true, rng: null
   };
 
   document.getElementById("btnQuickRitual").addEventListener("click", () => {
@@ -1192,49 +920,33 @@ function encodeWav16Stereo(L, R, sr){
     cleanup.setTimeout(() => enterRitual(), 50);
   });
 
-  
-  // Favorites quick access
   const favCountEl = document.getElementById("favCount");
   const btnFavs = document.getElementById("btnFavs");
   function updateFavCount(){
-    if(!favCountEl) return;
-    favCountEl.textContent = String(Object.keys(state.favorites || {}).length);
+    if(favCountEl) favCountEl.textContent = String(Object.keys(state.favorites || {}).length);
   }
   if(btnFavs){
     btnFavs.addEventListener("click", () => {
-      location.hash = "#library";
-      state._ui.filterFavs = true;
-      saveState();
-      // render after route
+      location.hash = "#library"; state._ui.filterFavs = true; saveState();
       setTimeout(() => { try{ renderRoute(); }catch{} }, 30);
     });
   }
   updateFavCount();
-// A11y: allow an offscreen exit control
+
   document.getElementById("ritualA11yExit").addEventListener("click", () => exitRitual());
 
   document.addEventListener("keydown", (e) => {
     if(!ritual.classList.contains("on")) return;
-
     if(e.key === "Escape") exitRitual();
-
     if(e.code === "Space"){
       e.preventDefault();
       if(session.running && !session.paused) pauseSession();
       else if(session.running && session.paused) resumeSession();
     }
-
-    if(e.key === "Tab"){
-      // Trap focus inside ritual (minimal UI)
-      e.preventDefault();
-      try{ ritual.focus(); }catch{}
-    }
-
+    if(e.key === "Tab"){ e.preventDefault(); try{ ritual.focus(); }catch{} }
     if(e.key.toLowerCase() === "m"){
-      state.prefs.labels = !state.prefs.labels;
-      saveState();
+      state.prefs.labels = !state.prefs.labels; saveState();
       toast("Labels: " + (state.prefs.labels ? "ON" : "OFF"));
-      // reflect in ritual immediately
       ritualPhase.textContent = state.prefs.labels ? (session.phases[session.phaseIndex]?.label || "") : "";
     }
   });
@@ -1242,194 +954,125 @@ function encodeWav16Stereo(L, R, sr){
   function enterRitual(){
     ritual.classList.add("on");
     ritual.setAttribute("aria-hidden", "false");
-    // Focus for accessibility + keyboard trap baseline
     try{ ritual.focus(); }catch{}
-    if(document.documentElement.requestFullscreen){
-      document.documentElement.requestFullscreen().catch(() => {});
-    }
+    if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
   }
 
   function exitRitual(){
     ritual.classList.remove("on");
     ritual.setAttribute("aria-hidden", "true");
-    if(document.fullscreenElement && document.exitFullscreen){
-      document.exitFullscreen().catch(() => {});
-    }
+    if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
   }
 
   function sessionPresets(){
     return [
-      {
-        id:"S88",
-        name:"88 — Pure Ma",
-        seconds: 88,
-        pureSilence: true,
-        phases: [
-          ["Arrive", 22],
-          ["Hold", 44],
-          ["Release", 22]
-        ],
-        note:"The smallest complete ritual. No sound required."
-      },
-      {
-        id:"S8",
-        name:"8 — Demonstration",
-        seconds: 8*60,
-        pureSilence: true,
-        phases: [
-          ["Settle", 120],
-          ["Field", 240],
-          ["Dissolve", 120]
-        ],
-        note:"Structured absence. Labels optional."
-      },
-      {
-        id:"S18",
-        name:"18 — Deep Reset",
-        seconds: 18*60,
-        pureSilence: false,
-        phases: [
-          ["Settle", 240],
-          ["Field", 660],
-          ["Dissolve", 180]
-        ],
-        note:"Silence-dominant with optional minimal texture."
-      },
-      {
-        id:"S40",
-        name:"40 — Work Boundary",
-        seconds: 40*60,
-        pureSilence: false,
-        phases: [
-          ["Settle", 420],
-          ["Field", 1380],
-          ["Dissolve", 600]
-        ],
-        note:"Designed as a boundary for deep work: begin, work, exit."
-      }
+      { id:"S88", name:"88 — Pure Ma", seconds: 88, pureSilence: true,
+        phases:[["Arrive",22],["Hold",44],["Release",22]],
+        note:"The smallest complete ritual. No sound required.", pillar:"Ma" },
+      { id:"S8", name:"8 — Demonstration", seconds: 8*60, pureSilence: true,
+        phases:[["Settle",120],["Field",240],["Dissolve",120]],
+        note:"Structured absence. Labels optional.", pillar:"Ma" },
+      { id:"S10", name:"Before the Word", seconds: 10*60, pureSilence: true,
+        phases:[["Arrive",90],["Hold",360],["Release",150]],
+        note:"Morning interval practice. Before conversation begins.", pillar:"Ma" },
+      { id:"S18", name:"18 — Deep Reset", seconds: 18*60, pureSilence: false,
+        phases:[["Settle",240],["Field",660],["Dissolve",180]],
+        note:"Silence-dominant with optional minimal texture.", pillar:"Sunyata" },
+      { id:"S25", name:"Form Into Absence", seconds: 25*60, pureSilence: false,
+        phases:[["Settle",300],["Dissolve",900],["Silence",300]],
+        note:"Sound points beyond itself until it exits entirely.", pillar:"Sunyata" },
+      { id:"S30", name:"Following Water", seconds: 30*60, pureSilence: false,
+        phases:[["Arrive",360],["Flow",1080],["Rest",360]],
+        note:"Works with your natural state. Effortless.", pillar:"Wu Wei" },
+      { id:"S40", name:"40 — Work Boundary", seconds: 40*60, pureSilence: false,
+        phases:[["Settle",420],["Field",1380],["Dissolve",600]],
+        note:"Begin, work, exit. A boundary for deep work.", pillar:"Wu Wei" }
     ];
   }
 
   function buildPhases(preset){
     let t = 0;
     return preset.phases.map(([label, sec]) => {
-      const start = t;
-      t += sec;
+      const start = t; t += sec;
       return { label, start, end: t, sec };
     });
   }
 
-  function startSession(presetId){
+  async function startSession(presetId){
     const p = sessionPresets().find(x => x.id === presetId) || sessionPresets()[0];
-    session.presetId = p.id;
-    session.durationSec = p.seconds;
-    session.phases = buildPhases(p);
-    session.phaseIndex = 0;
-    session.elapsedSec = 0;
-    session.running = true;
-    session.paused = false;
-    session.startAtMs = performance.now();
-    session.pureSilence = p.pureSilence;
-
-    // Seed RNG by preset + start time for a coherent field.
+    session.presetId = p.id; session.durationSec = p.seconds;
+    session.phases = buildPhases(p); session.phaseIndex = 0;
+    session.elapsedSec = 0; session.running = true; session.paused = false;
+    session.startAtMs = performance.now(); session.pureSilence = p.pureSilence;
     session.rng = createRNG(hash32(`${session.presetId}|${Date.now()}`));
-
-    if(!session.pureSilence){
-      startAmbientEngine();
-      // Perceptual confirmation (prevents "is it working?" confusion).
-      startupPing(0.016, 440, 0.32);
-    }else{
+    if(!session.pureSilence){ await startAmbientEngine(); startupPing(0.25, 440, 0.40); }
+    else{
       stopAmbientEngine();
+      ensureAudio(); await resumeAudioContext();
+      startupPing(0.20, 392, 0.30);
     }
-
     toast("Session started");
   }
 
   function stopSession(reason="ended"){
     if(!session.running) return;
-
-    session.running = false;
-    session.paused = false;
+    session.running = false; session.paused = false;
     stopAmbientEngine();
-
     const preset = sessionPresets().find(x => x.id === session.presetId);
-    const report = {
-      schema: "MAZEN_SESSION_REPORT_V1",
-      productVersion: "MAZEN_LAUNCH_v1.2.3",
-      engineVersion: "WAUDIO_MINIMAL_v1",
-      endedAt: new Date().toISOString(),
-      presetId: session.presetId,
-      presetName: preset?.name ?? session.presetId,
-      reason,
-      durationSec: session.durationSec,
+    state.lastSessionReport = {
+      schema: "MAZEN_SESSION_REPORT_V1", productVersion: "MAZEN_UNIFIED_v2",
+      engineVersion: "WAUDIO_MINIMAL_v1", endedAt: new Date().toISOString(),
+      presetId: session.presetId, presetName: preset?.name ?? session.presetId,
+      reason, durationSec: session.durationSec,
       elapsedSec: Math.round(session.elapsedSec),
-      labels: state.prefs.labels,
-      pureSilence: session.pureSilence,
+      labels: state.prefs.labels, pureSilence: session.pureSilence,
       enginePrefs: { ...state.prefs }
     };
-
-    state.lastSessionReport = report;
     saveState();
-
     toast(reason === "ended" ? "Complete" : "Stopped");
   }
 
   function pauseSession(){
     if(!session.running || session.paused) return;
-    session.paused = true;
-    session.elapsedSec = sessionElapsed();
-    stopAmbientEngine();
-    toast("Paused");
+    session.paused = true; session.elapsedSec = sessionElapsed();
+    stopAmbientEngine(); toast("Paused");
   }
 
-  function resumeSession(){
+  async function resumeSession(){
     if(!session.running || !session.paused) return;
     session.paused = false;
     session.startAtMs = performance.now() - session.elapsedSec*1000;
-    if(!session.pureSilence) startAmbientEngine();
+    if(!session.pureSilence) await startAmbientEngine();
     toast("Resume");
   }
 
-  function sessionElapsed(){
-    return (performance.now() - session.startAtMs)/1000;
-  }
+  function sessionElapsed(){ return (performance.now() - session.startAtMs)/1000; }
 
   /* =========================================================
-     Visualization helpers (phase timeline + activity spark)
-     - Phase timeline is deterministic (good for papers)
-     - Activity reflects actual engine output (real-world meaning)
-     ========================================================= */
+     Visualization helpers
+  ========================================================= */
   function phaseTimelineSvg(phases){
     const total = phases.at(-1)?.end || 1;
-    const W = 860, H = 44, pad = 10;
-    const y = 16, h = 12;
-
+    const W = 860, H = 44, pad = 10, y = 16, h = 12;
     const bars = phases.map((p, i) => {
       const x = pad + (p.start/total)*(W-2*pad);
       const w = Math.max(2, (p.sec/total)*(W-2*pad));
       const alpha = 0.18 + i*0.06;
       return `<rect x="${x.toFixed(2)}" y="${y}" width="${w.toFixed(2)}" height="${h}" rx="8" fill="rgba(184,154,106,${alpha.toFixed(2)})" />`;
     }).join("");
-
     const ticks = phases.slice(0, -1).map(p => {
       const x = pad + (p.end/total)*(W-2*pad);
       return `<line x1="${x.toFixed(2)}" y1="${y-5}" x2="${x.toFixed(2)}" y2="${y+h+5}" stroke="rgba(10,9,6,0.12)" />`;
     }).join("");
-
-    return `
-      <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" aria-label="Phase timeline">
-        <rect x="0" y="0" width="${W}" height="${H}" fill="rgba(242,237,228,0.0)"></rect>
-        ${bars}
-        ${ticks}
-        <rect id="tl_progress" x="${pad}" y="${y}" width="0" height="${h}" rx="8" fill="rgba(184,154,106,0.55)"></rect>
-      </svg>
-    `;
+    return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="none" aria-label="Phase timeline">
+      ${bars}${ticks}
+      <rect id="tl_progress" x="${pad}" y="${y}" width="0" height="${h}" rx="8" fill="rgba(184,154,106,0.55)"></rect>
+    </svg>`;
   }
 
   function updateTimelineProgress(svgEl, elapsed, duration){
     if(!svgEl) return;
-    const W = 860, pad = 10;
-    const innerW = (W - 2*pad);
+    const W = 860, pad = 10, innerW = W - 2*pad;
     const w = Math.max(0, Math.min(innerW, (elapsed/duration)*innerW));
     const bar = svgEl.querySelector("#tl_progress");
     if(bar) bar.setAttribute("width", String(w));
@@ -1437,21 +1080,22 @@ function encodeWav16Stereo(L, R, sr){
 
   /* =========================================================
      Pages
-     ========================================================= */
+  ========================================================= */
   function syncPlanUI(){
     const p = (state.plan || "free").toUpperCase();
     planText.textContent = p;
     planPill.style.borderColor = state.plan === "pro" ? "rgba(184,154,106,0.65)" : "rgba(184,154,106,0.35)";
   }
 
+  /* ---------- HOME ---------- */
   function renderHome(){
     page.innerHTML = `
       <div class="card">
         <div class="head">
           <div>
             <p class="title">Launchable Portfolio</p>
-            <h1>MA-ZEN in three products</h1>
-            <div class="sub">Proof (guided silence) • Floor (subscription library) • Cash (B2B audio identity).</div>
+            <h1>What is not heard is the <em>material</em></h1>
+            <div class="sub">Three products. One philosophy. Silence as architecture, not absence.</div>
           </div>
           <div class="controls">
             <button class="primary" id="goProof" type="button">Start a Silence Session</button>
@@ -1460,6 +1104,25 @@ function encodeWav16Stereo(L, R, sr){
           </div>
         </div>
         <div class="body">
+          <!-- Philosophy pillars from Claude -->
+          <div class="pillarGrid" style="margin-bottom:14px;">
+            <div class="pillar">
+              <div class="pillarChar">間</div>
+              <div class="pillarName">Ma</div>
+              <p>The interval. The pause that holds meaning.</p>
+            </div>
+            <div class="pillar">
+              <div class="pillarChar">空</div>
+              <div class="pillarName">Sunyata</div>
+              <p>Dissolution. Form pointing beyond itself.</p>
+            </div>
+            <div class="pillar">
+              <div class="pillarChar">無為</div>
+              <div class="pillarName">Wu Wei</div>
+              <p>Effortless action. The natural state.</p>
+            </div>
+          </div>
+
           <div class="grid">
             <div class="card" style="box-shadow:none;">
               <div class="head">
@@ -1473,7 +1136,7 @@ function encodeWav16Stereo(L, R, sr){
               <div class="body">
                 <div class="small">
                   Structured phases (settle → field → dissolve), labels optional, fullscreen ritual mode.
-                  Silence is the core output. Optional minimal texture exists only as support.
+                  7 session presets from 88 seconds to 40 minutes. Each rooted in Ma, Sunyata, or Wu Wei.
                 </div>
                 <div class="hr"></div>
                 <div class="controls">
@@ -1489,14 +1152,14 @@ function encodeWav16Stereo(L, R, sr){
                 <div>
                   <p class="title">THE FLOOR</p>
                   <h2>Subscription Soundscape Library</h2>
-                  <div class="sub">Stable recurring base. Minimal friction.</div>
+                  <div class="sub">Stable recurring base. Compounding catalogue value.</div>
                 </div>
-                <span class="pill"><span class="dot" aria-hidden="true"></span>Free → Pro upgrade path</span>
+                <span class="pill"><span class="dot" aria-hidden="true"></span>Free → Pro upgrade</span>
               </div>
               <div class="body">
                 <div class="small">
-                  Intentional soundscapes generated in-browser. Favorites, search, and Pro gating.
-                  Ready to connect payments later without rewriting UX.
+                  Intentional soundscapes generated in-browser. Favorites, search, Pro gating.
+                  The library grows every month. The price doesn't.
                 </div>
                 <div class="hr"></div>
                 <div class="controls">
@@ -1511,14 +1174,14 @@ function encodeWav16Stereo(L, R, sr){
                 <div>
                   <p class="title">THE CASH</p>
                   <h2>B2B Audio Branding</h2>
-                  <div class="sub">High revenue per unit time. Funds system development.</div>
+                  <div class="sub">Highest revenue per unit time. $500/hr effective rate.</div>
                 </div>
                 <span class="pill"><span class="dot" aria-hidden="true"></span>Brief → proposal-ready</span>
               </div>
               <div class="body">
                 <div class="small">
-                  A precise inquiry form that produces a downloadable brief (JSON) and a mail-ready message.
-                  No backend required to start getting leads.
+                  Silence Audit (free) → Sonic Identity → Guidelines. Starting at $12,000.
+                  Each project generates a case study. Each case study attracts the next client.
                 </div>
                 <div class="hr"></div>
                 <div class="controls">
@@ -1531,31 +1194,25 @@ function encodeWav16Stereo(L, R, sr){
             <div class="card" style="box-shadow:none;">
               <div class="head">
                 <div>
-                  <p class="title">No manipulation policy</p>
-                  <h2>Anti-gamification by design</h2>
-                  <div class="sub">No streaks. No guilt UI. No reward loops.</div>
+                  <p class="title">Anti-gamification</p>
+                  <h2>No streaks. No guilt UI. No reward loops.</h2>
+                  <div class="sub">The value is the boundary, not the engagement metric.</div>
                 </div>
               </div>
               <div class="body">
                 <div class="small">
-                  MA-ZEN is not “more guidance”. It is a reduction engine: fewer prompts, fewer claims, fewer hooks.
-                  The value is the boundary.
-                </div>
-                <div class="hr"></div>
-                <div class="small muted mono">
+                  MA-ZEN is not "more guidance". It is a reduction engine: fewer prompts, fewer claims, fewer hooks.
                   Built to run on GitHub Pages. Stored locally. Replace stubs with your backend when ready.
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
 
     document.getElementById("goProof").onclick = () => location.hash="#sessions";
     document.getElementById("goLibrary").onclick = () => location.hash="#library";
     document.getElementById("goB2B").onclick = () => location.hash="#b2b";
-
     document.getElementById("homeStart88").onclick = () => {
       location.hash="#sessions";
       cleanup.setTimeout(() => { startSession("S88"); enterRitual(); }, 40);
@@ -1568,46 +1225,34 @@ function encodeWav16Stereo(L, R, sr){
       location.hash="#sessions";
       cleanup.setTimeout(() => enterRitual(), 40);
     };
-
     document.getElementById("homeBrowse").onclick = () => location.hash="#library";
     document.getElementById("homeFavs").onclick = () => {
-      location.hash="#library";
-      state._ui.filterFavs = true;
-      saveState();
+      location.hash="#library"; state._ui.filterFavs = true; saveState();
       cleanup.setTimeout(() => renderLibrary(), 30);
     };
-
     document.getElementById("homeB2B").onclick = () => location.hash="#b2b";
     document.getElementById("homeCase").onclick = () => {
-      const sample = sampleB2BBrief();
-      downloadBlob(new Blob([JSON.stringify(sample, null, 2)], {type:"application/json"}), "MAZEN_B2B_SAMPLE_BRIEF.json");
+      downloadBlob(new Blob([JSON.stringify(sampleB2BBrief(), null, 2)], {type:"application/json"}), "MAZEN_B2B_SAMPLE_BRIEF.json");
       toast("Sample exported");
     };
   }
 
+  /* ---------- SESSIONS ---------- */
   function renderSessions(){
     const presets = sessionPresets();
-    const presetOptions = presets.map(p => `<option value="${p.id}" ${p.id===session.presetId?"selected":""}>${escapeHtml(p.name)}</option>`).join("");
-
+    const presetOptions = presets.map(p =>
+      `<option value="${p.id}" ${p.id===session.presetId?"selected":""}>${escapeHtml(p.name)} (${escapeHtml(p.pillar)})</option>`
+    ).join("");
     const last = state.lastSessionReport;
     const lastBlock = last ? `
       <div class="field">
         <label>Last session</label>
-        <div class="small">
-          <span class="mono">${escapeHtml(last.presetName)}</span> • ${fmtTime(last.elapsedSec)} / ${fmtTime(last.durationSec)} • ${escapeHtml(last.reason)}<br>
-          ${new Date(last.endedAt).toLocaleString()}
-        </div>
+        <div class="small"><span class="mono">${escapeHtml(last.presetName)}</span> · ${fmtTime(last.elapsedSec)} / ${fmtTime(last.durationSec)} · ${escapeHtml(last.reason)}<br>${new Date(last.endedAt).toLocaleString()}</div>
         <div class="controls" style="margin-top:10px;">
           <button class="ghost" id="dlReport" type="button">Download report</button>
           <button class="ghost" id="dlReportCsv" type="button">Download CSV</button>
         </div>
-      </div>
-    ` : `
-      <div class="field">
-        <label>Last session</label>
-        <div class="small muted">No sessions yet.</div>
-      </div>
-    `;
+      </div>` : `<div class="field"><label>Last session</label><div class="small muted">No sessions yet.</div></div>`;
 
     page.innerHTML = `
       <div class="card">
@@ -1615,7 +1260,7 @@ function encodeWav16Stereo(L, R, sr){
           <div>
             <p class="title">THE PROOF</p>
             <h1>Guided Silence Sessions</h1>
-            <div class="sub">A live demonstration of MA-ZEN. The boundary is the product.</div>
+            <div class="sub">A live demonstration. The boundary is the product.</div>
           </div>
           <div class="controls">
             <button class="primary" id="btnStart" type="button">Start</button>
@@ -1624,92 +1269,75 @@ function encodeWav16Stereo(L, R, sr){
             <button class="ghost" id="btnRitual" type="button">Ritual Mode</button>
           </div>
         </div>
-
         <div class="body">
           <div class="grid">
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Session</p>
-                  <h2>Structure without narration</h2>
-                  <div class="sub">No voice. No “keep going.” Labels optional.</div>
-                </div>
-              </div>
-
+              <div class="head"><div>
+                <p class="title">Session</p>
+                <h2>Structure without narration</h2>
+                <div class="sub">No voice. No "keep going." Labels optional.</div>
+              </div></div>
               <div class="body">
                 <div class="kv">
                   <div class="field">
                     <label for="presetSel">Preset</label>
                     <select id="presetSel">${presetOptions}</select>
-                    <div class="help muted">Presets define phase architecture. Sound remains optional.</div>
+                    <div class="help muted">Each preset embodies Ma, Sunyata, or Wu Wei.</div>
                   </div>
-
                   <div class="field">
                     <label for="labelsSel">Labels</label>
                     <select id="labelsSel">
                       <option value="on" ${state.prefs.labels?"selected":""}>On (minimal)</option>
                       <option value="off" ${!state.prefs.labels?"selected":""}>Off (pure)</option>
                     </select>
-                    <div class="help muted">Turn off labels to make it pure Ma.</div>
+                    <div class="help muted">Turn off labels for pure Ma.</div>
                   </div>
-
                   <div class="field">
                     <label>Ritual mode</label>
-                    <div class="small">Fullscreen. No controls on screen. Only time.</div>
+                    <div class="small">Fullscreen. No controls. Only time.</div>
                     <div class="controls" style="margin-top:10px;">
                       <button class="primary" id="enterRitual" type="button">Enter Ritual</button>
                       <button class="ghost" id="exitRitual" type="button">Exit</button>
                     </div>
                   </div>
-
                   ${lastBlock}
                 </div>
-
                 <div class="hr"></div>
-
                 <div class="sessionDisplay" aria-label="Session display">
-                  <div class="timeBig"><span id="tLeft" aria-label="Remaining session time">--:--</span></div>
+                  <div class="timeBig"><span id="tLeft">--:--</span></div>
                   <div class="phaseLine">
                     <div><span class="mono">Phase:</span> <span id="phaseTxt">${state.prefs.labels ? "—" : ""}</span></div>
                     <div><span class="mono">Mode:</span> <span id="modeTxt">—</span></div>
                   </div>
-                  <div class="meter" aria-hidden="true"><div id="meterFill"></div></div>
-
-                  <div class="viz" aria-label="Session visualizations">
+                  <div class="meter"><div id="meterFill"></div></div>
+                  <div class="viz">
                     <div class="spark" id="timelineBox"></div>
                     <div class="vizRow">
                       <span class="badge"><span class="mono">Silence bias</span>: <span id="silTxt">${Math.round(state.prefs.silenceBias*100)}%</span></span>
                       <span class="badge"><span class="mono">Engine activity</span></span>
-                      <span class="miniBar" aria-hidden="true"><div id="actFill"></div></span>
+                      <span class="miniBar"><div id="actFill"></div></span>
                       <span class="badge"><span class="mono">Events</span>: <span id="evTxt">0</span></span>
                     </div>
                   </div>
-
-                  <div class="small muted">
-                    Session is valid even if nothing “happens”. This is not performance tracking.
-                  </div>
+                  <div class="small muted">Session is valid even if nothing "happens". This is not performance tracking.</div>
                 </div>
               </div>
             </div>
-
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Optional support layer</p>
-                  <h2>Intentional texture (not music)</h2>
-                  <div class="sub">Silence-dominant field. Sparse neutral events.</div>
-                </div>
-                <span class="pill"><span class="dot" aria-hidden="true"></span>Web Audio</span>
+              <div class="head"><div>
+                <p class="title">Optional support layer</p>
+                <h2>Intentional texture (not music)</h2>
+                <div class="sub">Silence-dominant field. Sparse neutral events.</div>
               </div>
-
+              <span class="pill"><span class="dot" aria-hidden="true"></span>Web Audio</span>
+              </div>
               <div class="body">
                 <div class="kv">
                   <div class="field">
                     <label for="silBias">Silence bias</label>
-                    <input id="silBias" type="range" aria-label="Silence bias" min="0" max="1" step="0.01" value="${state.prefs.silenceBias}">
+                    <input id="silBias" type="range" min="0" max="1" step="0.01" value="${state.prefs.silenceBias}">
                     <div class="help"><span class="mono" id="silBiasTxt">${Math.round(state.prefs.silenceBias*100)}%</span> silence tendency.</div>
                   </div>
-
                   <div class="field">
                     <label for="texSel">Texture</label>
                     <select id="texSel">
@@ -1717,50 +1345,42 @@ function encodeWav16Stereo(L, R, sr){
                       <option value="air" ${state.prefs.texture==="air"?"selected":""}>Air</option>
                       <option value="stone" ${state.prefs.texture==="stone"?"selected":""}>Stone</option>
                     </select>
-                    <div class="help muted">Texture is a filter profile, not an audio file.</div>
+                    <div class="help muted">Filter profile, not an audio file.</div>
                   </div>
-
                   <div class="field">
                     <label for="warm">Warmth</label>
-                    <input id="warm" type="range" aria-label="Warmth" min="0" max="1" step="0.01" value="${state.prefs.warmth}">
-                    <div class="help muted">More warmth = softer, lower-center events.</div>
+                    <input id="warm" type="range" min="0" max="1" step="0.01" value="${state.prefs.warmth}">
+                    <div class="help muted">Softer, lower-center events.</div>
                   </div>
-
                   <div class="field">
                     <label for="motion">Motion</label>
-                    <input id="motion" type="range" aria-label="Motion" min="0" max="1" step="0.01" value="${state.prefs.motion}">
-                    <div class="help muted">More motion = slightly more sparse events (still silence-dominant).</div>
+                    <input id="motion" type="range" min="0" max="1" step="0.01" value="${state.prefs.motion}">
+                    <div class="help muted">More sparse events (still silence-dominant).</div>
                   </div>
-
                   <div class="field">
                     <label for="masterDb">Master level</label>
-                    <input id="masterDb" type="range" aria-label="Master level" min="-40" max="-10" step="1" value="${state.prefs.masterDb}">
-                    <div class="help"><span class="mono" id="dbTxt">${state.prefs.masterDb} dB</span> (safe low).</div>
+                    <input id="masterDb" type="range" min="-20" max="0" step="1" value="${state.prefs.masterDb}">
+                    <div class="help"><span class="mono" id="dbTxt">${state.prefs.masterDb} dB</span></div>
                   </div>
-
                   <div class="field">
                     <label>Engine</label>
-                    <div class="small">For pure sessions, engine can be off. For texture sessions, engine runs quietly.</div>
+                    <div class="small">Pure sessions need no engine. Texture sessions run quietly.</div>
                     <div class="controls" style="margin-top:10px;">
+                      <button class="ghost" id="audUnlock" type="button">Unlock audio</button>
                       <button class="ghost" id="audTest" type="button">Test texture (10s)</button>
-                      <button class="ghost" id="audRender" type="button">Render WAV (session)</button>
                       <button class="danger" id="audStop" type="button">Stop audio</button>
                     </div>
-                    <div class="help muted">Browsers require a click to start audio.</div>
                   </div>
                 </div>
-
                 <div class="hr"></div>
-                <div class="small">
-                  <span class="mono">Principle:</span> Silence first. Texture only supports the boundary.
-                </div>
+                <div class="small"><span class="mono">Principle:</span> Silence first. Texture only supports the boundary.</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
 
+    // Wire controls
     const tLeft = document.getElementById("tLeft");
     const phaseTxt = document.getElementById("phaseTxt");
     const modeTxt = document.getElementById("modeTxt");
@@ -1769,48 +1389,29 @@ function encodeWav16Stereo(L, R, sr){
     const evTxt = document.getElementById("evTxt");
     const silTxt = document.getElementById("silTxt");
     const timelineBox = document.getElementById("timelineBox");
-
     const presetSel = document.getElementById("presetSel");
     const labelsSel = document.getElementById("labelsSel");
-    // Prevent phase desync: presets cannot change mid-session
     presetSel.disabled = session.running;
 
-    // Setup timeline template based on current preset selection
     function rebuildTimeline(){
       const p = presets.find(x => x.id === presetSel.value) || presets[0];
-      const phases = buildPhases(p);
-      timelineBox.innerHTML = phaseTimelineSvg(phases);
+      timelineBox.innerHTML = phaseTimelineSvg(buildPhases(p));
     }
     rebuildTimeline();
 
-    presetSel.onchange = () => {
-      session.presetId = presetSel.value;
-      rebuildTimeline();
-      toast("Preset set");
-    };
-
-    labelsSel.onchange = () => {
-      state.prefs.labels = labelsSel.value === "on";
-      saveState();
-      toast("Labels: " + (state.prefs.labels ? "ON" : "OFF"));
-    };
+    presetSel.onchange = () => { session.presetId = presetSel.value; rebuildTimeline(); toast("Preset set"); };
+    labelsSel.onchange = () => { state.prefs.labels = labelsSel.value === "on"; saveState(); toast("Labels: " + (state.prefs.labels ? "ON" : "OFF")); };
 
     document.getElementById("btnStart").onclick = async () => {
       const p = presets.find(x => x.id === presetSel.value) || presets[0];
-      const ok = await resumeAudioContext(); // best effort for policy
-      if(!p.pureSilence && !ok){
-        toast("Audio blocked by browser");
-        return;
-      }
+      const ok = await resumeAudioContext();
+      if(!p.pureSilence && !ok){ toast("Audio blocked by browser"); return; }
       startSession(presetSel.value);
     };
-
     document.getElementById("btnPause").onclick = () => {
       if(!session.running) return;
-      if(session.paused) resumeSession();
-      else pauseSession();
+      if(session.paused) resumeSession(); else pauseSession();
     };
-
     document.getElementById("btnStop").onclick = () => stopSession("stopped");
     document.getElementById("btnRitual").onclick = () => enterRitual();
     document.getElementById("enterRitual").onclick = () => enterRitual();
@@ -1820,137 +1421,79 @@ function encodeWav16Stereo(L, R, sr){
     const silBias = document.getElementById("silBias");
     const silBiasTxt = document.getElementById("silBiasTxt");
     silBias.oninput = () => {
-      state.prefs.silenceBias = parseFloat(silBias.value);
-      saveState();
+      state.prefs.silenceBias = parseFloat(silBias.value); saveState();
       const pct = Math.round(state.prefs.silenceBias*100) + "%";
-      silBiasTxt.textContent = pct;
-      silTxt.textContent = pct;
+      silBiasTxt.textContent = pct; silTxt.textContent = pct;
     };
-
-    const texSel = document.getElementById("texSel");
-    texSel.onchange = () => { setTexture(texSel.value); toast("Texture: " + texSel.value); };
-
-    const warm = document.getElementById("warm");
-    warm.oninput = () => { state.prefs.warmth = parseFloat(warm.value); saveState(); };
-
-    const motion = document.getElementById("motion");
-    motion.oninput = () => { state.prefs.motion = parseFloat(motion.value); saveState(); };
-
+    document.getElementById("texSel").onchange = (e) => { setTexture(e.target.value); toast("Texture: " + e.target.value); };
+    document.getElementById("warm").oninput = (e) => { state.prefs.warmth = parseFloat(e.target.value); saveState(); };
+    document.getElementById("motion").oninput = (e) => { state.prefs.motion = parseFloat(e.target.value); saveState(); };
     const masterDb = document.getElementById("masterDb");
     const dbTxt = document.getElementById("dbTxt");
-    masterDb.oninput = () => {
-      const v = parseInt(masterDb.value, 10);
-      dbTxt.textContent = v + " dB";
-      setMasterDb(v);
-    };
+    masterDb.oninput = () => { const v = parseInt(masterDb.value, 10); dbTxt.textContent = v + " dB"; setMasterDb(v); };
+
+    document.getElementById("audUnlock").onclick = async () => { await unlockAudio("sessions"); };
 
     document.getElementById("audTest").onclick = async () => {
       const ok = await resumeAudioContext();
-      if(!ok){ toast("Audio blocked by browser"); return; }
-      startAmbientEngine();
-      toast("Texture test");
+      if(!ok){ toast("Audio blocked"); return; }
+      await startAmbientEngine(); startupPing(0.25, 440, 0.35); toast("Texture test");
       cleanup.setTimeout(() => { stopAmbientEngine(); toast("Test ended"); }, 10000);
     };
-
-    
-document.getElementById("audRender").onclick = () => {
-  // Renders a real WAV file using the same onset logic (no presets/assets required)
-  const p = presets.find(x => x.id === presetSel.value) || presets[0];
-  const seconds = p.seconds;
-  const seed = hash32(`${p.id}|${Date.now()}`);
-  const wav = renderOnsetStereoWav({ seconds, seed, prefs: state.prefs });
-  downloadBlob(wav, `MAZEN_ONSET_${p.id}_${seconds}s.wav`);
-  toast("WAV rendered");
-};
-
-document.getElementById("audStop").onclick = () => { stopAmbientEngine(); toast("Audio stopped"); };
+    document.getElementById("audStop").onclick = () => { stopAmbientEngine(); toast("Audio stopped"); };
 
     // Report downloads
     const dl = document.getElementById("dlReport");
-    if(dl){
-      dl.onclick = () => {
-        const blob = new Blob([JSON.stringify(state.lastSessionReport, null, 2)], {type:"application/json"});
-        downloadBlob(blob, "MAZEN_SESSION_REPORT.json");
-      };
-    }
+    if(dl) dl.onclick = () => downloadBlob(new Blob([JSON.stringify(state.lastSessionReport, null, 2)], {type:"application/json"}), "MAZEN_SESSION_REPORT.json");
     const dlCsv = document.getElementById("dlReportCsv");
-    if(dlCsv){
-      dlCsv.onclick = () => {
-        const r = state.lastSessionReport;
-        if(!r) return;
-        const header = ["endedAt","presetId","presetName","reason","durationSec","elapsedSec","labels","pureSilence","masterDb","silenceBias","texture","warmth","motion"];
-        const row = [
-          r.endedAt, r.presetId, r.presetName, r.reason, r.durationSec, r.elapsedSec, r.labels, r.pureSilence,
-          r.enginePrefs.masterDb, r.enginePrefs.silenceBias, r.enginePrefs.texture, r.enginePrefs.warmth, r.enginePrefs.motion
-        ].map(v => `"${String(v).replaceAll('"','""')}"`).join(",");
-        downloadBlob(new Blob([header.join(",") + "\n" + row + "\n"], {type:"text/csv"}), "MAZEN_SESSION_REPORT.csv");
-      };
-    }
+    if(dlCsv) dlCsv.onclick = () => {
+      const r = state.lastSessionReport; if(!r) return;
+      const header = ["endedAt","presetId","presetName","reason","durationSec","elapsedSec","labels","pureSilence","masterDb","silenceBias","texture","warmth","motion"];
+      const row = [r.endedAt, r.presetId, r.presetName, r.reason, r.durationSec, r.elapsedSec, r.labels, r.pureSilence,
+        r.enginePrefs.masterDb, r.enginePrefs.silenceBias, r.enginePrefs.texture, r.enginePrefs.warmth, r.enginePrefs.motion
+      ].map(v => `"${String(v).replaceAll('"','""')}"`).join(",");
+      downloadBlob(new Blob([header.join(",") + "\n" + row + "\n"], {type:"text/csv"}), "MAZEN_SESSION_REPORT.csv");
+    };
 
-    // Live UI loop (low-cost: 5Hz)
+    // Live UI loop (5Hz)
     function update(){
-      // session time + progress
       if(session.running && !session.paused){
         session.elapsedSec = sessionElapsed();
-
-        const remaining = session.durationSec - session.elapsedSec;
-
-        // Phase index
         let idx = 0;
         while(idx < session.phases.length && session.elapsedSec >= session.phases[idx].end) idx++;
         session.phaseIndex = Math.min(idx, Math.max(0, session.phases.length-1));
-
-        if(remaining <= 0){
+        if(session.durationSec - session.elapsedSec <= 0){
           ritualTime.textContent = "00:00";
           ritualPhase.textContent = state.prefs.labels ? "Boundary Reached" : "";
           stopSession("ended");
-          if(!session.pureSilence) startupPing(0.008, 392, 0.28);
-
+          if(!session.pureSilence) startupPing(0.15, 392, 0.35);
         }
       }
-
       const remaining = session.running ? (session.durationSec - session.elapsedSec) : session.durationSec;
       tLeft.textContent = session.running ? fmtTime(remaining) : "--:--";
-
-      phaseTxt.textContent = state.prefs.labels
-        ? (session.running ? (session.phases[session.phaseIndex]?.label || "—") : "—")
-        : "";
-
-      // Keep preset locked during active session
+      phaseTxt.textContent = state.prefs.labels ? (session.running ? (session.phases[session.phaseIndex]?.label || "—") : "—") : "";
       presetSel.disabled = session.running;
-
-      modeTxt.textContent = session.running
-        ? (session.pureSilence ? "Pure Silence" : "Silence + Texture")
-        : "—";
-
+      modeTxt.textContent = session.running ? (session.pureSilence ? "Pure Silence" : "Silence + Texture") : "—";
       const pct = session.running ? (session.elapsedSec / session.durationSec) : 0;
       meterFill.style.width = Math.max(0, Math.min(100, pct*100)) + "%";
-
-      // Timeline progress
       const svg = timelineBox.querySelector("svg");
       updateTimelineProgress(svg, session.running ? session.elapsedSec : 0, session.durationSec);
-
-      // Ritual overlay updates
       if(ritual.classList.contains("on")){
         ritualTime.textContent = session.running ? fmtTime(remaining) : "--:--";
         ritualPhase.textContent = state.prefs.labels ? (session.phases[session.phaseIndex]?.label || "") : "";
       }
-
-      // Engine metrics
-      actFill.style.width = Math.round(audio.activity*100) + "%";
-      evTxt.textContent = String(audio.eventsInWindow);
-
-      // Re-schedule
+      if(actFill) actFill.style.width = Math.round(audio.activity*100) + "%";
+      if(evTxt) evTxt.textContent = String(audio.eventsInWindow);
       cleanup.setTimeout(update, 200);
     }
     update();
   }
 
+  /* ---------- LIBRARY ---------- */
   function renderLibrary(){
     const catalog = soundscapeCatalog();
     const onlyFavs = !!state._ui.filterFavs;
-    state._ui.filterFavs = false;
-    saveState();
+    state._ui.filterFavs = false; saveState();
 
     page.innerHTML = `
       <div class="card">
@@ -1958,54 +1501,63 @@ document.getElementById("audStop").onclick = () => { stopAmbientEngine(); toast(
           <div>
             <p class="title">THE FLOOR</p>
             <h1>Subscription Soundscape Library</h1>
-            <div class="sub">Intentional sound. Silence-dominant. No gamification clutter.</div>
+            <div class="sub">Silence, curated. The catalogue grows; the price doesn't.</div>
           </div>
           <div class="controls">
             <input id="q" type="text" placeholder="Search..." style="min-width:220px;" aria-label="Search soundscapes"/>
             <button class="ghost" id="showFavs" type="button">${onlyFavs ? "All" : "Favorites"}</button>
+            <button class="ghost" id="libUnlock" type="button">Unlock audio</button>
             <button class="primary" id="playSelected" type="button">Play</button>
-            <button class="ghost" id="renderSelected" type="button">Render WAV</button>
             <button class="danger" id="stopAudio" type="button">Stop</button>
           </div>
         </div>
-
         <div class="body">
           <div class="kv" style="margin-bottom:12px;">
             <div class="field">
               <label>Quick mix</label>
-              <div class="small">This library uses the same engine (generated in-browser). Choose a card and press Play.</div>
+              <div class="small">Generated in-browser. Choose a card and press Play. Every preset is philosophy-curated — no filler.</div>
             </div>
             <div class="field">
               <label>Plan boundary</label>
-              <div class="small">
-                Free includes a few foundational fields. Pro unlocks the full library and longer boundaries.
-              </div>
+              <div class="small">Free: foundational fields. Pro: full library, longer boundaries, exclusive presets.</div>
             </div>
           </div>
-
           <div class="libraryGrid" id="grid"></div>
           <div class="hr"></div>
-          <div class="small muted">
-            Note: This MVP is static + local. To ship paid subscriptions, connect your payment + account system in <span class="mono">Account</span>.
+
+          <!-- FAQ from Claude -->
+          <div style="max-width:700px;">
+            <div class="faqItem">
+              <button class="faqQ" type="button">How is this different from Calm or Headspace?<span class="faqToggle">+</span></button>
+              <div class="faqA">Calm and Headspace are guided meditation apps with silence as incidental filler between narration. The MA-ZEN library is a philosophy-curated audio catalogue. Every session is structured around the Ma interval principle. Silence is the material, not the gap between content.</div>
+            </div>
+            <div class="faqItem">
+              <button class="faqQ" type="button">Can I download sessions for offline listening?<span class="faqToggle">+</span></button>
+              <div class="faqA">Pro plan includes download access. Sessions downloaded during an active subscription are yours to keep for personal use.</div>
+            </div>
+            <div class="faqItem">
+              <button class="faqQ" type="button">What is the Founding Member rate?<span class="faqToggle">+</span></button>
+              <div class="faqA">First 100 members receive a locked founding rate — 20% below standard. This is a reward for early belief, not a temporary discount. It never expires.</div>
+            </div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
+
+    // FAQ toggle logic
+    page.querySelectorAll(".faqQ").forEach(btn => {
+      btn.onclick = () => {
+        const item = btn.closest(".faqItem");
+        const wasOpen = item.classList.contains("open");
+        page.querySelectorAll(".faqItem").forEach(i => i.classList.remove("open"));
+        if(!wasOpen) item.classList.add("open");
+      };
+    });
 
     const q = document.getElementById("q");
     const grid = document.getElementById("grid");
-    const showFavsBtn = document.getElementById("showFavs");
-    const playSelectedBtn = document.getElementById("playSelected");
-    const stopAudioBtn = document.getElementById("stopAudio");
-
-const renderSelectedBtn = document.getElementById("renderSelected");
-
-
     let selected = catalog[0]?.id || null;
 
-    function allowed(item){
-      return item.tier === "free" || state.plan === "pro";
-    }
+    function allowed(item){ return item.tier === "free" || state.plan === "pro"; }
 
     function applySoundscape(item){
       state.prefs.texture = item.engine.texture;
@@ -2023,22 +1575,15 @@ const renderSelectedBtn = document.getElementById("renderSelected");
         if(query && !(item.name.toLowerCase().includes(query) || item.tags.join(" ").toLowerCase().includes(query))) return false;
         return true;
       });
-
       grid.innerHTML = "";
-      if(!filtered.length){
-        grid.innerHTML = `<div class="small muted">No results.</div>`;
-        return;
-      }
-
+      if(!filtered.length){ grid.innerHTML = `<div class="small muted">No results.</div>`; return; }
       for(const item of filtered){
         const isFav = !!state.favorites[item.id];
         const canUse = allowed(item);
-
         const tile = document.createElement("div");
         tile.className = "tile";
-        tile.style.borderColor = (item.id===selected) ? "rgba(184,154,106,0.55)" : "var(--line)";
-        tile.style.background = (item.id===selected) ? "rgba(184,154,106,0.08)" : "rgba(242,237,228,0.62)";
-
+        tile.style.borderColor = (item.id===selected) ? "rgba(184,154,106,0.55)" : "";
+        tile.style.background = (item.id===selected) ? "rgba(184,154,106,0.08)" : "";
         tile.innerHTML = `
           <div class="name">${escapeHtml(item.name)} ${item.tier==="pro" ? `<span class="tag">PRO</span>` : ``}</div>
           <div class="meta">${escapeHtml(item.desc)}</div>
@@ -2046,83 +1591,41 @@ const renderSelectedBtn = document.getElementById("renderSelected");
           <div class="row">
             <button class="ghost" type="button" data-act="select">${item.id===selected?"Selected":"Select"}</button>
             <div class="controls" style="gap:6px;">
-              <button class="ghost" type="button" data-act="fav" aria-label="Toggle favorite">${isFav ? "★" : "☆"}</button>
+              <button class="ghost" type="button" data-act="fav">${isFav ? "★" : "☆"}</button>
               <button class="${canUse ? "ghost" : "primary"}" type="button" data-act="use">${canUse ? "Use" : "Unlock"}</button>
             </div>
-          </div>
-        `;
-
+          </div>`;
         tile.querySelector('[data-act="select"]').onclick = () => { selected = item.id; renderTiles(); };
         tile.querySelector('[data-act="fav"]').onclick = () => {
           state.favorites[item.id] = !state.favorites[item.id];
           if(!state.favorites[item.id]) delete state.favorites[item.id];
-          saveState();
-          updateFavCount();
-          renderTiles();
+          saveState(); updateFavCount(); renderTiles();
         };
         tile.querySelector('[data-act="use"]').onclick = () => {
-          if(!canUse){
-            toast("Upgrade for PRO");
-            location.hash = "#account";
-            return;
-          }
-          applySoundscape(item);
-          selected = item.id;
-          renderTiles();
-          toast("Loaded: " + item.name);
+          if(!canUse){ toast("Upgrade for PRO"); location.hash = "#account"; return; }
+          applySoundscape(item); selected = item.id; renderTiles(); toast("Loaded: " + item.name);
         };
-
         grid.appendChild(tile);
       }
     }
 
-    playSelectedBtn.onclick = async () => {
+    document.getElementById("playSelected").onclick = async () => {
       const item = catalog.find(x => x.id === selected);
       if(!item) return;
-      if(item.tier==="pro" && state.plan!=="pro"){
-        toast("PRO required");
-        location.hash="#account";
-        return;
-      }
+      if(item.tier==="pro" && state.plan!=="pro"){ toast("PRO required"); location.hash="#account"; return; }
       applySoundscape(item);
-      {
-        const ok = await resumeAudioContext();
-        if(!ok){ toast("Audio blocked by browser"); return; }
-      }
-      startAmbientEngine();
-      toast("Playing");
+      const ok = await resumeAudioContext();
+      if(!ok){ toast("Audio blocked"); return; }
+      await startAmbientEngine(); startupPing(0.25, 440, 0.35); toast("Playing");
     };
-
-    
-renderSelectedBtn.onclick = () => {
-  const item = catalog.find(x => x.id === selected);
-  if(!item) return;
-  if(item.tier==="pro" && state.plan!=="pro"){
-    toast("PRO required");
-    location.hash="#account";
-    return;
-  }
-  // Apply soundscape settings, then render WAV
-  applySoundscape(item);
-  const seconds = 10*60; // library render: 10 minutes default
-  const seed = hash32(`${item.id}|${Date.now()}`);
-  const wav = renderOnsetStereoWav({ seconds, seed, prefs: state.prefs });
-  downloadBlob(wav, `MAZEN_LIBRARY_${item.id}_10m.wav`);
-  toast("WAV rendered");
-};
-
-stopAudioBtn.onclick = () => { stopAmbientEngine(); toast("Stopped"); };
-
-    showFavsBtn.onclick = () => {
-      state._ui.filterFavs = !onlyFavs;
-      saveState();
-      renderLibrary();
-    };
-
+    document.getElementById("libUnlock").onclick = async () => { await unlockAudio("library"); };
+    document.getElementById("stopAudio").onclick = () => { stopAmbientEngine(); toast("Stopped"); };
+    document.getElementById("showFavs").onclick = () => { state._ui.filterFavs = !onlyFavs; saveState(); renderLibrary(); };
     q.oninput = renderTiles;
     renderTiles();
   }
 
+  /* ---------- B2B ---------- */
   function renderB2B(){
     page.innerHTML = `
       <div class="card">
@@ -2130,7 +1633,7 @@ stopAudioBtn.onclick = () => { stopAmbientEngine(); toast("Stopped"); };
           <div>
             <p class="title">THE CASH</p>
             <h1>B2B Audio Branding</h1>
-            <div class="sub">High revenue per unit time. Produce enterprise case studies for credibility.</div>
+            <div class="sub">The sound of what you <em>don't</em> say. Silence as sonic identity.</div>
           </div>
           <div class="controls">
             <button class="ghost" id="btnSample" type="button">Download sample brief</button>
@@ -2138,120 +1641,45 @@ stopAudioBtn.onclick = () => { stopAmbientEngine(); toast("Stopped"); };
             <button class="ghost" id="btnMail" type="button">Email draft</button>
           </div>
         </div>
-
         <div class="body">
           <div class="grid">
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Inquiry</p>
-                  <h2>Collect only essentials</h2>
-                  <div class="sub">Short form. No theatre. Generates a proposal-ready brief.</div>
-                </div>
-              </div>
+              <div class="head"><div>
+                <p class="title">Inquiry</p>
+                <h2>Collect only essentials</h2>
+                <div class="sub">Short form. Generates a proposal-ready brief.</div>
+              </div></div>
               <div class="body">
                 <div class="kv">
-                  <div class="field">
-                    <label for="c_company">Company</label>
-                    <input id="c_company" type="text" placeholder="Company name" autocomplete="organization" />
+                  <div class="field"><label for="c_company">Company</label><input id="c_company" type="text" placeholder="Company name" autocomplete="organization" /></div>
+                  <div class="field"><label for="c_contact">Contact</label><input id="c_contact" type="text" placeholder="Name + role" autocomplete="name" /></div>
+                  <div class="field"><label for="c_email">Email</label><input id="c_email" type="email" placeholder="contact@company.com" autocomplete="email" /></div>
+                  <div class="field"><label for="c_industry">Industry</label>
+                    <select id="c_industry">
+                      <option value="">Select industry</option>
+                      <option>Wellness / Health</option><option>Luxury / Retail</option>
+                      <option>Technology / SaaS</option><option>Hospitality</option>
+                      <option>Finance / B2B</option><option>Other</option>
+                    </select>
                   </div>
-                  <div class="field">
-                    <label for="c_contact">Contact</label>
-                    <input id="c_contact" type="text" placeholder="Name + role" autocomplete="name" />
-                  </div>
-                  <div class="field">
-                    <label for="c_email">Email</label>
-                    <input id="c_email" type="email" placeholder="contact@company.com" autocomplete="email" />
-                  </div>
-                  <div class="field">
-                    <label for="c_industry">Industry</label>
-                    <input id="c_industry" type="text" placeholder="e.g., Hospitality, Tech, Wellness" />
-                  </div>
-                  <div class="field" style="grid-column: 1 / -1;">
-                    <label for="c_use">Use case</label>
-                    <textarea id="c_use" placeholder="Where will the audio identity live? (lobby, app, on-hold, events, product, retail, meditation rooms...)"></textarea>
-                  </div>
-                  <div class="field" style="grid-column: 1 / -1;">
-                    <label for="c_constraints">Constraints</label>
-                    <textarea id="c_constraints" placeholder="Legal, brand tone, duration, platforms, loudness requirements, safe-list, must-avoid..."></textarea>
-                  </div>
+                  <div class="field" style="grid-column:1/-1;"><label for="c_use">Use case</label><textarea id="c_use" placeholder="Where will the audio identity live? (lobby, app, on-hold, events, product, retail, meditation rooms...)"></textarea></div>
+                  <div class="field" style="grid-column:1/-1;"><label for="c_constraints">Constraints</label><textarea id="c_constraints" placeholder="Legal, brand tone, duration, platforms, loudness requirements, safe-list, must-avoid..."></textarea></div>
                 </div>
-
                 <div class="hr"></div>
-
                 <div class="kv">
-                  <div class="field">
-                    <label for="c_deliv">Deliverable</label>
-                    <select id="c_deliv">
-                      <option>Audio Logo (2–6s)</option>
-                      <option>On-Hold Identity Loop (2–5m)</option>
-                      <option>Space Ambience (10–30m)</option>
-                      <option>App Soundscape Set</option>
-                      <option>Full System Identity (multi-format)</option>
-                    </select>
+                  <div class="field"><label for="c_deliv">Deliverable</label>
+                    <select id="c_deliv"><option>Audio Logo (2–6s)</option><option>On-Hold Identity Loop (2–5m)</option><option>Space Ambience (10–30m)</option><option>App Soundscape Set</option><option>Full System Identity (multi-format)</option></select>
                   </div>
-                  <div class="field">
-                    <label for="c_timeline">Timeline</label>
-                    <select id="c_timeline">
-                      <option>2 weeks</option>
-                      <option>4 weeks</option>
-                      <option>6 weeks</option>
-                      <option>Flexible</option>
-                    </select>
+                  <div class="field"><label for="c_timeline">Timeline</label>
+                    <select id="c_timeline"><option>2 weeks</option><option>4 weeks</option><option>6 weeks</option><option>Flexible</option></select>
                   </div>
-                  <div class="field">
-                    <label for="c_budget">Budget band</label>
-                    <select id="c_budget">
-                      <option>Under $2k</option>
-                      <option>$2k–$8k</option>
-                      <option>$8k–$20k</option>
-                      <option>$20k+</option>
-                    </select>
+                  <div class="field"><label for="c_budget">Budget band</label>
+                    <select id="c_budget"><option>Under $2k</option><option>$2k–$8k</option><option>$8k–$20k</option><option>$20k+</option></select>
                   </div>
-                  <div class="field">
-                    <label for="c_dm">Decision maker</label>
-                    <select id="c_dm">
-                      <option>Yes</option>
-                      <option>No</option>
-                      <option>Not sure</option>
-                    </select>
+                  <div class="field"><label for="c_dm">Decision maker</label>
+                    <select id="c_dm"><option>Yes</option><option>No</option><option>Not sure</option></select>
                   </div>
                 </div>
-
-                <div class="hr"></div>
-                <div class="small muted">
-                  This MVP stores drafts locally and exports a brief. Add your CRM webhook later.
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Positioning</p>
-                  <h2>Why MA-ZEN wins B2B</h2>
-                  <div class="sub">Not “mood music”. It’s boundary design and sonic identity.</div>
-                </div>
-                <span class="pill"><span class="dot" aria-hidden="true"></span>Case-study ready</span>
-              </div>
-              <div class="body">
-                <div class="small">
-                  <span class="mono">Deliverables you can sell immediately:</span><br>
-                  • Audio logo (minimal, non-melodic) for brand recall without cheap jingles.<br>
-                  • Quiet space ambience (silence-dominant) for hospitality, clinics, studios, executive rooms.<br>
-                  • App sound layer that reduces cognitive load (no gamified pings).<br><br>
-
-                  <span class="mono">Proof mechanism:</span><br>
-                  Use the Guided Silence product as your “system demo” during discovery calls.
-                </div>
-
-                <div class="hr"></div>
-
-                <div class="small">
-                  <span class="mono">This page can launch today:</span><br>
-                  Press <span class="mono">Export brief</span> to generate a proposal-ready JSON to send or store.
-                </div>
-
                 <div class="hr"></div>
                 <div class="controls">
                   <button class="ghost" id="saveDraft" type="button">Save draft</button>
@@ -2260,232 +1688,192 @@ stopAudioBtn.onclick = () => { stopAmbientEngine(); toast("Stopped"); };
                 <div id="draftList" class="small muted" style="margin-top:10px;"></div>
               </div>
             </div>
+            <div class="card" style="box-shadow:none;">
+              <div class="head"><div>
+                <p class="title">Services & Methodology</p>
+                <h2>The MA-ZEN Method</h2>
+                <div class="sub">Silence Audit → Discovery → Identity → Guidelines</div>
+              </div>
+              <span class="pill"><span class="dot" aria-hidden="true"></span>Case-study ready</span>
+              </div>
+              <div class="body">
+                <!-- Services from Claude -->
+                <div class="serviceGrid" style="margin-bottom:14px;">
+                  <div class="serviceCard">
+                    <div class="pillarName">Foundation</div>
+                    <div class="servicePrice">$12,000+</div>
+                    <div class="small">Audio logo, sonic palette, Silence Audit, Identity Guidelines PDF. 3–4 weeks.</div>
+                  </div>
+                  <div class="serviceCard featured">
+                    <div class="pillarName">Complete Identity</div>
+                    <div class="servicePrice">$28–45K</div>
+                    <div class="small">Foundation + UI sounds, environmental audio, hold music, brand video direction. 6–8 weeks.</div>
+                  </div>
+                  <div class="serviceCard">
+                    <div class="pillarName">Retainer</div>
+                    <div class="servicePrice">$4–8K/mo</div>
+                    <div class="small">Monthly sonic review, new assets, campaign direction, consistency audits. 3-month minimum.</div>
+                  </div>
+                </div>
+                <div class="hr"></div>
+                <div class="small">
+                  <span class="mono">Methodology (4 steps):</span><br>
+                  <span class="mono">01</span> Silence Audit — free, delivered in 48h, yours regardless.<br>
+                  <span class="mono">02</span> Sonic Discovery — map the brand's interval.<br>
+                  <span class="mono">03</span> Identity Creation — every element evaluated against Ma, Sunyata, Wu Wei.<br>
+                  <span class="mono">04</span> Sonic Guidelines — codified document your team implements independently.
+                </div>
+                <div class="hr"></div>
+                <div class="small">
+                  <span class="mono">Ideal clients:</span> Wellness, Luxury/Retail, Technology/SaaS, Hospitality, Finance.<br><br>
+                  <span class="mono">Revenue projection:</span> $515K in 18 months. Each $20K project over 40 hours = $500/hr effective rate. Three retainer clients = $12–24K MRR.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
 
     const $ = (id) => document.getElementById(id);
 
     function collectBrief(){
       return {
-        schema: "MAZEN_B2B_BRIEF_V1",
-        productVersion: "MAZEN_LAUNCH_v1.2.3",
-        engineVersion: "WAUDIO_MINIMAL_v1",
+        schema: "MAZEN_B2B_BRIEF_V1", productVersion: "MAZEN_UNIFIED_v2",
         createdAt: new Date().toISOString(),
-        company: $("c_company").value.trim(),
-        contact: $("c_contact").value.trim(),
-        email: $("c_email").value.trim(),
-        industry: $("c_industry").value.trim(),
-        useCase: $("c_use").value.trim(),
-        constraints: $("c_constraints").value.trim(),
-        deliverable: $("c_deliv").value,
-        timeline: $("c_timeline").value,
-        budgetBand: $("c_budget").value,
-        decisionMaker: $("c_dm").value,
+        company: $("c_company").value.trim(), contact: $("c_contact").value.trim(),
+        email: $("c_email").value.trim(), industry: $("c_industry").value.trim(),
+        useCase: $("c_use").value.trim(), constraints: $("c_constraints").value.trim(),
+        deliverable: $("c_deliv").value, timeline: $("c_timeline").value,
+        budgetBand: $("c_budget").value, decisionMaker: $("c_dm").value,
         mazenAngle: "Silence-dominant boundary design. Non-gamified. Identity without manipulation.",
         nextStep: "Discovery call + reference playlist + draft identity sketch."
       };
     }
 
-    function exportBrief(){
-      const brief = collectBrief();
-      state.b2bDrafts.unshift(brief);
-      state.b2bDrafts = state.b2bDrafts.slice(0, 20);
-      saveState();
-
-      downloadBlob(
-        new Blob([JSON.stringify(brief, null, 2)], {type:"application/json"}),
-        `MAZEN_B2B_BRIEF_${safeFile(brief.company || "CLIENT")}.json`
-      );
-      toast("Brief exported");
-      renderDrafts();
-    }
-
-    function mailDraft(){
-      const brief = collectBrief();
-      const subject = encodeURIComponent(`MA-ZEN Audio Branding Inquiry — ${brief.company || "Client"}`);
-      const body = encodeURIComponent(
-`Company: ${brief.company}
-Contact: ${brief.contact}
-Email: ${brief.email}
-Industry: ${brief.industry}
-
-Deliverable: ${brief.deliverable}
-Timeline: ${brief.timeline}
-Budget: ${brief.budgetBand}
-Decision maker: ${brief.decisionMaker}
-
-Use case:
-${brief.useCase}
-
-Constraints:
-${brief.constraints}
-
-MA-ZEN angle:
-${brief.mazenAngle}
-
-Next step:
-${brief.nextStep}
-`
-      );
-      window.location.href = `mailto:${brief.email || ""}?subject=${subject}&body=${body}`;
-    }
-
-    function sample(){
-      const s = sampleB2BBrief();
-      downloadBlob(new Blob([JSON.stringify(s, null, 2)], {type:"application/json"}), "MAZEN_B2B_SAMPLE_BRIEF.json");
-      toast("Sample exported");
-    }
-
     function renderDrafts(){
       const box = $("draftList");
-      if(!state.b2bDrafts.length){
-        box.textContent = "No drafts saved.";
-        return;
-      }
-
-      const items = state.b2bDrafts.slice(0,5).map((d,i) => {
-        const label = `${d.company || "Client"} • ${d.deliverable} • ${new Date(d.createdAt).toLocaleDateString()}`;
-        return `
-          <div style="padding:6px 0; border-bottom:1px solid var(--soft);">
-            <span class="mono">${escapeHtml(label)}</span>
-            <button class="ghost" style="margin-left:8px; padding:6px 10px;" type="button" data-i="${i}">Download</button>
-          </div>
-        `;
-      }).join("");
-
-      box.innerHTML = items;
-      [...box.querySelectorAll("button[data-i]")].forEach(btn => {
+      if(!state.b2bDrafts.length){ box.textContent = "No drafts saved."; return; }
+      box.innerHTML = state.b2bDrafts.slice(0,5).map((d,i) => `
+        <div style="padding:6px 0;border-bottom:1px solid var(--soft);">
+          <span class="mono">${escapeHtml((d.company||"Client") + " · " + d.deliverable + " · " + new Date(d.createdAt).toLocaleDateString())}</span>
+          <button class="ghost" style="margin-left:8px;padding:6px 10px;" type="button" data-i="${i}">Download</button>
+        </div>`).join("");
+      box.querySelectorAll("button[data-i]").forEach(btn => {
         btn.onclick = () => {
-          const i = parseInt(btn.dataset.i, 10);
-          const d = state.b2bDrafts[i];
-          downloadBlob(
-            new Blob([JSON.stringify(d, null, 2)], {type:"application/json"}),
-            `MAZEN_B2B_BRIEF_${safeFile(d.company || "CLIENT")}.json`
-          );
+          const d = state.b2bDrafts[parseInt(btn.dataset.i, 10)];
+          downloadBlob(new Blob([JSON.stringify(d, null, 2)], {type:"application/json"}), `MAZEN_B2B_BRIEF_${safeFile(d.company||"CLIENT")}.json`);
           toast("Downloaded");
         };
       });
     }
 
-    $("btnExportBrief").onclick = exportBrief;
-    $("btnMail").onclick = mailDraft;
-    $("btnSample").onclick = sample;
-
+    $("btnExportBrief").onclick = () => {
+      const brief = collectBrief();
+      state.b2bDrafts.unshift(brief); state.b2bDrafts = state.b2bDrafts.slice(0, 20); saveState();
+      downloadBlob(new Blob([JSON.stringify(brief, null, 2)], {type:"application/json"}), `MAZEN_B2B_BRIEF_${safeFile(brief.company||"CLIENT")}.json`);
+      toast("Brief exported"); renderDrafts();
+    };
+    $("btnMail").onclick = () => {
+      const b = collectBrief();
+      const subject = encodeURIComponent(`MA-ZEN Audio Branding Inquiry — ${b.company || "Client"}`);
+      const body = encodeURIComponent(`Company: ${b.company}\nContact: ${b.contact}\nEmail: ${b.email}\nIndustry: ${b.industry}\n\nDeliverable: ${b.deliverable}\nTimeline: ${b.timeline}\nBudget: ${b.budgetBand}\nDecision maker: ${b.decisionMaker}\n\nUse case:\n${b.useCase}\n\nConstraints:\n${b.constraints}\n\nMA-ZEN angle:\n${b.mazenAngle}\n\nNext step:\n${b.nextStep}`);
+      window.location.href = `mailto:${b.email || ""}?subject=${subject}&body=${body}`;
+    };
+    $("btnSample").onclick = () => {
+      downloadBlob(new Blob([JSON.stringify(sampleB2BBrief(), null, 2)], {type:"application/json"}), "MAZEN_B2B_SAMPLE_BRIEF.json");
+      toast("Sample exported");
+    };
     $("saveDraft").onclick = () => {
-      const d = collectBrief();
-      state.b2bDrafts.unshift(d);
-      state.b2bDrafts = state.b2bDrafts.slice(0, 20);
-      saveState();
-      toast("Draft saved");
-      renderDrafts();
+      state.b2bDrafts.unshift(collectBrief()); state.b2bDrafts = state.b2bDrafts.slice(0, 20); saveState();
+      toast("Draft saved"); renderDrafts();
     };
     $("viewDrafts").onclick = renderDrafts;
-
     renderDrafts();
   }
 
-
+  /* ---------- WHY ---------- */
   function renderWhy(){
     page.innerHTML = `
       <div class="card">
         <div class="head">
           <div>
-            <p class="title">POSITIONING</p>
-            <h1>Not a meditation app. A boundary product.</h1>
-            <div class="sub">
-              Most meditation platforms expand through guidance and content libraries. MA-ZEN wins by defining limits: fewer prompts, fewer claims, fewer hooks.
-            </div>
+            <p class="title">Philosophy & Positioning</p>
+            <h1>Not meditation with a silence twist. <em>Silence is the medium.</em></h1>
+            <div class="sub">Most platforms expand through guidance and content. MA-ZEN wins by defining limits.</div>
           </div>
           <div class="controls">
             <button class="primary" id="whyStart" type="button">Start a boundary</button>
             <button class="ghost" id="whyB2B" type="button">B2B: sell the system</button>
-            <button class="ghost" id="whyExport" type="button">Download one‑pager</button>
+            <button class="ghost" id="whyExport" type="button">Download one-pager</button>
           </div>
         </div>
-
         <div class="body">
+          <!-- Philosophy pillars -->
+          <div class="pillarGrid" style="margin-bottom:14px;">
+            <div class="pillar">
+              <div class="pillarChar">間</div>
+              <div class="pillarName">Ma — Interval</div>
+              <p>The voice arrives, names the interval, and withdraws. What remains is the gate.</p>
+            </div>
+            <div class="pillar">
+              <div class="pillarChar">空</div>
+              <div class="pillarName">Sunyata — Dissolution</div>
+              <p>Sound points beyond itself until it exits entirely. The listener is left in vacated space.</p>
+            </div>
+            <div class="pillar">
+              <div class="pillarChar">無為</div>
+              <div class="pillarName">Wu Wei — Effortless</div>
+              <p>Works with your natural state. Breath tempo. Ambient sound. You do nothing.</p>
+            </div>
+          </div>
           <div class="grid">
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Where MA-ZEN attacks</p>
-                  <h2>Focus, deep work, and executive load</h2>
-                  <div class="sub">Boundary design for work blocks, not “relaxation content”.</div>
-                </div>
-              </div>
+              <div class="head"><div>
+                <p class="title">Where MA-ZEN attacks</p>
+                <h2>Focus, deep work, and executive load</h2>
+                <div class="sub">Boundary design for work blocks, not "relaxation content".</div>
+              </div></div>
               <div class="body">
                 <div class="small">
                   <span class="mono">Core wedge:</span> a tool that turns time into a clean block (begin → hold → exit).<br>
-                  <span class="mono">Why it wins:</span> it doesn’t compete on celebrity voices or huge libraries—only on friction removal.<br><br>
-                  <span class="mono">Ship language:</span><br>
-                  • “Start a boundary.”<br>
-                  • “Exit without trace.”<br>
-                  • “No streaks. No guilt UI.”<br>
+                  <span class="mono">Why it wins:</span> competes on friction removal, not celebrity voices or huge libraries.<br><br>
+                  <span class="mono">Ship language:</span> "Start a boundary." · "Exit without trace." · "No streaks. No guilt UI."
                 </div>
                 <div class="hr"></div>
-                <div class="small muted">
-                  This product is compatible with privacy expectations: local-first state by default, exportable audits.
-                </div>
+                <div class="small muted">Local-first privacy by default. Exportable audits. Compatible with enterprise expectations.</div>
               </div>
             </div>
-
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Differentiation</p>
-                  <h2>Comparison (behavioral)</h2>
-                  <div class="sub">Not features. Mechanisms.</div>
-                </div>
-              </div>
+              <div class="head"><div>
+                <p class="title">Differentiation</p>
+                <h2>Comparison (behavioral)</h2>
+                <div class="sub">Not features. Mechanisms.</div>
+              </div></div>
               <div class="body">
                 <div class="kv">
-                  <div class="field">
-                    <label>Mainstream platform pattern</label>
-                    <div class="small">
-                      Large libraries, guided narration, broad wellness positioning, engagement loops, constant catalog expansion.
-                    </div>
-                  </div>
-                  <div class="field">
-                    <label>MA‑ZEN pattern</label>
-                    <div class="small">
-                      Boundary blocks, silence‑dominant architecture, minimal texture, zero gamification, local-first.
-                    </div>
-                  </div>
-                  <div class="field" style="grid-column:1 / -1;">
-                    <label>What users actually buy</label>
-                    <div class="small">
-                      Mainstream: comfort, reassurance, guidance.<br>
-                      MA‑ZEN: cognitive clearance, focus boundaries, clean exits (especially for work).
-                    </div>
-                  </div>
+                  <div class="field"><label>Mainstream pattern</label><div class="small">Large libraries, guided narration, engagement loops, constant catalog expansion.</div></div>
+                  <div class="field"><label>MA-ZEN pattern</label><div class="small">Boundary blocks, silence-dominant architecture, zero gamification, local-first.</div></div>
+                  <div class="field" style="grid-column:1/-1;"><label>What users buy</label><div class="small">Mainstream: comfort, reassurance, guidance.<br>MA-ZEN: cognitive clearance, focus boundaries, clean exits.</div></div>
                 </div>
-
                 <div class="hr"></div>
-
                 <div class="small">
                   <span class="mono">Moat strategy:</span><br>
-                  1) Sell B2B identities + rooms first (cash + case studies).<br>
-                  2) Use those case studies to legitimize consumer subscription.<br>
-                  3) Keep consumer app intentionally small; expand only what reinforces the boundary.
+                  1) B2B identities first (cash + case studies).<br>
+                  2) Case studies legitimize consumer subscription.<br>
+                  3) Consumer app stays intentionally small.
                 </div>
               </div>
             </div>
-
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Go-to-market</p>
-                  <h2>3 channels that don’t require influencer spend</h2>
-                  <div class="sub">Start with proof that fits work environments.</div>
-                </div>
-              </div>
+              <div class="head"><div>
+                <p class="title">Go-to-market</p>
+                <h2>3 channels, no influencer spend</h2>
+              </div></div>
               <div class="body">
                 <div class="small">
-                  <span class="mono">Channel 1 — Teams:</span> “Boundary blocks for focus rooms.” Sell pilots to studios, clinics, co-working, exec suites.<br>
-                  <span class="mono">Channel 2 — B2B Identity:</span> audio logo + lobby ambience + app layer. High-margin, fast close.<br>
-                  <span class="mono">Channel 3 — Solo deep work:</span> makers, students, programmers. A timer that actually feels like a system.
+                  <span class="mono">Channel 1 — Teams:</span> Boundary blocks for focus rooms. Sell pilots to studios, clinics, exec suites.<br>
+                  <span class="mono">Channel 2 — B2B Identity:</span> Audio logo + lobby ambience + app layer. High-margin, fast close.<br>
+                  <span class="mono">Channel 3 — Solo deep work:</span> Makers, students, programmers. A timer that feels like a system.
                 </div>
                 <div class="hr"></div>
                 <div class="controls">
@@ -2494,282 +1882,35 @@ ${brief.nextStep}
                 </div>
               </div>
             </div>
-
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Anti‑claims policy</p>
-                  <h2>How we stay credible</h2>
-                  <div class="sub">No medical promises. No mystical language.</div>
-                </div>
-              </div>
+              <div class="head"><div>
+                <p class="title">Anti-claims policy</p>
+                <h2>How we stay credible</h2>
+                <div class="sub">No medical promises. No mystical language.</div>
+              </div></div>
               <div class="body">
                 <div class="small">
-                  MA‑ZEN avoids “fix your anxiety” claims. We sell a tool: boundary design for attention.<br><br>
-                  <span class="mono">Allowed statements:</span> reduce distraction, support focus routines, create a quiet boundary, simplify decisions.<br>
+                  MA-ZEN avoids "fix your anxiety" claims. We sell a tool: boundary design for attention.<br><br>
+                  <span class="mono">Allowed:</span> reduce distraction, support focus routines, create a quiet boundary.<br>
                   <span class="mono">Avoid:</span> therapy replacement, healing claims, diagnosis language.
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
 
-    document.getElementById("whyStart").onclick = () => { location.hash = "#sessions"; };
-    document.getElementById("whyB2B").onclick = () => { location.hash = "#b2b"; };
-    document.getElementById("whyLibrary").onclick = () => { location.hash = "#library"; };
-    document.getElementById("whyAccount").onclick = () => { location.hash = "#account"; };
-
+    document.getElementById("whyStart").onclick = () => location.hash = "#sessions";
+    document.getElementById("whyB2B").onclick = () => location.hash = "#b2b";
+    document.getElementById("whyLibrary").onclick = () => location.hash = "#library";
+    document.getElementById("whyAccount").onclick = () => location.hash = "#account";
     document.getElementById("whyExport").onclick = () => {
-      const txt =
-`MA‑ZEN — One‑Pager (v1.2 Attack Edition)
-
-What it is:
-A boundary product for focus. Begin → Hold → Exit.
-Silence-dominant. Optional minimal texture. No narration.
-
-What it is NOT:
-Not a meditation content library. Not therapy. Not “healing frequency”.
-
-Why it wins vs incumbents:
-• Competes on friction removal, not content volume
-• Local-first privacy by default
-• Ritual-mode signature experience
-• B2B identity services fund growth (cash + case studies)
-
-Three products:
-1) Guided Silence Sessions (THE PROOF)
-2) Subscription Soundscape Library (THE FLOOR)
-3) B2B Audio Branding (THE CASH)
-
-Positioning line:
-“Not more guidance. A cleaner boundary.”
-`;
-      downloadBlob(new Blob([txt], {type:"text/plain"}), "MAZEN_ONE_PAGER.txt");
-      toast("One‑pager downloaded");
+      downloadBlob(new Blob([`MA-ZEN — One-Pager\n\nWhat it is:\nA boundary product for focus. Begin → Hold → Exit.\nSilence-dominant. Optional minimal texture. No narration.\n\nPhilosophy:\nMa (間) — The interval that holds meaning.\nSunyata (空) — Dissolution. Form pointing beyond itself.\nWu Wei (無為) — Effortless action.\n\nThree products:\n1) Guided Silence Sessions (THE PROOF)\n2) Subscription Soundscape Library (THE FLOOR)\n3) B2B Audio Branding (THE CASH)\n\nB2B Services:\nSonic Identity Foundation — $12,000+\nComplete Sound Identity — $28,000–$45,000\nOngoing Audio Retainer — $4,000–$8,000/mo\n\nPositioning:\n"Not more guidance. A cleaner boundary."`], {type:"text/plain"}), "MAZEN_ONE_PAGER.txt");
+      toast("One-pager downloaded");
     };
   }
 
-
-
-  function renderQuality(){
-    page.innerHTML = `
-      <div class="card">
-        <div class="head">
-          <div>
-            <p class="title">Quality</p>
-            <h1>Testing Strategy & Process</h1>
-            <div class="sub">A practical, launch-oriented test structure for MA-ZEN (static SPA + Web Audio).</div>
-          </div>
-          <div class="controls">
-            <button class="ghost" id="dlQaChecklist" type="button">Download checklist (JSON)</button>
-            <button class="ghost" id="dlQaProcess" type="button">Download process (TXT)</button>
-          </div>
-        </div>
-
-        <div class="body">
-          <div class="grid">
-
-            <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">1. By Test Level</p>
-                  <h2>Scope</h2>
-                  <div class="sub">From smallest code units to user acceptance.</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="small">
-                  <b>Unit Testing</b><br>
-                  Tests individual components/modules in isolation (typically by developers).<br><br>
-
-                  <b>Integration Testing</b><br>
-                  Verifies interactions between integrated units/modules to detect interface defects.<br><br>
-
-                  <b>System Testing</b><br>
-                  Tests the complete integrated application against specified requirements.<br><br>
-
-                  <b>Acceptance Testing (UAT)</b><br>
-                  Validates the system against business needs; often performed by end-users.
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">2. By Test Approach</p>
-                  <h2>Knowledge of internals</h2>
-                  <div class="sub">How much the tester knows about the code.</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="small">
-                  <b>Black‑Box Testing</b><br>
-                  Tests functionality without inspecting internal code; based on requirements/specs.<br><br>
-
-                  <b>White‑Box Testing (Clear‑Box)</b><br>
-                  Tests internal structures/logic (e.g., code coverage, path testing).<br><br>
-
-                  <b>Gray‑Box Testing</b><br>
-                  Mix of black‑box and white‑box; tester has partial knowledge of internal logic.
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">3. By Test Objective</p>
-                  <h2>Functional vs Non‑Functional</h2>
-                  <div class="sub">Does it work, and does it work well under real conditions?</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="small">
-                  <b>Functional Testing</b><br>
-                  Validates behavior against functional requirements (smoke, sanity, regression, happy path).<br><br>
-
-                  <b>Non‑Functional Testing</b><br>
-                  Evaluates performance/usability/reliability, including:<br>
-                  • Performance (load, stress, endurance)<br>
-                  • Security (vulnerability checks, basic hardening)<br>
-                  • Usability (clarity, learnability)<br>
-                  • Compatibility (browsers/devices/OS)<br>
-                  • Reliability / availability
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">4. By Execution Mode</p>
-                  <h2>Manual vs Automated</h2>
-                  <div class="sub">How tests are executed.</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="small">
-                  <b>Manual Testing</b><br>
-                  Test cases executed by humans without tool automation.<br><br>
-
-                  <b>Automated Testing</b><br>
-                  Uses scripts/tools to execute tests, compare expected vs actual, and report (e.g., Playwright/Selenium for UI; unit tests for logic).
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none; grid-column: 1 / -1;">
-              <div class="head">
-                <div>
-                  <p class="title">5. Specialized Testing Types</p>
-                  <h2>What we run for a MA-ZEN web build</h2>
-                  <div class="sub">Mapped to this app: SPA routing + localStorage + WebAudio + exports.</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="small">
-                  <b>Regression Testing</b> — re-run core flows after changes to ensure existing behavior remains intact.<br>
-                  <b>Smoke Testing</b> — fast check that the build boots, routes, and core actions work.<br>
-                  <b>Sanity Testing</b> — narrow checks after small fixes (e.g., audio resume, export).<br>
-                  <b>Exploratory Testing</b> — active exploration to uncover edge cases (rapid route switching, ritual toggles).<br>
-                  <b>Ad‑hoc Testing</b> — informal spot checks without scripted cases.<br>
-                  <b>Alpha & Beta</b> — alpha internal QA; beta with limited external users for real feedback.<br><br>
-
-                  <b>API Testing</b> — N/A in this build (local-first). Apply once backend is connected.<br>
-                  <b>Database Testing</b> — N/A (localStorage schema + integrity instead).<br>
-                  <b>Localization/I18N</b> — validate language/region readiness when strings are externalized.<br>
-                  <b>Accessibility Testing</b> — keyboard use, screen reader semantics, focus management.
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none; grid-column: 1 / -1;">
-              <div class="head">
-                <div>
-                  <p class="title">Testing Process</p>
-                  <h2>Software Testing Lifecycle</h2>
-                  <div class="sub">A structured sequence that works in Waterfall, Agile, or CI/CD.</div>
-                </div>
-              </div>
-              <div class="body">
-                <div class="small">
-                  <b>1. Requirement Analysis</b><br>
-                  Identify testable features, prioritize conditions, clarify ambiguities with stakeholders.<br><br>
-
-                  <b>2. Test Planning</b><br>
-                  Define scope, objectives, strategy, deliverables, resources, tools, effort, and risks.<br><br>
-
-                  <b>3. Test Design / Test Case Development</b><br>
-                  Write cases/scenarios/checklists; prepare data and expected results; peer review/baseline.<br><br>
-
-                  <b>4. Test Environment Setup</b><br>
-                  Configure environment to mirror production; run smoke tests to validate readiness.<br><br>
-
-                  <b>5. Test Execution</b><br>
-                  Execute tests (manual/automated), log results, compare with expected, raise defects.<br><br>
-
-                  <b>6. Defect Tracking & Management</b><br>
-                  Document defects with repro steps, severity/priority; track lifecycle (new→assigned→fixed→verified→closed).<br><br>
-
-                  <b>7. Test Reporting & Metrics</b><br>
-                  Summarize progress, pass/fail, defect density, coverage; support release decisions.<br><br>
-
-                  <b>8. Test Closure</b><br>
-                  Confirm completion criteria; archive artifacts; run retrospective/lessons learned.
-                </div>
-                <div class="hr"></div>
-                <div class="small muted">
-                  Note: In Agile/DevOps, these steps are iterative. Automated tests should run on every code change in CI/CD.
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Downloads
-    const checklist = {
-      schema: "MAZEN_QA_CHECKLIST_V1",
-      productVersion: (window.MAZEN_VERSION || "v1.2.1"),
-      areas: [
-        { area:"Routing", checks:["Home loads", "Sessions loads", "Library loads", "B2B loads", "Account loads", "Quality loads"] },
-        { area:"Sessions", checks:["Start", "Pause/Resume", "Stop", "Ritual enter/exit", "Preset disabled during run", "Report export JSON/CSV"] },
-        { area:"Audio", checks:["Autoplay resume on click", "Texture test (10s)", "Stop audio", "No 'Playing' if blocked"] },
-        { area:"Library", checks:["Search", "Select", "Use", "Favorites", "Pro gating"] },
-        { area:"B2B", checks:["Export brief", "Save draft", "Download saved", "Mail draft opens client"] },
-        { area:"Account", checks:["Plan toggle", "Export all", "Wipe safely"] },
-        { area:"Accessibility", checks:["Keyboard navigation", "Ritual focus trap", "ARIA labels present", "Contrast acceptable"] }
-      ]
-    };
-
-    document.getElementById("dlQaChecklist").onclick = () => {
-      downloadBlob(new Blob([JSON.stringify(checklist, null, 2)], {type:"application/json"}), "MAZEN_QA_CHECKLIST.json");
-      toast("Checklist downloaded");
-    };
-
-    document.getElementById("dlQaProcess").onclick = () => {
-      const txt =
-`MA-ZEN Testing Process (Lifecycle)
-1. Requirement Analysis
-2. Test Planning
-3. Test Design / Test Case Development
-4. Test Environment Setup
-5. Test Execution
-6. Defect Tracking & Management
-7. Test Reporting & Metrics
-8. Test Closure
-
-Note: In Agile/DevOps, run automated tests on every change in CI/CD.`;
-      downloadBlob(new Blob([txt], {type:"text/plain"}), "MAZEN_TEST_PROCESS.txt");
-      toast("Process downloaded");
-    };
-  }
-
+  /* ---------- ACCOUNT ---------- */
   function renderAccount(){
     const isPro = state.plan === "pro";
     page.innerHTML = `
@@ -2778,234 +1919,230 @@ Note: In Agile/DevOps, run automated tests on every change in CI/CD.`;
           <div>
             <p class="title">Account</p>
             <h1>Plan & Export</h1>
-            <div class="sub">This is where you connect payments later. For now: a clean plan boundary + exports.</div>
+            <div class="sub">Connect payments later. For now: plan boundary + exports.</div>
           </div>
           <div class="controls">
-            <button class="${isPro ? "ghost" : "primary"}" id="togglePlan" type="button">${isPro ? "Switch to FREE" : "Mock Upgrade to PRO"}</button>
+            <button class="${isPro?"ghost":"primary"}" id="togglePlan" type="button">${isPro?"Switch to FREE":"Mock Upgrade to PRO"}</button>
             <button class="ghost" id="exportAll" type="button">Export data</button>
             <button class="danger" id="wipe" type="button">Wipe local data</button>
           </div>
         </div>
-
         <div class="body">
           <div class="grid">
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Plan</p>
-                  <h2>${isPro ? "PRO" : "FREE"}</h2>
-                  <div class="sub">${isPro ? "Full library + longer boundaries." : "Core sessions + limited library."}</div>
-                </div>
-                <span class="pill"><span class="dot" aria-hidden="true"></span>Boundary-based pricing</span>
+              <div class="head"><div>
+                <p class="title">Plan</p>
+                <h2>${isPro?"PRO":"FREE"}</h2>
+                <div class="sub">${isPro?"Full library + longer boundaries.":"Core sessions + limited library."}</div>
+              </div>
+              <span class="pill"><span class="dot" aria-hidden="true"></span>Boundary-based pricing</span>
               </div>
               <div class="body">
                 <div class="small">
-                  <span class="mono">Free</span>: Guided Silence (88s, 8-min demo), a few foundational soundscapes.<br>
-                  <span class="mono">Pro</span>: Full library presets + longer sessions + additional boundaries.
+                  <span class="mono">Free</span>: Guided Silence (88s, 8-min), foundational soundscapes.<br>
+                  <span class="mono">Pro</span>: Full library + longer sessions + exclusive presets.
                 </div>
                 <div class="hr"></div>
-                <div class="small muted">
-                  Replace this mock toggle with Stripe Checkout / Lemonsqueezy / App Store later.
-                </div>
+                <div class="small muted">Replace this mock toggle with Stripe / Lemonsqueezy / App Store later.</div>
               </div>
             </div>
-
             <div class="card" style="box-shadow:none;">
-              <div class="head">
-                <div>
-                  <p class="title">Exports</p>
-                  <h2>Portable & audit-friendly</h2>
-                  <div class="sub">Session reports + B2B briefs + preferences.</div>
-                </div>
-              </div>
+              <div class="head"><div>
+                <p class="title">Exports</p>
+                <h2>Portable & audit-friendly</h2>
+                <div class="sub">Session reports + B2B briefs + preferences.</div>
+              </div></div>
               <div class="body">
                 <div class="kv">
                   <div class="field">
                     <label>Last session report</label>
-                    <div class="small">${state.lastSessionReport ? escapeHtml(state.lastSessionReport.presetName) + " • " + fmtTime(state.lastSessionReport.elapsedSec) : "None"}</div>
-                    <div class="controls" style="margin-top:10px;">
-                      <button class="ghost" id="dlLast" type="button" ${state.lastSessionReport ? "" : "disabled"}>Download</button>
-                    </div>
+                    <div class="small">${state.lastSessionReport ? escapeHtml(state.lastSessionReport.presetName) + " · " + fmtTime(state.lastSessionReport.elapsedSec) : "None"}</div>
+                    <div class="controls" style="margin-top:10px;"><button class="ghost" id="dlLast" type="button" ${state.lastSessionReport?"":"disabled"}>Download</button></div>
                   </div>
                   <div class="field">
                     <label>B2B drafts</label>
                     <div class="small">${state.b2bDrafts.length} stored locally</div>
-                    <div class="controls" style="margin-top:10px;">
-                      <button class="ghost" id="dlB2B" type="button" ${state.b2bDrafts.length ? "" : "disabled"}>Download all</button>
-                    </div>
+                    <div class="controls" style="margin-top:10px;"><button class="ghost" id="dlB2B" type="button" ${state.b2bDrafts.length?"":"disabled"}>Download all</button></div>
                   </div>
-                  <div class="field">
-                    <label>Favorites</label>
-                    <div class="small">${Object.keys(state.favorites).length} favorites</div>
-                  </div>
-                  <div class="field">
-                    <label>Engine preferences</label>
-                    <div class="small muted mono">${escapeHtml(JSON.stringify(state.prefs))}</div>
-                  </div>
+                  <div class="field"><label>Favorites</label><div class="small">${Object.keys(state.favorites).length} favorites</div></div>
+                  <div class="field"><label>Engine preferences</label><div class="small muted mono">${escapeHtml(JSON.stringify(state.prefs))}</div></div>
                 </div>
                 <div class="hr"></div>
-                <div class="small muted">
-                  Data is stored locally in your browser (localStorage). For real accounts, replace with server sync + encryption.<br><br><span class="mono">Safety:</span> Audio output is low-level. Do not use while driving or operating machinery.
-                </div>
+                <div class="small muted">Data stored locally (localStorage). For real accounts, replace with server sync + encryption.<br><br><span class="mono">Safety:</span> Audio output is low-level. Do not use while driving or operating machinery.</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
 
     document.getElementById("togglePlan").onclick = () => {
-      state.plan = (state.plan === "pro") ? "free" : "pro";
-      saveState();
-      syncPlanUI();
-      toast("Plan: " + state.plan.toUpperCase());
-      renderAccount();
+      state.plan = state.plan === "pro" ? "free" : "pro"; saveState(); syncPlanUI();
+      toast("Plan: " + state.plan.toUpperCase()); renderAccount();
     };
-
     document.getElementById("exportAll").onclick = () => {
-      const payload = {
-        schema: "MAZEN_EXPORT_ALL_V1",
-        productVersion: "MAZEN_LAUNCH_v1.2.3",
+      downloadBlob(new Blob([JSON.stringify({
+        schema:"MAZEN_EXPORT_ALL_V1", productVersion:"MAZEN_UNIFIED_v2",
         exportedAt: new Date().toISOString(),
-        state: {
-          plan: state.plan,
-          favorites: state.favorites,
-          prefs: state.prefs,
-          lastSessionReport: state.lastSessionReport,
-          b2bDrafts: state.b2bDrafts
-        }
-      };
-      downloadBlob(new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"}), "MAZEN_EXPORT_ALL.json");
+        state:{ plan:state.plan, favorites:state.favorites, prefs:state.prefs, lastSessionReport:state.lastSessionReport, b2bDrafts:state.b2bDrafts }
+      }, null, 2)], {type:"application/json"}), "MAZEN_EXPORT_ALL.json");
       toast("Exported");
     };
-
     document.getElementById("wipe").onclick = () => {
-      const ok = confirm("Wipe all local data for MA-ZEN on this browser? This cannot be undone.");
-      if(!ok) return;
-
-      // Stop any active session/audio before wiping
-      if(session.running) stopSession("stopped");
-      stopAmbientEngine();
+      if(!confirm("Wipe all local data? This cannot be undone.")) return;
+      if(session.running) stopSession("stopped"); stopAmbientEngine();
       localStorage.removeItem(STORE_KEY);
-
-      // Reset in-place (keep object reference)
       const fresh = deepMerge(DEFAULT_STATE, {});
       for(const k of Object.keys(state)) delete state[k];
       Object.assign(state, fresh);
-
-      saveState();
-      syncPlanUI();
-      toast("Wiped");
-      renderAccount();
+      saveState(); syncPlanUI(); toast("Wiped"); renderAccount();
     };
-
     const dlLast = document.getElementById("dlLast");
-    if(dlLast){
-      dlLast.onclick = () => {
-        if(!state.lastSessionReport) return;
-        downloadBlob(new Blob([JSON.stringify(state.lastSessionReport, null, 2)], {type:"application/json"}), "MAZEN_SESSION_REPORT.json");
-        toast("Downloaded");
-      };
-    }
-
+    if(dlLast) dlLast.onclick = () => { if(state.lastSessionReport) downloadBlob(new Blob([JSON.stringify(state.lastSessionReport, null, 2)], {type:"application/json"}), "MAZEN_SESSION_REPORT.json"); };
     const dlB2B = document.getElementById("dlB2B");
-    if(dlB2B){
-      dlB2B.onclick = () => {
-        downloadBlob(new Blob([JSON.stringify(state.b2bDrafts, null, 2)], {type:"application/json"}), "MAZEN_B2B_DRAFTS.json");
-        toast("Downloaded");
-      };
-    }
+    if(dlB2B) dlB2B.onclick = () => downloadBlob(new Blob([JSON.stringify(state.b2bDrafts, null, 2)], {type:"application/json"}), "MAZEN_B2B_DRAFTS.json");
+  }
+
+  /* ---------- QUALITY ---------- */
+  function renderQuality(){
+    page.innerHTML = `
+      <div class="card">
+        <div class="head">
+          <div>
+            <p class="title">Quality</p>
+            <h1>Testing Strategy & Process</h1>
+            <div class="sub">Launch-oriented test structure for MA-ZEN (static SPA + Web Audio).</div>
+          </div>
+          <div class="controls">
+            <button class="ghost" id="dlQaChecklist" type="button">Download checklist (JSON)</button>
+            <button class="ghost" id="dlQaProcess" type="button">Download process (TXT)</button>
+          </div>
+        </div>
+        <div class="body">
+          <div class="grid">
+            <div class="card" style="box-shadow:none;">
+              <div class="head"><div><p class="title">1. By Test Level</p><h2>Scope</h2></div></div>
+              <div class="body"><div class="small">
+                <b>Unit Testing</b> — individual components in isolation.<br><br>
+                <b>Integration Testing</b> — interactions between modules.<br><br>
+                <b>System Testing</b> — complete application against requirements.<br><br>
+                <b>Acceptance Testing (UAT)</b> — validates against business needs.
+              </div></div>
+            </div>
+            <div class="card" style="box-shadow:none;">
+              <div class="head"><div><p class="title">2. By Test Approach</p><h2>Knowledge of internals</h2></div></div>
+              <div class="body"><div class="small">
+                <b>Black-Box</b> — functionality without inspecting code.<br><br>
+                <b>White-Box</b> — internal structures/logic, code coverage.<br><br>
+                <b>Gray-Box</b> — partial knowledge of internal logic.
+              </div></div>
+            </div>
+            <div class="card" style="box-shadow:none;">
+              <div class="head"><div><p class="title">3. Functional vs Non-Functional</p><h2>Does it work, and how well?</h2></div></div>
+              <div class="body"><div class="small">
+                <b>Functional</b> — behavior vs requirements (smoke, sanity, regression).<br><br>
+                <b>Non-Functional</b> — performance, security, usability, compatibility, reliability.
+              </div></div>
+            </div>
+            <div class="card" style="box-shadow:none;">
+              <div class="head"><div><p class="title">4. Manual vs Automated</p><h2>Execution mode</h2></div></div>
+              <div class="body"><div class="small">
+                <b>Manual</b> — test cases executed by humans.<br><br>
+                <b>Automated</b> — scripts/tools execute, compare, and report (Playwright, unit tests).
+              </div></div>
+            </div>
+            <div class="card" style="box-shadow:none;grid-column:1/-1;">
+              <div class="head"><div><p class="title">5. Specialized Types</p><h2>Mapped to this app</h2><div class="sub">SPA routing + localStorage + WebAudio + exports</div></div></div>
+              <div class="body"><div class="small">
+                <b>Regression</b> — re-run core flows after changes.<br>
+                <b>Smoke</b> — fast check that build boots and routes work.<br>
+                <b>Exploratory</b> — active exploration for edge cases.<br>
+                <b>Accessibility</b> — keyboard use, screen reader semantics, focus management.
+              </div></div>
+            </div>
+            <div class="card" style="box-shadow:none;grid-column:1/-1;">
+              <div class="head"><div><p class="title">Testing Lifecycle</p><h2>8-step process</h2></div></div>
+              <div class="body"><div class="small">
+                <b>1.</b> Requirement Analysis · <b>2.</b> Test Planning · <b>3.</b> Test Case Development · <b>4.</b> Environment Setup ·
+                <b>5.</b> Test Execution · <b>6.</b> Defect Tracking · <b>7.</b> Reporting & Metrics · <b>8.</b> Test Closure
+              </div><div class="hr"></div><div class="small muted">In Agile/DevOps, these steps are iterative. Automated tests run on every change in CI/CD.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById("dlQaChecklist").onclick = () => {
+      downloadBlob(new Blob([JSON.stringify({
+        schema:"MAZEN_QA_CHECKLIST_V1",
+        areas:[
+          {area:"Routing",checks:["Home","Sessions","Library","B2B","Account","Quality","Why"]},
+          {area:"Sessions",checks:["Start","Pause/Resume","Stop","Ritual enter/exit","Preset disabled during run","Report export"]},
+          {area:"Audio",checks:["Autoplay resume on click","Texture test","Stop audio","No 'Playing' if blocked"]},
+          {area:"Library",checks:["Search","Select","Use","Favorites","Pro gating","FAQ accordion"]},
+          {area:"B2B",checks:["Export brief","Save draft","Download saved","Mail draft","Services display"]},
+          {area:"Account",checks:["Plan toggle","Export all","Wipe safely"]},
+          {area:"Accessibility",checks:["Keyboard nav","Ritual focus trap","ARIA labels","Contrast"]}
+        ]
+      }, null, 2)], {type:"application/json"}), "MAZEN_QA_CHECKLIST.json");
+      toast("Checklist downloaded");
+    };
+    document.getElementById("dlQaProcess").onclick = () => {
+      downloadBlob(new Blob(["MA-ZEN Testing Process\n1. Requirement Analysis\n2. Test Planning\n3. Test Case Development\n4. Environment Setup\n5. Test Execution\n6. Defect Tracking\n7. Reporting & Metrics\n8. Test Closure\n\nIn Agile/DevOps, run automated tests on every change."], {type:"text/plain"}), "MAZEN_TEST_PROCESS.txt");
+      toast("Process downloaded");
+    };
   }
 
   /* =========================================================
-     Catalog
+     Catalogs
   ========================================================= */
   function soundscapeCatalog(){
     return [
-      {
-        id:"FND-PAPER-QUIET",
-        tier:"free",
-        name:"Paper Quiet",
+      { id:"FND-PAPER-QUIET", tier:"free", name:"Paper Quiet",
         desc:"A light paper-like bed that often disappears. Sparse neutral events.",
-        tags:["silence-dominant","neutral","work"],
-        engine:{ texture:"paper", silenceBias: 0.82, warmth:0.32, motion:0.22 }
-      },
-      {
-        id:"FND-STONE-BOUNDARY",
-        tier:"free",
-        name:"Stone Boundary",
+        tags:["silence-dominant","neutral","work"], engine:{ texture:"paper", silenceBias:0.82, warmth:0.32, motion:0.22 }},
+      { id:"FND-STONE-BOUNDARY", tier:"free", name:"Stone Boundary",
         desc:"Lower, denser texture. A boundary that feels physical without melody.",
-        tags:["boundary","low","grounded"],
-        engine:{ texture:"stone", silenceBias:0.86, warmth:0.46, motion:0.18 }
-      },
-      {
-        id:"FND-AIR-OPEN",
-        tier:"free",
-        name:"Air Open",
+        tags:["boundary","low","grounded"], engine:{ texture:"stone", silenceBias:0.86, warmth:0.46, motion:0.18 }},
+      { id:"FND-AIR-OPEN", tier:"free", name:"Air Open",
         desc:"Higher filter profile with frequent gaps. Clear, quiet, empty-first.",
-        tags:["open","clean","minimal"],
-        engine:{ texture:"air", silenceBias:0.90, warmth:0.28, motion:0.20 }
-      },
-
-      // PRO set
-      {
-        id:"PRO-MA-94",
-        tier:"pro",
-        name:"MA 94",
+        tags:["open","clean","minimal"], engine:{ texture:"air", silenceBias:0.90, warmth:0.28, motion:0.20 }},
+      { id:"PRO-MA-94", tier:"pro", name:"MA 94",
         desc:"Silence-first architecture. Events are rare and short. Designed as proof.",
-        tags:["proof","94% silence","ritual"],
-        engine:{ texture:"paper", silenceBias:0.94, warmth:0.25, motion:0.12 }
-      },
-      {
-        id:"PRO-FOCUS-FIELD",
-        tier:"pro",
-        name:"Focus Field",
+        tags:["proof","94% silence","ritual"], engine:{ texture:"paper", silenceBias:0.94, warmth:0.25, motion:0.12 }},
+      { id:"PRO-FOCUS-FIELD", tier:"pro", name:"Focus Field",
         desc:"For deep work blocks. Silence-dominant but steady enough to hold attention.",
-        tags:["deep work","field","steady"],
-        engine:{ texture:"stone", silenceBias:0.84, warmth:0.40, motion:0.28 }
-      },
-      {
-        id:"PRO-EXIT-WITHOUT-TRACE",
-        tier:"pro",
-        name:"Exit Without Trace",
-        desc:"Almost nothing. A boundary that dissolves. Not relaxation—release.",
-        tags:["dissolve","impermanence","minimal"],
-        engine:{ texture:"air", silenceBias:0.96, warmth:0.18, motion:0.08 }
-      },
-      {
-        id:"PRO-SOFT-NEUTRAL",
-        tier:"pro",
-        name:"Soft Neutral",
-        desc:"Gentle warmth with long gaps. For users who still want a human-safe edge.",
-        tags:["gentle","neutral","safe"],
-        engine:{ texture:"paper", silenceBias: 0.82, warmth:0.55, motion:0.18 }
-      }
+        tags:["deep work","field","steady"], engine:{ texture:"stone", silenceBias:0.84, warmth:0.40, motion:0.28 }},
+      { id:"PRO-EXIT-TRACE", tier:"pro", name:"Exit Without Trace",
+        desc:"Almost nothing. A boundary that dissolves. Not relaxation — release.",
+        tags:["dissolve","impermanence","minimal"], engine:{ texture:"air", silenceBias:0.96, warmth:0.18, motion:0.08 }},
+      { id:"PRO-SOFT-NEUTRAL", tier:"pro", name:"Soft Neutral",
+        desc:"Gentle warmth with long gaps. For those who want a human-safe edge.",
+        tags:["gentle","neutral","safe"], engine:{ texture:"paper", silenceBias:0.82, warmth:0.55, motion:0.18 }},
+      { id:"PRO-GATE", tier:"pro", name:"The Gate",
+        desc:"Structured acoustic intervals. The voice arrives, names the interval, withdraws.",
+        tags:["Ma","interval","focus","morning"], engine:{ texture:"paper", silenceBias:0.88, warmth:0.35, motion:0.15 }},
+      { id:"PRO-ABSENCE", tier:"pro", name:"Form Into Absence",
+        desc:"Audio fades and dissolves. Sound points beyond itself until it exits entirely.",
+        tags:["Sunyata","dissolution","deep"], engine:{ texture:"air", silenceBias:0.92, warmth:0.30, motion:0.10 }},
+      { id:"PRO-WATER", tier:"pro", name:"Following Water",
+        desc:"Works with your natural state. Breath tempo. Effortlessness extended into rest.",
+        tags:["Wu Wei","effortless","rest","sleep"], engine:{ texture:"stone", silenceBias:0.80, warmth:0.50, motion:0.22 }}
     ];
   }
 
-  /* =========================================================
-     B2B sample brief
-  ========================================================= */
   function sampleB2BBrief(){
     return {
-      schema: "MAZEN_B2B_BRIEF_V1",
-      createdAt: new Date().toISOString(),
-      company: "Example Hotel Group",
-      contact: "Head of Guest Experience",
-      email: "experience@example.com",
-      industry: "Hospitality",
-      useCase: "Lobby ambience + in-room app sound layer + on-hold identity loop.",
-      constraints: "No melody. No nature clichés. Loudness must be low (-24 LUFS target). Must avoid anxiety triggers.",
-      deliverable: "Space Ambience (10–30m)",
-      timeline: "4 weeks",
-      budgetBand: "$8k–$20k",
-      decisionMaker: "Yes",
-      mazenAngle: "Silence-dominant boundary design. Non-gamified. Identity without manipulation.",
-      nextStep: "Discovery call + reference set + first identity sketch + revision loop."
+      schema:"MAZEN_B2B_BRIEF_V1", createdAt: new Date().toISOString(),
+      company:"Example Hotel Group", contact:"Head of Guest Experience",
+      email:"experience@example.com", industry:"Hospitality",
+      useCase:"Lobby ambience + in-room app sound layer + on-hold identity loop.",
+      constraints:"No melody. No nature clichés. Loudness must be low (-24 LUFS). Must avoid anxiety triggers.",
+      deliverable:"Space Ambience (10–30m)", timeline:"4 weeks", budgetBand:"$8k–$20k",
+      decisionMaker:"Yes",
+      mazenAngle:"Silence-dominant boundary design. Non-gamified. Identity without manipulation.",
+      nextStep:"Discovery call + reference set + first identity sketch + revision loop."
     };
   }
 
-  // Final: reflect plan badge
   syncPlanUI();
 })();
 </script>
