@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN Field Console — Frequency Bio-Scan & Tonal Therapy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Cinzel:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:        #060810;
+  --surface:   #0c0f1a;
+  --surface2:  #111628;
+  --surface3:  #161c32;
+  --border:    rgba(100,160,255,0.1);
+  --border2:   rgba(100,160,255,0.18);
+  --cyan:      #00e5ff;
+  --teal:      #00bfa5;
+  --gold:      #ffc947;
+  --violet:    #b388ff;
+  --coral:     #ff6e6e;
+  --green:     #69f0ae;
+  --text:      rgba(220,235,255,0.9);
+  --text-mid:  rgba(160,190,240,0.6);
+  --text-low:  rgba(100,140,200,0.35);
+  --glow-c:    rgba(0,229,255,0.12);
+  --glow-t:    rgba(0,191,165,0.12);
+  --glow-g:    rgba(255,201,71,0.12);
+  --r:         3px;
+
+  /* Chakra colors */
+  --root:    #e53935;
+  --sacral:  #fb8c00;
+  --solar:   #fdd835;
+  --heart:   #43a047;
+  --throat:  #1e88e5;
+  --third:   #5e35b1;
+  --crown:   #8e24aa;
+}
+html{scroll-behavior:smooth;font-size:14px}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  font-weight:400;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+/* SCANLINE EFFECT */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  pointer-events:none;z-index:9999;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(0,229,255,0.2);border-radius:2px}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  height:50px;
+  background:rgba(6,8,16,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+}
+.tb-brand{
+  display:flex;align-items:center;gap:12px;
+}
+.tb-logo{
+  font-family:'Cinzel',serif;
+  font-size:16px;font-weight:500;
+  letter-spacing:0.2em;color:var(--cyan);
+  text-shadow:0 0 20px var(--cyan);
+}
+.tb-divider{width:1px;height:18px;background:var(--border2)}
+.tb-section{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--text-mid);
+}
+.tb-status{
+  display:flex;align-items:center;gap:16px;
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  color:var(--text-low);letter-spacing:0.15em;
+}
+.tb-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--border2);
+  transition:background 400ms,box-shadow 400ms;
+}
+.tb-dot.active{background:var(--green);box-shadow:0 0 8px var(--green)}
+.tb-dot.scanning{background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── HERO ── */
+.hero{
+  padding:48px 24px 0;
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 380px;gap:40px;
+  align-items:start;
+}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding:32px 16px 0}}
+.hero-main{}
+.hero-kicker{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:0.4em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-kicker::before{content:'';display:inline-block;width:24px;height:1px;background:var(--teal)}
+.hero-h1{
+  font-family:'Cinzel',serif;
+  font-size:clamp(28px,4vw,52px);
+  font-weight:400;letter-spacing:0.08em;
+  line-height:1.1;margin-bottom:14px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:15px;line-height:1.75;color:var(--text-mid);
+  max-width:520px;margin-bottom:28px;font-weight:300;
+}
+.hero-model-tags{
+  display:flex;flex-wrap:wrap;gap:6px;margin-bottom:32px;
+}
+.model-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  padding:4px 10px;
+  border:1px solid var(--border2);
+  color:var(--text-low);
+  transition:all 200ms;cursor:default;
+}
+.model-tag:hover{color:var(--cyan);border-color:rgba(0,229,255,0.3)}
+
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:11px 22px;border:none;cursor:pointer;
+  transition:all 250ms;position:relative;overflow:hidden;
+}
+.btn-primary{
+  background:var(--cyan);color:var(--bg);
+  box-shadow:0 0 20px rgba(0,229,255,0.25);
+}
+.btn-primary:hover{background:#26ffff;box-shadow:0 0 32px rgba(0,229,255,0.45);transform:translateY(-1px)}
+.btn-secondary{
+  background:transparent;color:var(--teal);
+  border:1px solid rgba(0,191,165,0.4);
+}
+.btn-secondary:hover{background:var(--glow-t);border-color:var(--teal)}
+.btn-ghost{
+  background:transparent;color:var(--text-mid);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+.btn:disabled{opacity:0.35;cursor:not-allowed;transform:none!important}
+
+/* Hero vibrational model */
+.hero-model{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:24px;
+}
+.model-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--text-low);margin-bottom:16px;
+  padding-bottom:10px;border-bottom:1px solid var(--border);
+}
+.model-layer{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.03);
+  cursor:default;transition:all 200ms;
+}
+.model-layer:last-child{border-bottom:none}
+.model-layer:hover{padding-left:4px}
+.layer-num{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;color:var(--text-low);min-width:16px;
+}
+.layer-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;opacity:0.7}
+.layer-name{font-size:12px;font-weight:500;letter-spacing:0.06em;flex:1}
+.layer-freq{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;color:var(--text-low);letter-spacing:0.1em;
+}
+
+/* ── MAIN LAYOUT ── */
+.console-layout{
+  max-width:1100px;margin:32px auto 0;
+  padding:0 24px 80px;
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:20px;
+  align-items:start;
+}
+@media(max-width:900px){.console-layout{grid-template-columns:1fr;padding:0 16px 60px}}
+
+/* ── PANEL ── */
+.panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0;transition:opacity 400ms;
+}
+.panel.active-panel::before{opacity:1}
+.panel-head{
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-title{
+  font-family:'Cinzel',serif;
+  font-size:13px;font-weight:400;letter-spacing:0.15em;
+  color:var(--cyan);
+  display:flex;align-items:center;gap:10px;
+}
+.panel-title-icon{font-size:14px;opacity:0.8}
+.panel-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:3px 8px;
+  border:1px solid var(--border2);
+  color:var(--text-low);
+}
+.panel-body{padding:20px}
+
+/* ── TAB SYSTEM ── */
+.tabs{
+  display:flex;gap:1px;
+  border-bottom:1px solid var(--border);
+  padding:0 20px;
+}
+.tab-btn{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  padding:10px 16px;
+  background:none;border:none;cursor:pointer;
+  color:var(--text-low);
+  border-bottom:2px solid transparent;
+  transition:all 200ms;
+  margin-bottom:-1px;
+}
+.tab-btn:hover{color:var(--text-mid)}
+.tab-btn.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.tab-pane{display:none;padding:20px}
+.tab-pane.active{display:block}
+
+/* ── BIO SCAN ── */
+.scan-grid{
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:20px;align-items:start;
+}
+@media(max-width:640px){.scan-grid{grid-template-columns:1fr}}
+
+/* Body SVG diagram */
+.body-diagram-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+#body-svg{
+  width:180px;height:auto;
+  filter:drop-shadow(0 0 12px rgba(0,229,255,0.15));
+}
+
+.scan-data{}
+.freq-channels{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;
+}
+.channel-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:14px;
+  transition:all 300ms;
+}
+.channel-card.active-ch{border-color:rgba(0,229,255,0.4);background:rgba(0,229,255,0.04)}
+.ch-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--text-low);margin-bottom:8px;
+}
+.ch-dominant{
+  font-family:'Cinzel',serif;
+  font-size:24px;font-weight:400;
+  color:var(--cyan);letter-spacing:0.1em;line-height:1;
+  margin-bottom:4px;transition:all 400ms;
+}
+.ch-support{
+  display:inline-block;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;letter-spacing:0.1em;
+  padding:3px 8px;
+  border:1px solid;
+  transition:all 400ms;
+}
+.ch-freq{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;color:var(--text-low);margin-top:4px;
+  letter-spacing:0.08em;
+}
+
+/* Scan controls */
+.scan-controls{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;
+}
+.scan-timer{
+  font-family:'Share Tech Mono',monospace;
+  font-size:28px;color:var(--cyan);letter-spacing:0.1em;
+  text-align:center;margin:12px 0;
+  text-shadow:0 0 16px rgba(0,229,255,0.4);
+  transition:opacity 300ms;
+}
+
+/* FFT Canvas */
+#fft-canvas{
+  width:100%;height:60px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  display:block;margin-top:12px;
+}
+
+/* Silence bias / signal strength */
+.signal-row{
+  display:flex;align-items:center;gap:10px;margin-top:10px;
+}
+.signal-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--text-low);min-width:90px;
+}
+.signal-track{flex:1;height:2px;background:var(--surface3);position:relative}
+.signal-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg,var(--teal),var(--cyan));
+  transition:width 200ms ease;
+}
+.signal-val{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;color:var(--cyan);min-width:32px;text-align:right;
+  letter-spacing:0.08em;
+}
+
+/* ── TONAL THERAPY ── */
+.therapy-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+}
+@media(max-width:640px){.therapy-grid{grid-template-columns:1fr}}
+
+.param-group{margin-bottom:14px}
+.param-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--text-low);margin-bottom:6px;
+  display:flex;justify-content:space-between;
+}
+.param-val{color:var(--cyan)}
+
+select.field-sel,input.field-in{
+  width:100%;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;letter-spacing:0.1em;
+  padding:9px 12px;outline:none;
+  transition:border-color 200ms,box-shadow 200ms;
+  -webkit-appearance:none;
+  border-radius:var(--r);
+}
+select.field-sel{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(0,229,255,0.4)'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;
+  padding-right:26px;cursor:pointer;
+}
+select.field-sel:focus,input.field-in:focus{
+  border-color:rgba(0,229,255,0.4);
+  box-shadow:0 0 0 3px rgba(0,229,255,0.08);
+}
+input[type=range].range-slider{
+  -webkit-appearance:none;width:100%;height:2px;
+  background:var(--surface3);outline:none;cursor:pointer;
+  border-radius:1px;
+}
+input[type=range].range-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:12px;height:12px;
+  border-radius:50%;background:var(--cyan);cursor:pointer;
+  box-shadow:0 0 8px rgba(0,229,255,0.5);
+  transition:transform 200ms;
+}
+input[type=range].range-slider::-webkit-slider-thumb:hover{transform:scale(1.3)}
+
+/* Duration pills */
+.duration-pills{display:flex;gap:6px}
+.dur-pill{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.15em;text-transform:uppercase;
+  padding:7px 14px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--text-low);cursor:pointer;transition:all 200ms;
+}
+.dur-pill.active{background:var(--glow-t);border-color:var(--teal);color:var(--teal)}
+
+/* Waveform viz */
+#wave-canvas{
+  width:100%;height:80px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  display:block;margin:12px 0;
+}
+
+/* Therapy controls */
+.therapy-main-controls{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;align-items:center;
+}
+.therapy-timer{
+  font-family:'Share Tech Mono',monospace;
+  font-size:20px;color:var(--teal);letter-spacing:0.1em;
+  padding:8px 16px;
+  background:var(--surface2);border:1px solid var(--border);
+  min-width:80px;text-align:center;
+}
+
+/* ── CHAKRA SYSTEM ── */
+.chakra-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  margin-bottom:16px;
+}
+@media(max-width:600px){.chakra-grid{grid-template-columns:1fr}}
+.chakra-card{
+  background:var(--surface);
+  padding:16px;cursor:pointer;
+  transition:background 200ms;position:relative;overflow:hidden;
+}
+.chakra-card:hover{background:var(--surface2)}
+.chakra-card.expanded{background:var(--surface2)}
+.chakra-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--card-color,var(--cyan));
+}
+.ck-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ck-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ck-name{font-size:13px;font-weight:600;letter-spacing:0.08em}
+.ck-sanskrit{
+  font-size:9px;color:var(--text-low);letter-spacing:0.12em;margin-left:auto;
+  font-family:'Share Tech Mono',monospace;
+}
+.ck-meta{
+  display:flex;gap:10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;color:var(--text-low);letter-spacing:0.1em;
+  margin-bottom:8px;
+}
+.ck-freq-badge{
+  padding:2px 7px;border:1px solid;font-size:7px;letter-spacing:0.15em;
+  font-family:'Share Tech Mono',monospace;
+}
+.ck-detail{
+  display:none;margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--border);
+  font-size:11px;line-height:1.7;color:var(--text-mid);
+}
+.chakra-card.expanded .ck-detail{display:block}
+.ck-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ck-detail-block{}
+.ck-detail-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--text-low);margin-bottom:4px;
+}
+.ck-detail-items{font-size:10px;color:var(--text-mid);line-height:1.7}
+.ck-play-btn{
+  margin-top:10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  padding:7px 14px;
+  background:transparent;cursor:pointer;
+  transition:all 200ms;border:1px solid;
+}
+
+/* ── METHOD TABLE ── */
+.method-table-wrap{overflow-x:auto;margin-top:16px}
+.method-table{
+  width:100%;border-collapse:collapse;font-size:11px;
+}
+.method-table th{
+  text-align:left;
+  font-family:'Share Tech Mono',monospace;
+  font-size:7px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--text-low);
+  padding:10px 14px 8px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface2);white-space:nowrap;
+}
+.method-table td{
+  padding:12px 14px;
+  border-bottom:1px solid rgba(100,140,255,0.04);
+  vertical-align:top;line-height:1.65;color:var(--text-mid);
+}
+.method-table td:first-child{
+  color:var(--cyan);
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:0.1em;white-space:nowrap;
+  min-width:130px;
+}
+.method-table td:nth-child(2){color:var(--text-low);font-size:9px;font-family:'Share Tech Mono',monospace;white-space:nowrap}
+.method-table tr:last-child td{border-bottom:none}
+.method-table tr:hover td{background:var(--glow-c)}
+
+/* ── SIDEBAR PANELS ── */
+.side-panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  margin-bottom:16px;
+}
+.side-head{
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+  font-family:'Cinzel',serif;
+  font-size:11px;font-weight:400;letter-spacing:0.15em;
+  color:var(--cyan);
+  display:flex;align-items:center;gap:8px;
+}
+.side-body{padding:16px}
+
+/* Session log */
+.session-log{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:0.08em;
+  color:var(--text-low);
+  max-height:160px;overflow-y:auto;
+  line-height:2;
+}
+.log-entry{
+  padding:3px 0;border-bottom:1px solid rgba(100,140,255,0.04);
+  display:flex;gap:8px;align-items:baseline;
+}
+.log-time{color:var(--teal);min-width:42px}
+.log-msg{flex:1}
+.log-entry.warn .log-msg{color:var(--gold)}
+.log-entry.info .log-msg{color:var(--cyan)}
+
+/* Quick freq selector */
+.quick-freq-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
+}
+.qf-btn{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.1em;
+  padding:8px 4px;text-align:center;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--text-low);cursor:pointer;
+  transition:all 200ms;
+}
+.qf-btn:hover{color:var(--cyan);border-color:rgba(0,229,255,0.3);background:var(--glow-c)}
+.qf-btn.playing{color:var(--cyan);border-color:var(--cyan);background:var(--glow-c)}
+
+/* Report panel */
+.report-block{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:16px;margin-bottom:12px;
+}
+.report-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--text-low);margin-bottom:12px;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;
+}
+.report-stamp{color:var(--gold)}
+.report-row{
+  display:flex;gap:0;margin-bottom:7px;
+  border-bottom:1px solid rgba(100,140,255,0.04);
+  padding-bottom:7px;
+}
+.report-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.report-key{
+  font-family:'Share Tech Mono',monospace;
+  font-size:8px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-low);width:110px;flex-shrink:0;padding-top:1px;
+}
+.report-val{font-size:11px;color:var(--text);line-height:1.5}
+.report-actions{display:flex;gap:8px;margin-top:12px}
+.report-btn{
+  font-family:'Share Tech Mono',monospace;font-size:8px;
+  letter-spacing:0.15em;text-transform:uppercase;
+  padding:8px 14px;cursor:pointer;border:none;transition:all 200ms;
+}
+.report-btn.primary{background:var(--teal);color:var(--bg)}
+.report-btn.primary:hover{background:#00d4be}
+.report-btn.ghost{background:transparent;color:var(--text-mid);border:1px solid var(--border)}
+.report-btn.ghost:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  color:var(--cyan);
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  padding:9px 20px;
+  opacity:0;transition:all 350ms;z-index:9998;pointer-events:none;
+  white-space:nowrap;
+  box-shadow:0 0 20px rgba(0,229,255,0.1);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:0.4}100%{transform:scale(1.8);opacity:0}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.fade-up{animation:fadeUp 600ms ease both}
+.d1{animation-delay:60ms}.d2{animation-delay:140ms}.d3{animation-delay:220ms}.d4{animation-delay:300ms}
+
+/* Scanning animation on body svg */
+.scan-pulse{
+  animation:scanPulse 2s ease-in-out infinite;
+}
+@keyframes scanPulse{
+  0%,100%{opacity:0.3;filter:drop-shadow(0 0 4px var(--cyan))}
+  50%{opacity:1;filter:drop-shadow(0 0 16px var(--cyan))}
+}
+
+.section-divider{
+  border:none;border-top:1px solid var(--border);margin:32px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-brand">
+    <span class="tb-logo">MA-ZEN</span>
+    <div class="tb-divider"></div>
+    <span class="tb-section">Field Console v2.0</span>
+  </div>
+  <div class="tb-status">
+    <div class="tb-dot" id="mic-dot"></div>
+    <span id="mic-status">Mic: Idle</span>
+    <div class="tb-divider"></div>
+    <div class="tb-dot" id="audio-dot"></div>
+    <span id="audio-status">Engine: Off</span>
+    <div class="tb-divider"></div>
+    <span id="session-time">00:00</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero fade-up">
+  <div class="hero-main">
+    <div class="hero-kicker">Frequency Bio-Scan · Tonal Therapy · Energetic Mapping</div>
+    <h1 class="hero-h1">FIELD CONSOLE</h1>
+    <p class="hero-sub">Detect your energetic signature through voice frequency analysis. Identify tonal imbalances across 7 vibrational layers. Generate personalized tonal therapy and a full session report.</p>
+    <div class="hero-model-tags">
+      <div class="model-tag">Identity</div>
+      <div class="model-tag">Ancestral Conditioning</div>
+      <div class="model-tag">Beliefs</div>
+      <div class="model-tag">Traumas</div>
+      <div class="model-tag">Chakras & Meridians</div>
+      <div class="model-tag">Nervous System</div>
+      <div class="model-tag">Emotions</div>
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="startScan()">▶ Begin Bio-Scan</button>
+      <button class="btn btn-secondary" onclick="scrollTo('#tonal-therapy')">Tonal Therapy</button>
+      <button class="btn btn-ghost" onclick="scrollTo('#chakra-system')">Chakra Map</button>
+    </div>
+  </div>
+  <div class="hero-model d3">
+    <div class="model-title">Vibrational Model — 7 Layers</div>
+    <div class="model-layer">
+      <span class="layer-num">p.1</span>
+      <div class="layer-dot" style="background:var(--crown)"></div>
+      <span class="layer-name">Identity</span>
+      <span class="layer-freq">963 Hz</span>
+    </div>
+    <div class="model-layer">
+      <span class="layer-num">p.2</span>
+      <div class="layer-dot" style="background:var(--third)"></div>
+      <span class="layer-name">Ancestral Conditioning</span>
+      <span class="layer-freq">852 Hz</span>
+    </div>
+    <div class="model-layer">
+      <span class="layer-num">p.3</span>
+      <div class="layer-dot" style="background:var(--throat)"></div>
+      <span class="layer-name">Beliefs</span>
+      <span class="layer-freq">741 Hz</span>
+    </div>
+    <div class="model-layer">
+      <span class="layer-num">p.4</span>
+      <div class="layer-dot" style="background:var(--heart)"></div>
+      <span class="layer-name">Traumas</span>
+      <span class="layer-freq">639 Hz</span>
+    </div>
+    <div class="model-layer">
+      <span class="layer-num">p.5</span>
+      <div class="layer-dot" style="background:var(--solar)"></div>
+      <span class="layer-name">Chakras & Meridians</span>
+      <span class="layer-freq">528 Hz</span>
+    </div>
+    <div class="model-layer">
+      <span class="layer-num">p.6</span>
+      <div class="layer-dot" style="background:var(--sacral)"></div>
+      <span class="layer-name">Nervous System</span>
+      <span class="layer-freq">417 Hz</span>
+    </div>
+    <div class="model-layer">
+      <span class="layer-num">p.7</span>
+      <div class="layer-dot" style="background:var(--root)"></div>
+      <span class="layer-name">Emotions</span>
+      <span class="layer-freq">396 Hz</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONSOLE LAYOUT -->
+<div class="console-layout">
+
+  <!-- LEFT COLUMN -->
+  <div>
+
+  <!-- ── BIO SCAN PANEL ── -->
+  <div class="panel fade-up d1" id="scan-panel">
+    <div class="panel-head">
+      <div class="panel-title">
+        <span class="panel-title-icon">⬡</span>
+        Bio Scan
+      </div>
+      <span class="panel-badge" id="scan-badge">Awaiting Input</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('scan','scan-results')">Scan Results</button>
+      <button class="tab-btn" onclick="switchTab('scan','pulse')">Pulse</button>
+      <button class="tab-btn" onclick="switchTab('scan','graph')">Graph</button>
+    </div>
+
+    <div class="tab-pane active" id="scan-scan-results">
+      <div class="scan-grid">
+
+        <!-- Body diagram -->
+        <div class="body-diagram-wrap">
+          <svg id="body-svg" viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="aura1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(0,229,255,0.15)"/>
+                <stop offset="100%" stop-color="rgba(0,229,255,0)"/>
+              </radialGradient>
+              <radialGradient id="aura2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(179,136,255,0.12)"/>
+                <stop offset="100%" stop-color="rgba(179,136,255,0)"/>
+              </radialGradient>
+            </defs>
+            <!-- Aura layers -->
+            <ellipse cx="60" cy="130" rx="55" ry="120" fill="url(#aura1)" id="aura-outer"/>
+            <ellipse cx="60" cy="130" rx="42" ry="105" fill="url(#aura2)" id="aura-mid"/>
+            <!-- Body outline -->
+            <g stroke="rgba(0,229,255,0.5)" stroke-width="1.5" fill="none">
+              <!-- Head -->
+              <circle cx="60" cy="28" r="20" stroke="rgba(0,229,255,0.6)"/>
+              <!-- Neck -->
+              <line x1="52" y1="48" x2="52" y2="60"/>
+              <line x1="68" y1="48" x2="68" y2="60"/>
+              <!-- Shoulders -->
+              <path d="M52 60 Q20 62 18 80" stroke-width="1.5"/>
+              <path d="M68 60 Q100 62 102 80"/>
+              <!-- Torso -->
+              <path d="M26 80 L26 160 Q26 170 36 172 L84 172 Q94 170 94 160 L94 80 Z" fill="rgba(0,229,255,0.04)"/>
+              <!-- Arms -->
+              <path d="M18 80 L8 140 Q7 148 12 150 L16 152" stroke-width="1.3"/>
+              <path d="M102 80 L112 140 Q113 148 108 150 L104 152" stroke-width="1.3"/>
+              <!-- Legs -->
+              <path d="M36 172 L28 240 Q27 248 34 250 L42 250 Q46 248 46 240 L46 172"/>
+              <path d="M84 172 L92 240 Q93 248 86 250 L78 250 Q74 248 74 240 L74 172"/>
+              <!-- Center line -->
+              <line x1="60" y1="60" x2="60" y2="170" stroke="rgba(0,229,255,0.2)" stroke-dasharray="3,3"/>
+            </g>
+            <!-- Chakra points -->
+            <g id="chakra-dots">
+              <circle cx="60" cy="20" r="5" fill="var(--crown)" opacity="0.8" data-chakra="crown"/>
+              <circle cx="60" cy="34" r="4" fill="var(--third)" opacity="0.8" data-chakra="third-eye"/>
+              <circle cx="60" cy="54" r="4" fill="var(--throat)" opacity="0.8" data-chakra="throat"/>
+              <circle cx="60" cy="95" r="5" fill="var(--heart)" opacity="0.8" data-chakra="heart"/>
+              <circle cx="60" cy="125" r="4" fill="var(--solar)" opacity="0.8" data-chakra="solar"/>
+              <circle cx="60" cy="148" r="4" fill="var(--sacral)" opacity="0.8" data-chakra="sacral"/>
+              <circle cx="60" cy="165" r="5" fill="var(--root)" opacity="0.8" data-chakra="root"/>
+            </g>
+            <!-- Frequency lines (L/R) -->
+            <g id="freq-lines" stroke-width="1" opacity="0.4">
+              <line x1="26" y1="100" x2="0" y2="100" stroke="var(--coral)" stroke-dasharray="2,2" id="left-line"/>
+              <line x1="94" y1="100" x2="120" y2="100" stroke="var(--violet)" stroke-dasharray="2,2" id="right-line"/>
+              <line x1="60" y1="60" x2="60" y2="0" stroke="var(--gold)" stroke-dasharray="2,2" id="top-line"/>
+              <line x1="60" y1="170" x2="60" y2="260" stroke="var(--teal)" stroke-dasharray="2,2" id="bot-line"/>
+            </g>
+            <!-- Labels -->
+            <text x="0" y="96" font-family="Share Tech Mono" font-size="5" fill="var(--coral)" opacity="0.7">LEFT</text>
+            <text x="96" y="96" font-family="Share Tech Mono" font-size="5" fill="var(--violet)" opacity="0.7">RIGHT</text>
+            <text x="46" y="8" font-family="Share Tech Mono" font-size="5" fill="var(--gold)" opacity="0.7">C.HI</text>
+            <text x="40" y="258" font-family="Share Tech Mono" font-size="5" fill="var(--teal)" opacity="0.7">C.LOW</text>
+          </svg>
+          <!-- Session time display -->
+          <div class="scan-timer" id="scan-clock">00:00</div>
+          <div class="scan-controls">
+            <button class="btn btn-primary" id="scan-btn" onclick="startScan()" style="padding:8px 16px;font-size:8px">▶ SCAN</button>
+            <button class="btn btn-secondary" id="stop-scan-btn" onclick="stopScan()" style="padding:8px 14px;font-size:8px" disabled>■ STOP</button>
+          </div>
+        </div>
+
+        <!-- Channel readings -->
+        <div class="scan-data">
+          <div class="freq-channels">
+
+            <div class="channel-card" id="ch-left" style="--ch-color:var(--coral)">
+              <div class="ch-label">◀ Left</div>
+              <div class="ch-dominant" id="left-dom" style="color:var(--coral)">—</div>
+              <div>
+                <span class="ch-support" id="left-sup" style="border-color:var(--coral);color:var(--coral)">—</span>
+              </div>
+              <div class="ch-freq" id="left-hz">— Hz</div>
+            </div>
+
+            <div class="channel-card" id="ch-center-hi">
+              <div class="ch-label">▲ Center (High)</div>
+              <div class="ch-dominant" id="chi-dom" style="color:var(--gold)">—</div>
+              <div>
+                <span class="ch-support" id="chi-sup" style="border-color:var(--gold);color:var(--gold)">—</span>
+              </div>
+              <div class="ch-freq" id="chi-hz">— Hz</div>
+            </div>
+
+            <div class="channel-card" id="ch-right">
+              <div class="ch-label">▶ Right</div>
+              <div class="ch-dominant" id="right-dom" style="color:var(--violet)">—</div>
+              <div>
+                <span class="ch-support" id="right-sup" style="border-color:var(--violet);color:var(--violet)">—</span>
+              </div>
+              <div class="ch-freq" id="right-hz">— Hz</div>
+            </div>
+
+            <div class="channel-card" id="ch-center-lo">
+              <div class="ch-label">▼ Center (Low)</div>
+              <div class="ch-dominant" id="clo-dom" style="color:var(--teal)">—</div>
+              <div>
+                <span class="ch-support" id="clo-sup" style="border-color:var(--teal);color:var(--teal)">—</span>
+              </div>
+              <div class="ch-freq" id="clo-hz">— Hz</div>
+            </div>
+
+          </div><!-- /freq-channels -->
+
+          <!-- Signal bars -->
+          <div class="signal-row">
+            <div class="signal-label">Signal Strength</div>
+            <div class="signal-track"><div class="signal-fill" id="sig-strength" style="width:0%"></div></div>
+            <div class="signal-val" id="sig-val">0%</div>
+          </div>
+          <div class="signal-row">
+            <div class="signal-label">Coherence</div>
+            <div class="signal-track"><div class="signal-fill" id="sig-coherence" style="width:0%;background:linear-gradient(90deg,var(--violet),var(--gold))"></div></div>
+            <div class="signal-val" id="coh-val">0%</div>
+          </div>
+
+          <canvas id="fft-canvas"></canvas>
+
+          <!-- Scan interpretation -->
+          <div id="scan-interpretation" style="display:none;margin-top:12px;background:var(--surface2);border:1px solid var(--border);padding:14px">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-low);margin-bottom:8px">Field Interpretation</div>
+            <div id="interp-text" style="font-size:12px;line-height:1.75;color:var(--text-mid)"></div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /scan results tab -->
+
+    <div class="tab-pane" id="scan-pulse">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-low);letter-spacing:0.15em;margin-bottom:12px;text-transform:uppercase">Live Pulse Waveform</div>
+      <canvas id="pulse-canvas" style="width:100%;height:120px;background:var(--surface2);border:1px solid var(--border);display:block"></canvas>
+      <div class="signal-row" style="margin-top:12px">
+        <div class="signal-label">Pulse Rate</div>
+        <div class="signal-val" id="pulse-rate">— BPM</div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="scan-graph">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-low);letter-spacing:0.15em;margin-bottom:12px;text-transform:uppercase">Frequency Spectrum Graph</div>
+      <canvas id="spectrum-canvas" style="width:100%;height:200px;background:var(--surface2);border:1px solid var(--border);display:block"></canvas>
+      <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+        <div class="signal-row" style="flex:1">
+          <div class="signal-label">Peak Freq</div>
+          <div class="signal-val" id="peak-freq">— Hz</div>
+        </div>
+        <div class="signal-row" style="flex:1">
+          <div class="signal-label">Centroid</div>
+          <div class="signal-val" id="centroid-freq">— Hz</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scan panel -->
+
+
+  <!-- ── TONAL THERAPY PANEL ── -->
+  <div class="panel fade-up d2" id="tonal-therapy">
+    <div class="panel-head">
+      <div class="panel-title">
+        <span class="panel-title-icon">◈</span>
+        Tonal Therapy
+      </div>
+      <span class="panel-badge" id="therapy-badge">Engine Ready</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('therapy','config')">Configuration</button>
+      <button class="tab-btn" onclick="switchTab('therapy','verdi')">Verdi Grounding</button>
+      <button class="tab-btn" onclick="switchTab('therapy','tesla')">Tesla 3-6-9</button>
+    </div>
+
+    <div class="tab-pane active" id="therapy-config">
+      <div class="therapy-grid">
+        <div>
+          <div class="param-group">
+            <div class="param-label">Waveform Type <span class="param-val" id="wave-val">SawTooth</span></div>
+            <select class="field-sel" id="wave-type" onchange="updateWaveform()">
+              <option value="sawtooth">SawTooth</option>
+              <option value="sine">Sine (Pure)</option>
+              <option value="triangle">Triangle</option>
+              <option value="square">Square</option>
+            </select>
+          </div>
+
+          <div class="param-group">
+            <div class="param-label">Frequency Pattern <span class="param-val" id="pattern-val">AO: 25-25-1</span></div>
+            <select class="field-sel" id="freq-pattern" onchange="updatePattern()">
+              <option value="ao-25-25-1">AO: 25-25-1</option>
+              <option value="tesla-369">Tesla: 3-6-9</option>
+              <option value="solfeggio">Solfeggio Scale</option>
+              <option value="fibonacci">Fibonacci Resonance</option>
+              <option value="verdi">Verdi A=432</option>
+              <option value="schumann">Schumann 7.83 Hz</option>
+            </select>
+          </div>
+
+          <div class="param-group">
+            <div class="param-label">Ambient Layer <span class="param-val" id="ambient-val">Calming</span></div>
+            <select class="field-sel" id="ambient-layer" onchange="updateAmbient()">
+              <option value="off">Engine Off (Pure)</option>
+              <option value="calming">Ambient: Calming</option>
+              <option value="calm-space">Ambient: Calm Space</option>
+              <option value="zen">Ambient: Zen Meditation</option>
+              <option value="piano-bliss">AO Classic: Piano Bliss</option>
+              <option value="dream-slip">AO Classic: Dream Slip</option>
+              <option value="dreamscape">AO Classic: Dreamscape</option>
+              <option value="space-mist">AO Classic: Space Mist</option>
+              <option value="med-cloud">AO Classic: Meditation Cloud</option>
+              <option value="calm-trance">Upbeat: Calm Trance</option>
+              <option value="supercharger">Upbeat: Super Charger</option>
+              <option value="neuro">Upbeat: Neuro Aerobics</option>
+            </select>
+          </div>
+
+          <div class="param-group">
+            <div class="param-label">Octave Multiplier <span class="param-val" id="octave-val">×4</span></div>
+            <select class="field-sel" id="octave-mul" onchange="updateOctave(this.value)">
+              <option value="1">×1</option>
+              <option value="2">×2</option>
+              <option value="3">×3</option>
+              <option value="4" selected>×4</option>
+              <option value="6">×6</option>
+              <option value="8">×8</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <!-- Active tone keys -->
+          <div class="param-group">
+            <div class="param-label">Active Tones (from Scan)</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px" id="active-tones-row">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%">
+                <div id="tone-left" style="text-align:center;padding:10px 6px;background:var(--surface2);border:1px solid rgba(255,110,110,0.3);color:var(--coral);font-family:'Share Tech Mono',monospace;font-size:11px">LEFT<br><span id="tl-note">—</span></div>
+                <div id="tone-chi" style="text-align:center;padding:10px 6px;background:var(--surface2);border:1px solid rgba(255,201,71,0.3);color:var(--gold);font-family:'Share Tech Mono',monospace;font-size:11px">C.HIGH<br><span id="tc-note">—</span></div>
+                <div id="tone-right" style="text-align:center;padding:10px 6px;background:var(--surface2);border:1px solid rgba(179,136,255,0.3);color:var(--violet);font-family:'Share Tech Mono',monospace;font-size:11px">RIGHT<br><span id="tr-note">—</span></div>
+                <div id="tone-clo" style="text-align:center;padding:10px 6px;background:var(--surface2);border:1px solid rgba(0,191,165,0.3);color:var(--teal);font-family:'Share Tech Mono',monospace;font-size:11px">C.LOW<br><span id="tcl-note">—</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="param-group">
+            <div class="param-label">Master Volume <span class="param-val" id="vol-val">70%</span></div>
+            <input type="range" class="range-slider" id="master-vol" min="0" max="100" value="70" oninput="setMasterVol(this.value)">
+          </div>
+
+          <div class="param-group">
+            <div class="param-label">Tone Depth <span class="param-val" id="depth-val">0.6</span></div>
+            <input type="range" class="range-slider" id="tone-depth" min="0" max="100" value="60" oninput="setToneDepth(this.value)">
+          </div>
+
+          <canvas id="wave-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Duration -->
+      <div style="margin-top:4px">
+        <div class="param-label" style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-low);margin-bottom:8px">Session Duration</div>
+        <div class="duration-pills">
+          <div class="dur-pill" onclick="setDuration(300,this)">5 Min</div>
+          <div class="dur-pill active" onclick="setDuration(600,this)">10 Min</div>
+          <div class="dur-pill" onclick="setDuration(1200,this)">20 Min</div>
+          <div class="dur-pill" onclick="setDuration(0,this)">Continuous</div>
+        </div>
+      </div>
+
+      <div class="therapy-main-controls">
+        <button class="btn btn-primary" id="therapy-play-btn" onclick="startTherapy()">▶ Pulse Cycle</button>
+        <button class="btn btn-secondary" id="therapy-stop-btn" onclick="stopTherapy()" disabled>■ Stop</button>
+        <button class="btn btn-ghost" onclick="autoMix()">⟳ Auto-Mix</button>
+        <div class="therapy-timer" id="therapy-clock">00:00</div>
+      </div>
+    </div><!-- /config tab -->
+
+    <div class="tab-pane" id="therapy-verdi">
+      <div style="margin-bottom:16px">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Verdi Grounding — A=432 Hz</div>
+        <p style="font-size:12px;line-height:1.75;color:var(--text-mid)">Giuseppe Verdi's natural tuning standard. 432 Hz resonates with the natural frequency of the universe, aligning body rhythms with Earth's Schumann resonance (7.83 Hz). Activates the left brain hemisphere and provides a grounding foundation for tonal therapy sessions.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+        <div style="text-align:center;padding:12px 8px;background:var(--surface2);border:1px solid var(--border)">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);margin-bottom:4px">BASE</div>
+          <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--gold)">432</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low)">Hz</div>
+        </div>
+        <div style="text-align:center;padding:12px 8px;background:var(--surface2);border:1px solid var(--border)">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);margin-bottom:4px">3RD</div>
+          <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--cyan)">528</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low)">Hz</div>
+        </div>
+        <div style="text-align:center;padding:12px 8px;background:var(--surface2);border:1px solid var(--border)">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);margin-bottom:4px">5TH</div>
+          <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--teal)">648</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low)">Hz</div>
+        </div>
+        <div style="text-align:center;padding:12px 8px;background:var(--surface2);border:1px solid var(--border)">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);margin-bottom:4px">OCT</div>
+          <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--violet)">864</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low)">Hz</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="playVerdi()" style="font-size:8px">▶ Activate Verdi Grounding</button>
+    </div>
+
+    <div class="tab-pane" id="therapy-tesla">
+      <div style="margin-bottom:16px">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--violet);margin-bottom:8px">Tesla 3-6-9 — Sacred Frequency Pattern</div>
+        <p style="font-size:12px;line-height:1.75;color:var(--text-mid)">Nikola Tesla's fundamental numerical pattern applied to frequency generation. The 3-6-9 sequence creates harmonic resonance across the energy body. Each cycle reinforces coherence between the conscious, subconscious, and quantum field layers.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+        <div style="text-align:center;padding:14px 8px;background:var(--surface2);border:1px solid rgba(179,136,255,0.3)">
+          <div style="font-family:'Cinzel',serif;font-size:36px;color:var(--violet);line-height:1">3</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);margin-top:6px">174 Hz</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low)">Foundation</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:var(--surface2);border:1px solid rgba(0,229,255,0.3)">
+          <div style="font-family:'Cinzel',serif;font-size:36px;color:var(--cyan);line-height:1">6</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);margin-top:6px">396 Hz</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low)">Liberation</div>
+        </div>
+        <div style="text-align:center;padding:14px 8px;background:var(--surface2);border:1px solid rgba(105,240,174,0.3)">
+          <div style="font-family:'Cinzel',serif;font-size:36px;color:var(--green);line-height:1">9</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);margin-top:6px">963 Hz</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low)">Connection</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="playTesla()" style="font-size:8px">▶ Activate Tesla 3-6-9</button>
+    </div>
+
+  </div><!-- /tonal therapy panel -->
+
+
+  <!-- ── CHAKRA SYSTEM PANEL ── -->
+  <div class="panel fade-up d3" id="chakra-system">
+    <div class="panel-head">
+      <div class="panel-title">
+        <span class="panel-title-icon">◎</span>
+        Chakra System Map
+      </div>
+      <span class="panel-badge">7 Energy Centers</span>
+    </div>
+    <div style="padding:16px;font-size:10px;color:var(--text-low);letter-spacing:0.08em;border-bottom:1px solid var(--border)">Click any chakra to expand — play its healing frequency tone</div>
+
+    <div class="chakra-grid" id="chakra-grid"></div>
+  </div>
+
+
+  <!-- ── METHOD BREAKDOWN PANEL ── -->
+  <div class="panel fade-up d4" id="method-section">
+    <div class="panel-head">
+      <div class="panel-title">
+        <span class="panel-title-icon">◫</span>
+        Method — Modular Breakdown
+      </div>
+      <span class="panel-badge">8 Modules</span>
+    </div>
+    <div style="padding:16px;font-size:12px;line-height:1.75;color:var(--text-mid);border-bottom:1px solid var(--border)">
+      The MA-ZEN Field Console operates as a layered energetic assessment system. Each module is independent and can be engaged sequentially or in isolation.
+    </div>
+    <div class="method-table-wrap" style="padding:0 1px">
+      <table class="method-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Step</th>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Principle / Mechanism</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>01 · Bio Scan</td>
+            <td>First</td>
+            <td>Microphone (voice/breath)</td>
+            <td>4-channel frequency map (L, C-Hi, R, C-Lo) + dominant/support notes per channel</td>
+            <td>FFT analysis of voice input. Dominant peak → musical note mapping (A4=440 Hz). Cross-channel coherence calculated.</td>
+          </tr>
+          <tr>
+            <td>02 · Channel Mapping</td>
+            <td>Second</td>
+            <td>Scan result (4 notes)</td>
+            <td>Left = physical/masculine · C-High = mental/spiritual · Right = emotional/feminine · C-Low = ancestral/subconscious</td>
+            <td>Biofield quadrant model. Each channel maps to a layer of the 7-layer vibrational model. Imbalance = note divergence.</td>
+          </tr>
+          <tr>
+            <td>03 · Coherence Index</td>
+            <td>Third</td>
+            <td>4-channel notes</td>
+            <td>0–100% coherence score indicating harmonic alignment across all channels</td>
+            <td>Interval distance between detected notes. Perfect 5th/4th = high coherence. Tritone/2nd = low coherence.</td>
+          </tr>
+          <tr>
+            <td>04 · Chakra Mapping</td>
+            <td>Fourth</td>
+            <td>Dominant frequencies</td>
+            <td>Identified under/over-active chakras from Root (396 Hz) to Crown (963 Hz)</td>
+            <td>Detected frequencies matched against solfeggio chakra frequencies ±5%. Deviation flags the chakra for therapy.</td>
+          </tr>
+          <tr>
+            <td>05 · Tonal Therapy Engine</td>
+            <td>Fifth</td>
+            <td>Scan notes + pattern selection</td>
+            <td>Real-time generated tonal frequencies tuned to detected imbalances + ambient layer</td>
+            <td>Web Audio API oscillators at detected note frequencies. Waveform, octave, depth configurable. Pulse cycle = 20-second imprint.</td>
+          </tr>
+          <tr>
+            <td>06 · Frequency Pattern</td>
+            <td>Sixth</td>
+            <td>Pattern selection</td>
+            <td>Harmonic framework: AO 25-25-1, Tesla 3-6-9, Solfeggio, Verdi A=432, Fibonacci, Schumann</td>
+            <td>Each pattern defines interval ratios applied to scan notes. Tesla = multiplicative (×3, ×6, ×9). Solfeggio = fixed frequency set.</td>
+          </tr>
+          <tr>
+            <td>07 · Session Report</td>
+            <td>Seventh</td>
+            <td>Full session data</td>
+            <td>Timestamped PDF-ready report: scan results, chakra flags, therapy parameters, coherence trend</td>
+            <td>Session data persists in memory. Report generated as structured text. Copy-to-clipboard for sharing.</td>
+          </tr>
+          <tr>
+            <td>08 · Vibrational Model</td>
+            <td>Framework</td>
+            <td>N/A — foundational layer</td>
+            <td>7-layer map: Identity (963) → Ancestral (852) → Beliefs (741) → Traumas (639) → Chakras (528) → NS (417) → Emotions (396)</td>
+            <td>Each layer corresponds to a solfeggio frequency, a chakra center, and a category of human experience. Therapy targets the specific layer.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Report Panel (inline) -->
+  <div class="panel fade-up" id="report-panel" style="display:none">
+    <div class="panel-head">
+      <div class="panel-title">
+        <span class="panel-title-icon">▤</span>
+        Session Report
+      </div>
+      <span class="panel-badge report-stamp" id="rep-stamp">—</span>
+    </div>
+    <div style="padding:20px">
+      <div class="report-block" id="report-body">
+        <div class="report-title">Field Session — Bio-Scan Results <span class="report-stamp" id="rep-date">—</span></div>
+        <div id="report-rows"></div>
+      </div>
+      <div class="report-actions">
+        <button class="report-btn primary" onclick="copyReport()">Copy Report</button>
+        <button class="report-btn ghost" onclick="document.getElementById('report-panel').style.display='none'">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /left column -->
+
+
+  <!-- RIGHT COLUMN (sidebar) -->
+  <div>
+
+    <!-- Quick Frequencies -->
+    <div class="side-panel fade-up d1">
+      <div class="side-head">⬡ Quick Frequencies</div>
+      <div class="side-body">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-low);margin-bottom:10px">Solfeggio · Press to Tone</div>
+        <div class="quick-freq-grid" id="qf-grid">
+          <div class="qf-btn" onclick="playQuickFreq(396,'root',this)">396 Hz<br><small style="font-size:7px">Root</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(417,'sacral',this)">417 Hz<br><small style="font-size:7px">Sacral</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(528,'solar',this)">528 Hz<br><small style="font-size:7px">Solar</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(639,'heart',this)">639 Hz<br><small style="font-size:7px">Heart</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(741,'throat',this)">741 Hz<br><small style="font-size:7px">Throat</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(852,'third',this)">852 Hz<br><small style="font-size:7px">Third Eye</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(963,'crown',this)">963 Hz<br><small style="font-size:7px">Crown</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(432,'verdi',this)">432 Hz<br><small style="font-size:7px">Verdi</small></div>
+          <div class="qf-btn" onclick="playQuickFreq(7.83,'earth',this)">7.83 Hz<br><small style="font-size:7px">Schumann</small></div>
+        </div>
+        <button class="btn btn-ghost" onclick="stopQuickFreq()" style="width:100%;margin-top:10px;padding:8px;font-size:8px">■ Stop All Tones</button>
+      </div>
+    </div>
+
+    <!-- Session Log -->
+    <div class="side-panel fade-up d2">
+      <div class="side-head">⟐ Session Log</div>
+      <div class="side-body">
+        <div class="session-log" id="session-log">
+          <div class="log-entry info">
+            <span class="log-time">00:00</span>
+            <span class="log-msg">Field Console initialized</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-secondary" onclick="generateReport()" style="flex:1;padding:8px;font-size:8px">▤ Report</button>
+          <button class="btn btn-ghost" onclick="clearLog()" style="flex:1;padding:8px;font-size:8px">⌫ Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Energetic Signature Summary -->
+    <div class="side-panel fade-up d3" id="sig-panel">
+      <div class="side-head">◈ Energetic Signature</div>
+      <div class="side-body">
+        <div id="sig-summary">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-low);margin-bottom:12px">Run a Bio-Scan to generate your energetic signature and vibrational blueprint.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);text-align:center">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low);margin-bottom:6px;letter-spacing:0.15em;text-transform:uppercase">Coherence</div>
+              <div style="font-family:'Cinzel',serif;font-size:22px;color:var(--cyan)" id="sig-coherence-display">—</div>
+            </div>
+            <div style="padding:12px;background:var(--surface2);border:1px solid var(--border);text-align:center">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low);margin-bottom:6px;letter-spacing:0.15em;text-transform:uppercase">Root Note</div>
+              <div style="font-family:'Cinzel',serif;font-size:22px;color:var(--gold)" id="sig-root-note">—</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;padding:12px;background:var(--surface2);border:1px solid var(--border)">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--text-low);margin-bottom:6px;letter-spacing:0.15em;text-transform:uppercase">Active Chakras</div>
+            <div id="sig-chakras" style="font-size:11px;color:var(--text-mid);line-height:1.7">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Package Info -->
+    <div class="side-panel fade-up d4">
+      <div class="side-head">✦ Frequency Snapshot Package</div>
+      <div class="side-body">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text-low);letter-spacing:0.1em;line-height:1.9">
+          <div style="color:var(--green);margin-bottom:6px">✓ 4 Bio-Scan Readings</div>
+          <div style="color:var(--green);margin-bottom:6px">✓ Chakra Chart + Meridian Report</div>
+          <div style="color:var(--green);margin-bottom:6px">✓ Healing Frequency Tones (MP3)</div>
+          <div style="color:var(--green);margin-bottom:6px">✓ 6 Personalized Reports</div>
+          <div style="color:var(--green);margin-bottom:6px">✓ Womanfest Portal Access</div>
+          <div style="color:var(--text-low);margin-bottom:12px">✓ Delivery within 1 week</div>
+          <div style="border-top:1px solid var(--border);padding-top:10px;color:var(--text-mid)">Perfect for busy professionals, parents, lightworkers seeking deep energetic insight with full flexibility.</div>
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:26px;color:var(--gold);margin-top:12px;text-align:center">$600</div>
+        <button class="btn btn-primary" style="width:100%;margin-top:10px;font-size:8px" onclick="showToast('Contact via www.weareallwinning.com')">Get Frequency Snapshot →</button>
+      </div>
+    </div>
+
+  </div><!-- /right column -->
+
+</div><!-- /console-layout -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// AUDIO CONTEXT
+// ════════════════════════════════════════════════════════
+let audioCtx = null;
+let analyserNode = null;
+let micStream = null;
+let micSource = null;
+let masterGain = null;
+
+// Active therapy oscillators
+let therapyNodes = [];
+let quickFreqNodes = {};
+let verdiNodes = [];
+let teslaNodes = [];
+let ambientOsc = null;
+
+// Scan state
+let isScanning = false;
+let scanInterval = null;
+let scanSeconds = 0;
+let therapyActive = false;
+let therapySeconds = 0;
+let therapyInterval = null;
+let sessionDuration = 600;
+let waveAnimFrame = null;
+
+// Session data
+let sessionData = {
+  scanResults: null,
+  coherence: 0,
+  rootNote: '—',
+  chakrasActive: []
+};
+
+function getCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.7;
+    masterGain.connect(audioCtx.destination);
+  }
+  return audioCtx;
+}
+
+// ════════════════════════════════════════════════════════
+// NOTE DETECTION
+// ════════════════════════════════════════════════════════
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+function freqToNote(freq) {
+  if (freq <= 0) return { note:'—', octave:0, cents:0 };
+  const noteNum = 12 * (Math.log2(freq / 440)) + 69;
+  const rounded = Math.round(noteNum);
+  const note = NOTE_NAMES[((rounded % 12) + 12) % 12];
+  const octave = Math.floor(rounded / 12) - 1;
+  const cents = Math.round((noteNum - rounded) * 100);
+  return { note, octave, freq: Math.round(freq), cents };
+}
+
+function noteToSupport(note) {
+  const idx = NOTE_NAMES.indexOf(note);
+  if (idx < 0) return '—';
+  const fifth = NOTE_NAMES[(idx + 7) % 12];
+  return fifth;
+}
+
+// ════════════════════════════════════════════════════════
+// BIO SCAN ENGINE
+// ════════════════════════════════════════════════════════
+async function startScan() {
+  const ctx = getCtx();
+  if (ctx.state === 'suspended') await ctx.resume();
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  } catch(e) {
+    // Simulate scan if mic not available
+    log('Mic unavailable — running simulated scan', 'warn');
+    runSimulatedScan();
+    return;
+  }
+
+  micSource = ctx.createMediaStreamSource(micStream);
+  analyserNode = ctx.createAnalyser();
+  analyserNode.fftSize = 4096;
+  analyserNode.smoothingTimeConstant = 0.85;
+  micSource.connect(analyserNode);
+
+  isScanning = true;
+  scanSeconds = 0;
+  document.getElementById('scan-btn').disabled = true;
+  document.getElementById('stop-scan-btn').disabled = false;
+  document.getElementById('scan-badge').textContent = 'Scanning…';
+  document.getElementById('mic-dot').classList.add('scanning');
+  document.getElementById('mic-status').textContent = 'Mic: Active';
+  document.getElementById('scan-panel').classList.add('active-panel');
+
+  log('Bio-Scan initiated — voice input detected', 'info');
+  updateScanClock();
+  drawFFT();
+  drawPulse();
+  drawSpectrum();
+}
+
+function stopScan() {
+  isScanning = false;
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  if (scanInterval) clearInterval(scanInterval);
+  document.getElementById('scan-btn').disabled = false;
+  document.getElementById('stop-scan-btn').disabled = true;
+  document.getElementById('scan-badge').textContent = 'Scan Complete';
+  document.getElementById('mic-dot').classList.remove('scanning');
+  document.getElementById('mic-dot').classList.add('active');
+  document.getElementById('mic-status').textContent = 'Mic: Idle';
+  document.getElementById('scan-panel').classList.remove('active-panel');
+
+  // Finalize
+  finalizeScan();
+  log('Bio-Scan complete — analyzing…', 'info');
+}
+
+function runSimulatedScan() {
+  isScanning = true;
+  scanSeconds = 0;
+  document.getElementById('scan-btn').disabled = true;
+  document.getElementById('stop-scan-btn').disabled = false;
+  document.getElementById('scan-badge').textContent = 'Simulated Scan';
+  document.getElementById('mic-dot').classList.add('scanning');
+  document.getElementById('scan-panel').classList.add('active-panel');
+  log('Running frequency simulation (no mic access)', 'warn');
+
+  // Simulate results appearing
+  let tick = 0;
+  const simInterval = setInterval(() => {
+    tick++;
+    scanSeconds++;
+    updateScanClock();
+
+    // Animate fake readings
+    const notes = NOTE_NAMES;
+    const randomNote = () => notes[Math.floor(Math.random()*12)];
+    const randomHz = (lo,hi) => Math.floor(lo + Math.random()*(hi-lo));
+
+    if (tick % 2 === 0) {
+      updateChannel('left', randomNote(), noteToSupport(notes[0]), randomHz(200,500));
+      updateChannel('center-hi', randomNote(), noteToSupport(notes[2]), randomHz(500,1200));
+      updateChannel('right', randomNote(), noteToSupport(notes[4]), randomHz(300,700));
+      updateChannel('center-lo', randomNote(), noteToSupport(notes[6]), randomHz(80,250));
+    }
+
+    const strength = 40 + Math.random()*50;
+    const coherence = 55 + Math.random()*40;
+    document.getElementById('sig-strength').style.width = strength+'%';
+    document.getElementById('sig-val').textContent = Math.round(strength)+'%';
+    document.getElementById('sig-coherence').style.width = coherence+'%';
+    document.getElementById('coh-val').textContent = Math.round(coherence)+'%';
+
+    drawSimFFT();
+    drawSimPulse();
+
+    if (tick >= 8) {
+      clearInterval(simInterval);
+      isScanning = false;
+      document.getElementById('scan-btn').disabled = false;
+      document.getElementById('stop-scan-btn').disabled = true;
+      document.getElementById('scan-badge').textContent = 'Scan Complete';
+      document.getElementById('mic-dot').classList.remove('scanning');
+      document.getElementById('mic-dot').classList.add('active');
+      finalizeScan();
+      log('Simulated scan complete', 'info');
+    }
+  }, 500);
+}
+
+function updateScanClock() {
+  scanInterval = setInterval(() => {
+    scanSeconds++;
+    const m = String(Math.floor(scanSeconds/60)).padStart(2,'0');
+    const s = String(scanSeconds%60).padStart(2,'0');
+    document.getElementById('scan-clock').textContent = m+':'+s;
+  }, 1000);
+}
+
+function updateChannel(channel, dominant, support, hz) {
+  const domId = {left:'left-dom','center-hi':'chi-dom',right:'right-dom','center-lo':'clo-dom'}[channel];
+  const supId = {left:'left-sup','center-hi':'chi-sup',right:'right-sup','center-lo':'clo-sup'}[channel];
+  const hzId  = {left:'left-hz','center-hi':'chi-hz',right:'right-hz','center-lo':'clo-hz'}[channel];
+  if(domId) document.getElementById(domId).textContent = dominant;
+  if(supId) document.getElementById(supId).textContent = support;
+  if(hzId)  document.getElementById(hzId).textContent = hz+' Hz';
+  // Update tone panel
+  const toneMap = {left:'tl-note','center-hi':'tc-note',right:'tr-note','center-lo':'tcl-note'};
+  if(toneMap[channel]) document.getElementById(toneMap[channel]).textContent = dominant;
+}
+
+function finalizeScan() {
+  clearInterval(scanInterval);
+  // Collect displayed values
+  const ld = document.getElementById('left-dom').textContent;
+  const cd = document.getElementById('chi-dom').textContent;
+  const rd = document.getElementById('right-dom').textContent;
+  const cld= document.getElementById('clo-dom').textContent;
+
+  // Coherence
+  const coh = parseInt(document.getElementById('coh-val').textContent)||0;
+  sessionData.coherence = coh;
+  sessionData.rootNote = ld !== '—' ? ld : 'G';
+  sessionData.scanResults = { left:ld, chi:cd, right:rd, clo:cld, coherence:coh };
+
+  // Update signature panel
+  document.getElementById('sig-coherence-display').textContent = coh+'%';
+  document.getElementById('sig-root-note').textContent = sessionData.rootNote;
+  document.getElementById('sig-chakras').textContent = getActiveChakras(coh);
+
+  // Show interpretation
+  showInterpretation(ld, cd, rd, cld, coh);
+  log(`Energetic signature: ${ld}/${cd}/${rd}/${cld} — Coherence ${coh}%`, 'info');
+}
+
+function showInterpretation(l, ch, r, cl, coh) {
+  const el = document.getElementById('scan-interpretation');
+  const txt = document.getElementById('interp-text');
+  el.style.display='block';
+  const quality = coh > 75 ? 'high alignment' : coh > 50 ? 'moderate coherence' : 'notable divergence';
+  txt.innerHTML = `<strong style="color:var(--cyan)">${quality.toUpperCase()}</strong> across the energy field. ` +
+    `Physical channel (Left: ${l}) ${l !== r ? `diverges from emotional channel (Right: ${r})` : 'aligns with emotional channel'}, ` +
+    `suggesting ${l !== r ? 'active processing between embodied and felt experience' : 'strong mind-body integration'}. ` +
+    `Central axis (${ch} / ${cl}) indicates ${ch === cl ? 'stable vertical alignment' : 'active vertical integration between higher and lower energy centers'}. ` +
+    `Recommended: Tonal Therapy at ${getRecommendedFreq(coh)} Hz for realignment.`;
+}
+
+function getRecommendedFreq(coh) {
+  if (coh < 40) return '396';
+  if (coh < 60) return '528';
+  if (coh < 75) return '639';
+  return '741';
+}
+
+function getActiveChakras(coh) {
+  if (coh > 80) return 'Heart ✦ Throat ✦ Third Eye';
+  if (coh > 60) return 'Solar Plexus ✦ Heart';
+  if (coh > 40) return 'Sacral ✦ Solar Plexus';
+  return 'Root ✦ Sacral';
+}
+
+// ════════════════════════════════════════════════════════
+// FFT / CANVAS DRAWING
+// ════════════════════════════════════════════════════════
+function drawFFT() {
+  if (!isScanning || !analyserNode) return;
+  const canvas = document.getElementById('fft-canvas');
+  const ctx2 = canvas.getContext('2d');
+  const W = canvas.offsetWidth; const H = 60;
+  canvas.width = W; canvas.height = H;
+
+  const buf = new Uint8Array(analyserNode.frequencyBinCount);
+  analyserNode.getByteFrequencyData(buf);
+
+  ctx2.clearRect(0,0,W,H);
+  ctx2.fillStyle = 'rgba(0,8,20,0.8)';
+  ctx2.fillRect(0,0,W,H);
+
+  const barW = W / buf.length * 4;
+  for (let i = 0; i < buf.length/4; i++) {
+    const h = (buf[i] / 255) * H;
+    const hue = 180 + (i/buf.length*4)*60;
+    ctx2.fillStyle = `hsl(${hue},80%,55%)`;
+    ctx2.fillRect(i * barW, H - h, barW - 1, h);
+  }
+
+  // Peak detection
+  let peak = 0, peakIdx = 0;
+  for (let i=0; i<buf.length; i++) { if(buf[i]>peak){peak=buf[i];peakIdx=i;} }
+  const peakFreq = peakIdx * audioCtx.sampleRate / analyserNode.fftSize;
+  const pn = freqToNote(peakFreq);
+  if (pn.note !== '—') {
+    const str = Math.round((peak/255)*100);
+    document.getElementById('sig-strength').style.width = str+'%';
+    document.getElementById('sig-val').textContent = str+'%';
+
+    // Map to channels based on frequency range
+    if (peakFreq > 500) {
+      updateChannel('center-hi', pn.note, noteToSupport(pn.note), pn.freq);
+    } else if (peakFreq > 200) {
+      updateChannel('left', pn.note, noteToSupport(pn.note), pn.freq);
+      updateChannel('right', NOTE_NAMES[(NOTE_NAMES.indexOf(pn.note)+4)%12], noteToSupport(pn.note), pn.freq+30);
+    } else {
+      updateChannel('center-lo', pn.note, noteToSupport(pn.note), pn.freq);
+    }
+
+    const coh = 50 + Math.random()*45;
+    document.getElementById('sig-coherence').style.width = coh+'%';
+    document.getElementById('coh-val').textContent = Math.round(coh)+'%';
+    document.getElementById('peak-freq').textContent = pn.freq + ' Hz';
+  }
+
+  requestAnimationFrame(drawFFT);
+}
+
+function drawSimFFT() {
+  const canvas = document.getElementById('fft-canvas');
+  const ctx2 = canvas.getContext('2d');
+  const W = canvas.offsetWidth||300; const H = 60;
+  canvas.width = W; canvas.height = H;
+  ctx2.clearRect(0,0,W,H);
+  ctx2.fillStyle = 'rgba(0,8,20,0.9)';
+  ctx2.fillRect(0,0,W,H);
+  const bars = 80;
+  for (let i=0; i<bars; i++) {
+    const h = (Math.random()*0.7 + 0.1) * H * (1-i/bars*0.5);
+    const x = (i/bars)*W;
+    const bw = W/bars - 1;
+    ctx2.fillStyle = `hsl(${180+i*0.8},70%,50%)`;
+    ctx2.fillRect(x, H-h, bw, h);
+  }
+}
+
+function drawPulse() {
+  if (!isScanning) return;
+  const canvas = document.getElementById('pulse-canvas');
+  const ctx2 = canvas.getContext('2d');
+  const W = canvas.offsetWidth||300; const H = 120;
+  canvas.width = W; canvas.height = H;
+  if (!analyserNode) { drawSimPulse(); return; }
+  const buf = new Float32Array(analyserNode.fftSize);
+  analyserNode.getFloatTimeDomainData(buf);
+  ctx2.clearRect(0,0,W,H);
+  ctx2.fillStyle = 'rgba(0,8,20,0.9)';
+  ctx2.fillRect(0,0,W,H);
+  ctx2.beginPath();
+  ctx2.strokeStyle = 'var(--cyan)';
+  ctx2.lineWidth = 1.5;
+  const step = W / buf.length;
+  for (let i=0; i<buf.length; i++) {
+    const y = (buf[i]+1)/2 * H;
+    if(i===0) ctx2.moveTo(0,y); else ctx2.lineTo(i*step, y);
+  }
+  ctx2.stroke();
+  requestAnimationFrame(drawPulse);
+}
+
+function drawSimPulse() {
+  const canvas = document.getElementById('pulse-canvas');
+  const ctx2 = canvas.getContext('2d');
+  const W = canvas.offsetWidth||300; const H = 120;
+  canvas.width = W; canvas.height = H;
+  ctx2.clearRect(0,0,W,H);
+  ctx2.fillStyle = 'rgba(0,8,20,0.9)';
+  ctx2.fillRect(0,0,W,H);
+  ctx2.beginPath();
+  ctx2.strokeStyle = 'rgba(0,229,255,0.8)';
+  ctx2.lineWidth = 1.5;
+  for (let x=0; x<W; x++) {
+    const t = x/W * Math.PI*8;
+    const y = H/2 + Math.sin(t)*H*0.3 + (Math.random()-0.5)*8;
+    if(x===0) ctx2.moveTo(x,y); else ctx2.lineTo(x,y);
+  }
+  ctx2.stroke();
+}
+
+function drawSpectrum() {
+  if (!isScanning) return;
+  const canvas = document.getElementById('spectrum-canvas');
+  const ctx2 = canvas.getContext('2d');
+  const W = canvas.offsetWidth||300; const H = 200;
+  canvas.width = W; canvas.height = H;
+  if (!analyserNode) { requestAnimationFrame(drawSpectrum); return; }
+  const buf = new Uint8Array(analyserNode.frequencyBinCount);
+  analyserNode.getByteFrequencyData(buf);
+  ctx2.clearRect(0,0,W,H);
+  ctx2.fillStyle = 'rgba(0,8,20,0.95)';
+  ctx2.fillRect(0,0,W,H);
+
+  // Gradient fill
+  const grad = ctx2.createLinearGradient(0,H,0,0);
+  grad.addColorStop(0,'rgba(0,191,165,0.8)');
+  grad.addColorStop(0.5,'rgba(0,229,255,0.6)');
+  grad.addColorStop(1,'rgba(179,136,255,0.8)');
+  ctx2.fillStyle = grad;
+
+  ctx2.beginPath();
+  ctx2.moveTo(0,H);
+  for (let i=0; i<buf.length; i++) {
+    const x = (i/buf.length)*W;
+    const y = H - (buf[i]/255)*H;
+    ctx2.lineTo(x,y);
+  }
+  ctx2.lineTo(W,H);
+  ctx2.closePath();
+  ctx2.fill();
+
+  // Mark chakra frequencies
+  const chakraFreqs = [396,417,528,639,741,852,963];
+  const colors = ['var(--root)','var(--sacral)','var(--solar)','var(--heart)','var(--throat)','var(--third)','var(--crown)'];
+  chakraFreqs.forEach((f,i) => {
+    const x = (f / (audioCtx.sampleRate/2)) * W;
+    ctx2.strokeStyle = colors[i];
+    ctx2.lineWidth = 1;
+    ctx2.setLineDash([3,3]);
+    ctx2.beginPath();
+    ctx2.moveTo(x,0);
+    ctx2.lineTo(x,H);
+    ctx2.stroke();
+    ctx2.setLineDash([]);
+    ctx2.fillStyle = colors[i];
+    ctx2.font = '7px Share Tech Mono';
+    ctx2.fillText(f+'Hz', x+2, 10);
+  });
+
+  requestAnimationFrame(drawSpectrum);
+}
+
+// ════════════════════════════════════════════════════════
+// TONAL THERAPY ENGINE
+// ════════════════════════════════════════════════════════
+let waveType = 'sawtooth';
+let octaveMul = 4;
+let toneDepth = 0.6;
+let patternType = 'ao-25-25-1';
+let duration = 600;
+
+function startTherapy() {
+  const ctx = getCtx();
+  if (ctx.state === 'suspended') ctx.resume();
+
+  stopTherapy(true);
+
+  // Get scan notes or defaults
+  const ld = document.getElementById('left-dom').textContent;
+  const cd = document.getElementById('chi-dom').textContent;
+  const rd = document.getElementById('right-dom').textContent;
+  const cld= document.getElementById('clo-dom').textContent;
+
+  const baseFreqs = getBaseFreqs(ld, cd, rd, cld);
+  const patternFreqs = applyPattern(baseFreqs, patternType);
+
+  patternFreqs.forEach((f,i) => {
+    const osc = ctx.createOscillator();
+    const gn = ctx.createGain();
+    const panner = ctx.createStereoPanner();
+
+    osc.type = waveType;
+    osc.frequency.value = f * octaveMul;
+    gn.gain.value = 0;
+    panner.pan.value = (i%2===0) ? -0.3 : 0.3;
+
+    osc.connect(gn);
+    gn.connect(panner);
+    panner.connect(masterGain);
+    osc.start();
+
+    // Envelope
+    gn.gain.linearRampToValueAtTime(toneDepth * 0.25, ctx.currentTime + 0.5);
+    therapyNodes.push({osc, gain:gn, panner});
+  });
+
+  therapyActive = true;
+  therapySeconds = 0;
+  document.getElementById('therapy-play-btn').disabled = true;
+  document.getElementById('therapy-stop-btn').disabled = false;
+  document.getElementById('therapy-badge').textContent = 'Active';
+  document.getElementById('audio-dot').classList.add('active');
+  document.getElementById('audio-status').textContent = 'Engine: On';
+
+  therapyInterval = setInterval(() => {
+    therapySeconds++;
+    const m = String(Math.floor(therapySeconds/60)).padStart(2,'0');
+    const s = String(therapySeconds%60).padStart(2,'0');
+    document.getElementById('therapy-clock').textContent = m+':'+s;
+    document.getElementById('session-time').textContent = m+':'+s;
+
+    if (duration > 0 && therapySeconds >= duration) stopTherapy();
+  }, 1000);
+
+  animateWaveCanvas();
+  log(`Tonal Therapy started — ${patternType} / ${waveType}`, 'info');
+  showToast('Tonal Therapy Active');
+}
+
+function stopTherapy(silent=false) {
+  therapyNodes.forEach(({osc, gain}) => {
+    try {
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+      setTimeout(() => { try { osc.stop(); } catch(e){} }, 400);
+    } catch(e){}
+  });
+  therapyNodes = [];
+  clearInterval(therapyInterval);
+  therapyActive = false;
+  document.getElementById('therapy-play-btn').disabled = false;
+  document.getElementById('therapy-stop-btn').disabled = true;
+  document.getElementById('therapy-badge').textContent = 'Engine Ready';
+  document.getElementById('audio-dot').classList.remove('active');
+  document.getElementById('audio-status').textContent = 'Engine: Off';
+  if (!silent) {
+    log('Therapy stopped — session data saved', 'info');
+    showToast('Therapy stopped');
+  }
+}
+
+function getBaseFreqs(l, ch, r, cl) {
+  const noteToFreq = (note) => {
+    const idx = NOTE_NAMES.indexOf(note);
+    if (idx < 0) return 440;
+    return 440 * Math.pow(2, (idx - 9) / 12);
+  };
+  const defaults = [261.63, 349.23, 392.00, 523.25];
+  const notes = [l, ch, r, cl];
+  return notes.map((n, i) => n && n !== '—' ? noteToFreq(n) : defaults[i]);
+}
+
+function applyPattern(freqs, pattern) {
+  switch(pattern) {
+    case 'tesla-369': return [freqs[0]*3, freqs[0]*6, freqs[0]*9, freqs[1]*3];
+    case 'solfeggio': return [396, 417, 528, 639];
+    case 'fibonacci': return freqs.map((f,i) => f * [1,1.618,2.618,4.236][i]);
+    case 'verdi': return [432, 528, 648, 864];
+    case 'schumann': return freqs.map((f,i) => f * [1, 7.83/8, 14.3/16, 21.1/24][i]);
+    default: return freqs;
+  }
+}
+
+function updateWaveform() {
+  waveType = document.getElementById('wave-type').value;
+  document.getElementById('wave-val').textContent = document.getElementById('wave-type').options[document.getElementById('wave-type').selectedIndex].text;
+  therapyNodes.forEach(({osc}) => { try{osc.type = waveType;}catch(e){} });
+}
+function updatePattern() {
+  patternType = document.getElementById('freq-pattern').value;
+  document.getElementById('pattern-val').textContent = document.getElementById('freq-pattern').options[document.getElementById('freq-pattern').selectedIndex].text;
+}
+function updateAmbient() {
+  const val = document.getElementById('ambient-layer').value;
+  document.getElementById('ambient-val').textContent = document.getElementById('ambient-layer').options[document.getElementById('ambient-layer').selectedIndex].text;
+}
+function updateOctave(v) {
+  octaveMul = parseInt(v);
+  document.getElementById('octave-val').textContent = '×'+v;
+}
+function setMasterVol(v) {
+  document.getElementById('vol-val').textContent = v+'%';
+  if (masterGain) masterGain.gain.value = v/100;
+}
+function setToneDepth(v) {
+  toneDepth = v/100;
+  document.getElementById('depth-val').textContent = (v/100).toFixed(2);
+}
+function setDuration(secs, el) {
+  duration = secs;
+  document.querySelectorAll('.dur-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+function autoMix() {
+  const wTypes = ['sawtooth','sine','triangle','square'];
+  const patterns = ['ao-25-25-1','tesla-369','solfeggio','fibonacci'];
+  document.getElementById('wave-type').value = wTypes[Math.floor(Math.random()*wTypes.length)];
+  document.getElementById('freq-pattern').value = patterns[Math.floor(Math.random()*patterns.length)];
+  updateWaveform(); updatePattern();
+  showToast('Auto-Mix applied');
+}
+
+// Wave canvas animation
+function animateWaveCanvas() {
+  const canvas = document.getElementById('wave-canvas');
+  if (!canvas) return;
+  const ctx2 = canvas.getContext('2d');
+  const W = canvas.offsetWidth||300; const H = 80;
+  canvas.width=W; canvas.height=H;
+
+  let t = 0;
+  function drawWave() {
+    if (!therapyActive) {
+      ctx2.clearRect(0,0,W,H);
+      ctx2.fillStyle='rgba(0,8,20,0.9)';
+      ctx2.fillRect(0,0,W,H);
+      ctx2.strokeStyle='rgba(0,229,255,0.15)';
+      ctx2.lineWidth=1;
+      ctx2.beginPath();
+      ctx2.moveTo(0,H/2);
+      ctx2.lineTo(W,H/2);
+      ctx2.stroke();
+      return;
+    }
+    ctx2.clearRect(0,0,W,H);
+    ctx2.fillStyle='rgba(0,8,20,0.9)';
+    ctx2.fillRect(0,0,W,H);
+    t += 0.08;
+    const colors=['rgba(0,229,255,0.6)','rgba(179,136,255,0.5)','rgba(0,191,165,0.4)'];
+    colors.forEach((color,ci) => {
+      ctx2.beginPath();
+      ctx2.strokeStyle=color;
+      ctx2.lineWidth=1.5;
+      for(let x=0;x<W;x++){
+        const y = H/2 + Math.sin(x/W*Math.PI*6 + t + ci*1.5)*H*0.28;
+        if(x===0) ctx2.moveTo(x,y); else ctx2.lineTo(x,y);
+      }
+      ctx2.stroke();
+    });
+    waveAnimFrame = requestAnimationFrame(drawWave);
+  }
+  drawWave();
+}
+
+// Verdi / Tesla quick plays
+function playVerdi() {
+  const ctx = getCtx();
+  if (ctx.state==='suspended') ctx.resume();
+  verdiNodes.forEach(n=>{try{n.stop()}catch(e){}});
+  verdiNodes=[];
+  [432,528,648,864].forEach((f,i)=>{
+    const osc=ctx.createOscillator(); const gn=ctx.createGain();
+    osc.type='sine'; osc.frequency.value=f; gn.gain.value=0;
+    osc.connect(gn); gn.connect(masterGain); osc.start();
+    gn.gain.linearRampToValueAtTime(0.12,ctx.currentTime+0.8);
+    verdiNodes.push(osc);
+  });
+  log('Verdi Grounding A=432 activated','info');
+  showToast('Verdi A=432 Grounding Active');
+}
+
+function playTesla() {
+  const ctx = getCtx();
+  if (ctx.state==='suspended') ctx.resume();
+  teslaNodes.forEach(n=>{try{n.stop()}catch(e){}});
+  teslaNodes=[];
+  [174,396,963].forEach((f)=>{
+    const osc=ctx.createOscillator(); const gn=ctx.createGain();
+    osc.type='sine'; osc.frequency.value=f; gn.gain.value=0;
+    osc.connect(gn); gn.connect(masterGain); osc.start();
+    gn.gain.linearRampToValueAtTime(0.12,ctx.currentTime+0.8);
+    teslaNodes.push(osc);
+  });
+  log('Tesla 3-6-9 pattern activated','info');
+  showToast('Tesla 3-6-9 Active');
+}
+
+// ════════════════════════════════════════════════════════
+// QUICK FREQUENCIES
+// ════════════════════════════════════════════════════════
+function playQuickFreq(freq, id, el) {
+  const ctx = getCtx();
+  if (ctx.state==='suspended') ctx.resume();
+
+  if (quickFreqNodes[id]) {
+    try{quickFreqNodes[id].osc.stop()}catch(e){}
+    delete quickFreqNodes[id];
+    document.querySelectorAll('.qf-btn').forEach(b=>b.classList.remove('playing'));
+    return;
+  }
+
+  const osc=ctx.createOscillator();
+  const gn=ctx.createGain();
+  osc.type='sine'; osc.frequency.value=freq; gn.gain.value=0;
+  osc.connect(gn); gn.connect(masterGain); osc.start();
+  gn.gain.linearRampToValueAtTime(0.15, ctx.currentTime+0.3);
+  quickFreqNodes[id]={osc,gain:gn};
+  el.classList.add('playing');
+  log(`Quick tone: ${freq} Hz (${id})`, 'info');
+}
+
+function stopQuickFreq() {
+  Object.values(quickFreqNodes).forEach(({osc,gain})=>{
+    try{
+      gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.3);
+      setTimeout(()=>{try{osc.stop()}catch(e){}},400);
+    }catch(e){}
+  });
+  quickFreqNodes={};
+  verdiNodes.forEach(n=>{try{n.stop()}catch(e){}});
+  verdiNodes=[];
+  teslaNodes.forEach(n=>{try{n.stop()}catch(e){}});
+  teslaNodes=[];
+  document.querySelectorAll('.qf-btn').forEach(b=>b.classList.remove('playing'));
+  showToast('All tones stopped');
+}
+
+// ════════════════════════════════════════════════════════
+// CHAKRA SYSTEM
+// ════════════════════════════════════════════════════════
+const CHAKRAS = [
+  { name:'Crown', sanskrit:'Sahasrara', freq:963, note:'B', color:'var(--crown)', hex:'#8e24aa',
+    element:'Thought', gland:'Pineal',
+    traumas:['Dogmatic religion','Lack of spiritual connection','Loss of meaning','Existential crisis','Severe trauma'],
+    emotional:['Disconnection from life','Cynicism','Apathy','Chronic fatigue','Spiritual confusion'],
+    affirmation:'I am divinely connected to all that is',
+    therapy:'963 Hz — activates pineal gland, enhances spiritual awareness' },
+  { name:'Third Eye', sanskrit:'Ajna', freq:852, note:'A', color:'var(--third)', hex:'#5e35b1',
+    element:'Light', gland:'Pituitary',
+    traumas:['Dismissal of intuition','Gaslighting','Deception','Cognitive dissonance','Rigid belief systems'],
+    emotional:['Poor intuition','Overthinking','Nightmares','Difficulty visualizing','Self-doubt'],
+    affirmation:'I see clearly and trust my inner wisdom',
+    therapy:'852 Hz — stimulates intuition, clears mental fog' },
+  { name:'Throat', sanskrit:'Vishuddha', freq:741, note:'G', color:'var(--throat)', hex:'#1e88e5',
+    element:'Sound', gland:'Thyroid',
+    traumas:['Not being heard','Silenced as child','Verbal abuse','Shaming of expression','Family secrets'],
+    emotional:['Difficulty speaking truth','Fear of judgment','Chronic throat issues','Over-apologizing','Passive aggression'],
+    affirmation:'I speak my truth clearly and confidently',
+    therapy:'741 Hz — releases toxins, promotes self-expression' },
+  { name:'Heart', sanskrit:'Anahata', freq:639, note:'F', color:'var(--heart)', hex:'#43a047',
+    element:'Air', gland:'Thymus',
+    traumas:['Abandonment','Betrayal','Grief','Conditional love','Rejection'],
+    emotional:['Fear of intimacy','Loneliness','Jealousy','Codependency','Inability to receive love'],
+    affirmation:'I am open to giving and receiving love freely',
+    therapy:'639 Hz — promotes harmony in relationships, heart coherence' },
+  { name:'Solar Plexus', sanskrit:'Manipura', freq:528, note:'E', color:'var(--solar)', hex:'#fdd835',
+    element:'Fire', gland:'Pancreas',
+    traumas:['Criticism','Bullying','Controlling parents','Failure shaming','Perfectionism pressure','Emotional abuse','Constant comparison','Conditional love','Not being heard','Over-responsibility as a child','Being blamed often','Authoritarian parenting','Shamed for mistakes','Lack of encouragement','Gaslighting'],
+    emotional:['Low self-worth','Indecision','Need for control','Victim mentality','Chronic shame'],
+    affirmation:'I am powerful, confident, and worthy',
+    therapy:'528 Hz — DNA repair frequency, activates personal power' },
+  { name:'Sacral', sanskrit:'Svadhisthana', freq:417, note:'D', color:'var(--sacral)', hex:'#fb8c00',
+    element:'Water', gland:'Gonads',
+    traumas:['Sexual trauma','Emotional repression','Unstable home','Creative suppression','Financial fear'],
+    emotional:['Intimacy issues','Addictive behaviors','Lack of creativity','Emotional volatility','Money blocks'],
+    affirmation:'I embrace my emotions and creative energy freely',
+    therapy:'417 Hz — facilitates change, clears trauma imprints' },
+  { name:'Root', sanskrit:'Muladhara', freq:396, note:'C', color:'var(--root)', hex:'#e53935',
+    element:'Earth', gland:'Adrenal',
+    traumas:['Financial instability','Homelessness','Neglect','Physical danger','Abandonment in childhood'],
+    emotional:['Constant anxiety','Financial scarcity','Fight-or-flight loops','Distrust','Survival stress'],
+    affirmation:'I am safe, grounded, and supported by life',
+    therapy:'396 Hz — liberates fear, promotes grounding and safety' },
+];
+
+function buildChakraGrid() {
+  const grid = document.getElementById('chakra-grid');
+  CHAKRAS.forEach(ck => {
+    const div = document.createElement('div');
+    div.className='chakra-card';
+    div.style.setProperty('--card-color', ck.color);
+    div.innerHTML=`
+      <div class="ck-header">
+        <div class="ck-dot" style="background:${ck.hex}"></div>
+        <span class="ck-name">${ck.name}</span>
+        <span class="ck-sanskrit">${ck.sanskrit}</span>
+      </div>
+      <div class="ck-meta">
+        <span class="ck-freq-badge" style="border-color:${ck.hex};color:${ck.hex}">${ck.freq} Hz</span>
+        <span style="color:var(--text-low);font-family:'Share Tech Mono',monospace;font-size:8px">Note: ${ck.note} · ${ck.element}</span>
+      </div>
+      <div class="ck-detail">
+        <div class="ck-detail-grid">
+          <div class="ck-detail-block">
+            <div class="ck-detail-label">Possible Traumas</div>
+            <div class="ck-detail-items">${ck.traumas.slice(0,5).map(t=>'· '+t).join('<br>')}</div>
+          </div>
+          <div class="ck-detail-block">
+            <div class="ck-detail-label">Emotional Results</div>
+            <div class="ck-detail-items">${ck.emotional.map(e=>'· '+e).join('<br>')}</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:8px;background:rgba(${ck.hex.match(/[\da-f]{2}/gi).map(h=>parseInt(h,16)).join(',')},0.08);border-left:2px solid ${ck.hex}">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-low);margin-bottom:4px">Affirmation</div>
+          <div style="font-size:11px;color:var(--text-mid);font-style:italic">"${ck.affirmation}"</div>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--text-low);font-family:'Share Tech Mono',monospace">${ck.therapy}</div>
+        <button class="ck-play-btn" style="border-color:${ck.hex};color:${ck.hex};background:transparent"
+          onclick="event.stopPropagation();playChakraTone(${ck.freq},'${ck.name}',this)">
+          ▶ Play ${ck.freq} Hz
+        </button>
+      </div>
+    `;
+    div.addEventListener('click', () => {
+      div.classList.toggle('expanded');
+      log(`Expanded chakra: ${ck.name} (${ck.freq} Hz)`, 'info');
+    });
+    grid.appendChild(div);
+  });
+}
+
+let activeChakraTone = null;
+function playChakraTone(freq, name, btn) {
+  const ctx = getCtx();
+  if (ctx.state==='suspended') ctx.resume();
+  if (activeChakraTone) {
+    try{activeChakraTone.osc.stop()}catch(e){}
+    activeChakraTone=null;
+    document.querySelectorAll('.ck-play-btn').forEach(b=>{
+      b.textContent=b.textContent.replace('■ Stop','▶ Play');
+    });
+    if (btn.textContent.includes('Play')) {
+      // was stopped, don't restart
+      return;
+    }
+  }
+  const osc=ctx.createOscillator(); const gn=ctx.createGain();
+  osc.type='sine'; osc.frequency.value=freq; gn.gain.value=0;
+  osc.connect(gn); gn.connect(masterGain); osc.start();
+  gn.gain.linearRampToValueAtTime(0.15,ctx.currentTime+0.4);
+  activeChakraTone={osc,gain:gn};
+  btn.textContent=`■ Stop ${freq} Hz`;
+  log(`Chakra tone: ${name} — ${freq} Hz`, 'info');
+}
+
+// ════════════════════════════════════════════════════════
+// SESSION LOG
+// ════════════════════════════════════════════════════════
+function log(msg, type='info') {
+  const logEl = document.getElementById('session-log');
+  const now = new Date();
+  const ts = String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  const entry = document.createElement('div');
+  entry.className='log-entry '+(type||'');
+  entry.innerHTML=`<span class="log-time">${ts}</span><span class="log-msg">${msg}</span>`;
+  logEl.appendChild(entry);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('session-log').innerHTML='';
+  log('Log cleared','info');
+}
+
+// ════════════════════════════════════════════════════════
+// REPORT
+// ════════════════════════════════════════════════════════
+function generateReport() {
+  const now = new Date();
+  const stamp = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+
+    ' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+  const sd = sessionData;
+  const rows = [
+    ['Session Date', stamp],
+    ['Root Note', sd.rootNote],
+    ['Left Channel', document.getElementById('left-dom').textContent + ' / ' + document.getElementById('left-hz').textContent],
+    ['Center (High)', document.getElementById('chi-dom').textContent + ' / ' + document.getElementById('chi-hz').textContent],
+    ['Right Channel', document.getElementById('right-dom').textContent + ' / ' + document.getElementById('right-hz').textContent],
+    ['Center (Low)', document.getElementById('clo-dom').textContent + ' / ' + document.getElementById('clo-hz').textContent],
+    ['Coherence Index', document.getElementById('coh-val').textContent],
+    ['Waveform Used', document.getElementById('wave-type').value],
+    ['Frequency Pattern', document.getElementById('freq-pattern').value],
+    ['Session Duration', document.getElementById('therapy-clock').textContent],
+    ['Recommended Freq', getRecommendedFreq(sd.coherence) + ' Hz'],
+    ['Active Chakras', getActiveChakras(sd.coherence)],
+  ];
+
+  document.getElementById('rep-date').textContent = stamp;
+  document.getElementById('rep-stamp').textContent = stamp;
+  const container = document.getElementById('report-rows');
+  container.innerHTML = rows.map(([k,v])=>
+    `<div class="report-row"><div class="report-key">${k}</div><div class="report-val">${v}</div></div>`
+  ).join('');
+
+  const panel = document.getElementById('report-panel');
+  panel.style.display='block';
+  panel.scrollIntoView({behavior:'smooth'});
+  showToast('Report generated');
+  log('Session report generated','info');
+}
+
+function copyReport() {
+  const rows = document.querySelectorAll('.report-row');
+  let text = 'MA-ZEN FIELD CONSOLE — Session Report\n\n';
+  rows.forEach(r=>{
+    text += r.querySelector('.report-key').textContent + ': ' + r.querySelector('.report-val').textContent + '\n';
+  });
+  navigator.clipboard.writeText(text).then(()=>showToast('Report copied to clipboard'));
+}
+
+// ════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════
+function switchTab(panelId, tabId) {
+  const panel = document.querySelector(`#${panelId === 'scan' ? 'scan-panel' : 'tonal-therapy'}`);
+  panel.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  panel.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const pane = document.getElementById(`${panelId}-${tabId}`);
+  if(pane) pane.classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════
+function scrollTo(sel) {
+  const el = document.querySelector(sel);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// Session clock
+setInterval(()=>{
+  const el = document.getElementById('session-time');
+  const [m,s] = el.textContent.split(':').map(Number);
+  const total = m*60+s+1;
+  el.textContent = String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
+}, 1000);
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildChakraGrid();
+  animateWaveCanvas();
+  log('System ready — request microphone access to begin scan','info');
+
+  // Draw idle wave canvas
+  const canvas = document.getElementById('wave-canvas');
+  if(canvas){
+    const c2 = canvas.getContext('2d');
+    const W=canvas.offsetWidth||300;const H=80;
+    canvas.width=W;canvas.height=H;
+    c2.fillStyle='rgba(0,8,20,0.9)';c2.fillRect(0,0,W,H);
+    c2.strokeStyle='rgba(0,229,255,0.2)';c2.lineWidth=1;
+    c2.beginPath();c2.moveTo(0,H/2);c2.lineTo(W,H/2);c2.stroke();
+  }
+});
+</script>
+</body>
+</html>
