@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AERIA — Sonic Demonstration Suite · MA-ZEN</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
+
+  :root {
+    --bg: #080808;
+    --surface: #0f0f0f;
+    --border: #1e1e1e;
+    --accent: #c8b89a;
+    --accent-dim: #6b5d4a;
+    --text: #e8e4de;
+    --text-muted: #5a5650;
+    --text-dim: #2e2c2a;
+    --white: #f0ede8;
+    --green: #4a7c5a;
+    --playing-pulse: rgba(200,184,154,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+  nav .brand { color: var(--accent); text-transform: uppercase; }
+  nav .sub { color: var(--text-muted); }
+  nav .cta-nav {
+    border: 1px solid var(--accent-dim);
+    padding: 0.45rem 1.1rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    font-size: 0.65rem;
+    transition: all 0.3s;
+  }
+  nav .cta-nav:hover { background: var(--accent); color: var(--bg); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 2.5rem 4rem;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 70% 40%, rgba(200,184,154,0.04) 0%, transparent 70%);
+  }
+  .hero-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+  .hero-label {
+    font-size: 0.65rem; letter-spacing: 0.2em; color: var(--accent);
+    margin-bottom: 2.5rem; text-transform: uppercase;
+    opacity: 0; animation: fadeUp 1s 0.3s forwards;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.92;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    opacity: 0; animation: fadeUp 1s 0.5s forwards;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    margin-top: 2rem;
+    font-size: 0.72rem; letter-spacing: 0.08em; color: var(--text-muted);
+    max-width: 420px; line-height: 1.8;
+    opacity: 0; animation: fadeUp 1s 0.7s forwards;
+  }
+  .hero-meta {
+    display: flex; gap: 3rem; margin-top: 3.5rem;
+    opacity: 0; animation: fadeUp 1s 0.9s forwards;
+  }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 0.3rem; }
+  .hero-meta-item .val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem; color: var(--white);
+  }
+  .hero-meta-item .lbl { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; }
+
+  .scroll-hint {
+    position: absolute; right: 2.5rem; bottom: 4rem;
+    font-size: 0.6rem; letter-spacing: 0.18em; color: var(--text-dim);
+    writing-mode: vertical-rl;
+    opacity: 0; animation: fadeUp 1s 1.2s forwards;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 5rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 3.5rem;
+  }
+  .section-num { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--accent); }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--white); line-height: 1.1;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* ── DEMO CARD ── */
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
+  }
+  .demo-card {
+    background: var(--surface);
+    padding: 2.2rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .demo-card:hover { background: #131313; }
+  .demo-card.featured {
+    grid-column: 1 / -1;
+    background: #0c0c0c;
+  }
+  .demo-tag {
+    font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent-dim); margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .demo-tag::before {
+    content: ''; width: 18px; height: 1px; background: var(--accent-dim);
+  }
+  .demo-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.55rem; font-weight: 300;
+    color: var(--white); margin-bottom: 0.6rem; line-height: 1.2;
+  }
+  .demo-card .sublabel {
+    font-size: 0.62rem; letter-spacing: 0.1em; color: var(--text-muted);
+    margin-bottom: 1.5rem; font-style: italic;
+  }
+  .demo-desc {
+    font-size: 0.68rem; color: var(--text-muted);
+    line-height: 1.9; margin-bottom: 1.8rem;
+  }
+
+  /* ── AUDIO PLAYER ── */
+  .player {
+    border: 1px solid var(--border);
+    padding: 1.2rem 1.4rem;
+    display: flex; align-items: center; gap: 1.2rem;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .player:hover { border-color: var(--accent-dim); }
+  .player.playing { border-color: var(--accent); }
+  .player.playing::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--playing-pulse);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .play-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--accent-dim);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.3s; position: relative; z-index: 1;
+  }
+  .player.playing .play-btn { border-color: var(--accent); background: rgba(200,184,154,0.1); }
+  .play-icon { width: 0; height: 0; border-style: solid;
+    border-width: 5px 0 5px 9px;
+    border-color: transparent transparent transparent var(--accent);
+    margin-left: 2px; }
+  .pause-icon { display: none; width: 9px; height: 10px;
+    border-left: 3px solid var(--accent);
+    border-right: 3px solid var(--accent); }
+  .player.playing .play-icon { display: none; }
+  .player.playing .pause-icon { display: block; }
+
+  .player-info { flex: 1; position: relative; z-index: 1; }
+  .player-title { font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text); margin-bottom: 0.3rem; }
+  .player-dur { font-size: 0.58rem; color: var(--text-muted); }
+
+  .waveform {
+    display: flex; align-items: center; gap: 2px;
+    height: 20px; position: relative; z-index: 1;
+  }
+  .wave-bar {
+    width: 2px; background: var(--border);
+    border-radius: 1px; transition: background 0.3s;
+    animation: none;
+  }
+  .player.playing .wave-bar {
+    background: var(--accent-dim);
+    animation: wave 1.2s ease-in-out infinite;
+  }
+  .wave-bar:nth-child(1) { height: 4px; animation-delay: 0s; }
+  .wave-bar:nth-child(2) { height: 10px; animation-delay: 0.1s; }
+  .wave-bar:nth-child(3) { height: 16px; animation-delay: 0.2s; }
+  .wave-bar:nth-child(4) { height: 8px; animation-delay: 0.3s; }
+  .wave-bar:nth-child(5) { height: 14px; animation-delay: 0.15s; }
+  .wave-bar:nth-child(6) { height: 6px; animation-delay: 0.25s; }
+  .wave-bar:nth-child(7) { height: 12px; animation-delay: 0.05s; }
+
+  /* ── SOUND KIT (Demo 3) ── */
+  .sound-kit {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); margin-top: 1rem;
+  }
+  .sound-btn {
+    background: var(--surface); padding: 1rem 0.8rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    cursor: pointer; transition: background 0.2s;
+    border: none; color: inherit; font-family: inherit;
+  }
+  .sound-btn:hover { background: #181818; }
+  .sound-btn.triggered { background: rgba(200,184,154,0.08); }
+  .sound-btn .icon { font-size: 1.1rem; }
+  .sound-btn .s-label { font-size: 0.58rem; letter-spacing: 0.12em; color: var(--text-muted); text-transform: uppercase; }
+  .sound-btn .s-dur { font-size: 0.54rem; color: var(--text-dim); margin-top: 0.1rem; }
+
+  /* ── DEMO 4-6 SPECIAL ── */
+  .concept-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.56rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--green); border: 1px solid rgba(74,124,90,0.3);
+    padding: 0.25rem 0.6rem; margin-bottom: 1rem;
+  }
+  .concept-badge::before { content: '●'; font-size: 0.4rem; animation: blink 2s infinite; }
+
+  .spec-list { list-style: none; margin-top: 1.2rem; }
+  .spec-list li {
+    font-size: 0.63rem; color: var(--text-muted); padding: 0.45rem 0;
+    border-bottom: 1px solid var(--dim-border, #161616);
+    display: flex; gap: 0.8rem; align-items: baseline;
+  }
+  .spec-list li::before { content: '—'; color: var(--accent-dim); flex-shrink: 0; }
+
+  .progress-bar-wrap {
+    height: 2px; background: var(--border); margin-top: 1.2rem; position: relative;
+  }
+  .progress-bar-fill {
+    height: 100%; background: var(--accent-dim); width: 0;
+    transition: width 0.1s linear;
+  }
+
+  /* ── BRIEF NOTE ── */
+  .brief-note {
+    border-left: 2px solid var(--accent-dim);
+    padding: 1.2rem 1.5rem; margin-top: 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; font-size: 0.92rem;
+    color: var(--text-muted); line-height: 1.8;
+    background: rgba(200,184,154,0.02);
+  }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    padding: 6rem 2.5rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: end;
+  }
+  .cta-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--white); line-height: 1;
+  }
+  .cta-section h2 em { font-style: italic; color: var(--accent); }
+  .cta-section p { font-size: 0.68rem; color: var(--text-muted); line-height: 1.9; }
+  .cta-link {
+    display: inline-block; margin-top: 2rem;
+    border: 1px solid var(--accent);
+    padding: 0.8rem 2rem;
+    color: var(--accent); text-decoration: none;
+    font-size: 0.7rem; letter-spacing: 0.12em;
+    transition: all 0.3s;
+  }
+  .cta-link:hover { background: var(--accent); color: var(--bg); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem 2.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.6rem; letter-spacing: 0.12em; color: var(--text-muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+  }
+  @keyframes wave {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(1.6); }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 640px) {
+    .cta-section { grid-template-columns: 1fr; }
+    nav { padding: 1rem 1.2rem; }
+    .section { padding: 3.5rem 1.2rem; }
+    .hero { padding: 0 1.2rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div>
+    <span class="brand">MA-ZEN</span>
+    <span class="sub"> · AERIA DEMOS</span>
+  </div>
+  <a class="cta-nav" href="https://dunkin2025.github.io/mazen/the-cash-b2b.html" target="_blank">← B2B Deck</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-noise"></div>
+  <div class="hero-label">AERIA Hotel · Sonic Demonstration Suite · 6 Concepts</div>
+  <h1>The <em>proof</em><br>of silence.</h1>
+  <p class="hero-sub">Six demonstration concepts for the AERIA sonic identity program. Each demo is a listening experience — not a pitch. Press play. Wait. Notice what you don't notice.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><span class="val">6</span><span class="lbl">Demo Concepts</span></div>
+    <div class="hero-meta-item"><span class="val">~48m</span><span class="lbl">Total Runtime</span></div>
+    <div class="hero-meta-item"><span class="val">0</span><span class="lbl">Melodies</span></div>
+    <div class="hero-meta-item"><span class="val">∞</span><span class="lbl">Silence Ratio</span></div>
+  </div>
+  <div class="scroll-hint">SCROLL TO EXPLORE</div>
+</section>
+
+<!-- DEMOS 1–3 -->
+<section class="section" id="primary">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-num">01 · PRIMARY ENVIRONMENTS</div>
+      <h2 class="section-title">Spatial <em>atmospheres</em></h2>
+    </div>
+  </div>
+
+  <div class="demo-grid">
+
+    <!-- DEMO 1 — LOBBY -->
+    <div class="demo-card featured reveal">
+      <div class="demo-tag">Demo 01 · Most Important</div>
+      <div class="concept-badge">Flagship Environment</div>
+      <h3>Lobby Sonic Environment</h3>
+      <p class="sublabel">AERIA Lobby Sound Profile — Concept Demonstration</p>
+      <p class="demo-desc">
+        A 12-minute silence-dominant spatial field. No melody. No rhythm. Tonal presence exists only as a barely-perceptible resonance — the acoustic equivalent of light through frosted glass. The goal is that guests do not register "music" — they register space.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:1.5rem;">
+        <div style="background:var(--surface);padding:1rem 1.2rem;">
+          <div style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.4rem;">Silence Ratio</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--white);">78%</div>
+        </div>
+        <div style="background:var(--surface);padding:1rem 1.2rem;">
+          <div style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.4rem;">Duration</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--white);">12 min</div>
+        </div>
+        <div style="background:var(--surface);padding:1rem 1.2rem;">
+          <div style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.4rem;">Frequency Range</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--white);">60–400 Hz</div>
+        </div>
+        <div style="background:var(--surface);padding:1rem 1.2rem;">
+          <div style="font-size:0.58rem;color:var(--text-muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.4rem;">Melody</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--white);">None</div>
+        </div>
+      </div>
+      <div class="player" id="player1" onclick="togglePlayer('player1', 720)">
+        <div class="play-btn"><div class="play-icon"></div><div class="pause-icon"></div></div>
+        <div class="player-info">
+          <div class="player-title">AERIA LOBBY — CONCEPT DEMO v1.0</div>
+          <div class="player-dur" id="dur1">12:00</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog1"></div></div>
+        </div>
+        <div class="waveform">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+      <div class="brief-note">
+        "The lobby is the first interval. If you fill it, you waste it. This profile does not fill — it frames."
+      </div>
+    </div>
+
+    <!-- DEMO 2 — SPA -->
+    <div class="demo-card reveal">
+      <div class="demo-tag">Demo 02</div>
+      <h3>Spa / Relaxation Floor</h3>
+      <p class="sublabel">AERIA Wellness Sonic Profile — Concept Demonstration</p>
+      <p class="demo-desc">Warmer harmonic content. Slower amplitude modulation cycles (8–12 second periods). Lower fundamental tones. More softness in the upper register. Still silence-forward — but the silence here feels inhabited rather than architectural.</p>
+      <ul class="spec-list">
+        <li>Warmer tone profile · 200–800 Hz focus</li>
+        <li>8–12s amplitude modulation cycles</li>
+        <li>No percussion or rhythmic element</li>
+        <li>Silence ratio ~72% across 10 minutes</li>
+      </ul>
+      <div class="player" id="player2" onclick="togglePlayer('player2', 600)" style="margin-top:1.5rem;">
+        <div class="play-btn"><div class="play-icon"></div><div class="pause-icon"></div></div>
+        <div class="player-info">
+          <div class="player-title">AERIA SPA FLOOR — CONCEPT DEMO v1.0</div>
+          <div class="player-dur" id="dur2">10:00</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog2"></div></div>
+        </div>
+        <div class="waveform">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 3 — AUDIO LOGO + UI -->
+    <div class="demo-card reveal">
+      <div class="demo-tag">Demo 03</div>
+      <h3>Audio Logo & UI Sound Kit</h3>
+      <p class="sublabel">AERIA Sonic Identity Kit — Demonstration</p>
+      <p class="demo-desc">Eight discrete sonic elements. Each is a precise interval — not a decorative gesture. The audio logo is 4 seconds. Every UI element is derived from the same tonal root. Press each to audition.</p>
+      <div class="sound-kit" id="soundKit">
+        <button class="sound-btn" onclick="triggerSound(this, 'logo', 4)" title="Audio Logo">
+          <span class="icon">◈</span>
+          <span class="s-label">Audio Logo</span>
+          <span class="s-dur">4.0s</span>
+        </button>
+        <button class="sound-btn" onclick="triggerSound(this, 'btn1', 0.3)" title="Button Primary">
+          <span class="icon">▷</span>
+          <span class="s-label">Btn Primary</span>
+          <span class="s-dur">0.3s</span>
+        </button>
+        <button class="sound-btn" onclick="triggerSound(this, 'btn2', 0.2)" title="Button Secondary">
+          <span class="icon">◇</span>
+          <span class="s-label">Btn Secondary</span>
+          <span class="s-dur">0.2s</span>
+        </button>
+        <button class="sound-btn" onclick="triggerSound(this, 'btn3', 0.4)" title="Button Confirm">
+          <span class="icon">◉</span>
+          <span class="s-label">Btn Confirm</span>
+          <span class="s-dur">0.4s</span>
+        </button>
+        <button class="sound-btn" onclick="triggerSound(this, 'notif', 1.2)" title="Notification">
+          <span class="icon">◌</span>
+          <span class="s-label">Notification</span>
+          <span class="s-dur">1.2s</span>
+        </button>
+        <button class="sound-btn" onclick="triggerSound(this, 'confirm', 2.5)" title="Booking Confirmation">
+          <span class="icon">✦</span>
+          <span class="s-label">Booking Confirm</span>
+          <span class="s-dur">2.5s</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- DEMOS 4–6 -->
+<section class="section" id="extended">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-num">02 · EXTENDED CONCEPTS</div>
+      <h2 class="section-title">MA-ZEN <em>creative</em><br>proposals</h2>
+    </div>
+  </div>
+
+  <div class="demo-grid">
+
+    <!-- DEMO 4 — ELEVATOR / VERTICAL TRANSIT -->
+    <div class="demo-card reveal">
+      <div class="demo-tag">Demo 04 · Original Concept</div>
+      <h3>Vertical Transit<br>Sonic Field</h3>
+      <p class="sublabel">Elevator & Lift Environment — AERIA</p>
+      <p class="demo-desc">
+        The elevator is the most psychologically compressed space in any hotel — 8 to 30 seconds of involuntary proximity, 0 to 40 floors of vertical displacement. This profile uses infrasonic sub-bass sweep (matched to floor ascent rate) paired with a single sustained tone at 432 Hz. Guests won't know why they feel calm. That is the goal.
+      </p>
+      <ul class="spec-list">
+        <li>Duration scales with floor count · 8–45 seconds</li>
+        <li>Sub-bass sweep mirrors ascent / descent velocity</li>
+        <li>Single held tone · 432 Hz · no harmonics added</li>
+        <li>Silence onset at door-open event</li>
+        <li>Imperceptible at normal volume · present at liminal threshold</li>
+      </ul>
+      <div class="player" id="player4" onclick="togglePlayer('player4', 30)" style="margin-top:1.5rem;">
+        <div class="play-btn"><div class="play-icon"></div><div class="pause-icon"></div></div>
+        <div class="player-info">
+          <div class="player-title">AERIA VERTICAL TRANSIT — DEMO · 30-FLOOR SIMULATION</div>
+          <div class="player-dur" id="dur4">0:30</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog4"></div></div>
+        </div>
+        <div class="waveform">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+      <div class="brief-note">"The only space where a guest cannot leave. Waste it and they remember the discomfort. Design it and they arrive differently."</div>
+    </div>
+
+    <!-- DEMO 5 — RESTAURANT / DINING -->
+    <div class="demo-card reveal">
+      <div class="demo-tag">Demo 05 · Original Concept</div>
+      <h3>Dining Room<br>Sonic Architecture</h3>
+      <p class="sublabel">F&B Environment — AERIA · 3 Time-Phase System</p>
+      <p class="demo-desc">
+        A three-phase sonic program for AERIA's dining context — designed to behaviorally align with meal pacing without the guest ever noticing the mechanism. Early (arrival/menu): low tonal field, ~80% silence. Mid (dining peak): slight density increase, still no melody. Late (dessert/linger): return to sparse field. The sonic architecture manages table turn without urgency.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin:1.2rem 0;">
+        <div style="background:var(--surface);padding:0.8rem;text-align:center;">
+          <div style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">PHASE I</div>
+          <div style="font-size:0.75rem;color:var(--accent);">Arrival</div>
+          <div style="font-size:0.58rem;color:var(--text-muted);margin-top:0.2rem;">Silence 82%</div>
+        </div>
+        <div style="background:var(--surface);padding:0.8rem;text-align:center;">
+          <div style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">PHASE II</div>
+          <div style="font-size:0.75rem;color:var(--accent);">Dining</div>
+          <div style="font-size:0.58rem;color:var(--text-muted);margin-top:0.2rem;">Silence 68%</div>
+        </div>
+        <div style="background:var(--surface);padding:0.8rem;text-align:center;">
+          <div style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.3rem;">PHASE III</div>
+          <div style="font-size:0.75rem;color:var(--accent);">Close</div>
+          <div style="font-size:0.58rem;color:var(--text-muted);margin-top:0.2rem;">Silence 85%</div>
+        </div>
+      </div>
+      <div class="player" id="player5" onclick="togglePlayer('player5', 420)">
+        <div class="play-btn"><div class="play-icon"></div><div class="pause-icon"></div></div>
+        <div class="player-info">
+          <div class="player-title">AERIA DINING — 3-PHASE CONCEPT · 7 MIN COMPRESSION</div>
+          <div class="player-dur" id="dur5">7:00</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog5"></div></div>
+        </div>
+        <div class="waveform">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 6 — GUESTROOM WAKEUP -->
+    <div class="demo-card featured reveal">
+      <div class="demo-tag">Demo 06 · Original Concept</div>
+      <div class="concept-badge">Signature Touchpoint</div>
+      <h3>Guestroom Wake Protocol<br>& Departure Seal</h3>
+      <p class="sublabel">In-Room Sonic Identity — AERIA · Two-Phase Experience</p>
+      <p class="demo-desc">
+        The most intimate sonic touchpoint in any hotel stays: the moment of morning. AERIA's wake protocol replaces the conventional alarm with a 4-minute sonic emergence sequence — a gradual tonal rise from 40 Hz to 180 Hz, mimicking natural dawn-light amplitude. The Departure Seal is a 90-second in-room goodbye: a final tone that signals the stay has ended without words. Guests check out emotionally before they check out physically.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0;">
+        <div>
+          <div style="font-size:0.58rem;letter-spacing:0.12em;color:var(--accent-dim);text-transform:uppercase;margin-bottom:0.8rem;">Phase A · Wake</div>
+          <ul class="spec-list">
+            <li>4-minute emergence sequence</li>
+            <li>40→180 Hz gradual rise</li>
+            <li>No alarm signal · no percussion</li>
+            <li>Light mimicry via frequency</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:0.58rem;letter-spacing:0.12em;color:var(--accent-dim);text-transform:uppercase;margin-bottom:0.8rem;">Phase B · Departure</div>
+          <ul class="spec-list">
+            <li>90-second farewell tone</li>
+            <li>Single harmonic resolution</li>
+            <li>Triggered by checkout event</li>
+            <li>Room returns to silence</li>
+          </ul>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);">
+        <div class="player" id="player6a" onclick="togglePlayer('player6a', 240)" style="border:none;border-right:1px solid var(--border);">
+          <div class="play-btn"><div class="play-icon"></div><div class="pause-icon"></div></div>
+          <div class="player-info">
+            <div class="player-title">WAKE PROTOCOL · 4 MIN</div>
+            <div class="player-dur" id="dur6a">4:00</div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog6a"></div></div>
+          </div>
+          <div class="waveform">
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+          </div>
+        </div>
+        <div class="player" id="player6b" onclick="togglePlayer('player6b', 90)" style="border:none;">
+          <div class="play-btn"><div class="play-icon"></div><div class="pause-icon"></div></div>
+          <div class="player-info">
+            <div class="player-title">DEPARTURE SEAL · 1:30</div>
+            <div class="player-dur" id="dur6b">1:30</div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog6b"></div></div>
+          </div>
+          <div class="waveform">
+            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+          </div>
+        </div>
+      </div>
+      <div style="border:1px solid var(--border);border-top:none;padding:0.8rem 1.4rem;">
+        <div style="font-size:0.6rem;color:var(--text-muted);letter-spacing:0.08em;">Plays in sequence as a complete stay-arc experience →</div>
+      </div>
+      <div class="brief-note">"The stay begins in the lobby. It ends in the room. The goodbye is the last impression. Design it — or lose it to silence you didn't choose."</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- OVERVIEW TABLE -->
+<section class="section" id="overview">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-num">03 · OVERVIEW</div>
+      <h2 class="section-title">All <em>six</em> concepts</h2>
+    </div>
+  </div>
+  <div class="reveal" style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.65rem;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:0.8rem 1rem;color:var(--text-muted);font-weight:400;letter-spacing:0.12em;text-transform:uppercase;">Demo</th>
+          <th style="text-align:left;padding:0.8rem 1rem;color:var(--text-muted);font-weight:400;letter-spacing:0.12em;text-transform:uppercase;">Space</th>
+          <th style="text-align:left;padding:0.8rem 1rem;color:var(--text-muted);font-weight:400;letter-spacing:0.12em;text-transform:uppercase;">Duration</th>
+          <th style="text-align:left;padding:0.8rem 1rem;color:var(--text-muted);font-weight:400;letter-spacing:0.12em;text-transform:uppercase;">Silence Ratio</th>
+          <th style="text-align:left;padding:0.8rem 1rem;color:var(--text-muted);font-weight:400;letter-spacing:0.12em;text-transform:uppercase;">Primary Effect</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--dim-border,#111);">
+          <td style="padding:1rem;color:var(--accent);">01</td>
+          <td style="padding:1rem;color:var(--text);">Lobby</td>
+          <td style="padding:1rem;color:var(--text-muted);">12 min</td>
+          <td style="padding:1rem;color:var(--text-muted);">78%</td>
+          <td style="padding:1rem;color:var(--text-muted);">Spatial presence · arrival decompression</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--dim-border,#111);">
+          <td style="padding:1rem;color:var(--accent);">02</td>
+          <td style="padding:1rem;color:var(--text);">Spa / Relaxation</td>
+          <td style="padding:1rem;color:var(--text-muted);">10 min</td>
+          <td style="padding:1rem;color:var(--text-muted);">72%</td>
+          <td style="padding:1rem;color:var(--text-muted);">Warmth · somatic calm</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--dim-border,#111);">
+          <td style="padding:1rem;color:var(--accent);">03</td>
+          <td style="padding:1rem;color:var(--text);">UI / Identity Kit</td>
+          <td style="padding:1rem;color:var(--text-muted);">0.2–4s each</td>
+          <td style="padding:1rem;color:var(--text-muted);">—</td>
+          <td style="padding:1rem;color:var(--text-muted);">Brand recognition · interface clarity</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--dim-border,#111);">
+          <td style="padding:1rem;color:var(--accent);">04</td>
+          <td style="padding:1rem;color:var(--text);">Elevator / Transit</td>
+          <td style="padding:1rem;color:var(--text-muted);">8–45s adaptive</td>
+          <td style="padding:1rem;color:var(--text-muted);">85%</td>
+          <td style="padding:1rem;color:var(--text-muted);">Anxiety reduction · compressed space</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--dim-border,#111);">
+          <td style="padding:1rem;color:var(--accent);">05</td>
+          <td style="padding:1rem;color:var(--text);">Dining Room</td>
+          <td style="padding:1rem;color:var(--text-muted);">7 min (3-phase)</td>
+          <td style="padding:1rem;color:var(--text-muted);">68–85%</td>
+          <td style="padding:1rem;color:var(--text-muted);">Behavioral pacing · table arc management</td>
+        </tr>
+        <tr>
+          <td style="padding:1rem;color:var(--accent);">06</td>
+          <td style="padding:1rem;color:var(--text);">Guestroom · Wake + Depart</td>
+          <td style="padding:1rem;color:var(--text-muted);">4 min + 1:30</td>
+          <td style="padding:1rem;color:var(--text-muted);">90%</td>
+          <td style="padding:1rem;color:var(--text-muted);">Stay arc completion · departure imprint</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal" style="border-bottom:1px solid var(--border);">
+  <div>
+    <h2>This is the<br><em>brief.</em></h2>
+  </div>
+  <div>
+    <p>These six demonstrations are the pre-engagement proof. The actual AERIA Sonic Identity program begins with the Silence Audit — a 48-hour diagnostic of your current sonic presence, delivered free, before any engagement begins.</p>
+    <a class="cta-link" href="https://dunkin2025.github.io/mazen/the-cash-b2b.html" target="_blank">Request Silence Audit → B2B Deck</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>MA-ZEN · AERIA Demonstration Suite · 2024–2025</div>
+  <div>6 Concepts · Sound is identity</div>
+  <div style="color:var(--text-dim);">The sound of what you don't say.</div>
+</footer>
+
+<script>
+// ── AUDIO ENGINE (Web Audio API — generates actual sound) ──
+const ctx = () => {
+  if (!window._actx) window._actx = new (window.AudioContext || window.webkitAudioContext)();
+  return window._actx;
+};
+
+const profiles = {
+  lobby:    { freqs: [60, 80, 120], mod: 0.015, gain: 0.04, warm: false },
+  spa:      { freqs: [80, 120, 200, 280], mod: 0.008, gain: 0.05, warm: true },
+  transit:  { freqs: [40, 60, 432], mod: 0.03, gain: 0.035, warm: false },
+  dining:   { freqs: [100, 140, 180], mod: 0.012, gain: 0.045, warm: true },
+  wake:     { freqs: [40, 80, 120, 180], mod: 0.006, gain: 0.04, warm: true },
+  depart:   { freqs: [180, 240, 320], mod: 0.004, gain: 0.03, warm: false },
+};
+
+const playerNodes = {};
+const playerTimers = {};
+const playerStates = {};
+
+function buildAmbient(profile, ac) {
+  const master = ac.createGain();
+  master.gain.setValueAtTime(0, ac.currentTime);
+  master.gain.linearRampToValueAtTime(profile.gain, ac.currentTime + 3);
+  master.connect(ac.destination);
+
+  profile.freqs.forEach((freq, i) => {
+    const osc = ac.createOscillator();
+    const g = ac.createGain();
+    const lfo = ac.createOscillator();
+    const lfoGain = ac.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    lfo.type = 'sine';
+    lfo.frequency.value = profile.mod + i * 0.003;
+    lfoGain.gain.value = 0.015;
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(g.gain);
+    osc.connect(g);
+    g.gain.value = 0.3 + Math.random() * 0.2;
+    g.connect(master);
+
+    osc.start(); lfo.start();
+    if (!playerNodes[profile]) playerNodes[profile] = [];
+    playerNodes[profile].push({ osc, lfo, master });
+  });
+  return master;
+}
+
+// UI Sounds via Web Audio
+function playUISound(type, ac) {
+  const g = ac.createGain();
+  g.connect(ac.destination);
+  const t = ac.currentTime;
+
+  if (type === 'logo') {
+    [220, 277, 330, 440].forEach((f, i) => {
+      const o = ac.createOscillator();
+      const og = ac.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      og.gain.setValueAtTime(0, t + i * 0.6);
+      og.gain.linearRampToValueAtTime(0.08, t + i * 0.6 + 0.2);
+      og.gain.exponentialRampToValueAtTime(0.001, t + i * 0.6 + 1.5);
+      o.connect(og); og.connect(ac.destination);
+      o.start(t + i * 0.6); o.stop(t + i * 0.6 + 1.6);
+    });
+  } else if (type === 'btn1') {
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = 880;
+    g.gain.setValueAtTime(0.06, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    o.connect(g); o.start(t); o.stop(t + 0.35);
+  } else if (type === 'btn2') {
+    const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = 660;
+    g.gain.setValueAtTime(0.05, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    o.connect(g); o.start(t); o.stop(t + 0.25);
+  } else if (type === 'btn3') {
+    [440, 550].forEach((f, i) => {
+      const o = ac.createOscillator(); const og = ac.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      og.gain.setValueAtTime(0.05, t + i*0.05);
+      og.gain.exponentialRampToValueAtTime(0.001, t + 0.4 + i*0.05);
+      o.connect(og); og.connect(ac.destination);
+      o.start(t + i*0.05); o.stop(t + 0.45 + i*0.05);
+    });
+  } else if (type === 'notif') {
+    [523, 659].forEach((f, i) => {
+      const o = ac.createOscillator(); const og = ac.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      og.gain.setValueAtTime(0, t + i*0.3);
+      og.gain.linearRampToValueAtTime(0.06, t + i*0.3 + 0.05);
+      og.gain.exponentialRampToValueAtTime(0.001, t + i*0.3 + 0.6);
+      o.connect(og); og.connect(ac.destination);
+      o.start(t + i*0.3); o.stop(t + i*0.3 + 0.7);
+    });
+  } else if (type === 'confirm') {
+    [330, 415, 494, 659].forEach((f, i) => {
+      const o = ac.createOscillator(); const og = ac.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      og.gain.setValueAtTime(0, t + i*0.35);
+      og.gain.linearRampToValueAtTime(0.07, t + i*0.35 + 0.1);
+      og.gain.exponentialRampToValueAtTime(0.001, t + i*0.35 + 1.2);
+      o.connect(og); og.connect(ac.destination);
+      o.start(t + i*0.35); o.stop(t + i*0.35 + 1.3);
+    });
+  }
+}
+
+let currentPlayer = null;
+let currentNodes = null;
+
+function togglePlayer(id, duration) {
+  const el = document.getElementById(id);
+  const progEl = document.getElementById('prog' + id.replace('player',''));
+  const durEl = document.getElementById('dur' + id.replace('player',''));
+
+  // Stop current if different
+  if (currentPlayer && currentPlayer !== id) {
+    stopPlayer(currentPlayer);
+  }
+
+  if (playerStates[id]) {
+    stopPlayer(id);
+    return;
+  }
+
+  // Start
+  playerStates[id] = true;
+  currentPlayer = id;
+  el.classList.add('playing');
+
+  const ac = ctx();
+  if (ac.state === 'suspended') ac.resume();
+
+  // Pick profile
+  const profileMap = {
+    player1: profiles.lobby,
+    player2: profiles.spa,
+    player4: profiles.transit,
+    player5: profiles.dining,
+    player6a: profiles.wake,
+    player6b: profiles.depart,
+  };
+  const prof = profileMap[id];
+  if (prof) {
+    currentNodes = buildAmbient(prof, ac);
+  }
+
+  // Progress
+  let elapsed = 0;
+  const interval = setInterval(() => {
+    if (!playerStates[id]) { clearInterval(interval); return; }
+    elapsed += 0.5;
+    const pct = Math.min((elapsed / duration) * 100, 100);
+    if (progEl) progEl.style.width = pct + '%';
+    const rem = Math.max(duration - elapsed, 0);
+    const m = Math.floor(rem / 60);
+    const s = Math.floor(rem % 60).toString().padStart(2,'0');
+    if (durEl) durEl.textContent = m + ':' + s;
+    if (elapsed >= duration) {
+      stopPlayer(id);
+      clearInterval(interval);
+    }
+  }, 500);
+  playerTimers[id] = interval;
+}
+
+function stopPlayer(id) {
+  playerStates[id] = false;
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('playing');
+  if (playerTimers[id]) clearInterval(playerTimers[id]);
+  if (currentNodes) {
+    try {
+      const ac = ctx();
+      currentNodes.gain.linearRampToValueAtTime(0, ac.currentTime + 1.5);
+      setTimeout(() => { try { currentNodes.disconnect(); } catch(e){} }, 1600);
+    } catch(e) {}
+    currentNodes = null;
+  }
+  if (currentPlayer === id) currentPlayer = null;
+}
+
+function triggerSound(btn, type, dur) {
+  const ac = ctx();
+  if (ac.state === 'suspended') ac.resume();
+  playUISound(type, ac);
+  btn.classList.add('triggered');
+  setTimeout(() => btn.classList.remove('triggered'), dur * 1000 + 200);
+}
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
