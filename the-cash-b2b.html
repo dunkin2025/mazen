@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE CASH — B2B Audio Branding · MA-ZEN</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Syne:wght@400;500;600;700&family=Syne+Mono&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --ink:      #0b0a09;
+  --paper:    #f4f0e8;
+  --cream:    #ede8dc;
+  --warm:     #e8e0d0;
+  --gold:     #b8924a;
+  --gold-lt:  #d4aa6a;
+  --gold-dim: rgba(184,146,74,0.12);
+  --gold-rule:rgba(184,146,74,0.3);
+  --charcoal: #1c1a17;
+  --ash:      #3a3630;
+  --dust:     #6b6459;
+  --mist:     #9c9589;
+  --border:   rgba(11,10,9,0.1);
+  --border-lt:rgba(11,10,9,0.06);
+  --shadow:   0 2px 24px rgba(11,10,9,0.08);
+  --r:        1px;
+}
+
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+
+/* ── GRAIN ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.038'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9000;mix-blend-mode:multiply;
+}
+
+/* ── TOP NAV ── */
+.topnav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(244,240,232,0.94);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;
+}
+.nav-brand{
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-weight:400;
+  letter-spacing:0.14em;
+  color:var(--ink);
+}
+.nav-section{
+  font-size:9px;letter-spacing:0.32em;text-transform:uppercase;
+  color:var(--mist);margin-left:14px;
+}
+.nav-left{display:flex;align-items:baseline}
+.nav-cta{
+  background:var(--ink);color:var(--paper);
+  font-family:'Syne Mono',monospace;
+  font-size:9px;letter-spacing:0.2em;text-transform:uppercase;
+  padding:9px 18px;border:none;cursor:pointer;
+  transition:background 250ms,transform 200ms;
+}
+.nav-cta:hover{background:var(--charcoal);transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{
+  min-height:88vh;
+  display:grid;
+  grid-template-columns:1fr 420px;
+  grid-template-rows:1fr auto;
+  padding:0 40px;
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:80px 60px 80px 0;
+  border-right:1px solid var(--border);
+  position:relative;
+}
+.hero-eyebrow{
+  font-family:'Syne Mono',monospace;
+  font-size:9px;letter-spacing:0.36em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:28px;
+  display:flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before{content:'';display:inline-block;width:32px;height:1px;background:var(--gold)}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(52px,7vw,96px);
+  font-weight:400;line-height:0.92;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  margin-bottom:32px;
+}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-sub{
+  font-size:15px;line-height:1.8;
+  color:var(--dust);
+  max-width:480px;margin-bottom:40px;
+  font-family:'Playfair Display',serif;
+  font-style:italic;font-weight:400;
+}
+.hero-stat-row{
+  display:flex;gap:40px;
+  padding-top:32px;
+  border-top:1px solid var(--border-lt);
+}
+.stat-block{}
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:32px;font-weight:400;
+  color:var(--gold);letter-spacing:-0.02em;
+  line-height:1;margin-bottom:4px;
+}
+.stat-label{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--mist);
+}
+
+.hero-right{
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:60px 0 60px 48px;
+  position:relative;
+}
+.hero-manifesto{
+  position:absolute;top:60px;right:0;left:48px;
+}
+.manifesto-line{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--mist);padding:8px 0;
+  border-bottom:1px solid var(--border-lt);
+  display:flex;justify-content:space-between;
+  animation:slideIn 600ms ease both;
+}
+.manifesto-line:nth-child(1){animation-delay:100ms}
+.manifesto-line:nth-child(2){animation-delay:220ms}
+.manifesto-line:nth-child(3){animation-delay:340ms}
+.manifesto-line:nth-child(4){animation-delay:460ms}
+.manifesto-line:nth-child(5){animation-delay:580ms}
+
+.hero-scroll-cue{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.24em;text-transform:uppercase;
+  color:var(--mist);
+  display:flex;align-items:center;gap:8px;
+  position:absolute;bottom:40px;left:48px;
+}
+.scroll-line{width:40px;height:1px;background:var(--mist)}
+
+/* ── SECTION SCAFFOLDING ── */
+.page-section{
+  max-width:1080px;margin:0 auto;
+  padding:80px 40px;
+}
+.page-section+.page-section{
+  border-top:1px solid var(--border);
+}
+.section-kicker{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.36em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;
+}
+.section-heading{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,3.5vw,44px);
+  font-weight:400;letter-spacing:-0.01em;
+  color:var(--ink);margin-bottom:20px;
+  line-height:1.1;
+}
+.section-heading em{font-style:italic;color:var(--gold)}
+.section-body{
+  font-size:14px;line-height:1.85;
+  color:var(--dust);
+  max-width:600px;
+  font-family:'Playfair Display',serif;
+  font-style:italic;font-weight:400;
+}
+
+/* ── INQUIRY FORM ── */
+.inquiry-layout{
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:60px;
+  align-items:start;
+}
+@media(max-width:840px){.inquiry-layout{grid-template-columns:1fr}}
+
+.form-wrap{
+  background:var(--cream);
+  border:1px solid var(--border);
+  padding:40px;
+}
+.form-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:400;font-style:italic;
+  color:var(--ink);margin-bottom:8px;
+}
+.form-note{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:32px;
+  padding-bottom:20px;border-bottom:1px solid var(--border-lt);
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 20px;
+  margin-bottom:18px;
+}
+.form-full{grid-column:1/-1}
+
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-label{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.24em;text-transform:uppercase;
+  color:var(--dust);
+}
+.field-label .req{color:var(--gold)}
+
+.field-input,.field-select,.field-textarea{
+  background:var(--paper);
+  border:1px solid var(--border);
+  color:var(--ink);
+  font-family:'Syne',sans-serif;
+  font-size:12px;letter-spacing:0.02em;
+  padding:10px 12px;
+  outline:none;
+  transition:border-color 220ms,box-shadow 220ms;
+  width:100%;
+  border-radius:var(--r);
+  -webkit-appearance:none;
+}
+.field-input:focus,.field-select:focus,.field-textarea:focus{
+  border-color:var(--gold-lt);
+  box-shadow:0 0 0 3px var(--gold-dim);
+}
+.field-input.error,.field-select.error,.field-textarea.error{
+  border-color:#c0392b;
+  box-shadow:0 0 0 3px rgba(192,57,43,0.08);
+}
+.field-select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b6459'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  padding-right:28px;cursor:pointer;
+}
+.field-textarea{resize:vertical;min-height:80px;line-height:1.6}
+.field-error{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.12em;color:#c0392b;
+  opacity:0;transform:translateY(-4px);
+  transition:all 200ms;height:0;overflow:hidden;
+}
+.field-error.show{opacity:1;transform:translateY(0);height:auto;margin-top:3px}
+
+.form-footer-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:24px;padding-top:20px;border-top:1px solid var(--border-lt);
+  flex-wrap:wrap;gap:12px;
+}
+.no-drafts{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--mist);
+  display:flex;align-items:center;gap:6px;
+}
+.no-drafts-dot{width:5px;height:5px;border-radius:50%;background:var(--mist)}
+
+.submit-btn{
+  background:var(--ink);color:var(--paper);
+  font-family:'Syne Mono',monospace;
+  font-size:9px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:12px 28px;border:none;cursor:pointer;
+  transition:all 250ms;
+  position:relative;overflow:hidden;
+}
+.submit-btn:hover{background:var(--charcoal);transform:translateY(-1px)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.submit-btn.loading::after{
+  content:'';position:absolute;bottom:0;left:0;height:2px;
+  background:var(--gold);animation:loadBar 1.6s ease-in-out infinite;
+}
+@keyframes loadBar{0%{width:0;left:0}50%{width:60%}100%{width:0;left:100%}}
+
+/* Brief output */
+.brief-output{
+  background:var(--charcoal);color:var(--paper);
+  padding:32px;
+  border:1px solid rgba(255,255,255,0.06);
+  opacity:0;transform:translateY(12px);
+  transition:all 500ms;
+  display:none;
+}
+.brief-output.visible{opacity:1;transform:translateY(0);display:block}
+.brief-header{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:20px;
+  padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.brief-stamp{
+  color:var(--gold-lt);
+}
+.brief-row{
+  display:flex;gap:0;margin-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  padding-bottom:10px;
+}
+.brief-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.brief-key{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--mist);width:130px;flex-shrink:0;padding-top:1px;
+}
+.brief-val{
+  font-size:12px;color:rgba(244,240,232,0.85);line-height:1.6;letter-spacing:0.02em;
+}
+.brief-recommendation{
+  margin-top:20px;
+  padding:16px;
+  background:rgba(184,146,74,0.12);
+  border-left:2px solid var(--gold);
+}
+.brief-rec-label{
+  font-family:'Syne Mono',monospace;
+  font-size:7px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--gold-lt);margin-bottom:8px;
+}
+.brief-rec-body{
+  font-size:11px;line-height:1.7;
+  color:rgba(244,240,232,0.75);
+  font-family:'Playfair Display',serif;font-style:italic;
+}
+.brief-actions{
+  display:flex;gap:10px;margin-top:20px;
+}
+.brief-btn{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  padding:8px 16px;cursor:pointer;transition:all 200ms;border:none;
+}
+.brief-btn.primary{background:var(--gold);color:var(--ink)}
+.brief-btn.primary:hover{background:var(--gold-lt)}
+.brief-btn.secondary{background:transparent;color:var(--mist);border:1px solid rgba(255,255,255,0.12)}
+.brief-btn.secondary:hover{color:var(--paper);border-color:rgba(255,255,255,0.3)}
+
+/* Form sidebar */
+.form-sidebar{}
+.sidebar-block{
+  padding:24px 0;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-block:last-child{border-bottom:none}
+.sidebar-label{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:12px;
+}
+.audit-card{
+  background:var(--gold);color:var(--ink);
+  padding:24px;
+  margin-bottom:16px;
+}
+.audit-title{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:400;font-style:italic;
+  margin-bottom:8px;
+}
+.audit-desc{
+  font-size:11px;line-height:1.7;color:rgba(11,10,9,0.7);
+  letter-spacing:0.02em;margin-bottom:16px;
+}
+.audit-detail{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  display:flex;flex-direction:column;gap:5px;
+}
+.audit-item{display:flex;align-items:center;gap:8px;color:var(--ink);opacity:0.7}
+.audit-item::before{content:'✓';color:var(--ink);opacity:0.6}
+
+.ideal-client-grid{
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.client-chip{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.16em;text-transform:uppercase;
+  padding:5px 10px;
+  border:1px solid var(--border);
+  color:var(--dust);
+  cursor:default;
+  transition:all 200ms;
+}
+.client-chip:hover{border-color:var(--gold-rule);color:var(--gold)}
+
+/* ── SERVICES ── */
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border-lt);
+  border:1px solid var(--border);
+  margin-top:40px;
+}
+@media(max-width:780px){.services-grid{grid-template-columns:1fr}}
+
+.service-card{
+  background:var(--paper);
+  padding:36px 30px;
+  display:flex;flex-direction:column;
+  gap:0;
+  transition:background 220ms;
+  position:relative;
+  overflow:hidden;
+}
+.service-card::after{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--gold);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 350ms ease;
+}
+.service-card:hover{background:var(--cream)}
+.service-card:hover::after{transform:scaleX(1)}
+.service-card.featured{background:var(--ink)}
+.service-card.featured:hover{background:var(--charcoal)}
+.service-card.featured .sc-tier{color:var(--gold-lt)}
+.service-card.featured .sc-name{color:var(--paper)}
+.service-card.featured .sc-price{color:var(--gold-lt)}
+.service-card.featured .sc-timeline{color:rgba(244,240,232,0.4)}
+.service-card.featured .sc-item{color:rgba(244,240,232,0.65)}
+.service-card.featured .sc-item::before{color:var(--gold)}
+.service-card.featured .sc-cta{background:var(--gold);color:var(--ink)}
+.service-card.featured .sc-cta:hover{background:var(--gold-lt)}
+.service-card.featured::after{background:var(--gold-lt)}
+
+.sc-tier{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:20px;
+}
+.sc-name{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:400;font-style:italic;
+  color:var(--ink);margin-bottom:4px;line-height:1.2;
+}
+.sc-price{
+  font-family:'Playfair Display',serif;
+  font-size:32px;font-weight:400;
+  color:var(--gold);margin-bottom:4px;line-height:1;letter-spacing:-0.02em;
+}
+.sc-timeline{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:24px;
+  padding-bottom:20px;border-bottom:1px solid var(--border-lt);
+}
+.sc-items{list-style:none;flex:1;margin-bottom:24px}
+.sc-item{
+  font-size:11px;line-height:1;color:var(--dust);
+  padding:6px 0;border-bottom:1px solid var(--border-lt);
+  display:flex;align-items:flex-start;gap:8px;letter-spacing:0.02em;
+}
+.sc-item:last-child{border-bottom:none}
+.sc-item::before{content:'·';color:var(--gold);flex-shrink:0;margin-top:-1px}
+.sc-cta{
+  background:var(--ink);color:var(--paper);
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  padding:11px;width:100%;border:none;cursor:pointer;
+  transition:all 250ms;text-align:center;
+}
+.sc-cta:hover{background:var(--charcoal);transform:translateY(-1px)}
+
+/* ── METHOD ── */
+.method-flow{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--border-lt);
+  border:1px solid var(--border);
+  margin:40px 0 48px;
+}
+@media(max-width:700px){.method-flow{grid-template-columns:1fr 1fr}}
+@media(max-width:400px){.method-flow{grid-template-columns:1fr}}
+
+.method-step{
+  background:var(--paper);
+  padding:28px 24px;
+  position:relative;
+  transition:background 220ms;
+}
+.method-step:hover{background:var(--cream)}
+.method-step-num{
+  font-family:'Playfair Display',serif;
+  font-size:52px;font-weight:400;font-style:italic;
+  color:var(--border);
+  line-height:1;margin-bottom:16px;
+  user-select:none;
+}
+.method-step-title{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:400;font-style:italic;
+  color:var(--ink);margin-bottom:8px;
+}
+.method-step-sub{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+}
+.method-step-desc{
+  font-size:11px;line-height:1.7;color:var(--dust);letter-spacing:0.02em;
+}
+.method-step-flag{
+  position:absolute;top:20px;right:20px;
+  font-family:'Syne Mono',monospace;
+  font-size:7px;letter-spacing:0.2em;text-transform:uppercase;
+  padding:3px 7px;
+  background:var(--gold-dim);color:var(--gold);
+  border:1px solid var(--gold-rule);
+}
+
+/* Method table */
+.method-table-wrap{overflow-x:auto}
+.method-table{
+  width:100%;border-collapse:collapse;
+  font-size:11px;
+  background:var(--cream);
+  border:1px solid var(--border);
+}
+.method-table th{
+  text-align:left;
+  font-family:'Syne Mono',monospace;
+  font-size:7px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--mist);
+  padding:12px 18px 10px;
+  border-bottom:1px solid var(--border);
+  background:var(--warm);white-space:nowrap;
+}
+.method-table td{
+  padding:14px 18px;
+  border-bottom:1px solid var(--border-lt);
+  vertical-align:top;line-height:1.65;color:var(--dust);
+}
+.method-table td:first-child{
+  font-family:'Playfair Display',serif;
+  font-style:italic;font-size:14px;font-weight:400;
+  color:var(--ink);white-space:nowrap;
+}
+.method-table td:nth-child(2){
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.12em;color:var(--gold);
+  white-space:nowrap;
+}
+.method-table td:nth-child(3){width:90px;font-family:'Syne Mono',monospace;font-size:8px;color:var(--mist)}
+.method-table tr:last-child td{border-bottom:none}
+.method-table tr:hover td{background:var(--gold-dim)}
+
+/* ── REVENUE PROJECTION ── */
+.revenue-layout{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:48px;align-items:start;
+  margin-top:40px;
+}
+@media(max-width:780px){.revenue-layout{grid-template-columns:1fr}}
+
+.rev-chart-wrap{
+  background:var(--charcoal);
+  padding:36px;border:1px solid rgba(255,255,255,0.06);
+}
+.rev-chart-title{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--mist);margin-bottom:28px;
+}
+.rev-bars{
+  display:flex;align-items:flex-end;gap:6px;height:160px;margin-bottom:16px;
+}
+.rev-bar-wrap{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;
+}
+.rev-bar{
+  width:100%;
+  background:var(--gold);
+  border-radius:1px 1px 0 0;
+  transition:height 1.2s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative;min-height:3px;
+}
+.rev-bar.retainer{background:rgba(184,146,74,0.4)}
+.rev-bar.project{background:var(--gold)}
+.rev-bar-label{
+  font-family:'Syne Mono',monospace;
+  font-size:7px;letter-spacing:0.1em;
+  color:rgba(244,240,232,0.3);
+  writing-mode:vertical-lr;
+  transform:rotate(180deg);
+  white-space:nowrap;
+}
+.rev-bar-val{
+  position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  font-family:'Syne Mono',monospace;
+  font-size:7px;letter-spacing:0.1em;
+  color:var(--gold-lt);white-space:nowrap;
+}
+.rev-axis-x{
+  display:flex;gap:6px;
+  font-family:'Syne Mono',monospace;
+  font-size:7px;letter-spacing:0.1em;color:rgba(244,240,232,0.25);
+}
+.rev-axis-x span{flex:1;text-align:center}
+
+.rev-legend{
+  display:flex;gap:16px;margin-top:12px;
+}
+.rev-legend-item{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Syne Mono',monospace;font-size:7px;letter-spacing:0.15em;text-transform:uppercase;
+  color:rgba(244,240,232,0.4);
+}
+.rev-legend-dot{width:8px;height:8px;flex-shrink:0}
+
+.rev-sidebar{}
+.rev-kpi{
+  padding:20px 0;
+  border-bottom:1px solid var(--border);
+}
+.rev-kpi:last-child{border-bottom:none}
+.rev-kpi-val{
+  font-family:'Playfair Display',serif;
+  font-size:30px;font-weight:400;
+  color:var(--gold);letter-spacing:-0.02em;line-height:1;
+  margin-bottom:4px;
+}
+.rev-kpi-label{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--dust);
+}
+.rev-kpi-note{
+  font-size:11px;color:var(--mist);margin-top:6px;
+  font-family:'Playfair Display',serif;font-style:italic;
+  line-height:1.5;
+}
+
+/* ── PHILOSOPHY STRIP ── */
+.philosophy-strip{
+  background:var(--ink);
+  color:var(--paper);
+  padding:60px 40px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.phil-quote{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,3.5vw,40px);
+  font-weight:400;font-style:italic;
+  color:var(--paper);
+  max-width:700px;line-height:1.4;
+  margin-bottom:24px;letter-spacing:-0.01em;
+}
+.phil-attr{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.32em;text-transform:uppercase;
+  color:var(--mist);
+}
+
+/* ── FOOTER ── */
+.site-footer{
+  background:var(--ink);color:var(--paper);
+  padding:32px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-brand{
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-weight:400;letter-spacing:0.14em;color:var(--gold-lt);
+}
+.footer-note{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(244,240,232,0.3);
+}
+.footer-links{display:flex;gap:24px}
+.footer-links a{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(244,240,232,0.3);text-decoration:none;transition:color 200ms;
+}
+.footer-links a:hover{color:var(--gold-lt)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--ink);color:var(--paper);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:10px 22px;
+  font-family:'Syne Mono',monospace;
+  font-size:9px;letter-spacing:0.18em;text-transform:uppercase;
+  opacity:0;transition:all 350ms;z-index:999;pointer-events:none;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── ANIMATIONS ── */
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp 700ms ease both}
+.d1{animation-delay:80ms}.d2{animation-delay:170ms}.d3{animation-delay:260ms}.d4{animation-delay:350ms}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding:0 24px}
+  .hero-left{padding:60px 0;border-right:none;border-bottom:1px solid var(--border)}
+  .hero-right{padding:40px 0}
+  .page-section{padding:60px 24px}
+  .topnav{padding:0 24px}
+  .site-footer{padding:24px}
+}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr}
+  .services-grid{grid-template-columns:1fr}
+  .method-flow{grid-template-columns:1fr}
+  .revenue-layout{grid-template-columns:1fr}
+  .hero-stat-row{flex-direction:column;gap:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOP NAV ── -->
+<header class="topnav">
+  <div class="nav-left">
+    <span class="nav-brand">MA-ZEN</span>
+    <span class="nav-section">// THE CASH</span>
+  </div>
+  <button class="nav-cta" onclick="scrollToInquiry()">Request Silence Audit →</button>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-left fade-up">
+    <div class="hero-eyebrow">B2B Audio Branding · Enterprise</div>
+    <h1 class="hero-title">THE<br><em>CASH</em></h1>
+    <p class="hero-sub">The sound of what you don't say.<br>Silence as sonic identity.</p>
+    <div class="hero-stat-row">
+      <div class="stat-block">
+        <div class="stat-num">$515K</div>
+        <div class="stat-label">18-mo projection</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">$500</div>
+        <div class="stat-label">Effective hourly rate</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">48h</div>
+        <div class="stat-label">Silence Audit delivery</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right fade-up d2">
+    <div class="hero-manifesto">
+      <div class="manifesto-line"><span>Sound is identity</span><span>→ Tier 1</span></div>
+      <div class="manifesto-line"><span>Silence is architecture</span><span>→ Tier 2</span></div>
+      <div class="manifesto-line"><span>Intervals carry meaning</span><span>→ Tier 3</span></div>
+      <div class="manifesto-line"><span>What you don't play</span><span>→ Tier 4</span></div>
+      <div class="manifesto-line"><span>That is the brief</span><span>→ Tier Ø</span></div>
+    </div>
+    <div class="hero-scroll-cue">
+      <span class="scroll-line"></span>
+      <span>Inquiry below</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHILOSOPHY STRIP ── -->
+<div class="philosophy-strip">
+  <p class="phil-quote">"Most sonic branding fills space. MA-ZEN structures it. The interval between sounds is not dead air — it is the architecture your audience inhabits."</p>
+  <div class="phil-attr">MA-ZEN · Sonic Identity Principle · 2024</div>
+</div>
+
+<!-- ── INQUIRY ── -->
+<section class="page-section fade-up" id="inquiry-section">
+  <div class="section-kicker">01 · Inquiry</div>
+  <h2 class="section-heading">Start with<br><em>a brief</em></h2>
+  <p class="section-body">Short form. Generates a proposal-ready brief. No pitch decks, no discovery calls until you've seen the Silence Audit.</p>
+
+  <div class="inquiry-layout" style="margin-top:40px">
+
+    <!-- FORM -->
+    <div>
+      <div class="form-wrap" id="inquiry-form-wrap">
+        <div class="form-title">Inquiry Form</div>
+        <div class="form-note">Collects only essentials · No drafts saved · All fields marked <span style="color:var(--gold)">*</span> required</div>
+
+        <form id="inquiry-form" novalidate>
+          <div class="form-grid">
+
+            <div class="field-group">
+              <label class="field-label">Company <span class="req">*</span></label>
+              <input class="field-input" id="f-company" type="text" placeholder="Acme Studio" autocomplete="organization">
+              <span class="field-error" id="e-company">Company name is required</span>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Contact Name <span class="req">*</span></label>
+              <input class="field-input" id="f-contact" type="text" placeholder="Alex Kim" autocomplete="name">
+              <span class="field-error" id="e-contact">Contact name is required</span>
+            </div>
+
+            <div class="field-group form-full">
+              <label class="field-label">Email <span class="req">*</span></label>
+              <input class="field-input" id="f-email" type="email" placeholder="alex@company.com" autocomplete="email">
+              <span class="field-error" id="e-email">A valid email address is required</span>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Industry <span class="req">*</span></label>
+              <select class="field-select" id="f-industry">
+                <option value="">Select industry</option>
+                <option>Wellness / Mindfulness</option>
+                <option>Luxury / Retail</option>
+                <option>Technology / SaaS</option>
+                <option>Hospitality</option>
+                <option>Finance</option>
+                <option>Healthcare</option>
+                <option>Media / Entertainment</option>
+                <option>Other</option>
+              </select>
+              <span class="field-error" id="e-industry">Please select an industry</span>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Use Case <span class="req">*</span></label>
+              <select class="field-select" id="f-usecase">
+                <option value="">Select use case</option>
+                <option>Audio logo / Sonic logo</option>
+                <option>Full sonic identity</option>
+                <option>UI / Product sounds</option>
+                <option>Environmental audio</option>
+                <option>Hold music / On-hold</option>
+                <option>Campaign audio</option>
+                <option>Brand video direction</option>
+                <option>Consultation only</option>
+              </select>
+              <span class="field-error" id="e-usecase">Please select a use case</span>
+            </div>
+
+            <div class="field-group form-full">
+              <label class="field-label">Constraints</label>
+              <input class="field-input" id="f-constraints" type="text" placeholder="e.g. Must avoid percussion, no narration, international markets">
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Deliverable</label>
+              <select class="field-select" id="f-deliverable">
+                <option value="">Select deliverable</option>
+                <option>Audio files + guidelines</option>
+                <option>Guidelines PDF only</option>
+                <option>Implementation + handoff</option>
+                <option>Ongoing retainer</option>
+                <option>Unsure — need consultation</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Timeline</label>
+              <select class="field-select" id="f-timeline">
+                <option value="">Select timeline</option>
+                <option>Under 4 weeks</option>
+                <option>4–8 weeks</option>
+                <option>2–3 months</option>
+                <option>Flexible</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Budget Band</label>
+              <select class="field-select" id="f-budget">
+                <option value="">Select budget</option>
+                <option>Under $10K</option>
+                <option>$10–20K (Foundation)</option>
+                <option>$20–50K (Complete Identity)</option>
+                <option>$50K+ (Enterprise)</option>
+                <option>Retainer ($4–8K/mo)</option>
+                <option>Undecided</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Decision Maker</label>
+              <select class="field-select" id="f-decision">
+                <option value="">Select role</option>
+                <option>Founder / CEO</option>
+                <option>CMO / Head of Brand</option>
+                <option>Creative Director</option>
+                <option>Marketing Manager</option>
+                <option>Procurement</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field-group form-full">
+              <label class="field-label">Additional Context</label>
+              <textarea class="field-textarea" id="f-context" placeholder="Anything else that frames the project — existing audio, what you're moving away from, target feeling…" rows="3"></textarea>
+            </div>
+
+          </div><!-- /form-grid -->
+
+          <div class="form-footer-row">
+            <div class="no-drafts">
+              <div class="no-drafts-dot"></div>
+              No drafts saved
+            </div>
+            <button type="submit" class="submit-btn" id="submit-btn">Generate Brief →</button>
+          </div>
+        </form>
+      </div><!-- /form-wrap -->
+
+      <!-- BRIEF OUTPUT -->
+      <div class="brief-output" id="brief-output">
+        <div class="brief-header">
+          <span>Proposal-ready Brief</span>
+          <span class="brief-stamp" id="brief-stamp">—</span>
+        </div>
+        <div id="brief-rows"></div>
+        <div class="brief-recommendation" id="brief-rec">
+          <div class="brief-rec-label">MA-ZEN Recommendation</div>
+          <div class="brief-rec-body" id="brief-rec-body">—</div>
+        </div>
+        <div class="brief-actions">
+          <button class="brief-btn primary" onclick="copyBrief()">Copy Brief</button>
+          <button class="brief-btn secondary" onclick="resetForm()">New Inquiry</button>
+          <button class="brief-btn secondary" onclick="scrollToServices()">View Services →</button>
+        </div>
+      </div>
+
+    </div><!-- /form col -->
+
+    <!-- SIDEBAR -->
+    <div class="form-sidebar">
+
+      <div class="sidebar-block">
+        <div class="sidebar-label">Start here — always free</div>
+        <div class="audit-card">
+          <div class="audit-title">Silence Audit</div>
+          <div class="audit-desc">A diagnostic of your current sonic presence. Delivered in 48 hours. Yours to keep regardless of whether you proceed.</div>
+          <div class="audit-detail">
+            <div class="audit-item">Current audio inventory review</div>
+            <div class="audit-item">Silence ratio measurement</div>
+            <div class="audit-item">Competitive sonic gap analysis</div>
+            <div class="audit-item">Preliminary Ma interval map</div>
+            <div class="audit-item">Delivered as PDF, no call required</div>
+          </div>
+        </div>
+        <p style="font-size:10px;color:var(--mist);line-height:1.7;font-family:'Playfair Display',serif;font-style:italic">
+          The audit is the proof. We deliver value before the engagement begins — because the brief should already contain something worth having.
+        </p>
+      </div>
+
+      <div class="sidebar-block">
+        <div class="sidebar-label">Ideal Clients</div>
+        <div class="ideal-client-grid">
+          <div class="client-chip">Wellness</div>
+          <div class="client-chip">Luxury</div>
+          <div class="client-chip">Technology</div>
+          <div class="client-chip">SaaS</div>
+          <div class="client-chip">Hospitality</div>
+          <div class="client-chip">Finance</div>
+          <div class="client-chip">Healthcare</div>
+          <div class="client-chip">Retail</div>
+        </div>
+      </div>
+
+      <div class="sidebar-block">
+        <div class="sidebar-label">Engagement Model</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-family:'Syne Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Foundation</div>
+            <div style="font-size:11px;color:var(--dust)">$12,000+ · 3–4 weeks</div>
+          </div>
+          <div>
+            <div style="font-family:'Syne Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Complete Identity</div>
+            <div style="font-size:11px;color:var(--dust)">$28–45K · 6–8 weeks</div>
+          </div>
+          <div>
+            <div style="font-family:'Syne Mono',monospace;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Retainer</div>
+            <div style="font-size:11px;color:var(--dust)">$4–8K/mo · 3-month minimum</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sidebar -->
+
+  </div><!-- /inquiry-layout -->
+</section>
+
+<!-- ── SERVICES ── -->
+<section class="page-section fade-up" id="services-section">
+  <div class="section-kicker">02 · Services</div>
+  <h2 class="section-heading">Three<br><em>engagement tiers</em></h2>
+  <p class="section-body">Every tier begins with the Silence Audit. No pitch decks before diagnostics.</p>
+
+  <div class="services-grid">
+
+    <div class="service-card">
+      <div class="sc-tier">Tier I · Entry</div>
+      <div class="sc-name">Foundation</div>
+      <div class="sc-price">$12,000+</div>
+      <div class="sc-timeline">3–4 weeks · ~24 hours of work</div>
+      <ul class="sc-items">
+        <li class="sc-item">Silence Audit (free, delivered first)</li>
+        <li class="sc-item">Audio logo — primary + variants</li>
+        <li class="sc-item">Sonic palette — 4–6 tonal elements</li>
+        <li class="sc-item">Identity Guidelines PDF</li>
+        <li class="sc-item">Ma interval specification</li>
+        <li class="sc-item">Implementation handoff</li>
+      </ul>
+      <button class="sc-cta" onclick="selectServiceAndScroll('Foundation – $12,000+')">Select Foundation →</button>
+    </div>
+
+    <div class="service-card featured">
+      <div class="sc-tier">Tier II · Complete · Most Requested</div>
+      <div class="sc-name">Complete Identity</div>
+      <div class="sc-price">$28–45K</div>
+      <div class="sc-timeline">6–8 weeks · ~60 hours of work</div>
+      <ul class="sc-items">
+        <li class="sc-item">Everything in Foundation</li>
+        <li class="sc-item">UI / product sound system</li>
+        <li class="sc-item">Environmental audio (3 contexts)</li>
+        <li class="sc-item">On-hold / telephony audio</li>
+        <li class="sc-item">Brand video audio direction</li>
+        <li class="sc-item">Extended Sonic Guidelines PDF</li>
+        <li class="sc-item">60-day implementation support</li>
+      </ul>
+      <button class="sc-cta" onclick="selectServiceAndScroll('Complete Identity – $28–45K')">Select Complete Identity →</button>
+    </div>
+
+    <div class="service-card">
+      <div class="sc-tier">Tier III · Ongoing</div>
+      <div class="sc-name">Retainer</div>
+      <div class="sc-price">$4–8K/mo</div>
+      <div class="sc-timeline">3-month minimum · ~12 hrs/mo</div>
+      <ul class="sc-items">
+        <li class="sc-item">Monthly sonic consistency audit</li>
+        <li class="sc-item">New asset creation (2–4/mo)</li>
+        <li class="sc-item">Campaign audio direction</li>
+        <li class="sc-item">Guidelines maintenance + versioning</li>
+        <li class="sc-item">Priority 48h response</li>
+        <li class="sc-item">Quarterly identity review</li>
+      </ul>
+      <button class="sc-cta" onclick="selectServiceAndScroll('Retainer – $4–8K/mo')">Select Retainer →</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── METHOD ── -->
+<section class="page-section fade-up" id="method-section">
+  <div class="section-kicker">03 · Method</div>
+  <h2 class="section-heading">The MA-ZEN<br><em>Four-Step Method</em></h2>
+  <p class="section-body">Silence Audit → Discovery → Identity → Guidelines. Each step is a deliverable. None are skipped.</p>
+
+  <div class="method-flow">
+    <div class="method-step">
+      <div class="method-step-num">01</div>
+      <div class="method-step-flag">Always free</div>
+      <div class="method-step-sub">Silence Audit</div>
+      <div class="method-step-title">Diagnose before designing</div>
+      <div class="method-step-desc">We audit your current sonic presence — or its absence. Delivered as a structured PDF in 48 hours. Yours regardless of whether you proceed. No call required.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-step-num">02</div>
+      <div class="method-step-sub">Sonic Discovery</div>
+      <div class="method-step-title">Map the brand's interval</div>
+      <div class="method-step-desc">A structured workshop (remote or on-site) to identify the Ma interval of your brand. What does your brand not say? Where does it breathe? This becomes the generative constraint.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-step-num">03</div>
+      <div class="method-step-sub">Identity Creation</div>
+      <div class="method-step-title">Every element evaluated against three principles</div>
+      <div class="method-step-desc">All audio elements are tested against Ma (interval), Sunyata (absence), and Wu Wei (effortlessness). Elements that fail are removed. Silence is not an absence of output — it is the output.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-step-num">04</div>
+      <div class="method-step-sub">Sonic Guidelines</div>
+      <div class="method-step-title">A codified document your team owns</div>
+      <div class="method-step-desc">The guidelines PDF is designed to be implemented without us. It specifies permitted sounds, prohibited sounds, silence ratios, interval rules, and implementation notes per context.</div>
+    </div>
+  </div>
+
+  <!-- Method breakdown table -->
+  <div class="method-table-wrap">
+    <table class="method-table">
+      <thead>
+        <tr>
+          <th>Step</th>
+          <th>Concept</th>
+          <th>Duration</th>
+          <th>Output</th>
+          <th>Principle applied</th>
+          <th>Client deliverable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>01 · Silence Audit</td>
+          <td>Ma · Negative space</td>
+          <td>48 hours</td>
+          <td>Diagnostic PDF — inventory, silence ratio, gap map, interval sketch</td>
+          <td>Identify what is already present before adding anything new</td>
+          <td>PDF report · Free · No engagement required</td>
+        </tr>
+        <tr>
+          <td>02 · Sonic Discovery</td>
+          <td>Wu Wei · Alignment</td>
+          <td>1–3 days</td>
+          <td>Brand interval map, generative constraints document, approved Ma reference points</td>
+          <td>Define what the brand does not say before defining what it says</td>
+          <td>Discovery document · Constraint specification</td>
+        </tr>
+        <tr>
+          <td>03 · Identity Creation</td>
+          <td>Sunyata · Essentials</td>
+          <td>2–5 weeks</td>
+          <td>Audio logo, sonic palette, UI sounds, hold music, environmental profiles</td>
+          <td>Every element evaluated: does it serve the interval, or fill it?</td>
+          <td>Master audio files · Source sessions · Usage matrix</td>
+        </tr>
+        <tr>
+          <td>04 · Sonic Guidelines</td>
+          <td>Ma · Codification</td>
+          <td>3–5 days</td>
+          <td>Implementation PDF: permitted elements, silence ratios, interval rules, context-specific notes</td>
+          <td>The document must work without MA-ZEN present. Independence is the goal.</td>
+          <td>Guidelines PDF · Implementation checklist · Version control</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── REVENUE PROJECTION ── -->
+<section class="page-section fade-up" id="revenue-section">
+  <div class="section-kicker">04 · Business Model</div>
+  <h2 class="section-heading">Revenue<br><em>Projection</em></h2>
+  <p class="section-body">Conservative 18-month model. Three revenue streams: project work, retainer MRR, and the Silence Audit funnel.</p>
+
+  <div class="revenue-layout">
+
+    <div class="rev-chart-wrap">
+      <div class="rev-chart-title">18-Month Revenue Trajectory — $515K Total</div>
+      <div class="rev-bars" id="rev-bars">
+        <!-- filled by JS -->
+      </div>
+      <div class="rev-axis-x" id="rev-axis">
+        <!-- filled by JS -->
+      </div>
+      <div class="rev-legend">
+        <div class="rev-legend-item">
+          <div class="rev-legend-dot" style="background:var(--gold)"></div>
+          Project revenue
+        </div>
+        <div class="rev-legend-item">
+          <div class="rev-legend-dot" style="background:rgba(184,146,74,0.4)"></div>
+          Retainer MRR
+        </div>
+      </div>
+    </div>
+
+    <div class="rev-sidebar">
+      <div class="rev-kpi">
+        <div class="rev-kpi-val">$515K</div>
+        <div class="rev-kpi-label">18-month target</div>
+        <div class="rev-kpi-note">Conservative. Assumes 2–3 projects/quarter scaling to 4 from month 9.</div>
+      </div>
+      <div class="rev-kpi">
+        <div class="rev-kpi-val">$500/hr</div>
+        <div class="rev-kpi-label">Effective rate</div>
+        <div class="rev-kpi-note">Each $20K project over ~40 hours. Rate rises as process tightens.</div>
+      </div>
+      <div class="rev-kpi">
+        <div class="rev-kpi-val">$24K</div>
+        <div class="rev-kpi-label">MRR ceiling (3 retainers)</div>
+        <div class="rev-kpi-note">Three retainer clients at $8K/mo. 12–18 hours total per month.</div>
+      </div>
+      <div class="rev-kpi">
+        <div class="rev-kpi-val">Free</div>
+        <div class="rev-kpi-label">Silence Audit — top of funnel</div>
+        <div class="rev-kpi-note">Delivers immediate value. Converts at a higher rate than discovery calls. No wasted time on misaligned leads.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-brand">MA-ZEN</div>
+  <div class="footer-note">The sound of what you don't say.</div>
+  <div class="footer-links">
+    <a href="#">THE PROOF</a>
+    <a href="#">THE FLOOR</a>
+    <a href="#">THE CASH</a>
+    <a href="#method-section">Method</a>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// FORM LOGIC
+// ═══════════════════════════════════════════════
+const REQUIRED = ['f-company','f-contact','f-email','f-industry','f-usecase'];
+
+function validate(id) {
+  const el = document.getElementById(id);
+  const err = document.getElementById('e-' + id.replace('f-',''));
+  if (!el || !err) return true;
+  let valid = el.value.trim() !== '';
+  if (id === 'f-email' && valid) {
+    valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+    err.textContent = valid ? '' : 'A valid email address is required';
+  }
+  el.classList.toggle('error', !valid);
+  err.classList.toggle('show', !valid);
+  return valid;
+}
+
+// Live validation on blur
+REQUIRED.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('blur', () => validate(id));
+    el.addEventListener('input', () => {
+      if (el.classList.contains('error')) validate(id);
+    });
+  }
+});
+
+document.getElementById('inquiry-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const allValid = REQUIRED.map(id => validate(id)).every(Boolean);
+  if (!allValid) {
+    showToast('Please complete required fields');
+    const firstErr = document.querySelector('.field-input.error, .field-select.error');
+    if (firstErr) firstErr.focus();
+    return;
+  }
+
+  // Loading state
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.textContent = 'Generating…';
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = 'Generate Brief →';
+    renderBrief();
+  }, 1400);
+});
+
+function renderBrief() {
+  const vals = {
+    company:     document.getElementById('f-company').value.trim(),
+    contact:     document.getElementById('f-contact').value.trim(),
+    email:       document.getElementById('f-email').value.trim(),
+    industry:    document.getElementById('f-industry').value,
+    usecase:     document.getElementById('f-usecase').value,
+    constraints: document.getElementById('f-constraints').value.trim() || 'None specified',
+    deliverable: document.getElementById('f-deliverable').value || 'Not specified',
+    timeline:    document.getElementById('f-timeline').value || 'Flexible',
+    budget:      document.getElementById('f-budget').value || 'Not specified',
+    decision:    document.getElementById('f-decision').value || 'Not specified',
+    context:     document.getElementById('f-context').value.trim() || 'None provided',
+  };
+
+  // Recommendation logic
+  const rec = getRecommendation(vals);
+
+  // Stamp
+  const now = new Date();
+  document.getElementById('brief-stamp').textContent =
+    now.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
+    now.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+
+  // Rows
+  const rows = [
+    ['Company', vals.company],
+    ['Contact', `${vals.contact} · ${vals.email}`],
+    ['Industry', vals.industry],
+    ['Use case', vals.usecase],
+    ['Constraints', vals.constraints],
+    ['Deliverable', vals.deliverable],
+    ['Timeline', vals.timeline],
+    ['Budget band', vals.budget],
+    ['Decision maker', vals.decision],
+    ['Context', vals.context],
+  ];
+
+  const container = document.getElementById('brief-rows');
+  container.innerHTML = rows.map(([k,v]) =>
+    `<div class="brief-row"><div class="brief-key">${k}</div><div class="brief-val">${v}</div></div>`
+  ).join('');
+
+  document.getElementById('brief-rec-body').textContent = rec;
+
+  // Show
+  const output = document.getElementById('brief-output');
+  output.style.display = 'block';
+  setTimeout(() => output.classList.add('visible'), 10);
+  document.getElementById('inquiry-form-wrap').style.opacity = '0.5';
+  document.getElementById('inquiry-form-wrap').style.pointerEvents = 'none';
+
+  output.scrollIntoView({behavior:'smooth', block:'nearest'});
+  showToast('Brief generated — ' + vals.company);
+}
+
+function getRecommendation(v) {
+  const budget = v.budget.toLowerCase();
+  const uc = v.usecase.toLowerCase();
+  const industry = v.industry.toLowerCase();
+
+  if (budget.includes('retainer')) {
+    return `Based on your inquiry, a Retainer engagement is indicated. ${v.company} would benefit from ongoing sonic consistency review rather than a one-time deliverable. We recommend beginning with a Silence Audit to establish baseline, then entering a 3-month retainer with review at month 2.`;
+  }
+  if (budget.includes('28') || budget.includes('45') || budget.includes('complete') || uc.includes('full')) {
+    return `Complete Identity is the appropriate tier for ${v.company}. The scope — ${v.usecase} — requires more than a logo-level engagement. We recommend beginning with the Silence Audit, then a 2-day Discovery workshop before committing to timelines. Expected outcome: a self-operating Sonic Guidelines document your team can implement without ongoing dependency.`;
+  }
+  if (budget.includes('12') || budget.includes('10–20') || uc.includes('logo')) {
+    return `Foundation tier aligns with ${v.company}'s stated budget and use case. Audio logo + palette + guidelines is achievable in 3–4 weeks. We recommend requesting the Silence Audit first — it will sharpen the brief and reduce revision cycles.`;
+  }
+  if (industry.includes('wellness') || industry.includes('mindfulness')) {
+    return `${v.company} is a strong candidate for the MA-ZEN method. Wellness brands carry the highest risk of sonic inconsistency — ambient playlists, guided sessions, and app UI sounds frequently contradict one another. The Silence Audit will surface these conflicts. Foundation or Complete Identity recommended.`;
+  }
+  return `Based on the brief, we recommend beginning with the Silence Audit — free, delivered in 48 hours. This will sharpen the scope and ensure the engagement starts from an accurate diagnostic rather than assumption. We will follow up within 24 hours of receiving this inquiry.`;
+}
+
+function copyBrief() {
+  const rows = document.querySelectorAll('.brief-row');
+  let text = 'MA-ZEN — Inquiry Brief\n\n';
+  rows.forEach(r => {
+    const k = r.querySelector('.brief-key').textContent;
+    const v = r.querySelector('.brief-val').textContent;
+    text += `${k}: ${v}\n`;
+  });
+  text += '\nRecommendation:\n' + document.getElementById('brief-rec-body').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Brief copied to clipboard'));
+}
+
+function resetForm() {
+  document.getElementById('inquiry-form').reset();
+  document.getElementById('brief-output').classList.remove('visible');
+  setTimeout(() => document.getElementById('brief-output').style.display = 'none', 500);
+  const wrap = document.getElementById('inquiry-form-wrap');
+  wrap.style.opacity = '1';
+  wrap.style.pointerEvents = 'auto';
+  document.querySelectorAll('.field-input,.field-select,.field-textarea').forEach(el => el.classList.remove('error'));
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+  wrap.scrollIntoView({behavior:'smooth'});
+}
+
+function selectServiceAndScroll(service) {
+  // Pre-fill deliverable if possible
+  const delivEl = document.getElementById('f-deliverable');
+  if (service.includes('Retainer')) delivEl.value = 'Ongoing retainer';
+  else if (service.includes('Complete')) delivEl.value = 'Implementation + handoff';
+  else delivEl.value = 'Audio files + guidelines';
+
+  // Pre-fill budget
+  const budgetEl = document.getElementById('f-budget');
+  if (service.includes('Retainer')) budgetEl.value = 'Retainer ($4–8K/mo)';
+  else if (service.includes('Complete')) budgetEl.value = '$20–50K (Complete Identity)';
+  else budgetEl.value = '$10–20K (Foundation)';
+
+  scrollToInquiry();
+  showToast(service + ' selected');
+}
+
+// ═══════════════════════════════════════════════
+// REVENUE CHART
+// ═══════════════════════════════════════════════
+const MONTHS = ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12','M13','M14','M15','M16','M17','M18'];
+const PROJECT_REV = [0,0,20000,20000,20000,40000,40000,40000,20000,40000,60000,40000,20000,40000,40000,40000,40000,20000];
+const RETAINER_REV= [0,0,0,4000,4000,4000,8000,8000,8000,8000,12000,12000,16000,16000,24000,24000,24000,24000];
+
+function buildChart() {
+  const barsEl = document.getElementById('rev-bars');
+  const axisEl = document.getElementById('rev-axis');
+  const maxVal = Math.max(...PROJECT_REV.map((p,i) => p + RETAINER_REV[i]));
+
+  barsEl.innerHTML = '';
+  axisEl.innerHTML = '';
+
+  MONTHS.forEach((mo, i) => {
+    const proj = PROJECT_REV[i];
+    const ret  = RETAINER_REV[i];
+    const total = proj + ret;
+    const totalPct = total / maxVal;
+    const projPct  = proj  / maxVal;
+    const retPct   = ret   / maxVal;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'rev-bar-wrap';
+
+    if (total > 0) {
+      const valLabel = document.createElement('div');
+      valLabel.style.cssText = 'font-family:\'Syne Mono\',monospace;font-size:6px;color:rgba(212,170,106,0.6);margin-bottom:2px;text-align:center';
+      valLabel.textContent = '$' + (total/1000).toFixed(0) + 'K';
+      wrap.appendChild(valLabel);
+    }
+
+    if (proj > 0) {
+      const pBar = document.createElement('div');
+      pBar.className = 'rev-bar project';
+      pBar.style.height = '0px';
+      pBar.style.flex = 'none';
+      wrap.appendChild(pBar);
+      setTimeout(() => { pBar.style.height = (projPct * 140) + 'px'; }, 200 + i * 40);
+    }
+    if (ret > 0) {
+      const rBar = document.createElement('div');
+      rBar.className = 'rev-bar retainer';
+      rBar.style.height = '0px';
+      rBar.style.flex = 'none';
+      wrap.appendChild(rBar);
+      setTimeout(() => { rBar.style.height = (retPct * 140) + 'px'; }, 300 + i * 40);
+    }
+    if (total === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'width:100%;height:3px;background:rgba(255,255,255,0.05);flex:none';
+      wrap.appendChild(empty);
+    }
+
+    const lbl = document.createElement('div');
+    lbl.className = 'rev-bar-label';
+    lbl.textContent = mo;
+    wrap.appendChild(lbl);
+
+    barsEl.appendChild(wrap);
+    const axSpan = document.createElement('span');
+    axisEl.appendChild(axSpan);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function scrollToInquiry() {
+  document.getElementById('inquiry-section').scrollIntoView({behavior:'smooth'});
+  setTimeout(() => document.getElementById('f-company').focus(), 600);
+}
+function scrollToServices() {
+  document.getElementById('services-section').scrollIntoView({behavior:'smooth'});
+}
+
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Intersection observer for chart animation
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { buildChart(); observer.disconnect(); }
+  });
+}, {threshold: 0.2});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const rev = document.getElementById('rev-bars');
+  if (rev) observer.observe(rev.parentElement);
+});
+</script>
+</body>
+</html>
