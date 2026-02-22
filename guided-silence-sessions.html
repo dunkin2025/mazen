@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE PROOF — Guided Silence Sessions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Space+Mono:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0b;
+    --surface: #111113;
+    --border: rgba(255,255,255,0.06);
+    --text-primary: rgba(255,255,255,0.88);
+    --text-secondary: rgba(255,255,255,0.38);
+    --text-ghost: rgba(255,255,255,0.12);
+    --accent: #c8b99a;
+    --accent-dim: rgba(200,185,154,0.18);
+    --accent-glow: rgba(200,185,154,0.06);
+    --phase-color: #c8b99a;
+    --danger: #c87a5a;
+    --radius: 2px;
+    --duration: 600ms;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── LAYOUT ── */
+  #app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 280px 1fr 260px;
+    grid-template-rows: 56px 1fr auto;
+    grid-template-areas:
+      "header header header"
+      "sidebar main panel"
+      "footer footer footer";
+    gap: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    grid-area: header;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .brand {
+    display: flex; align-items: baseline; gap: 16px;
+  }
+  .brand-proof {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+  }
+  .brand-sub {
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .header-controls {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .header-badge {
+    font-size: 9px; letter-spacing: 0.2em;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  /* ── TOGGLE BUTTON ── */
+  .toggle-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    transition: all 200ms;
+  }
+  .toggle-btn:hover { color: var(--text-primary); border-color: var(--border); }
+  .toggle-btn.active { color: var(--accent); border-color: var(--accent-dim); }
+
+  /* ── SIDEBAR ── */
+  aside#sidebar {
+    grid-area: sidebar;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 24px 0;
+    display: flex; flex-direction: column; gap: 0;
+  }
+
+  .section-label {
+    font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    padding: 0 24px 10px;
+  }
+
+  /* ── PRESET LIST ── */
+  .preset-list {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+  .preset-item {
+    position: relative;
+    padding: 14px 24px;
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 4px;
+    border-left: 2px solid transparent;
+    transition: all 200ms;
+  }
+  .preset-item:hover { background: var(--accent-glow); }
+  .preset-item.active {
+    border-left-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .preset-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px; font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+  }
+  .preset-meta {
+    font-size: 9px; color: var(--text-secondary);
+    letter-spacing: 0.1em;
+  }
+  .preset-concept {
+    font-size: 8px; color: var(--text-ghost);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ── SESSION LIST ── */
+  .session-list {
+    list-style: none;
+  }
+  .session-item {
+    padding: 10px 24px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    border-left: 2px solid transparent;
+    transition: all 200ms;
+    opacity: 0.6;
+  }
+  .session-item:hover { opacity: 1; background: var(--accent-glow); }
+  .session-item.active {
+    opacity: 1;
+    border-left-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .session-num {
+    font-size: 9px; color: var(--text-ghost);
+    min-width: 18px;
+  }
+  .session-info { flex: 1; }
+  .session-title { font-size: 10px; letter-spacing: 0.08em; }
+  .session-dur { font-size: 9px; color: var(--text-secondary); margin-top: 2px; }
+  .session-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: 0;
+    transition: opacity 200ms;
+  }
+  .session-item.active .session-dot { opacity: 1; }
+
+  /* ── MAIN ── */
+  main#main {
+    grid-area: main;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── CANVAS (silence field) ── */
+  #silence-canvas {
+    position: absolute; inset: 0;
+    opacity: 0.6;
+  }
+
+  /* ── CENTER DISPLAY ── */
+  .center-display {
+    position: relative; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center;
+    gap: 0;
+    text-align: center;
+    user-select: none;
+  }
+
+  /* ── TIMER ── */
+  .timer-wrap {
+    position: relative;
+    width: 200px; height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  #timer-ring {
+    position: absolute; inset: 0;
+    transform: rotate(-90deg);
+  }
+  #timer-ring .track {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1;
+  }
+  #timer-ring .progress {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear, stroke 600ms;
+  }
+  .timer-inner {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+  }
+  .timer-elapsed {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px; font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--text-primary);
+    transition: opacity 300ms;
+  }
+  .timer-total {
+    font-size: 9px; color: var(--text-secondary);
+    letter-spacing: 0.2em;
+  }
+  .timer-phase {
+    font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--phase-color);
+    transition: color 600ms, opacity 600ms;
+    margin-top: 6px;
+    height: 14px;
+    opacity: 1;
+  }
+
+  /* ── PLAY CONTROL ── */
+  .play-btn {
+    margin-top: 28px;
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 300ms;
+    position: relative;
+  }
+  .play-btn:hover {
+    border-color: var(--accent-dim);
+    background: var(--accent-dim);
+    transform: scale(1.06);
+  }
+  .play-btn svg { transition: all 300ms; }
+  .play-btn.playing { border-color: var(--accent); }
+
+  /* ── STATUS BAR ── */
+  .status-bar {
+    margin-top: 32px;
+    display: flex; align-items: center; gap: 24px;
+    font-size: 9px; letter-spacing: 0.2em;
+    color: var(--text-ghost);
+    text-transform: uppercase;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--text-ghost);
+    transition: background 600ms, box-shadow 600ms;
+  }
+  .status-dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse-dot 3s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .validity-tag {
+    font-size: 8px; letter-spacing: 0.18em;
+    color: var(--text-ghost);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    margin-top: 16px;
+    text-align: center;
+    max-width: 280px;
+  }
+
+  /* ── LABELS (hideable) ── */
+  .labels-layer {
+    transition: opacity 600ms;
+  }
+  .labels-layer.hidden { opacity: 0; pointer-events: none; }
+
+  /* ── RIGHT PANEL ── */
+  aside#panel {
+    grid-area: panel;
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 24px 0;
+    display: flex; flex-direction: column; gap: 24px;
+  }
+
+  .panel-section {
+    padding: 0 24px;
+  }
+  .panel-section + .panel-section {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  /* ── SILENCE BIAS METER ── */
+  .bias-ring-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; margin-bottom: 16px;
+  }
+  #bias-svg {
+    transform: rotate(-90deg);
+  }
+  .bias-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 300;
+    color: var(--accent);
+    text-align: center;
+    line-height: 1;
+  }
+  .bias-label {
+    font-size: 8px; letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  /* ── SLIDERS ── */
+  .param-row {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 14px;
+  }
+  .param-label {
+    display: flex; justify-content: space-between;
+    font-size: 9px; letter-spacing: 0.18em;
+    color: var(--text-secondary);
+  }
+  .param-value { color: var(--accent); }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform 200ms;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.5); }
+
+  /* ── SELECT ── */
+  select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 0.12em;
+    padding: 8px 12px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.25)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 28px;
+  }
+  select:focus { border-color: var(--accent-dim); }
+
+  /* ── METHOD TABLE ── */
+  .method-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9px;
+  }
+  .method-table th {
+    text-align: left;
+    font-size: 8px; letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    padding: 8px 0 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .method-table td {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+  .method-table td:first-child {
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    padding-right: 12px;
+    white-space: nowrap;
+    width: 90px;
+  }
+  .method-table tr:last-child td { border-bottom: none; }
+
+  /* ── FOOTER ── */
+  footer {
+    grid-area: footer;
+    border-top: 1px solid var(--border);
+    padding: 10px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-left {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 9px; color: var(--text-ghost);
+    letter-spacing: 0.18em;
+  }
+  .footer-right {
+    font-size: 9px; color: var(--text-ghost);
+    letter-spacing: 0.16em;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; font-weight: 300;
+  }
+
+  /* ── RITUAL MODE ── */
+  body.ritual-mode #app {
+    grid-template-columns: 0 1fr 0;
+    grid-template-rows: 0 1fr 0;
+    grid-template-areas: "main main main";
+  }
+  body.ritual-mode header,
+  body.ritual-mode aside,
+  body.ritual-mode footer { display: none; }
+  body.ritual-mode #main { grid-area: main; }
+  body.ritual-mode .play-btn { opacity: 0; pointer-events: none; }
+  body.ritual-mode .status-bar { opacity: 0; }
+  body.ritual-mode .validity-tag { display: none; }
+  body.ritual-mode .timer-total { opacity: 0; }
+
+  /* ── MODAL / METHOD DOC ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: min(680px, 92vw);
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 36px;
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 300;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .modal-sub {
+    font-size: 9px; letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    margin-bottom: 28px;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none;
+    color: var(--text-secondary);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; letter-spacing: 0.2em;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .modal-close:hover { color: var(--text-primary); }
+
+  .method-block {
+    margin-bottom: 28px;
+  }
+  .method-block-title {
+    font-size: 8px; letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* ── PHASE TRANSITION FLASH ── */
+  #phase-flash {
+    position: fixed; inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 500;
+    transition: opacity 200ms;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { animation: fade-in 800ms ease both; }
+  .fade-in-d1 { animation-delay: 100ms; }
+  .fade-in-d2 { animation-delay: 220ms; }
+  .fade-in-d3 { animation-delay: 340ms; }
+  .fade-in-d4 { animation-delay: 460ms; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="phase-flash"></div>
+
+<!-- ── MODAL: Method Documentation ── -->
+<div class="modal-overlay" id="method-modal">
+  <div class="modal-box" style="position:relative">
+    <button class="modal-close" onclick="closeModal()">Close ×</button>
+    <div class="modal-title">Method</div>
+    <div class="modal-sub">Modular Breakdown — Guided Silence Sessions</div>
+
+    <div class="method-block">
+      <div class="method-block-title">Module Map</div>
+      <table class="method-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Function</th>
+            <th>Design Principle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Preset Engine</td>
+            <td>Defines the temporal and tonal character of a session. Each preset (Ma, Sunyata, Wu Wei) carries a unique phase sequence, bias range, and color signature.</td>
+            <td>Silence has texture. Presets are containers, not styles.</td>
+          </tr>
+          <tr>
+            <td>Phase Sequencer</td>
+            <td>Advances the session through structured phases (Open, Settle, Hold, Dissolve, Return). Each phase has a defined duration ratio and transitions without narration.</td>
+            <td>Time structures experience. No guidance is itself guidance.</td>
+          </tr>
+          <tr>
+            <td>Silence Bias Meter</td>
+            <td>A live readout (0–100%) of the current session's disposition toward pure silence vs. texture activity. Influenced by preset and texture parameters.</td>
+            <td>The ratio of silence to event is the practice, made visible.</td>
+          </tr>
+          <tr>
+            <td>Texture Engine</td>
+            <td>Generates sparse, canvas-rendered visual events based on Warmth and Motion parameters. All events are subordinate to silence (bias-weighted probability).</td>
+            <td>Texture supports the boundary. Silence is the primary field.</td>
+          </tr>
+          <tr>
+            <td>Label Layer</td>
+            <td>Phase name, mode tag, and bias readout. Can be disabled for pure, unmediated experience. Persists across sessions until toggled.</td>
+            <td>Labels are for orientation, not affirmation. They are optional.</td>
+          </tr>
+          <tr>
+            <td>Ritual Mode</td>
+            <td>Fullscreen, control-stripped presentation. All structural chrome disappears. Only the field and the clock remain. Activated and exited via keyboard (Escape).</td>
+            <td>The frame is also content. Removing it changes the session.</td>
+          </tr>
+          <tr>
+            <td>Session Ledger</td>
+            <td>Persistent record of session index, preset used, duration completed, and timestamp. Displayed in sidebar. Serves as archive, not progress tracker.</td>
+            <td>Completion is not achievement. The record witnesses, not judges.</td>
+          </tr>
+          <tr>
+            <td>Validity Engine</td>
+            <td>Session is marked valid at the moment it begins. Zero events does not invalidate. Non-completion does not invalidate. Validity is ontological, not conditional.</td>
+            <td>The session is valid even if nothing "happens."</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="method-block">
+      <div class="method-block-title">Preset Definitions</div>
+      <table class="method-table">
+        <thead>
+          <tr><th>Preset</th><th>Concept</th><th>Behavior</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ma (間)</td>
+            <td>Japanese: negative space, interval, pause. The meaningful emptiness between events.</td>
+            <td>High silence bias (85%). Long Hold phases. Warm amber tone. Very sparse events separated by long intervals.</td>
+          </tr>
+          <tr>
+            <td>Sunyata (शून्यता)</td>
+            <td>Sanskrit: emptiness, the absence of inherent existence. Buddhist concept of groundlessness.</td>
+            <td>Maximum silence bias (92%). Near-zero events. Cool blue-white tone. Minimal phase transitions. Field dominates completely.</td>
+          </tr>
+          <tr>
+            <td>Wu Wei (無為)</td>
+            <td>Taoist: non-action, effortless action, flowing with what is. Not passivity but alignment.</td>
+            <td>Moderate bias (78%). Soft flowing events. Natural motion arcs. Green-amber tone. Events emerge and dissolve without peaks.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="method-block">
+      <div class="method-block-title">Phase Sequence</div>
+      <table class="method-table">
+        <thead>
+          <tr><th>Phase</th><th>Ratio</th><th>Quality</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Open</td><td>8%</td><td>Arrival. The field becomes present.</td></tr>
+          <tr><td>Settle</td><td>15%</td><td>Residue clears. Attention softens.</td></tr>
+          <tr><td>Hold</td><td>52%</td><td>The primary body. Stillness deepens.</td></tr>
+          <tr><td>Dissolve</td><td>18%</td><td>Edges soften. Return becomes possible.</td></tr>
+          <tr><td>Return</td><td>7%</td><td>Reintegration. The session completes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="method-block">
+      <div class="method-block-title">Design Principles</div>
+      <table class="method-table">
+        <thead><tr><th>Principle</th><th>Statement</th></tr></thead>
+        <tbody>
+          <tr><td>Silence First</td><td>Every design decision defaults to silence. Texture is added only to serve the boundary, never to fill it.</td></tr>
+          <tr><td>No Performance</td><td>The system does not track, score, reward, or validate behavior. Events counter reads 0 as a neutral state.</td></tr>
+          <tr><td>The Boundary is the Product</td><td>The session container — its edges, duration, and structure — is the deliverable. What occurs inside it is the user's.</td></tr>
+          <tr><td>Narration is Interference</td><td>No voice, no cue, no instruction during the session. Structure guides without speaking.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header class="fade-in">
+    <div class="brand">
+      <span class="brand-proof">THE PROOF</span>
+      <span class="brand-sub">Guided Silence Sessions</span>
+    </div>
+    <div class="header-controls">
+      <button class="toggle-btn active" id="labels-btn" onclick="toggleLabels()">Labels On</button>
+      <button class="toggle-btn" id="ritual-btn" onclick="enterRitual()">Ritual Mode</button>
+      <button class="toggle-btn" onclick="openModal()">Method ↗</button>
+      <span class="header-badge" id="session-badge">Session 8</span>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="fade-in fade-in-d1">
+
+    <div class="section-label">Presets</div>
+    <ul class="preset-list" id="preset-list">
+      <li class="preset-item active" data-preset="ma" onclick="selectPreset('ma', this)">
+        <span class="preset-name">Ma</span>
+        <span class="preset-meta">間 · Negative Space</span>
+        <span class="preset-concept">Interval · Pause · Presence</span>
+      </li>
+      <li class="preset-item" data-preset="sunyata" onclick="selectPreset('sunyata', this)">
+        <span class="preset-name">Sunyata</span>
+        <span class="preset-meta">शून्यता · Emptiness</span>
+        <span class="preset-concept">Void · Groundlessness · Pure Field</span>
+      </li>
+      <li class="preset-item" data-preset="wuwei" onclick="selectPreset('wuwei', this)">
+        <span class="preset-name">Wu Wei</span>
+        <span class="preset-meta">無為 · Non-Action</span>
+        <span class="preset-concept">Flow · Effortless · Alignment</span>
+      </li>
+    </ul>
+
+    <div class="section-label">Sessions</div>
+    <ul class="session-list" id="session-list">
+      <li class="session-item" onclick="loadSession(1)">
+        <span class="session-num">01</span>
+        <div class="session-info">
+          <div class="session-title">Introduction</div>
+          <div class="session-dur">04:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+      <li class="session-item" onclick="loadSession(2)">
+        <span class="session-num">02</span>
+        <div class="session-info">
+          <div class="session-title">Open Field</div>
+          <div class="session-dur">06:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+      <li class="session-item" onclick="loadSession(3)">
+        <span class="session-num">03</span>
+        <div class="session-info">
+          <div class="session-title">Settle</div>
+          <div class="session-dur">08:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+      <li class="session-item" onclick="loadSession(4)">
+        <span class="session-num">04</span>
+        <div class="session-info">
+          <div class="session-title">Deep Hold</div>
+          <div class="session-dur">10:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+      <li class="session-item" onclick="loadSession(5)">
+        <span class="session-num">05</span>
+        <div class="session-info">
+          <div class="session-title">Sunyata Field</div>
+          <div class="session-dur">12:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+      <li class="session-item" onclick="loadSession(6)">
+        <span class="session-num">06</span>
+        <div class="session-info">
+          <div class="session-title">Wu Wei Flow</div>
+          <div class="session-dur">15:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+      <li class="session-item" onclick="loadSession(7)">
+        <span class="session-num">07</span>
+        <div class="session-info">
+          <div class="session-title">Dissolution</div>
+          <div class="session-dur">20:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+      <li class="session-item active" onclick="loadSession(8)">
+        <span class="session-num">08</span>
+        <div class="session-info">
+          <div class="session-title">Demonstration</div>
+          <div class="session-dur">08:00</div>
+        </div>
+        <div class="session-dot"></div>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main">
+    <canvas id="silence-canvas"></canvas>
+
+    <div class="center-display fade-in fade-in-d2">
+
+      <!-- Timer ring -->
+      <div class="timer-wrap">
+        <svg id="timer-ring" width="200" height="200" viewBox="0 0 200 200">
+          <circle class="track" cx="100" cy="100" r="90"/>
+          <circle class="progress" id="ring-progress" cx="100" cy="100" r="90"
+            stroke-dasharray="565.49" stroke-dashoffset="565.49"/>
+        </svg>
+        <div class="timer-inner">
+          <div class="timer-elapsed" id="timer-elapsed">00:00</div>
+          <div class="timer-total" id="timer-total">/ 08:00</div>
+        </div>
+      </div>
+
+      <!-- Phase label -->
+      <div class="labels-layer" id="labels-layer">
+        <div class="timer-phase" id="phase-label">— Waiting —</div>
+      </div>
+
+      <!-- Play button -->
+      <button class="play-btn" id="play-btn" onclick="togglePlay()" title="Start / Pause">
+        <svg id="play-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M5 3l8 5-8 5V3z" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+      </button>
+
+      <!-- Status -->
+      <div class="status-bar labels-layer" id="status-row">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Stopped</span>
+        <span>·</span>
+        <span id="mode-text">Pure Silence</span>
+        <span>·</span>
+        <span id="events-text">Events: 0</span>
+      </div>
+
+      <div class="validity-tag">
+        Session is valid even if nothing "happens". This is not performance tracking.
+      </div>
+    </div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside id="panel" class="fade-in fade-in-d3">
+
+    <!-- Silence Bias -->
+    <div class="panel-section">
+      <div class="section-label" style="padding:0 0 10px">Silence Bias</div>
+      <div class="bias-ring-wrap">
+        <svg id="bias-svg" width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
+          <circle cx="40" cy="40" r="32" fill="none" stroke="var(--accent)" stroke-width="4"
+            stroke-linecap="round"
+            stroke-dasharray="201.06"
+            stroke-dashoffset="35"
+            id="bias-arc"
+            style="transition: stroke-dashoffset 600ms ease, stroke 600ms"/>
+        </svg>
+        <div class="bias-number" id="bias-number">82%</div>
+        <div class="bias-label">Silence Tendency</div>
+      </div>
+    </div>
+
+    <!-- Texture -->
+    <div class="panel-section">
+      <div class="section-label" style="padding:0 0 10px">Optional Texture</div>
+      <div class="param-row">
+        <select id="texture-profile" onchange="updateTexture()">
+          <option value="off">Engine Off (Pure Session)</option>
+          <option value="neutral">Neutral Field</option>
+          <option value="warm">Warm Presence</option>
+          <option value="motion">Motion Sparse</option>
+        </select>
+      </div>
+
+      <div class="param-row">
+        <div class="param-label">
+          <span>Warmth</span>
+          <span class="param-value" id="warmth-val">0.40</span>
+        </div>
+        <input type="range" id="warmth" min="0" max="100" value="40" oninput="updateParam('warmth', this.value)">
+      </div>
+
+      <div class="param-row">
+        <div class="param-label">
+          <span>Motion</span>
+          <span class="param-value" id="motion-val">0.30</span>
+        </div>
+        <input type="range" id="motion" min="0" max="100" value="30" oninput="updateParam('motion', this.value)">
+      </div>
+
+      <div class="param-row">
+        <div class="param-label">
+          <span>Master Level</span>
+          <span class="param-value" id="master-val">0 dB</span>
+        </div>
+        <input type="range" id="master-level" min="-24" max="0" value="0" oninput="updateParam('master', this.value)">
+      </div>
+    </div>
+
+    <!-- Method Quick Ref -->
+    <div class="panel-section">
+      <div class="section-label" style="padding:0 0 10px">Phase Sequence</div>
+      <table class="method-table">
+        <tbody>
+          <tr><td>Open</td><td>Arrival · 8%</td></tr>
+          <tr><td>Settle</td><td>Clearing · 15%</td></tr>
+          <tr><td>Hold</td><td>Primary field · 52%</td></tr>
+          <tr><td>Dissolve</td><td>Softening · 18%</td></tr>
+          <tr><td>Return</td><td>Completion · 7%</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:14px">
+        <button class="toggle-btn" onclick="openModal()" style="padding:6px 0; width:100%; text-align:center; border-color:var(--border);">
+          View Full Method ↗
+        </button>
+      </div>
+    </div>
+
+    <!-- Principles -->
+    <div class="panel-section">
+      <div class="section-label" style="padding:0 0 10px">Engine Principle</div>
+      <p style="font-size:9px; line-height:1.7; color:var(--text-ghost); letter-spacing:0.08em;">
+        Silence first. Texture only supports the boundary.<br>
+        Pure sessions run without the engine.<br>
+        No voice. No "keep going."
+      </p>
+    </div>
+  </aside>
+
+  <!-- FOOTER -->
+  <footer class="fade-in fade-in-d4">
+    <div class="footer-left">
+      <span id="footer-session">Session 8 — Demonstration</span>
+      <span>·</span>
+      <span id="footer-date"></span>
+      <span>·</span>
+      <span id="footer-preset-tag">Preset: Ma</span>
+      <span>·</span>
+      <span>Esc — Exit Ritual</span>
+    </div>
+    <div class="footer-right">The boundary is the product.</div>
+  </footer>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+const PRESETS = {
+  ma:      { bias: 82, color: '#c8b99a', bgTint: 'rgba(200,185,154,0.03)', label: 'Ma', eventRate: 0.0006 },
+  sunyata: { bias: 92, color: '#b0c4d8', bgTint: 'rgba(176,196,216,0.02)', label: 'Sunyata', eventRate: 0.0001 },
+  wuwei:   { bias: 78, color: '#a8c4a0', bgTint: 'rgba(168,196,160,0.04)', label: 'Wu Wei', eventRate: 0.0012 },
+};
+
+const PHASES = [
+  { name: 'Open',    ratio: 0.08 },
+  { name: 'Settle',  ratio: 0.15 },
+  { name: 'Hold',    ratio: 0.52 },
+  { name: 'Dissolve',ratio: 0.18 },
+  { name: 'Return',  ratio: 0.07 },
+];
+
+const SESSIONS = [
+  { id:1, title:'Introduction',  dur:240 },
+  { id:2, title:'Open Field',    dur:360 },
+  { id:3, title:'Settle',        dur:480 },
+  { id:4, title:'Deep Hold',     dur:600 },
+  { id:5, title:'Sunyata Field', dur:720 },
+  { id:6, title:'Wu Wei Flow',   dur:900 },
+  { id:7, title:'Dissolution',   dur:1200},
+  { id:8, title:'Demonstration', dur:480 },
+];
+
+let state = {
+  playing: false,
+  elapsed: 0,
+  sessionDur: 480,
+  sessionId: 8,
+  preset: 'ma',
+  labelsVisible: true,
+  eventCount: 0,
+  warmth: 0.4,
+  motion: 0.3,
+  textureMode: 'off',
+};
+
+let tickInterval = null;
+let canvasParticles = [];
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('footer-date').textContent = new Date().toLocaleString('en-US', {
+    month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'
+  });
+  initCanvas();
+  applyPreset('ma');
+  updateBiasArc(82);
+  updateRing(0, 480);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') exitRitual();
+  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+});
+
+// ═══════════════════════════════════════════
+//  CANVAS — Texture Engine
+// ═══════════════════════════════════════════
+const canvas = document.getElementById('silence-canvas');
+const ctx = canvas.getContext('2d');
+
+function initCanvas() {
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  renderLoop();
+}
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+
+function renderLoop() {
+  requestAnimationFrame(renderLoop);
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const p = PRESETS[state.preset];
+
+  // background tint
+  ctx.fillStyle = p.bgTint;
+  ctx.fillRect(0,0,W,H);
+
+  // spawn particles (texture engine)
+  if (state.playing && state.textureMode !== 'off') {
+    const bias = p.bias / 100;
+    if (Math.random() > bias * (1 - state.motion * 0.3)) {
+      spawnParticle(W, H, p.color);
+    }
+  }
+
+  // update + draw particles
+  canvasParticles = canvasParticles.filter(pt => pt.life > 0);
+  for (const pt of canvasParticles) {
+    pt.life -= 0.004;
+    pt.x += pt.vx;
+    pt.y += pt.vy;
+    pt.vy += 0.01 * (1 - state.warmth); // subtle drift
+
+    const alpha = Math.sin(pt.life * Math.PI) * 0.12 * pt.maxAlpha;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI*2);
+    ctx.fillStyle = hexToRgba(pt.color, alpha);
+    ctx.fill();
+  }
+}
+
+function spawnParticle(W, H, color) {
+  if (canvasParticles.length > 40) return;
+  state.eventCount++;
+  document.getElementById('events-text').textContent = `Events: ${state.eventCount}`;
+
+  canvasParticles.push({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: 2 + Math.random() * 60 * state.warmth,
+    vx: (Math.random()-0.5) * 0.3 * state.motion,
+    vy: (Math.random()-0.5) * 0.3 * state.motion,
+    life: 0.8 + Math.random() * 0.2,
+    maxAlpha: 0.6 + state.warmth * 0.4,
+    color,
+  });
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ═══════════════════════════════════════════
+//  PLAYBACK
+// ═══════════════════════════════════════════
+function togglePlay() {
+  if (state.playing) pause(); else play();
+}
+
+function play() {
+  state.playing = true;
+  document.getElementById('play-btn').classList.add('playing');
+  document.getElementById('play-icon').innerHTML = '<rect x="4" y="3" width="3" height="10" fill="rgba(255,255,255,0.8)"/><rect x="9" y="3" width="3" height="10" fill="rgba(255,255,255,0.8)"/>';
+  document.getElementById('status-dot').classList.add('active');
+  document.getElementById('status-text').textContent = 'Running';
+
+  if (state.elapsed >= state.sessionDur) { state.elapsed = 0; state.eventCount = 0; }
+
+  clearInterval(tickInterval);
+  tickInterval = setInterval(tick, 1000);
+}
+
+function pause() {
+  state.playing = false;
+  clearInterval(tickInterval);
+  document.getElementById('play-btn').classList.remove('playing');
+  document.getElementById('play-icon').innerHTML = '<path d="M5 3l8 5-8 5V3z" fill="rgba(255,255,255,0.7)"/>';
+  document.getElementById('status-dot').classList.remove('active');
+  document.getElementById('status-text').textContent = 'Paused';
+}
+
+function tick() {
+  state.elapsed++;
+  if (state.elapsed >= state.sessionDur) {
+    state.elapsed = state.sessionDur;
+    pause();
+    document.getElementById('status-text').textContent = 'Complete';
+    document.getElementById('phase-label').textContent = '✦ Complete';
+    return;
+  }
+  updateTimer();
+  updatePhase();
+  updateRing(state.elapsed, state.sessionDur);
+}
+
+function updateTimer() {
+  const e = state.elapsed;
+  const t = state.sessionDur;
+  document.getElementById('timer-elapsed').textContent = fmtTime(e);
+  document.getElementById('timer-total').textContent = '/ ' + fmtTime(t);
+}
+
+function updateRing(elapsed, total) {
+  const circ = 565.49;
+  const offset = circ - (elapsed / total) * circ;
+  document.getElementById('ring-progress').style.strokeDashoffset = offset;
+  document.getElementById('ring-progress').style.stroke = PRESETS[state.preset].color;
+}
+
+function updatePhase() {
+  const pct = state.elapsed / state.sessionDur;
+  let cumulative = 0;
+  let currentPhase = PHASES[PHASES.length-1].name;
+  for (const ph of PHASES) {
+    cumulative += ph.ratio;
+    if (pct <= cumulative) { currentPhase = ph.name; break; }
+  }
+  const el = document.getElementById('phase-label');
+  if (el.textContent !== `Phase: ${currentPhase}`) {
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = `Phase: ${currentPhase}`;
+      el.style.opacity = '1';
+    }, 300);
+    flashPhase();
+  }
+}
+
+function flashPhase() {
+  const f = document.getElementById('phase-flash');
+  f.style.opacity = '0.015';
+  setTimeout(() => { f.style.opacity = '0'; }, 200);
+}
+
+function fmtTime(s) {
+  const m = Math.floor(s/60);
+  const sec = s % 60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+// ═══════════════════════════════════════════
+//  PRESETS
+// ═══════════════════════════════════════════
+function selectPreset(key, el) {
+  document.querySelectorAll('.preset-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  applyPreset(key);
+}
+
+function applyPreset(key) {
+  state.preset = key;
+  const p = PRESETS[key];
+  document.documentElement.style.setProperty('--accent', p.color);
+  document.documentElement.style.setProperty('--accent-dim', hexToRgba(p.color, 0.18));
+  document.documentElement.style.setProperty('--accent-glow', hexToRgba(p.color, 0.06));
+  document.getElementById('bias-arc').style.stroke = p.color;
+  updateBiasArc(p.bias);
+  document.getElementById('bias-number').textContent = p.bias + '%';
+  document.getElementById('footer-preset-tag').textContent = `Preset: ${p.label}`;
+  updateModeText();
+  updateRing(state.elapsed, state.sessionDur);
+}
+
+// ═══════════════════════════════════════════
+//  SESSIONS
+// ═══════════════════════════════════════════
+function loadSession(id) {
+  const s = SESSIONS.find(x => x.id === id);
+  if (!s) return;
+  pause();
+  state.elapsed = 0;
+  state.sessionId = id;
+  state.sessionDur = s.dur;
+  state.eventCount = 0;
+  document.getElementById('events-text').textContent = 'Events: 0';
+  document.getElementById('timer-elapsed').textContent = '00:00';
+  document.getElementById('timer-total').textContent = '/ ' + fmtTime(s.dur);
+  document.getElementById('session-badge').textContent = `Session ${id}`;
+  document.getElementById('footer-session').textContent = `Session ${id} — ${s.title}`;
+  document.getElementById('phase-label').textContent = '— Waiting —';
+  document.getElementById('status-text').textContent = 'Stopped';
+  updateRing(0, s.dur);
+  canvasParticles = [];
+
+  document.querySelectorAll('.session-item').forEach((el,i) => {
+    el.classList.toggle('active', i === id-1);
+  });
+}
+
+// ═══════════════════════════════════════════
+//  BIAS ARC
+// ═══════════════════════════════════════════
+function updateBiasArc(pct) {
+  const circ = 201.06;
+  const offset = circ - (pct / 100) * circ;
+  document.getElementById('bias-arc').style.strokeDashoffset = offset;
+  document.getElementById('bias-number').textContent = pct + '%';
+}
+
+// ═══════════════════════════════════════════
+//  LABELS
+// ═══════════════════════════════════════════
+function toggleLabels() {
+  state.labelsVisible = !state.labelsVisible;
+  const btn = document.getElementById('labels-btn');
+  const layers = document.querySelectorAll('.labels-layer');
+  if (state.labelsVisible) {
+    btn.textContent = 'Labels On';
+    btn.classList.add('active');
+    layers.forEach(l => l.classList.remove('hidden'));
+  } else {
+    btn.textContent = 'Labels Off';
+    btn.classList.remove('active');
+    layers.forEach(l => l.classList.add('hidden'));
+  }
+}
+
+// ═══════════════════════════════════════════
+//  TEXTURE PARAMS
+// ═══════════════════════════════════════════
+function updateTexture() {
+  const val = document.getElementById('texture-profile').value;
+  state.textureMode = val;
+
+  const presets = {
+    off:     { warmth: 0,  motion: 0  },
+    neutral: { warmth: 40, motion: 30 },
+    warm:    { warmth: 70, motion: 20 },
+    motion:  { warmth: 30, motion: 65 },
+  };
+  const pp = presets[val];
+  document.getElementById('warmth').value = pp.warmth;
+  document.getElementById('motion').value = pp.motion;
+  state.warmth = pp.warmth / 100;
+  state.motion = pp.motion / 100;
+  document.getElementById('warmth-val').textContent = (pp.warmth/100).toFixed(2);
+  document.getElementById('motion-val').textContent = (pp.motion/100).toFixed(2);
+
+  // adjust bias
+  const baseBias = PRESETS[state.preset].bias;
+  const texturePenalty = (pp.warmth + pp.motion) * 0.06;
+  const displayBias = Math.max(60, Math.round(baseBias - texturePenalty));
+  updateBiasArc(displayBias);
+  updateModeText();
+}
+
+function updateParam(type, value) {
+  if (type === 'warmth') {
+    state.warmth = value / 100;
+    document.getElementById('warmth-val').textContent = (value/100).toFixed(2);
+  } else if (type === 'motion') {
+    state.motion = value / 100;
+    document.getElementById('motion-val').textContent = (value/100).toFixed(2);
+  } else if (type === 'master') {
+    document.getElementById('master-val').textContent = `${value} dB`;
+  }
+  const baseBias = PRESETS[state.preset].bias;
+  const texturePenalty = (state.warmth + state.motion) * 6;
+  updateBiasArc(Math.max(60, Math.round(baseBias - texturePenalty)));
+}
+
+function updateModeText() {
+  const mode = state.textureMode === 'off' ? 'Pure Silence' : 'Texture Active';
+  document.getElementById('mode-text').textContent = mode;
+}
+
+// ═══════════════════════════════════════════
+//  RITUAL MODE
+// ═══════════════════════════════════════════
+function enterRitual() {
+  document.body.classList.add('ritual-mode');
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+  if (!state.playing) play();
+}
+function exitRitual() {
+  document.body.classList.remove('ritual-mode');
+  if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+}
+
+// ═══════════════════════════════════════════
+//  METHOD MODAL
+// ═══════════════════════════════════════════
+function openModal() {
+  document.getElementById('method-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('method-modal').classList.remove('open');
+}
+document.getElementById('method-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
