@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN · Field Console</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap');
+
+/* ═══════════════════════════════════════════
+   MA-ZEN DESIGN PRINCIPLES ENCODED IN CSS
+   Ma    = generous void, structured absence
+   Sunyata = form dissolves, points beyond
+   Wu Wei  = controls emerge, exit without trace
+═══════════════════════════════════════════ */
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* The void — near-absolute dark */
+  --void:      #06060a;
+  --ground:    #090910;
+  --surface:   #0e0e18;
+  --veil:      rgba(255,255,255,0.03);
+  --veil2:     rgba(255,255,255,0.06);
+
+  /* The interval — single gold accent, like light through the gate */
+  --gold:      #c8a96e;
+  --gold-dim:  rgba(200,169,110,0.15);
+  --gold-glow: rgba(200,169,110,0.06);
+  --gold-line: rgba(200,169,110,0.25);
+
+  /* Chakra spectrum — subtle, never loud */
+  --root:    rgba(200,60,60,0.7);
+  --sacral:  rgba(230,130,40,0.7);
+  --solar:   rgba(220,190,60,0.7);
+  --heart:   rgba(60,170,80,0.7);
+  --throat:  rgba(50,130,210,0.7);
+  --third:   rgba(90,60,180,0.7);
+  --crown:   rgba(150,50,180,0.7);
+
+  /* Text — dissolves into ground */
+  --text:     rgba(220,215,205,0.82);
+  --text-mid: rgba(180,175,165,0.45);
+  --text-low: rgba(140,135,125,0.25);
+  --text-ghost: rgba(120,115,108,0.12);
+
+  /* Transitions — slow, like breath */
+  --t-slow: 800ms;
+  --t-med:  400ms;
+  --t-fast: 200ms;
+}
+
+html { height: 100%; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  min-height: 100%;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Grain — like washi paper */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.032'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9000; mix-blend-mode: screen; opacity: 0.7;
+}
+
+/* Scrollbar — minimal */
+::-webkit-scrollbar { width: 1px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gold-line); }
+
+/* ── MA: THE GATE ── */
+/* The header is a single horizontal interval, not a container */
+.gate {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  background: rgba(6,6,10,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--text-ghost);
+  transition: opacity var(--t-slow);
+}
+
+/* Gate dissolves in ritual mode */
+body.ritual .gate { opacity: 0; pointer-events: none; }
+
+.gate-mark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 300;
+  letter-spacing: 0.36em; text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.9;
+}
+
+.gate-interval {
+  /* Ma — the space between words IS the content */
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--text-low);
+  display: flex; align-items: center; gap: 20px;
+}
+
+.interval-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--text-ghost);
+  transition: background var(--t-slow), box-shadow var(--t-slow);
+}
+.interval-dot.live {
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold-dim);
+  animation: breathe 4s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ── FIELD: THE PRIMARY SPACE ── */
+/* One large void. Everything lives here. Ma in practice. */
+.field {
+  min-height: 100vh;
+  padding-top: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── THE SILENCE BANNER ── */
+/* Sunyata: form points beyond itself, then dissolves */
+.silence-banner {
+  padding: 80px 40px 60px;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: rise 1200ms ease 200ms both;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.silence-kicker {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.5em; text-transform: uppercase;
+  color: var(--text-low);
+  margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+}
+.silence-kicker::before,
+.silence-kicker::after {
+  content: ''; display: inline-block;
+  width: 40px; height: 1px; background: var(--text-ghost);
+}
+
+.silence-h1 {
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 300; font-style: italic;
+  letter-spacing: 0.04em; line-height: 0.9;
+  color: var(--text);
+  margin-bottom: 28px;
+}
+
+.silence-h1 em {
+  font-style: normal;
+  color: var(--gold);
+  font-weight: 300;
+}
+
+.silence-sub {
+  font-size: 17px; font-weight: 300; font-style: italic;
+  line-height: 1.9;
+  color: var(--text-mid);
+  letter-spacing: 0.02em;
+  max-width: 480px; margin: 0 auto 40px;
+}
+
+/* Three-pillar Ma description */
+.three-pillars {
+  display: flex; gap: 0;
+  border-top: 1px solid var(--text-ghost);
+  border-bottom: 1px solid var(--text-ghost);
+  margin: 0 auto;
+  max-width: 600px;
+  opacity: 0;
+  animation: rise 1000ms ease 600ms both;
+}
+.pillar {
+  flex: 1;
+  padding: 20px 24px;
+  border-right: 1px solid var(--text-ghost);
+  text-align: center;
+}
+.pillar:last-child { border-right: none; }
+.pillar-kanji {
+  font-size: 22px; font-weight: 300;
+  color: var(--gold); opacity: 0.8;
+  line-height: 1; margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+.pillar-name {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low);
+  margin-bottom: 5px;
+}
+.pillar-def {
+  font-size: 11px; font-style: italic;
+  color: var(--text-mid); line-height: 1.5;
+}
+
+/* ── BODY DIAGRAM — THE INTERVAL CENTER ── */
+.diagram-zone {
+  width: 100%;
+  max-width: 900px;
+  margin: 64px auto 0;
+  padding: 0 40px;
+  opacity: 0;
+  animation: rise 1000ms ease 400ms both;
+}
+
+.diagram-layout {
+  display: grid;
+  grid-template-columns: 1fr 200px 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+/* Left reading panel */
+.channel-left, .channel-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.channel-left { align-items: flex-end; text-align: right; }
+.channel-right { align-items: flex-start; text-align: left; }
+
+.ch-card {
+  padding: 16px 20px;
+  border: 1px solid var(--text-ghost);
+  background: var(--veil);
+  transition: all var(--t-slow);
+  min-width: 140px;
+  position: relative;
+}
+.ch-card::before {
+  content: '';
+  position: absolute; top: 0; bottom: 0;
+  width: 1px;
+  background: var(--gold-line);
+  opacity: 0;
+  transition: opacity var(--t-slow);
+}
+.channel-left .ch-card::before { right: 0; }
+.channel-right .ch-card::before { left: 0; }
+.ch-card.has-data::before { opacity: 1; }
+
+.ch-dir {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low); margin-bottom: 8px;
+}
+.ch-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px; font-weight: 300; font-style: italic;
+  color: var(--gold); line-height: 1; letter-spacing: 0.06em;
+  transition: all var(--t-slow);
+}
+.ch-support {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px; letter-spacing: 0.14em;
+  color: var(--text-low); margin-top: 4px;
+}
+.ch-hz {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.1em;
+  color: var(--text-ghost); margin-top: 2px;
+}
+
+/* Body SVG container */
+.body-center {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px;
+}
+
+#body-svg {
+  width: 160px; height: auto;
+  transition: filter var(--t-slow);
+}
+
+/* Scan timer — large, centered, Ma in time */
+.scan-clock {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px; font-weight: 300; font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.06em; line-height: 1;
+  text-align: center;
+  min-height: 56px;
+  transition: opacity var(--t-slow);
+  opacity: 0.3;
+}
+.scan-clock.active { opacity: 1; }
+
+/* ── SIGNAL BAR ── */
+.signal-zone {
+  max-width: 900px; margin: 32px auto 0;
+  padding: 0 40px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.sig-row {
+  display: flex; align-items: center; gap: 14px;
+}
+.sig-name {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--text-low); min-width: 90px;
+}
+.sig-track {
+  flex: 1; height: 1px;
+  background: var(--text-ghost);
+  position: relative; overflow: hidden;
+}
+.sig-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: var(--gold-line);
+  width: 0%;
+  transition: width 300ms ease;
+}
+.sig-val {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px; color: var(--gold); letter-spacing: 0.1em;
+  min-width: 28px; text-align: right; opacity: 0.6;
+}
+
+/* ── FFT CANVAS ── */
+.canvas-zone {
+  max-width: 900px; margin: 24px auto 0;
+  padding: 0 40px;
+}
+#fft-canvas {
+  width: 100%; height: 40px;
+  display: block;
+  opacity: 0.5;
+  transition: opacity var(--t-slow);
+}
+#fft-canvas.active { opacity: 1; }
+
+/* ── PRIMARY CONTROL — Wu Wei: one button, effortless ── */
+.primary-action {
+  margin: 48px auto 0;
+  text-align: center;
+  opacity: 0;
+  animation: rise 800ms ease 800ms both;
+}
+
+.begin-btn {
+  background: none;
+  border: 1px solid var(--gold-line);
+  color: var(--gold);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 300; font-style: italic;
+  letter-spacing: 0.2em;
+  padding: 18px 60px;
+  cursor: pointer;
+  transition: all var(--t-slow);
+  position: relative; overflow: hidden;
+}
+.begin-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--gold-glow);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform var(--t-slow);
+}
+.begin-btn:hover::before { transform: scaleX(1); }
+.begin-btn:hover { border-color: var(--gold); letter-spacing: 0.28em; }
+.begin-btn.scanning {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  animation: scanPulse 3s ease-in-out infinite;
+}
+@keyframes scanPulse {
+  0%,100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+  50% { box-shadow: 0 0 0 12px transparent; }
+}
+
+.action-note {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low); margin-top: 14px;
+}
+
+/* ── INTERPRETATION — Sunyata: form points beyond ── */
+.interpretation {
+  max-width: 600px; margin: 48px auto 0;
+  padding: 0 40px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity var(--t-slow);
+  min-height: 80px;
+}
+.interpretation.visible { opacity: 1; }
+.interp-text {
+  font-size: 16px; font-weight: 300; font-style: italic;
+  line-height: 2;
+  color: var(--text-mid);
+  letter-spacing: 0.02em;
+}
+.interp-rec {
+  margin-top: 16px;
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold); opacity: 0.7;
+}
+
+/* ── TONAL THERAPY — emerges from void ── */
+/* Wu Wei: controls appear only when needed */
+.therapy-zone {
+  max-width: 900px; margin: 72px auto 0;
+  padding: 0 40px 0;
+  border-top: 1px solid var(--text-ghost);
+  padding-top: 64px;
+  opacity: 0;
+  animation: rise 800ms ease 1000ms both;
+}
+
+.zone-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300; font-style: italic;
+  color: var(--text-mid);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.zone-subtitle {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low);
+  margin-bottom: 40px;
+}
+
+.therapy-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 32px;
+}
+
+/* Param groups — sparse, not stacked */
+.param-group { margin-bottom: 24px; }
+.param-name {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low); margin-bottom: 8px;
+  display: flex; justify-content: space-between;
+}
+.param-val { color: var(--gold); opacity: 0.8; }
+
+select.ma-select, input.ma-input {
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--text-ghost);
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 300; font-style: italic;
+  padding: 8px 0;
+  outline: none;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: border-color var(--t-med);
+  -webkit-appearance: none; appearance: none;
+}
+select.ma-select:focus,
+input.ma-input:focus {
+  border-bottom-color: var(--gold-line);
+}
+select.ma-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='rgba(200,169,110,0.3)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0 center;
+  padding-right: 16px;
+}
+select.ma-select option {
+  background: var(--ground); color: var(--text);
+  font-style: italic;
+}
+
+input[type=range].ma-range {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 1px;
+  background: var(--text-ghost);
+  outline: none; cursor: pointer; border-radius: 1px;
+}
+input[type=range].ma-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold); cursor: pointer; opacity: 0.7;
+  transition: opacity var(--t-med), transform var(--t-med);
+}
+input[type=range].ma-range::-webkit-slider-thumb:hover {
+  opacity: 1; transform: scale(1.3);
+}
+
+/* Duration selector — minimal pills */
+.dur-row {
+  display: flex; gap: 0;
+  border: 1px solid var(--text-ghost);
+  margin-top: 8px; width: fit-content;
+}
+.dur-pill {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 8px 16px;
+  background: none; border: none;
+  color: var(--text-low); cursor: pointer;
+  transition: all var(--t-med);
+  border-right: 1px solid var(--text-ghost);
+}
+.dur-pill:last-child { border-right: none; }
+.dur-pill.active { background: var(--gold-glow); color: var(--gold); }
+.dur-pill:hover:not(.active) { color: var(--text-mid); }
+
+/* Active tones display */
+.tones-display {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px; margin-top: 16px;
+}
+.tone-cell {
+  text-align: center; padding: 12px 6px;
+  border: 1px solid var(--text-ghost);
+  transition: all var(--t-slow);
+}
+.tone-cell.active-tone { border-color: var(--gold-line); background: var(--gold-glow); }
+.tone-dir {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-low); margin-bottom: 6px;
+}
+.tone-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 300; font-style: italic;
+  color: var(--gold); line-height: 1;
+}
+
+/* Therapy controls */
+.therapy-controls {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--text-ghost);
+}
+
+.ma-btn {
+  background: none;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px; font-weight: 300; font-style: italic;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all var(--t-med);
+}
+.ma-btn-primary {
+  border: 1px solid var(--gold-line);
+  color: var(--gold); padding: 12px 32px;
+}
+.ma-btn-primary:hover { background: var(--gold-glow); border-color: var(--gold); }
+.ma-btn-primary.active { background: var(--gold-dim); border-color: var(--gold); }
+.ma-btn-ghost {
+  border: 1px solid var(--text-ghost);
+  color: var(--text-mid); padding: 12px 24px;
+}
+.ma-btn-ghost:hover { border-color: var(--text-low); color: var(--text); }
+.ma-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+
+.therapy-clock {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300; font-style: italic;
+  color: var(--gold); opacity: 0.5; letter-spacing: 0.1em;
+  transition: opacity var(--t-slow);
+}
+.therapy-clock.active { opacity: 1; }
+
+/* Wave canvas */
+#wave-canvas {
+  width: 100%; height: 50px; display: block; margin-top: 16px; opacity: 0.4;
+  transition: opacity var(--t-slow);
+}
+#wave-canvas.active { opacity: 0.8; }
+
+/* ── CHAKRA MAP — Ma: each center has its own interval ── */
+.chakra-zone {
+  max-width: 900px; margin: 80px auto 0;
+  padding: 0 40px;
+  border-top: 1px solid var(--text-ghost);
+  padding-top: 64px;
+  opacity: 0;
+  animation: rise 800ms ease 1200ms both;
+}
+
+.chakra-strip {
+  display: flex; gap: 0;
+  border: 1px solid var(--text-ghost);
+  margin-top: 40px;
+  overflow-x: auto;
+}
+.chakra-node {
+  flex: 1; min-width: 100px;
+  padding: 20px 12px;
+  text-align: center;
+  cursor: pointer;
+  border-right: 1px solid var(--text-ghost);
+  transition: all var(--t-slow);
+  position: relative;
+  overflow: hidden;
+}
+.chakra-node:last-child { border-right: none; }
+.chakra-node::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--node-color, transparent);
+  transform: scaleX(0);
+  transition: transform var(--t-med);
+}
+.chakra-node:hover::after,
+.chakra-node.active-node::after { transform: scaleX(1); }
+.chakra-node:hover { background: var(--veil); }
+.chakra-node.active-node { background: var(--veil2); }
+
+.ck-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--node-color, var(--text-ghost));
+  margin: 0 auto 10px;
+  opacity: 0.5; transition: opacity var(--t-med);
+  box-shadow: 0 0 0 3px transparent;
+  transition: all var(--t-med);
+}
+.chakra-node:hover .ck-dot,
+.chakra-node.active-node .ck-dot {
+  opacity: 1;
+  box-shadow: 0 0 0 4px rgba(var(--node-r,200),var(--node-g,169),var(--node-b,110),0.15);
+}
+
+.ck-name {
+  font-size: 12px; font-weight: 300; font-style: italic;
+  color: var(--text-mid); letter-spacing: 0.06em;
+  line-height: 1.2; margin-bottom: 4px;
+}
+.ck-hz {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.15em;
+  color: var(--text-low);
+}
+
+/* Chakra detail — expands below, Ma: the detail is the interval */
+.chakra-detail {
+  max-height: 0; overflow: hidden;
+  transition: max-height 600ms ease;
+  border: 1px solid transparent;
+  border-top: none;
+  margin-top: -1px;
+}
+.chakra-detail.open {
+  max-height: 500px;
+  border-color: var(--text-ghost);
+  background: var(--veil);
+}
+.ck-detail-inner {
+  padding: 32px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+}
+.ck-col {}
+.ck-col-title {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low); margin-bottom: 12px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--text-ghost);
+}
+.ck-col-body {
+  font-size: 12px; font-style: italic; font-weight: 300;
+  color: var(--text-mid); line-height: 1.9; letter-spacing: 0.02em;
+}
+.ck-play {
+  margin-top: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-style: italic;
+  color: var(--gold); opacity: 0.7;
+  background: none; border: 1px solid var(--gold-line);
+  padding: 8px 20px; cursor: pointer;
+  transition: all var(--t-med); letter-spacing: 0.08em;
+}
+.ck-play:hover { opacity: 1; background: var(--gold-glow); }
+
+/* ── QUICK TONES — minimal ── */
+.tones-zone {
+  max-width: 900px; margin: 80px auto 0;
+  padding: 0 40px;
+  border-top: 1px solid var(--text-ghost);
+  padding-top: 64px;
+  opacity: 0;
+  animation: rise 800ms ease 1400ms both;
+}
+
+.tone-grid {
+  display: grid; grid-template-columns: repeat(9,1fr);
+  gap: 1px; background: var(--text-ghost);
+  border: 1px solid var(--text-ghost);
+  margin-top: 40px;
+}
+.tone-tile {
+  background: var(--void);
+  padding: 16px 8px; text-align: center; cursor: pointer;
+  transition: all var(--t-med);
+}
+.tone-tile:hover { background: var(--veil); }
+.tone-tile.playing { background: var(--gold-glow); }
+.tone-tile.playing .tile-hz { color: var(--gold); }
+.tile-hz {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 300; font-style: italic;
+  color: var(--text-mid); line-height: 1; margin-bottom: 5px;
+}
+.tile-name {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-low);
+}
+
+/* ── METHOD: The map dissolves into its own subject ── */
+.method-zone {
+  max-width: 900px; margin: 80px auto 0;
+  padding: 0 40px 120px;
+  border-top: 1px solid var(--text-ghost);
+  padding-top: 64px;
+  opacity: 0;
+  animation: rise 800ms ease 1600ms both;
+}
+
+.method-table-wrap { overflow-x: auto; margin-top: 40px; }
+.method-table {
+  width: 100%; border-collapse: collapse;
+}
+.method-table th {
+  text-align: left;
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low); padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--text-ghost);
+  white-space: nowrap;
+}
+.method-table td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  vertical-align: top; line-height: 1.8;
+  color: var(--text-mid); font-size: 13px; font-weight: 300;
+}
+.method-table td:first-child {
+  font-style: italic; color: var(--gold);
+  font-size: 15px; min-width: 140px; opacity: 0.8;
+}
+.method-table td:nth-child(2) {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.1em;
+  color: var(--text-low); white-space: nowrap;
+}
+.method-table tr:last-child td { border-bottom: none; }
+.method-table tr:hover td { background: var(--veil); }
+
+/* MA-ZEN principle callout */
+.principle-strip {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px; background: var(--text-ghost);
+  border: 1px solid var(--text-ghost);
+  margin-top: 48px;
+}
+.principle-cell {
+  background: var(--void); padding: 28px 24px;
+  transition: background var(--t-med);
+}
+.principle-cell:hover { background: var(--veil); }
+.pc-kanji {
+  font-size: 32px; font-weight: 300; color: var(--gold);
+  opacity: 0.5; line-height: 1; margin-bottom: 12px;
+  transition: opacity var(--t-med);
+}
+.principle-cell:hover .pc-kanji { opacity: 0.9; }
+.pc-name {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-low); margin-bottom: 8px;
+}
+.pc-def {
+  font-size: 13px; font-style: italic; font-weight: 300;
+  color: var(--text-mid); line-height: 1.7;
+}
+.pc-application {
+  margin-top: 10px;
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.1em;
+  color: var(--text-low); line-height: 1.7;
+}
+
+/* ── SESSION LOG — ghost text, dissolves ── */
+.log-zone {
+  position: fixed; bottom: 20px; right: 28px;
+  width: 260px; z-index: 100;
+  opacity: 0.3; transition: opacity var(--t-med);
+}
+.log-zone:hover { opacity: 1; }
+.log-title {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--text-low); margin-bottom: 6px;
+}
+.log-list {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.05em;
+  color: var(--text-low); line-height: 1.9;
+  max-height: 80px; overflow-y: auto;
+}
+.log-entry-row { display: flex; gap: 8px; }
+.log-ts { color: var(--text-ghost); min-width: 36px; }
+
+/* Report button (fixed bottom left) */
+.report-fab {
+  position: fixed; bottom: 20px; left: 28px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-weight: 300; font-style: italic;
+  letter-spacing: 0.12em;
+  color: var(--text-low); opacity: 0.4;
+  background: none; border: 1px solid var(--text-ghost);
+  padding: 9px 18px; cursor: pointer;
+  transition: all var(--t-slow);
+}
+.report-fab:hover { opacity: 1; color: var(--gold); border-color: var(--gold-line); }
+
+/* ── TOAST — Wu Wei: exits without trace ── */
+.toast {
+  position: fixed; bottom: 60px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-mid);
+  background: var(--surface);
+  border: 1px solid var(--text-ghost);
+  padding: 8px 18px;
+  opacity: 0; pointer-events: none;
+  transition: all 400ms;
+  z-index: 9998; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── REPORT OVERLAY ── */
+.report-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(6,6,10,0.92);
+  backdrop-filter: blur(16px);
+  z-index: 1000;
+  align-items: center; justify-content: center;
+}
+.report-overlay.open { display: flex; }
+.report-box {
+  width: min(640px, 90vw);
+  background: var(--ground);
+  border: 1px solid var(--text-ghost);
+  padding: 48px;
+  max-height: 80vh; overflow-y: auto;
+}
+.report-header {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 300; font-style: italic;
+  color: var(--gold); margin-bottom: 6px;
+}
+.report-ts {
+  font-family: 'Inconsolata', monospace;
+  font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-low); margin-bottom: 32px;
+}
+.report-row {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--text-ghost);
+  padding: 10px 0;
+}
+.report-row:last-child { border-bottom: none; }
+.rk {
+  font-family: 'Inconsolata', monospace;
+  font-size: 7px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-low); width: 130px; flex-shrink: 0; padding-top: 2px;
+}
+.rv { font-size: 13px; font-weight: 300; color: var(--text-mid); line-height: 1.5; }
+.report-actions {
+  display: flex; gap: 12px; margin-top: 28px;
+}
+.rep-btn {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px; font-style: italic; font-weight: 300;
+  padding: 10px 24px; cursor: pointer; letter-spacing: 0.1em;
+  transition: all var(--t-med);
+}
+.rep-btn.primary { background: var(--gold-dim); border: 1px solid var(--gold-line); color: var(--gold); }
+.rep-btn.primary:hover { background: var(--gold-glow); }
+.rep-btn.ghost { background: none; border: 1px solid var(--text-ghost); color: var(--text-low); }
+.rep-btn.ghost:hover { color: var(--text); border-color: var(--text-low); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .diagram-layout { grid-template-columns: 1fr; gap: 24px; }
+  .channel-left, .channel-right { align-items: center; text-align: center; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .therapy-layout { grid-template-columns: 1fr; gap: 24px; }
+  .tone-grid { grid-template-columns: repeat(3,1fr); }
+  .ck-detail-inner { grid-template-columns: 1fr; }
+  .principle-strip { grid-template-columns: 1fr; }
+  .gate { padding: 0 20px; }
+  .diagram-zone, .therapy-zone, .chakra-zone, .tones-zone, .method-zone { padding: 0 20px; }
+  .therapy-zone { padding-top: 40px; }
+  .chakra-zone { padding-top: 40px; }
+  .tones-zone { padding-top: 40px; }
+  .method-zone { padding-top: 40px; padding-bottom: 80px; }
+  .silence-banner { padding: 60px 20px 40px; }
+  .three-pillars { flex-direction: column; }
+  .pillar { border-right: none; border-bottom: 1px solid var(--text-ghost); }
+  .log-zone { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- GATE — the interval between nothing and something -->
+<header class="gate">
+  <div class="gate-mark">MA–ZEN</div>
+  <div class="gate-interval">
+    <span>Field Console</span>
+    <div class="interval-dot" id="mic-dot"></div>
+    <span id="gate-status">Idle</span>
+    <div class="interval-dot" id="audio-dot"></div>
+    <span id="gate-audio">—</span>
+    <span id="gate-clock" style="letter-spacing:0.1em">00:00</span>
+  </div>
+</header>
+
+<!-- THE FIELD — one continuous space, no panels -->
+<div class="field">
+
+  <!-- SILENCE BANNER -->
+  <div class="silence-banner">
+    <div class="silence-kicker">Frequency Bio-Scan · Tonal Therapy</div>
+    <h1 class="silence-h1">Field<br><em>Console</em></h1>
+    <p class="silence-sub">The interval between sounds is not dead air — it is the architecture your field inhabits.</p>
+
+    <div class="three-pillars">
+      <div class="pillar">
+        <div class="pillar-kanji">間</div>
+        <div class="pillar-name">Ma</div>
+        <div class="pillar-def">The interval is the material</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-kanji">空</div>
+        <div class="pillar-name">Sunyata</div>
+        <div class="pillar-def">Form dissolves — no clinging</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-kanji">無為</div>
+        <div class="pillar-name">Wu Wei</div>
+        <div class="pillar-def">Effortless — exits without trace</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY DIAGRAM — the central interval -->
+  <div class="diagram-zone">
+    <div class="diagram-layout">
+
+      <!-- LEFT CHANNELS -->
+      <div class="channel-left">
+        <div class="ch-card" id="ch-left">
+          <div class="ch-dir">◀ Left</div>
+          <div class="ch-note" id="left-note">—</div>
+          <div class="ch-support" id="left-sup">Support: —</div>
+          <div class="ch-hz" id="left-hz">— Hz</div>
+        </div>
+        <div class="ch-card" id="ch-clo">
+          <div class="ch-dir">▼ Center Low</div>
+          <div class="ch-note" id="clo-note">—</div>
+          <div class="ch-support" id="clo-sup">Support: —</div>
+          <div class="ch-hz" id="clo-hz">— Hz</div>
+        </div>
+      </div>
+
+      <!-- BODY SVG -->
+      <div class="body-center">
+        <svg id="body-svg" viewBox="0 0 120 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="ag1" cx="50%" cy="40%" r="55%">
+              <stop offset="0%" stop-color="rgba(200,169,110,0.1)"/>
+              <stop offset="100%" stop-color="rgba(200,169,110,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- Aura glow -->
+          <ellipse cx="60" cy="115" rx="52" ry="115" fill="url(#ag1)" id="aura-el"/>
+          <!-- Body outline — hair-thin -->
+          <g stroke="rgba(200,169,110,0.3)" stroke-width="1" fill="none">
+            <circle cx="60" cy="25" r="18"/>
+            <line x1="53" y1="43" x2="53" y2="58"/>
+            <line x1="67" y1="43" x2="67" y2="58"/>
+            <path d="M53 58 Q22 60 20 78"/>
+            <path d="M67 58 Q98 60 100 78"/>
+            <path d="M28 78 L28 162 Q28 170 38 172 L82 172 Q92 170 92 162 L92 78 Z" fill="rgba(200,169,110,0.02)"/>
+            <path d="M20 78 L10 138 Q9 146 14 148"/>
+            <path d="M100 78 L110 138 Q111 146 106 148"/>
+            <path d="M38 172 L30 248 Q29 253 36 253 L44 253 Q48 251 48 246 L48 172"/>
+            <path d="M82 172 L90 248 Q91 253 84 253 L76 253 Q72 251 72 246 L72 172"/>
+            <line x1="60" y1="58" x2="60" y2="172" stroke="rgba(200,169,110,0.12)" stroke-dasharray="4,4"/>
+          </g>
+          <!-- Chakra points — breathing gently -->
+          <circle cx="60" cy="17" r="4" fill="none" stroke="rgba(150,50,180,0.6)" stroke-width="1" id="ck-crown"/>
+          <circle cx="60" cy="30" r="3" fill="none" stroke="rgba(90,60,180,0.6)" stroke-width="1" id="ck-third"/>
+          <circle cx="60" cy="50" r="3" fill="none" stroke="rgba(50,130,210,0.6)" stroke-width="1" id="ck-throat"/>
+          <circle cx="60" cy="90" r="4" fill="none" stroke="rgba(60,170,80,0.6)" stroke-width="1" id="ck-heart"/>
+          <circle cx="60" cy="118" r="3" fill="none" stroke="rgba(220,190,60,0.6)" stroke-width="1" id="ck-solar"/>
+          <circle cx="60" cy="145" r="3" fill="none" stroke="rgba(230,130,40,0.6)" stroke-width="1" id="ck-sacral"/>
+          <circle cx="60" cy="165" r="4" fill="none" stroke="rgba(200,60,60,0.6)" stroke-width="1" id="ck-root"/>
+          <!-- Channel indicator lines -->
+          <line x1="28" y1="100" x2="4"   y2="100" stroke="rgba(200,169,110,0.2)" stroke-dasharray="3,3" id="l-line"/>
+          <line x1="92" y1="100" x2="116" y2="100" stroke="rgba(200,169,110,0.2)" stroke-dasharray="3,3" id="r-line"/>
+        </svg>
+        <div class="scan-clock" id="scan-clock">00:00</div>
+      </div>
+
+      <!-- RIGHT CHANNELS -->
+      <div class="channel-right">
+        <div class="ch-card" id="ch-right">
+          <div class="ch-dir">Right ▶</div>
+          <div class="ch-note" id="right-note">—</div>
+          <div class="ch-support" id="right-sup">Support: —</div>
+          <div class="ch-hz" id="right-hz">— Hz</div>
+        </div>
+        <div class="ch-card" id="ch-chi">
+          <div class="ch-dir">Center High ▲</div>
+          <div class="ch-note" id="chi-note">—</div>
+          <div class="ch-support" id="chi-sup">Support: —</div>
+          <div class="ch-hz" id="chi-hz">— Hz</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SIGNAL METERS -->
+  <div class="signal-zone">
+    <div class="sig-row">
+      <div class="sig-name">Signal</div>
+      <div class="sig-track"><div class="sig-fill" id="sig-strength" style="width:0%"></div></div>
+      <div class="sig-val" id="sig-val">—</div>
+    </div>
+    <div class="sig-row">
+      <div class="sig-name">Coherence</div>
+      <div class="sig-track"><div class="sig-fill" id="sig-coherence" style="width:0%"></div></div>
+      <div class="sig-val" id="coh-val">—</div>
+    </div>
+  </div>
+
+  <!-- FFT CANVAS -->
+  <div class="canvas-zone">
+    <canvas id="fft-canvas" height="40"></canvas>
+  </div>
+
+  <!-- PRIMARY ACTION — Wu Wei: one gesture -->
+  <div class="primary-action">
+    <button class="begin-btn" id="begin-btn" onclick="toggleScan()">
+      Begin Scan
+    </button>
+    <div class="action-note" id="action-note">voice / breath / intention</div>
+  </div>
+
+  <!-- INTERPRETATION -->
+  <div class="interpretation" id="interpretation">
+    <div class="interp-text" id="interp-text"></div>
+    <div class="interp-rec" id="interp-rec"></div>
+  </div>
+
+  <!-- TONAL THERAPY ZONE -->
+  <div class="therapy-zone">
+    <div class="zone-title">Tonal Therapy</div>
+    <div class="zone-subtitle">Frequency · Waveform · Pattern · Duration</div>
+
+    <div class="therapy-layout">
+      <div>
+        <div class="param-group">
+          <div class="param-name">Waveform <span class="param-val" id="wave-label">Sawtooth</span></div>
+          <select class="ma-select" id="wave-type" onchange="onWaveChange()">
+            <option value="sawtooth">Sawtooth</option>
+            <option value="sine">Sine — Pure</option>
+            <option value="triangle">Triangle</option>
+            <option value="square">Square</option>
+          </select>
+        </div>
+        <div class="param-group">
+          <div class="param-name">Pattern <span class="param-val" id="pattern-label">AO 25·25·1</span></div>
+          <select class="ma-select" id="freq-pattern" onchange="onPatternChange()">
+            <option value="ao">AO 25·25·1</option>
+            <option value="tesla">Tesla 3·6·9</option>
+            <option value="solfeggio">Solfeggio Scale</option>
+            <option value="fibonacci">Fibonacci Resonance</option>
+            <option value="verdi">Verdi A=432</option>
+            <option value="schumann">Schumann 7.83</option>
+          </select>
+        </div>
+        <div class="param-group">
+          <div class="param-name">Ambient Layer <span class="param-val" id="ambient-label">Off</span></div>
+          <select class="ma-select" id="ambient-layer" onchange="onAmbientChange()">
+            <option value="off">Engine Off — Pure</option>
+            <option value="calming">Ambient · Calming</option>
+            <option value="zen">Ambient · Zen Meditation</option>
+            <option value="calm-space">Ambient · Calm Space</option>
+            <option value="piano-bliss">AO Classic · Piano Bliss</option>
+            <option value="dreamscape">AO Classic · Dreamscape</option>
+            <option value="space-mist">AO Classic · Space Mist</option>
+            <option value="dream-slip">AO Classic · Dream Slip</option>
+            <option value="med-cloud">AO Classic · Meditation Cloud</option>
+            <option value="calm-trance">Upbeat · Calm Trance</option>
+            <option value="neuro">Upbeat · Neuro Aerobics</option>
+            <option value="supercharger">Upbeat · Super Charger</option>
+          </select>
+        </div>
+        <div class="param-group">
+          <div class="param-name">Octave <span class="param-val" id="octave-label">×4</span></div>
+          <select class="ma-select" id="octave-sel" onchange="onOctaveChange(this.value)">
+            <option value="1">×1</option><option value="2">×2</option>
+            <option value="3">×3</option><option value="4" selected>×4</option>
+            <option value="6">×6</option><option value="8">×8</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <div class="param-group">
+          <div class="param-name">Volume <span class="param-val" id="vol-label">70%</span></div>
+          <input type="range" class="ma-range" id="vol-range" min="0" max="100" value="70" oninput="onVolChange(this.value)">
+        </div>
+        <div class="param-group">
+          <div class="param-name">Depth <span class="param-val" id="depth-label">0.60</span></div>
+          <input type="range" class="ma-range" id="depth-range" min="0" max="100" value="60" oninput="onDepthChange(this.value)">
+        </div>
+        <div class="param-group">
+          <div class="param-name">Duration</div>
+          <div class="dur-row">
+            <button class="dur-pill" onclick="setDur(300,this)">5 min</button>
+            <button class="dur-pill active" onclick="setDur(600,this)">10 min</button>
+            <button class="dur-pill" onclick="setDur(1200,this)">20 min</button>
+            <button class="dur-pill" onclick="setDur(0,this)">∞</button>
+          </div>
+        </div>
+
+        <div class="param-group">
+          <div class="param-name">Active Tones</div>
+          <div class="tones-display">
+            <div class="tone-cell" id="tc-left"><div class="tone-dir">Left</div><div class="tone-note" id="tn-left">—</div></div>
+            <div class="tone-cell" id="tc-chi"><div class="tone-dir">C.Hi</div><div class="tone-note" id="tn-chi">—</div></div>
+            <div class="tone-cell" id="tc-right"><div class="tone-dir">Right</div><div class="tone-note" id="tn-right">—</div></div>
+            <div class="tone-cell" id="tc-clo"><div class="tone-dir">C.Lo</div><div class="tone-note" id="tn-clo">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="wave-canvas" height="50"></canvas>
+
+    <div class="therapy-controls">
+      <button class="ma-btn ma-btn-primary" id="therapy-btn" onclick="toggleTherapy()">Begin Pulse Cycle</button>
+      <button class="ma-btn ma-btn-ghost" onclick="autoMix()">Auto·Mix</button>
+      <button class="ma-btn ma-btn-ghost" onclick="playVerdi()">Verdi 432</button>
+      <button class="ma-btn ma-btn-ghost" onclick="playTesla()">Tesla 3·6·9</button>
+      <div class="therapy-clock" id="therapy-clock">00:00</div>
+    </div>
+  </div>
+
+  <!-- CHAKRA SYSTEM -->
+  <div class="chakra-zone" id="chakra-zone">
+    <div class="zone-title">Chakra Map</div>
+    <div class="zone-subtitle">Seven energy centers · Click to expand · Play to tone</div>
+
+    <div class="chakra-strip" id="chakra-strip"></div>
+    <div class="chakra-detail" id="chakra-detail">
+      <div class="ck-detail-inner" id="ck-detail-inner"></div>
+    </div>
+  </div>
+
+  <!-- QUICK TONES -->
+  <div class="tones-zone">
+    <div class="zone-title">Quick Tones</div>
+    <div class="zone-subtitle">Solfeggio · Verdi · Schumann · Touch to play · Touch again to stop</div>
+    <div class="tone-grid" id="tone-grid">
+      <div class="tone-tile" onclick="playQuick(396,'Root',this)"><div class="tile-hz">396</div><div class="tile-name">Root</div></div>
+      <div class="tone-tile" onclick="playQuick(417,'Sacral',this)"><div class="tile-hz">417</div><div class="tile-name">Sacral</div></div>
+      <div class="tone-tile" onclick="playQuick(528,'Solar',this)"><div class="tile-hz">528</div><div class="tile-name">Solar</div></div>
+      <div class="tone-tile" onclick="playQuick(639,'Heart',this)"><div class="tile-hz">639</div><div class="tile-name">Heart</div></div>
+      <div class="tone-tile" onclick="playQuick(741,'Throat',this)"><div class="tile-hz">741</div><div class="tile-name">Throat</div></div>
+      <div class="tone-tile" onclick="playQuick(852,'Third Eye',this)"><div class="tile-hz">852</div><div class="tile-name">Third Eye</div></div>
+      <div class="tone-tile" onclick="playQuick(963,'Crown',this)"><div class="tile-hz">963</div><div class="tile-name">Crown</div></div>
+      <div class="tone-tile" onclick="playQuick(432,'Verdi',this)"><div class="tile-hz">432</div><div class="tile-name">Verdi</div></div>
+      <div class="tone-tile" onclick="playQuick(7.83,'Schumann',this)"><div class="tile-hz">7.83</div><div class="tile-name">Earth</div></div>
+    </div>
+    <div style="margin-top:12px;text-align:right">
+      <button class="ma-btn ma-btn-ghost" style="font-size:12px;padding:8px 18px" onclick="stopAllQuick()">Stop all tones</button>
+    </div>
+  </div>
+
+  <!-- METHOD BREAKDOWN -->
+  <div class="method-zone">
+    <div class="zone-title">Method</div>
+    <div class="zone-subtitle">Modular breakdown · Eight modules · MA-ZEN architecture</div>
+
+    <!-- Answer the user's question directly in the UI -->
+    <div class="principle-strip" style="margin-top:32px;margin-bottom:0">
+      <div class="principle-cell">
+        <div class="pc-kanji">間</div>
+        <div class="pc-name">Ma — Structured Absence</div>
+        <div class="pc-def">The interface uses generous void. Controls emerge only when needed. The space between elements is the design.</div>
+        <div class="pc-application">Applied here: single primary action · channels dissolve into body diagram · no dashboard · no metric walls</div>
+      </div>
+      <div class="principle-cell">
+        <div class="pc-kanji">空</div>
+        <div class="pc-name">Sunyata — Form Dissolves</div>
+        <div class="pc-def">The tool points beyond itself. After a session completes, the interface returns to silence. It does not cling to your data.</div>
+        <div class="pc-application">Applied here: no performance scores · session log fades · report is yours to keep or release · the field is valid with zero events</div>
+      </div>
+      <div class="principle-cell">
+        <div class="pc-kanji">無為</div>
+        <div class="pc-name">Wu Wei — Effortless Action</div>
+        <div class="pc-def">No tutorial required. The user discovers the path. Controls require zero explanation. The system trusts the practitioner.</div>
+        <div class="pc-application">Applied here: one-button scan · chakras expand on touch · tones play on single click · auto-mix finds the right state</div>
+      </div>
+    </div>
+
+    <div class="method-table-wrap">
+      <table class="method-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>MA-ZEN Principle</th>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bio Scan</td>
+            <td>Ma</td>
+            <td>Voice / mic</td>
+            <td>4 channels: L, C-Hi, R, C-Lo — note + Hz + support</td>
+            <td>FFT analysis maps voice frequencies to musical notes. The microphone detects the energetic signature already present — it does not create one.</td>
+          </tr>
+          <tr>
+            <td>Channel Map</td>
+            <td>Sunyata</td>
+            <td>4 notes</td>
+            <td>Left = physical · C-High = spiritual · Right = emotional · C-Low = ancestral</td>
+            <td>Biofield quadrant model. Each channel maps to a layer of the 7-layer vibrational blueprint. Imbalance = interval divergence. The map dissolves after reading.</td>
+          </tr>
+          <tr>
+            <td>Coherence Index</td>
+            <td>Ma</td>
+            <td>4-channel notes</td>
+            <td>0–100% harmonic alignment</td>
+            <td>Interval distance between detected notes. Perfect consonance = high coherence. The index is informational only — not a score. A low reading is as valid as a high one.</td>
+          </tr>
+          <tr>
+            <td>Chakra Mapping</td>
+            <td>Sunyata</td>
+            <td>Detected frequencies</td>
+            <td>Flagged chakras · Expanded detail on request</td>
+            <td>Scan frequencies matched against solfeggio chakra set ±5%. Deviation indicates the center for therapy. Detail expands on touch and dissolves when released.</td>
+          </tr>
+          <tr>
+            <td>Tonal Therapy</td>
+            <td>Wu Wei</td>
+            <td>Scan notes + pattern</td>
+            <td>Real-time oscillators tuned to detected imbalances</td>
+            <td>Web Audio API generates tones from scan data. The system does not impose sound — it offers the frequency and exits. Waveform, octave, depth are effortless adjustments.</td>
+          </tr>
+          <tr>
+            <td>Frequency Pattern</td>
+            <td>Ma</td>
+            <td>Pattern selection</td>
+            <td>Harmonic framework applied to scan notes</td>
+            <td>AO 25·25·1, Tesla 3·6·9, Solfeggio, Verdi A=432, Fibonacci, Schumann 7.83. Each pattern is an interval framework — a different spacing of the same silence.</td>
+          </tr>
+          <tr>
+            <td>Session Report</td>
+            <td>Wu Wei</td>
+            <td>Full session data</td>
+            <td>Timestamped report — copy or release</td>
+            <td>The report is generated without prompting. It exits without trace unless you choose to keep it. No data is stored. The session is complete whether or not a report is generated.</td>
+          </tr>
+          <tr>
+            <td>Vibrational Model</td>
+            <td>Sunyata</td>
+            <td>—</td>
+            <td>7-layer blueprint: Identity → Ancestral → Beliefs → Traumas → Chakras → NS → Emotions</td>
+            <td>The model is the foundational framework. Each layer maps to a solfeggio frequency. It is not a hierarchy — each layer is complete in itself. The model points beyond itself: the goal is the practitioner's own direct experience, not the map.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /field -->
+
+<!-- SESSION LOG (ghost) -->
+<div class="log-zone">
+  <div class="log-title">Session</div>
+  <div class="log-list" id="log-list"></div>
+</div>
+
+<!-- REPORT FAB -->
+<button class="report-fab" onclick="openReport()">Generate Report</button>
+
+<!-- REPORT OVERLAY -->
+<div class="report-overlay" id="report-overlay">
+  <div class="report-box">
+    <div class="report-header">Field Session Report</div>
+    <div class="report-ts" id="rep-ts">—</div>
+    <div id="rep-rows"></div>
+    <div class="report-actions">
+      <button class="rep-btn primary" onclick="copyReport()">Copy</button>
+      <button class="rep-btn ghost" onclick="closeReport()">Release</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// MA-ZEN FIELD CONSOLE — ENGINE
+// The sound of what you don't say.
+// ═══════════════════════════════════════════════════════
+
+// ── AUDIO CONTEXT ──
+let actx = null, masterGain = null, analyser = null;
+let micStream = null, micSrc = null;
+
+// ── STATE ──
+let isScanning = false, scanSecs = 0, scanTick = null;
+let therapyActive = false, therapySecs = 0, therapyTick = null;
+let sessionDur = 600;
+let waveType = 'sawtooth', patternType = 'ao', octaveMul = 4, toneDepth = 0.6;
+let therapyOscs = [];
+let quickOscs = {};  // id → {osc,gain}
+let chakraOsc = null;
+let specialOscs = [];  // verdi/tesla
+let waveAnimId = null;
+let fftAnimId = null;
+let activeChakraIdx = -1;
+
+// Session store
+let session = { left:'—', chi:'—', right:'—', clo:'—', coherence:0, rootNote:'—' };
+
+// Note table
+const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const NOTE_FREQS = [261.63,277.18,293.66,311.13,329.63,349.23,369.99,392,415.3,440,466.16,493.88];
+
+function getCtx() {
+  if (!actx) {
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = actx.createGain();
+    masterGain.gain.value = 0.7;
+    masterGain.connect(actx.destination);
+  }
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+
+function freqToNote(freq) {
+  if (freq <= 20) return { note:'—', hz:0 };
+  const n = 12 * Math.log2(freq / 440) + 69;
+  const idx = Math.round(n);
+  return { note: NOTES[((idx%12)+12)%12], hz: Math.round(freq) };
+}
+
+function fifth(note) {
+  const i = NOTES.indexOf(note);
+  return i < 0 ? '—' : NOTES[(i+7)%12];
+}
+
+// ── BIO SCAN ──
+async function toggleScan() {
+  if (isScanning) { stopScan(); return; }
+  await startScan();
+}
+
+async function startScan() {
+  const ctx = getCtx();
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+    micSrc = ctx.createMediaStreamSource(micStream);
+    analyser = ctx.createAnalyser();
+    analyser.fftSize = 4096;
+    analyser.smoothingTimeConstant = 0.88;
+    micSrc.connect(analyser);
+    log('Mic connected — scanning field');
+  } catch(e) {
+    log('Mic unavailable — simulating scan');
+    runSim();
+    return;
+  }
+
+  isScanning = true;
+  scanSecs = 0;
+  setBtnState('scanning');
+  dot('mic-dot', true);
+  setGateStatus('Scanning');
+  drawFFT();
+}
+
+function stopScan() {
+  isScanning = false;
+  clearInterval(scanTick);
+  if (micStream) { micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
+  setBtnState('stopped');
+  dot('mic-dot', false);
+  setGateStatus('Idle');
+  finalize();
+}
+
+function setBtnState(state) {
+  const btn = document.getElementById('begin-btn');
+  const note = document.getElementById('action-note');
+  if (state === 'scanning') {
+    btn.textContent = 'Stop Scan';
+    btn.classList.add('scanning');
+    note.textContent = 'scanning your energetic field…';
+    document.getElementById('scan-clock').classList.add('active');
+    // Start clock
+    scanSecs = 0;
+    clearInterval(scanTick);
+    scanTick = setInterval(() => {
+      scanSecs++;
+      const m = String(Math.floor(scanSecs/60)).padStart(2,'0');
+      const s = String(scanSecs%60).padStart(2,'0');
+      document.getElementById('scan-clock').textContent = m+':'+s;
+    }, 1000);
+  } else {
+    btn.textContent = 'Begin Scan';
+    btn.classList.remove('scanning');
+    note.textContent = 'voice / breath / intention';
+    document.getElementById('scan-clock').classList.remove('active');
+  }
+}
+
+function runSim() {
+  isScanning = true; scanSecs = 0;
+  setBtnState('scanning');
+  dot('mic-dot', true);
+  setGateStatus('Simulating');
+
+  let tick = 0;
+  const sim = setInterval(() => {
+    tick++;
+    scanSecs++;
+
+    // Randomize readings progressively
+    const rn = () => NOTES[Math.floor(Math.random()*12)];
+    const rh = (lo,hi) => Math.floor(lo+Math.random()*(hi-lo));
+
+    setChannel('left',  rn(), rh(200,500));
+    setChannel('chi',   rn(), rh(600,1400));
+    setChannel('right', rn(), rh(300,700));
+    setChannel('clo',   rn(), rh(80,240));
+
+    const str = 45+Math.random()*45;
+    const coh = 52+Math.random()*42;
+    setSig(str, coh);
+    drawSimFFT();
+
+    if (tick >= 8) {
+      clearInterval(sim);
+      isScanning = false;
+      setBtnState('stopped');
+      dot('mic-dot', false);
+      setGateStatus('Idle');
+      finalize();
+    }
+  }, 500);
+}
+
+function setChannel(ch, note, hz) {
+  const map = {left:'left',chi:'chi',right:'right',clo:'clo'};
+  const n = note || '—';
+  const h = hz || 0;
+  const sup = fifth(n);
+  document.getElementById(`${ch}-note`).textContent = n;
+  document.getElementById(`${ch}-sup`).textContent = 'Support: ' + (sup !== '—' ? sup : '—');
+  document.getElementById(`${ch}-hz`).textContent = h > 0 ? h+' Hz' : '— Hz';
+  // Show data indicator
+  const card = document.getElementById('ch-'+ch);
+  if (card && n !== '—') card.classList.add('has-data');
+  // Tone panel
+  const toneMap = {left:'tn-left',chi:'tn-chi',right:'tn-right',clo:'tn-clo'};
+  if (toneMap[ch]) document.getElementById(toneMap[ch]).textContent = n;
+  const tcMap = {left:'tc-left',chi:'tc-chi',right:'tc-right',clo:'tc-clo'};
+  if (tcMap[ch] && n !== '—') document.getElementById(tcMap[ch]).classList.add('active-tone');
+
+  // Save to session
+  const sKey = {left:'left',chi:'chi',right:'right',clo:'clo'};
+  if (sKey[ch]) session[sKey[ch]] = n;
+}
+
+function setSig(str, coh) {
+  document.getElementById('sig-strength').style.width = str+'%';
+  document.getElementById('sig-val').textContent = Math.round(str)+'%';
+  document.getElementById('sig-coherence').style.width = coh+'%';
+  document.getElementById('coh-val').textContent = Math.round(coh)+'%';
+  session.coherence = Math.round(coh);
+}
+
+function finalize() {
+  clearInterval(scanTick);
+  session.rootNote = document.getElementById('left-note').textContent || '—';
+  showInterpretation();
+  log(`Scan complete — ${session.left}/${session.chi}/${session.right}/${session.clo} — ${session.coherence}% coherence`);
+
+  // Pulse chakra dots based on coherence
+  animateChakraDots(session.coherence);
+}
+
+function showInterpretation() {
+  const el = document.getElementById('interpretation');
+  const txt = document.getElementById('interp-text');
+  const rec = document.getElementById('interp-rec');
+  const coh = session.coherence;
+
+  const quality = coh > 78 ? 'strong harmonic alignment' : coh > 55 ? 'partial coherence across the field' : 'active divergence — integration in motion';
+  const chan = session.left !== session.right ? `The ${session.left} channel diverges from the ${session.right} channel` : `Both channels converge on ${session.left}`;
+
+  txt.innerHTML = `${quality} — ${chan}. The field is already present. This reading reflects what is, not what should be.`;
+  rec.textContent = `Suggested tone: ${getRecFreq(coh)} Hz — ${getRecName(coh)}`;
+
+  el.classList.add('visible');
+}
+
+function getRecFreq(coh) {
+  if (coh < 40) return '396'; if (coh < 55) return '417';
+  if (coh < 70) return '528'; if (coh < 82) return '639'; return '741';
+}
+function getRecName(coh) {
+  if (coh < 40) return 'Root — liberation from fear';
+  if (coh < 55) return 'Sacral — facilitating change';
+  if (coh < 70) return 'Solar Plexus — DNA repair';
+  if (coh < 82) return 'Heart — harmonic resonance';
+  return 'Throat — self-expression';
+}
+
+// ── FFT / CANVAS ──
+function drawFFT() {
+  if (!isScanning || !analyser) return;
+  const cv = document.getElementById('fft-canvas');
+  const c = cv.getContext('2d');
+  const W = cv.offsetWidth||600; const H = 40;
+  cv.width=W; cv.height=H;
+  cv.classList.add('active');
+
+  const buf = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(buf);
+  c.clearRect(0,0,W,H);
+  c.fillStyle='rgba(6,6,10,0.6)';c.fillRect(0,0,W,H);
+
+  // Draw bars
+  const bw = W / (buf.length/4);
+  for (let i=0; i<buf.length/4; i++) {
+    const h = (buf[i]/255)*H;
+    const alpha = 0.3 + (buf[i]/255)*0.6;
+    c.fillStyle=`rgba(200,169,110,${alpha})`;
+    c.fillRect(i*bw, H-h, bw-1, h);
+  }
+
+  // Peak detection → channel update
+  let peak=0, peakI=0;
+  for(let i=0;i<buf.length;i++){if(buf[i]>peak){peak=buf[i];peakI=i;}}
+  const peakHz = peakI * actx.sampleRate / analyser.fftSize;
+  const pn = freqToNote(peakHz);
+  if (pn.note !== '—') {
+    const str = (peak/255)*100;
+    const coh = 55+Math.random()*38;
+    setSig(str, coh);
+    if (peakHz > 800) setChannel('chi', pn.note, pn.hz);
+    else if (peakHz > 300) { setChannel('left', pn.note, pn.hz); setChannel('right', NOTES[(NOTES.indexOf(pn.note)+4)%12], pn.hz+28); }
+    else setChannel('clo', pn.note, pn.hz);
+  }
+
+  fftAnimId = requestAnimationFrame(drawFFT);
+}
+
+function drawSimFFT() {
+  const cv = document.getElementById('fft-canvas');
+  const c = cv.getContext('2d');
+  const W=cv.offsetWidth||600; const H=40;
+  cv.width=W; cv.height=H;
+  cv.classList.add('active');
+  c.clearRect(0,0,W,H);
+  c.fillStyle='rgba(6,6,10,0.6)';c.fillRect(0,0,W,H);
+  const bars=100;
+  for(let i=0;i<bars;i++){
+    const h=(Math.random()*0.6+0.05)*H*(1-i/bars*0.4);
+    const alpha=0.2+Math.random()*0.5;
+    c.fillStyle=`rgba(200,169,110,${alpha})`;
+    c.fillRect((i/bars)*W,H-h,(W/bars)-1,h);
+  }
+}
+
+// Wave canvas animation for therapy
+function animateWave() {
+  const cv = document.getElementById('wave-canvas');
+  const c = cv.getContext('2d');
+  const W=cv.offsetWidth||600; const H=50;
+  cv.width=W; cv.height=H;
+
+  let t=0;
+  function draw() {
+    c.clearRect(0,0,W,H);
+    c.fillStyle='rgba(6,6,10,0.95)';c.fillRect(0,0,W,H);
+
+    if (!therapyActive) {
+      c.strokeStyle='rgba(200,169,110,0.1)';c.lineWidth=1;
+      c.beginPath();c.moveTo(0,H/2);c.lineTo(W,H/2);c.stroke();
+      waveAnimId=null; return;
+    }
+    t+=0.06;
+    [[.6,.6,0],[.4,.7,1.4],[.3,.8,2.8]].forEach(([amp,spd,off])=>{
+      c.beginPath();
+      c.strokeStyle=`rgba(200,169,110,${amp*0.5})`;
+      c.lineWidth=1;
+      for(let x=0;x<W;x++){
+        const y=H/2+Math.sin(x/W*Math.PI*6+t*spd+off)*H*amp*0.3;
+        x===0?c.moveTo(x,y):c.lineTo(x,y);
+      }
+      c.stroke();
+    });
+    waveAnimId=requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── TONAL THERAPY ──
+function toggleTherapy() {
+  if (therapyActive) { stopTherapy(); return; }
+  startTherapy();
+}
+
+function startTherapy() {
+  const ctx = getCtx();
+  stopTherapy(true);
+
+  // Get scan notes
+  const notes = [session.left,session.chi,session.right,session.clo];
+  const freqs = getFreqsForPattern(notes);
+
+  freqs.forEach((f,i)=>{
+    const osc=ctx.createOscillator();
+    const gn=ctx.createGain();
+    const pan=ctx.createStereoPanner();
+    osc.type=waveType;
+    osc.frequency.value=f*octaveMul;
+    gn.gain.value=0;
+    pan.pan.value=[-0.35,-0.12,0.35,0.12][i]||0;
+    osc.connect(gn);gn.connect(pan);pan.connect(masterGain);
+    osc.start();
+    gn.gain.linearRampToValueAtTime(toneDepth*0.22,ctx.currentTime+0.8);
+    therapyOscs.push({osc,gain:gn});
+  });
+
+  therapyActive=true; therapySecs=0;
+  document.getElementById('therapy-btn').textContent='Stop Therapy';
+  document.getElementById('therapy-btn').classList.add('active');
+  document.getElementById('therapy-clock').classList.add('active');
+  document.getElementById('wave-canvas').classList.add('active');
+  dot('audio-dot',true);
+  setGateAudio('Therapy');
+
+  clearInterval(therapyTick);
+  therapyTick=setInterval(()=>{
+    therapySecs++;
+    const m=String(Math.floor(therapySecs/60)).padStart(2,'0');
+    const s=String(therapySecs%60).padStart(2,'0');
+    document.getElementById('therapy-clock').textContent=m+':'+s;
+    document.getElementById('gate-clock').textContent=m+':'+s;
+    if(sessionDur>0&&therapySecs>=sessionDur)stopTherapy();
+  },1000);
+
+  animateWave();
+  log(`Therapy started — ${patternType} / ${waveType}`);
+}
+
+function stopTherapy(silent=false) {
+  therapyOscs.forEach(({osc,gain})=>{
+    try{gain.gain.linearRampToValueAtTime(0,(actx||{currentTime:0}).currentTime+0.5);
+      setTimeout(()=>{try{osc.stop()}catch(e){}},600);}catch(e){}
+  });
+  therapyOscs=[];
+  clearInterval(therapyTick);
+  therapyActive=false;
+  document.getElementById('therapy-btn').textContent='Begin Pulse Cycle';
+  document.getElementById('therapy-btn').classList.remove('active');
+  document.getElementById('therapy-clock').classList.remove('active');
+  document.getElementById('wave-canvas').classList.remove('active');
+  dot('audio-dot',false);
+  setGateAudio('—');
+  if(waveAnimId){cancelAnimationFrame(waveAnimId);waveAnimId=null;}
+  if(!silent) log('Therapy stopped');
+}
+
+function getFreqsForPattern(notes) {
+  const base = notes.map((n,i)=>{
+    const idx=NOTES.indexOf(n);
+    return idx>=0 ? NOTE_FREQS[idx] : [261.63,349.23,392,523.25][i];
+  });
+  switch(patternType){
+    case 'tesla': return [base[0]*3,base[0]*6,base[0]*9,base[1]*3];
+    case 'solfeggio': return [396,417,528,639];
+    case 'fibonacci': return base.map((f,i)=>f*[1,1.618,2.618,4.236][i]);
+    case 'verdi': return [432,528,648,864];
+    case 'schumann': return base.map(f=>f*(7.83/8));
+    default: return base;
+  }
+}
+
+// ── PARAM HANDLERS ──
+function onWaveChange(){ waveType=document.getElementById('wave-type').value; document.getElementById('wave-label').textContent=document.getElementById('wave-type').options[document.getElementById('wave-type').selectedIndex].text; therapyOscs.forEach(({osc})=>{try{osc.type=waveType}catch(e){}});}
+function onPatternChange(){ patternType=document.getElementById('freq-pattern').value; document.getElementById('pattern-label').textContent=document.getElementById('freq-pattern').options[document.getElementById('freq-pattern').selectedIndex].text;}
+function onAmbientChange(){ document.getElementById('ambient-label').textContent=document.getElementById('ambient-layer').options[document.getElementById('ambient-layer').selectedIndex].text;}
+function onOctaveChange(v){ octaveMul=parseInt(v); document.getElementById('octave-label').textContent='×'+v;}
+function onVolChange(v){ document.getElementById('vol-label').textContent=v+'%'; if(masterGain)masterGain.gain.value=v/100;}
+function onDepthChange(v){ toneDepth=v/100; document.getElementById('depth-label').textContent=(v/100).toFixed(2);}
+function setDur(s,el){ sessionDur=s; document.querySelectorAll('.dur-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active');}
+function autoMix(){ const wt=['sawtooth','sine','triangle']; const pt=['ao','tesla','solfeggio','fibonacci']; document.getElementById('wave-type').value=wt[Math.floor(Math.random()*wt.length)]; document.getElementById('freq-pattern').value=pt[Math.floor(Math.random()*pt.length)]; onWaveChange();onPatternChange(); toast('Auto·Mix');}
+
+// ── VERDI / TESLA ──
+function playVerdi(){ const ctx=getCtx(); stopSpecial(); [432,528,648,864].forEach(f=>{const o=ctx.createOscillator();const g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=0;o.connect(g);g.connect(masterGain);o.start();g.gain.linearRampToValueAtTime(0.1,ctx.currentTime+1);specialOscs.push({osc:o,gain:g});}); log('Verdi A=432 grounding'); dot('audio-dot',true); setGateAudio('Verdi');}
+function playTesla(){ const ctx=getCtx(); stopSpecial(); [174,396,963].forEach(f=>{const o=ctx.createOscillator();const g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=0;o.connect(g);g.connect(masterGain);o.start();g.gain.linearRampToValueAtTime(0.1,ctx.currentTime+1);specialOscs.push({osc:o,gain:g});}); log('Tesla 3·6·9 pattern'); dot('audio-dot',true); setGateAudio('Tesla');}
+function stopSpecial(){ specialOscs.forEach(({osc,gain})=>{try{gain.gain.linearRampToValueAtTime(0,actx.currentTime+0.4);setTimeout(()=>{try{osc.stop()}catch(e){}},500);}catch(e){}});specialOscs=[];}
+
+// ── QUICK TONES ──
+function playQuick(freq, name, el) {
+  const ctx=getCtx();
+  const id=name.replace(' ','_');
+  if(quickOscs[id]){
+    try{quickOscs[id].gain.linearRampToValueAtTime(0,ctx.currentTime+0.3);setTimeout(()=>{try{quickOscs[id].osc.stop()}catch(e){}},400);}catch(e){}
+    delete quickOscs[id]; el.classList.remove('playing'); return;
+  }
+  const osc=ctx.createOscillator();const gn=ctx.createGain();
+  osc.type='sine';osc.frequency.value=freq;gn.gain.value=0;
+  osc.connect(gn);gn.connect(masterGain);osc.start();
+  gn.gain.linearRampToValueAtTime(0.15,ctx.currentTime+0.3);
+  quickOscs[id]={osc,gain:gn};
+  el.classList.add('playing');
+  log(`${name} — ${freq} Hz`);
+}
+
+function stopAllQuick(){
+  Object.entries(quickOscs).forEach(([k,{osc,gain}])=>{
+    try{gain.gain.linearRampToValueAtTime(0,actx.currentTime+0.3);setTimeout(()=>{try{osc.stop()}catch(e){}},400);}catch(e){}
+  });
+  quickOscs={};
+  stopSpecial();
+  if(chakraOsc){try{chakraOsc.osc.stop()}catch(e){} chakraOsc=null;}
+  document.querySelectorAll('.tone-tile').forEach(t=>t.classList.remove('playing'));
+  dot('audio-dot',false); setGateAudio('—');
+}
+
+// ── CHAKRA SYSTEM ──
+const CHAKRAS = [
+  {name:'Crown',    sanskrit:'Sahasrara',freq:963,note:'B', hex:'#8e24aa',r:150,g:50,b:180,
+   traumas:['Dogmatic religion','Loss of meaning','Severe trauma','Existential crisis','Disconnection'],
+   emotional:['Spiritual confusion','Apathy','Chronic fatigue','Cynicism','Purposelessness'],
+   affirmation:'I am connected to all that is.',therapy:'963 Hz — pineal activation, spiritual coherence'},
+  {name:'Third Eye', sanskrit:'Ajna',    freq:852,note:'A', hex:'#5e35b1',r:90,g:60,b:180,
+   traumas:['Gaslighting','Intuition dismissed','Rigid beliefs','Deception','Cognitive dissonance'],
+   emotional:['Poor intuition','Overthinking','Self-doubt','Nightmares','Foggy mind'],
+   affirmation:'I see clearly. I trust what I know.',therapy:'852 Hz — intuition stimulation, mental clarity'},
+  {name:'Throat',   sanskrit:'Vishuddha',freq:741,note:'G', hex:'#1e88e5',r:50,g:130,b:210,
+   traumas:['Not being heard','Verbal abuse','Silenced as child','Family secrets','Shamed for expression'],
+   emotional:['Fear of speaking','Passive aggression','Chronic throat issues','Over-apologizing'],
+   affirmation:'I speak my truth with clarity and ease.',therapy:'741 Hz — toxin release, authentic expression'},
+  {name:'Heart',    sanskrit:'Anahata', freq:639,note:'F', hex:'#43a047',r:60,g:170,b:80,
+   traumas:['Abandonment','Betrayal','Grief','Conditional love','Rejection'],
+   emotional:['Fear of intimacy','Jealousy','Codependency','Loneliness','Inability to receive'],
+   affirmation:'I give and receive love freely.',therapy:'639 Hz — heart coherence, relational harmony'},
+  {name:'Solar',    sanskrit:'Manipura', freq:528,note:'E', hex:'#fdd835',r:220,g:190,b:60,
+   traumas:['Criticism','Bullying','Controlling parents','Failure shaming','Perfectionism pressure','Emotional abuse','Constant comparison','Conditional love','Not being heard','Over-responsibility','Being blamed','Authoritarian parenting','Shamed for mistakes','Lack of encouragement','Gaslighting'],
+   emotional:['Low self-worth','Indecision','Control need','Victim pattern','Chronic shame'],
+   affirmation:'I am powerful, worthy, and capable.',therapy:'528 Hz — DNA repair, personal power activation'},
+  {name:'Sacral',   sanskrit:'Svadhisthana',freq:417,note:'D',hex:'#fb8c00',r:230,g:130,b:40,
+   traumas:['Sexual trauma','Emotional repression','Unstable home','Creative suppression','Financial fear'],
+   emotional:['Intimacy issues','Addictive behavior','Lack of creativity','Emotional volatility','Money blocks'],
+   affirmation:'My emotions and creativity flow freely.',therapy:'417 Hz — change facilitation, trauma clearing'},
+  {name:'Root',     sanskrit:'Muladhara',freq:396,note:'C', hex:'#e53935',r:200,g:60,b:60,
+   traumas:['Financial instability','Neglect','Abandonment','Physical danger','Homelessness'],
+   emotional:['Chronic anxiety','Scarcity mindset','Distrust','Survival stress','Fight-or-flight loops'],
+   affirmation:'I am safe, grounded, and supported.',therapy:'396 Hz — liberation from fear, root grounding'},
+];
+
+function buildChakraStrip() {
+  const strip = document.getElementById('chakra-strip');
+  CHAKRAS.forEach((ck,i)=>{
+    const node=document.createElement('div');
+    node.className='chakra-node';
+    node.style.setProperty('--node-color',ck.hex);
+    node.style.setProperty('--node-r',ck.r);
+    node.style.setProperty('--node-g',ck.g);
+    node.style.setProperty('--node-b',ck.b);
+    node.innerHTML=`<div class="ck-dot" style="background:${ck.hex}"></div>
+      <div class="ck-name">${ck.name}</div>
+      <div class="ck-hz">${ck.freq} Hz</div>`;
+    node.addEventListener('click',()=>expandChakra(i,node));
+    strip.appendChild(node);
+  });
+}
+
+function expandChakra(idx, node) {
+  const detail=document.getElementById('chakra-detail');
+  const inner=document.getElementById('ck-detail-inner');
+
+  if(activeChakraIdx===idx){
+    detail.classList.remove('open');
+    node.classList.remove('active-node');
+    activeChakraIdx=-1; return;
+  }
+
+  document.querySelectorAll('.chakra-node').forEach(n=>n.classList.remove('active-node'));
+  node.classList.add('active-node');
+  activeChakraIdx=idx;
+
+  const ck=CHAKRAS[idx];
+  inner.innerHTML=`
+    <div class="ck-col">
+      <div class="ck-col-title">Possible Traumas</div>
+      <div class="ck-col-body">${ck.traumas.map(t=>'· '+t).join('<br>')}</div>
+    </div>
+    <div class="ck-col">
+      <div class="ck-col-title">Emotional Patterns</div>
+      <div class="ck-col-body">${ck.emotional.map(e=>'· '+e).join('<br>')}</div>
+      <div style="margin-top:16px;padding:12px;border:1px solid rgba(${ck.r},${ck.g},${ck.b},0.15);font-size:12px;font-style:italic;color:var(--text-mid);line-height:1.7">"${ck.affirmation}"</div>
+    </div>
+    <div class="ck-col">
+      <div class="ck-col-title">Tonal Therapy</div>
+      <div class="ck-col-body" style="margin-bottom:12px">${ck.therapy}</div>
+      <div style="font-family:'Inconsolata',monospace;font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-low);margin-bottom:8px">Sanskrit · ${ck.sanskrit}</div>
+      <div style="font-family:'Inconsolata',monospace;font-size:8px;letter-spacing:0.15em;color:var(--text-low)">Note: ${ck.note}</div>
+      <button class="ck-play" onclick="playChakraTone(${ck.freq},'${ck.name}',this)" style="margin-top:16px;color:${ck.hex};border-color:rgba(${ck.r},${ck.g},${ck.b},0.3)">
+        ▶ Play ${ck.freq} Hz
+      </button>
+    </div>
+  `;
+  detail.classList.add('open');
+  log(`${ck.name} expanded — ${ck.freq} Hz`);
+}
+
+function playChakraTone(freq, name, btn) {
+  const ctx=getCtx();
+  if(chakraOsc){
+    try{chakraOsc.gain.linearRampToValueAtTime(0,ctx.currentTime+0.4);setTimeout(()=>{try{chakraOsc.osc.stop()}catch(e){}},500);}catch(e){}
+    chakraOsc=null;
+    btn.textContent=`▶ Play ${freq} Hz`; return;
+  }
+  const osc=ctx.createOscillator();const gn=ctx.createGain();
+  osc.type='sine';osc.frequency.value=freq;gn.gain.value=0;
+  osc.connect(gn);gn.connect(masterGain);osc.start();
+  gn.gain.linearRampToValueAtTime(0.15,ctx.currentTime+0.4);
+  chakraOsc={osc,gain:gn};
+  btn.textContent=`■ Stop ${freq} Hz`;
+  log(`${name} — ${freq} Hz toning`);
+  dot('audio-dot',true); setGateAudio(freq+' Hz');
+}
+
+function animateChakraDots(coh) {
+  const svgDots=['ck-root','ck-sacral','ck-solar','ck-heart','ck-throat','ck-third','ck-crown'];
+  const activeCount = Math.min(7, Math.ceil(coh/15));
+  svgDots.slice(0,activeCount).forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el){
+      setTimeout(()=>{
+        el.setAttribute('fill', el.getAttribute('stroke').replace('0.6)','0.4)'));
+        el.setAttribute('r','5');
+        el.style.filter='drop-shadow(0 0 4px currentColor)';
+      }, i*150);
+    }
+  });
+}
+
+// ── UI HELPERS ──
+function dot(id, on) {
+  const el=document.getElementById(id);
+  if(el) el.classList.toggle('live',on);
+}
+function setGateStatus(s){ const el=document.getElementById('gate-status'); if(el)el.textContent=s; }
+function setGateAudio(s){ const el=document.getElementById('gate-audio'); if(el)el.textContent=s; }
+
+let logEntries=[];
+function log(msg){
+  const now=new Date();
+  const ts=String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  logEntries.push({ts,msg});
+  const el=document.getElementById('log-list');
+  if(!el)return;
+  const row=document.createElement('div');
+  row.className='log-entry-row';
+  row.innerHTML=`<span class="log-ts">${ts}</span><span>${msg}</span>`;
+  el.appendChild(row);
+  el.scrollTop=el.scrollHeight;
+}
+
+// ── REPORT ──
+function openReport(){
+  const now=new Date();
+  const ts=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('rep-ts').textContent=ts;
+  const rows=[
+    ['Left Channel', session.left+' · '+document.getElementById('left-hz').textContent],
+    ['Center High',  session.chi+' · '+document.getElementById('chi-hz').textContent],
+    ['Right Channel',session.right+' · '+document.getElementById('right-hz').textContent],
+    ['Center Low',   session.clo+' · '+document.getElementById('clo-hz').textContent],
+    ['Coherence',    session.coherence+'%'],
+    ['Root Note',    session.rootNote],
+    ['Recommended',  getRecFreq(session.coherence)+' Hz — '+getRecName(session.coherence)],
+    ['Waveform',     waveType],
+    ['Pattern',      patternType],
+    ['Session Time', document.getElementById('therapy-clock').textContent],
+  ];
+  document.getElementById('rep-rows').innerHTML=rows.map(([k,v])=>`<div class="report-row"><div class="rk">${k}</div><div class="rv">${v}</div></div>`).join('');
+  document.getElementById('report-overlay').classList.add('open');
+}
+function closeReport(){ document.getElementById('report-overlay').classList.remove('open'); }
+function copyReport(){
+  let txt='MA-ZEN Field Console — Session Report\n\n';
+  document.querySelectorAll('.report-row').forEach(r=>{txt+=r.querySelector('.rk').textContent+': '+r.querySelector('.rv').textContent+'\n';});
+  navigator.clipboard.writeText(txt).then(()=>toast('Report copied'));
+}
+document.getElementById('report-overlay').addEventListener('click',function(e){if(e.target===this)closeReport();});
+
+// ── TOAST — Wu Wei: exits without trace ──
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ── SESSION CLOCK ──
+let globalSecs=0;
+setInterval(()=>{
+  globalSecs++;
+  const m=String(Math.floor(globalSecs/60)).padStart(2,'0');
+  const s=String(globalSecs%60).padStart(2,'0');
+  document.getElementById('gate-clock').textContent=m+':'+s;
+},1000);
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  buildChakraStrip();
+  animateWave();
+  log('Field Console initialized');
+  log('MA-ZEN · Finite silence architecture');
+});
+
+// Keyboard shortcut: Space = scan toggle, Escape = stop all
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if(e.code==='Space'){e.preventDefault();toggleScan();}
+  if(e.code==='Escape'){stopAllQuick();stopTherapy();}
+});
+</script>
+</body>
+</html>
