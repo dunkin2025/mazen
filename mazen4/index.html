@@ -1,1 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MA-ZEN — Finite Silence Architecture</title>
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ────────────────────────────────── */
+    :root {
+      --bg:           #080808;
+      --surface:      #0f0f0f;
+      --surface2:     #141414;
+      --border:       #1a1a1a;
+      --border2:      #252525;
+      --text:         #e6e2da;
+      --dim:          #5a5650;
+      --mid:          #908c86;
+      --accent:       #c4b49a;
+      --accent-dim:   #6e6358;
+      --white:        #f2ede4;
+      --head:         'Cormorant Garamond', Georgia, serif;
+      --mono:         'DM Mono', 'Courier New', monospace;
+      --max:          1120px;
+    }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.75;
+      letter-spacing: 0.02em;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ───────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,8,8,0.94);
+      backdrop-filter: blur(14px);
+    }
+    .nav-logo {
+      font-family: var(--head);
+      font-size: 1.05rem; font-weight: 400;
+      letter-spacing: 0.18em; color: var(--white);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--dim); text-decoration: none;
+      font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      border: 1px solid var(--border2);
+      padding: 0.35rem 0.9rem;
+      color: var(--mid) !important;
+      transition: border-color 0.25s, color 0.25s !important;
+    }
+    .nav-cta:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+
+    /* ── LAYOUT ────────────────────────────────── */
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 2.5rem; }
+    section { border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+
+    /* ── LABEL ─────────────────────────────────── */
+    .lbl {
+      font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--dim); display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .lbl::after { content: ''; width: 40px; height: 1px; background: var(--border2); }
+
+    /* ── TYPE ──────────────────────────────────── */
+    h1, h2, h3, h4 {
+      font-family: var(--head); font-weight: 300; line-height: 1.12;
+    }
+    h1 { font-size: clamp(3rem, 7vw, 6.5rem); color: var(--white); }
+    h2 { font-size: clamp(2rem, 4.5vw, 3.8rem); color: var(--white); }
+    h3 { font-size: 1.4rem; color: var(--white); }
+    em { font-style: italic; color: var(--accent); }
+    p  { color: var(--mid); line-height: 1.85; }
+
+    /* ── BTN ───────────────────────────────────── */
+    .btn {
+      display: inline-block; font-family: var(--mono);
+      font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none; padding: 0.65rem 1.5rem;
+      transition: all 0.2s; cursor: pointer; border: none; outline: none;
+    }
+    .btn-primary { background: var(--accent); color: var(--bg); }
+    .btn-primary:hover { background: var(--white); }
+    .btn-ghost { border: 1px solid var(--border2); color: var(--mid); background: transparent; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── HERO ──────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      padding-top: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-body {
+      display: flex; align-items: flex-end;
+      padding: 0 2.5rem 4rem;
+      max-width: var(--max); margin: 0 auto; width: 100%;
+    }
+    .hero-text { position: relative; z-index: 2; max-width: 700px; }
+    .hero-eyebrow {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-eyebrow span {
+      display: inline-block; width: 30px; height: 1px; background: var(--dim);
+    }
+    .hero-h1 { margin-bottom: 1.75rem; }
+    .hero-sub {
+      font-size: 14px; color: var(--mid); max-width: 52ch;
+      line-height: 1.85; margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* BG watermark */
+    .hero-watermark {
+      position: absolute;
+      top: 50%; right: -3rem;
+      transform: translateY(-50%);
+      font-family: var(--head);
+      font-size: clamp(10rem, 22vw, 28rem);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(196,180,154,0.04);
+      pointer-events: none; user-select: none;
+      line-height: 1; white-space: nowrap;
+    }
+
+    /* Ticker stripe */
+    .hero-ticker {
+      border-top: 1px solid var(--border);
+      padding: 1rem 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .ticker-track {
+      display: flex; gap: 0;
+      animation: ticker 30s linear infinite;
+      width: max-content;
+    }
+    .ticker-item {
+      font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--dim); padding: 0 3rem;
+      border-right: 1px solid var(--border2);
+      white-space: nowrap;
+    }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ── TRANSLATION ───────────────────────────── */
+    #translation { padding: 5rem 0; }
+    .translation-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+    .t-cell {
+      background: var(--bg); padding: 2.5rem;
+      transition: background 0.2s;
+    }
+    .t-cell:hover { background: var(--surface); }
+    .t-num {
+      font-size: 10px; letter-spacing: 0.15em; color: var(--dim);
+      margin-bottom: 1.2rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .t-num::before {
+      content: ''; width: 20px; height: 1px; background: var(--border2);
+    }
+    .t-cell h3 { margin-bottom: 0.75rem; font-size: 1.3rem; }
+    .t-cell p { font-size: 12px; max-width: 45ch; }
+
+    /* ── SILENCE REFRAME ────────────────────────── */
+    #silence-reframe { padding: 5rem 0; background: var(--surface); }
+    .reframe-inner {
+      display: grid; grid-template-columns: 1fr 1.4fr;
+      gap: 6rem; align-items: start;
+    }
+    .reframe-left { position: sticky; top: 100px; }
+    .reframe-left h2 { margin-bottom: 1.5rem; }
+    .reframe-left p { max-width: 44ch; margin-bottom: 1.5rem; }
+    .reframe-right { display: flex; flex-direction: column; gap: 1px; }
+
+    .reframe-card {
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: grid; grid-template-columns: 90px 1fr;
+      gap: 2rem; align-items: start;
+    }
+    .reframe-card + .reframe-card { border-top: none; }
+    .reframe-card:hover { border-color: var(--border2); }
+
+    .rc-label {
+      font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--dim); padding-top: 0.2rem; line-height: 1.6;
+    }
+    .rc-label strong {
+      display: block; font-size: 1.6rem;
+      font-family: var(--head); font-weight: 300;
+      color: var(--accent); margin-bottom: 0.2rem; letter-spacing: 0;
+    }
+    .rc-body h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .rc-body p { font-size: 11.5px; color: var(--mid); max-width: 50ch; }
+
+    /* Key insight block */
+    .insight-block {
+      margin-top: 3rem; padding: 2rem 2.5rem;
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent-dim);
+      background: var(--surface2);
+    }
+    .insight-block p { font-size: 13px; color: var(--text); max-width: 60ch; line-height: 1.8; }
+    .insight-block cite {
+      display: block; margin-top: 0.75rem;
+      font-size: 9.5px; letter-spacing: 0.1em;
+      color: var(--dim); font-style: normal;
+    }
+
+    /* ── TRIANGLE ──────────────────────────────── */
+    #triangle { padding: 5rem 0; }
+    .triangle-intro {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; margin-bottom: 4rem; align-items: end;
+    }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+    }
+    .product-card {
+      background: var(--bg); padding: 2.5rem;
+      display: flex; flex-direction: column;
+      transition: background 0.2s;
+    }
+    .product-card:hover { background: var(--surface); }
+    .product-tag {
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 2rem;
+    }
+    .product-name {
+      font-family: var(--head); font-size: 1.8rem; font-weight: 300;
+      color: var(--white); line-height: 1.1; margin-bottom: 1.5rem;
+    }
+    .product-desc { font-size: 12px; color: var(--mid); flex: 1; }
+    .product-link {
+      display: inline-block; margin-top: 2rem;
+      font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .product-link:hover { color: var(--white); }
+
+    /* ── STATS ─────────────────────────────────── */
+    #stats { padding: 0; }
+    .stats-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-cell {
+      padding: 3rem 2.5rem;
+      border-right: 1px solid var(--border);
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-v {
+      font-family: var(--head); font-size: 3rem;
+      color: var(--white); display: block;
+      line-height: 1; margin-bottom: 0.5rem;
+    }
+    .stat-l {
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--dim);
+    }
+
+    /* ── METHOD ────────────────────────────────── */
+    #method { padding: 5rem 0; background: var(--surface); }
+    .method-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: start; margin-top: 3rem;
+    }
+    .method-steps { display: flex; flex-direction: column; gap: 0; }
+    .m-step {
+      display: grid; grid-template-columns: 60px 1fr;
+      gap: 1.5rem; padding: 1.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .m-step:last-child { border-bottom: none; }
+    .m-n {
+      font-family: var(--head); font-size: 2rem;
+      color: var(--border2); line-height: 1; padding-top: 0.3rem;
+    }
+    .m-content h4 { font-size: 1rem; margin-bottom: 0.4rem; }
+    .m-content p { font-size: 11.5px; color: var(--dim); }
+    .m-content .m-badge {
+      display: inline-block; margin-top: 0.6rem;
+      font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+      border: 1px solid var(--border2); padding: 0.2rem 0.6rem;
+      color: var(--dim);
+    }
+    .method-right { position: sticky; top: 100px; }
+    .method-principle {
+      padding: 2.5rem; border: 1px solid var(--border); background: var(--bg);
+      margin-bottom: 1px;
+    }
+    .method-principle:hover { border-color: var(--border2); }
+    .mp-label {
+      font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 1rem;
+    }
+    .method-principle p { font-size: 12px; color: var(--mid); }
+
+    /* ── ENTERPRISE CTA ────────────────────────── */
+    #enterprise {
+      padding: 6rem 0;
+      background:
+        radial-gradient(ellipse at 70% 50%, rgba(196,180,154,0.03) 0%, transparent 60%),
+        var(--bg);
+    }
+    .enterprise-inner {
+      display: grid; grid-template-columns: 1.2fr 1fr;
+      gap: 5rem; align-items: center;
+    }
+    .enterprise-inner h2 { margin-bottom: 1.5rem; }
+    .enterprise-inner p { max-width: 46ch; margin-bottom: 2.5rem; }
+    .enterprise-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .audit-box {
+      border: 1px solid var(--border2); padding: 2.5rem; background: var(--surface);
+    }
+    .audit-box .audit-tag {
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent-dim); margin-bottom: 1rem;
+    }
+    .audit-box h3 { margin-bottom: 1rem; }
+    .audit-box p { font-size: 12px; margin-bottom: 1.5rem; }
+    .audit-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .audit-list li {
+      font-size: 11px; color: var(--dim);
+      padding-left: 1.2rem; position: relative; letter-spacing: 0.02em;
+    }
+    .audit-list li::before {
+      content: '—'; position: absolute; left: 0; color: var(--border2);
+    }
+    .audit-price {
+      margin-top: 1.5rem; padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .audit-price .price {
+      font-family: var(--head); font-size: 1.3rem; color: var(--accent);
+    }
+    .audit-price .price-note { font-size: 10px; color: var(--dim); }
+
+    /* ── FOOTER ────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 2.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .f-brand {
+      font-family: var(--head); font-size: 1rem;
+      letter-spacing: 0.14em; color: var(--dim);
+    }
+    .f-links { display: flex; gap: 2rem; list-style: none; }
+    .f-links a {
+      font-size: 10.5px; color: var(--dim); text-decoration: none;
+      letter-spacing: 0.08em; transition: color 0.2s;
+    }
+    .f-links a:hover { color: var(--accent); }
+    .f-copy { font-size: 9.5px; color: var(--accent-dim); letter-spacing: 0.06em; }
+
+    /* ── SCROLL REVEAL ─────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero-watermark { display: none; }
+      .nav-links { display: none; }
+      .wrap { padding: 0 1.5rem; }
+      .hero-body { padding: 0 1.5rem 3.5rem; }
+      h1 { font-size: 2.6rem; }
+      h2 { font-size: 2rem; }
+      .translation-grid { grid-template-columns: 1fr; }
+      .reframe-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .reframe-left { position: static; }
+      .products-grid { grid-template-columns: 1fr; }
+      .stats-strip { grid-template-columns: 1fr 1fr; }
+      .stat-cell:nth-child(2) { border-right: none; }
+      .stat-cell:nth-child(3),
+      .stat-cell:nth-child(4) { border-top: 1px solid var(--border); }
+      .method-grid { grid-template-columns: 1fr; }
+      .method-right { position: static; }
+      .enterprise-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .triangle-intro { grid-template-columns: 1fr; gap: 2rem; }
+      .reframe-card { grid-template-columns: 1fr; gap: 1rem; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ────────────────────────────────── -->
+<nav>
+  <a class="nav-logo" href="index.html">MA·ZEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html" class="nav-cta">Contact →</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ───────────────────────────────── -->
+<section id="hero">
+  <div class="hero-body">
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <span></span>
+        Finite Silence Architecture · Studio
+      </div>
+      <h1 class="hero-h1">
+        The sound of<br>what you <em>don't</em> say.
+      </h1>
+      <p class="hero-sub">
+        MA-ZEN engineers perceptual environments where interval, restraint, and structured absence replace manipulation, coercion, and noise. Silence is not the gap between products — silence is the product.
+      </p>
+      <div class="hero-actions">
+        <a href="solutions.html" class="btn btn-primary">Explore Solutions →</a>
+        <a href="research.html" class="btn btn-ghost">Research Foundation →</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-watermark">間</div>
+  <div class="hero-ticker">
+    <div class="ticker-track" id="ticker">
+      <!-- JS duplicates for seamless loop -->
+    </div>
+  </div>
+</section>
+
+<!-- ── TRANSLATION ─────────────────────────── -->
+<section id="translation">
+  <div class="wrap">
+    <p class="lbl">What this means in practice</p>
+    <h2 style="margin-bottom:0.5rem;">Silence<br><em>as architecture.</em></h2>
+    <p style="max-width:52ch; margin-bottom:0; font-size:13px;">
+      Every MA-ZEN system is built on the same three structural commitments. They apply equally to a 4-minute session and a $40K enterprise sonic identity.
+    </p>
+
+    <div class="translation-grid reveal">
+      <div class="t-cell">
+        <p class="t-num">01</p>
+        <h3>The interval <em>is</em> the design</h3>
+        <p>In architecture, the space between walls carries as much meaning as the walls. In music, the pause between notes defines what the notes mean. MA-ZEN applies this to sonic identity — the interval specification is not empty space, it is the primary deliverable.</p>
+      </div>
+      <div class="t-cell">
+        <p class="t-num">02</p>
+        <h3>No manipulation <em>mechanisms</em></h3>
+        <p>No urgency colors. No reward loops. No emotional coercion. No prompts designed to retain attention. MA-ZEN environments do not persuade — they structure. What occurs within the structure is the user's, not ours.</p>
+      </div>
+      <div class="t-cell" style="border-top:1px solid var(--border);">
+        <p class="t-num">03</p>
+        <h3>Defined <em>edges</em></h3>
+        <p>Every MA-ZEN product has hard boundaries. Sessions have start and end. Sonic guidelines have permitted and prohibited elements. Abrupt terminations are by design — because soft, drifting endings remove the structure that makes the interval meaningful.</p>
+      </div>
+      <div class="t-cell" style="border-top:1px solid var(--border);">
+        <p class="t-num">04</p>
+        <h3>Restrained <em>claims</em></h3>
+        <p>MA-ZEN does not claim therapeutic outcomes, improved focus, or reduced stress. We design structural conditions. Whether those conditions are useful to you is your determination, not our marketing copy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SILENCE REFRAME ─────────────────────── -->
+<!--
+  THIS IS WHERE THE 94% PROBLEM IS SOLVED IN THE PRODUCT NARRATIVE.
+  Consumer sessions: silence IS the product — stated plainly.
+  Enterprise: the SYSTEM is the product — the interval specification,
+  the guidelines PDF, the Ma ratio map. Never leading with "94% silence"
+  in the B2B context. Instead: "sonic restraint index," "interval specification."
+-->
+<section id="silence-reframe">
+  <div class="wrap">
+    <div class="reframe-inner">
+
+      <div class="reframe-left">
+        <p class="lbl">The silence question</p>
+        <h2>What does<br><em>"94% silence"</em><br>actually mean?</h2>
+        <p style="margin-top:1.5rem;">
+          It means different things in two different contexts. We are precise about which is which — because the confusion between them is where most sonic design fails.
+        </p>
+        <p>
+          A building is not "mostly empty." It is a designed proportion of occupied and unoccupied space. A well-composed piece of music is not "mostly quiet." It is a precise interval architecture. MA-ZEN is in the same business.
+        </p>
+        <div class="insight-block" style="margin-top:2rem;">
+          <p>The measure of sonic restraint is not a deficit. It is the specification. What you don't play is as governed as what you do.</p>
+          <cite>MA-ZEN · Interval Architecture Principle</cite>
+        </div>
+      </div>
+
+      <div class="reframe-right reveal">
+
+        <!-- CONSUMER CONTEXT -->
+        <div class="reframe-card" style="border-bottom:none;">
+          <div class="rc-label">
+            <strong>94%</strong>
+            Consumer<br>Sessions
+          </div>
+          <div class="rc-body">
+            <h4>Here: silence <em>is</em> the product</h4>
+            <p>In THE PROOF — Guided Silence Sessions — 94% silence is the explicit, stated design intention. The user is buying structured absence. The high silence ratio is not a flaw in the session; it is what the session is. This number is worn publicly because the consumer understands they are purchasing unmediated time.</p>
+          </div>
+        </div>
+
+        <!-- ENTERPRISE CONTEXT -->
+        <div class="reframe-card">
+          <div class="rc-label">
+            <strong>Ma</strong>
+            Enterprise<br>Identity
+          </div>
+          <div class="rc-body">
+            <h4>Here: the <em>system</em> is the product</h4>
+            <p>In THE CASH — B2B Sonic Branding — MA-ZEN delivers a complete sonic identity system: interval specifications, usage rules, permitted and prohibited elements, silence-ratio targets by context, and the Sonic Guidelines PDF that governs brand audio behavior for years. The deliverable is the architecture, not the audio files. A brand style guide is not "just fonts" — it is the rules that govern them. Same logic applies here.</p>
+          </div>
+        </div>
+
+        <!-- WHAT ENTERPRISE BUYERS RECEIVE -->
+        <div class="reframe-card">
+          <div class="rc-label">
+            <strong>∅</strong>
+            What<br>you own
+          </div>
+          <div class="rc-body">
+            <h4>The specification is the <em>deliverable</em></h4>
+            <p>Audio files are a small component of a Complete Identity engagement. What enterprises actually receive: a Ma interval map, a sonic palette with usage matrix, a silence-ratio specification per deployment context, a Sonic Guidelines PDF designed to be implemented without MA-ZEN present, and the framework that makes every future audio decision coherent. That is the product. The files are outputs of the system, not the system itself.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THREE PRODUCT TRIANGLE ──────────────── -->
+<section id="triangle">
+  <div class="wrap">
+    <div class="triangle-intro">
+      <div>
+        <p class="lbl">System architecture</p>
+        <h2>Three products.<br><em>One system.</em></h2>
+      </div>
+      <div>
+        <p style="font-size:13px; max-width:48ch;">Each product is a distinct revenue stream and a distinct expression of the same design philosophy. They are independent. They are also mutually reinforcing — the triangle is a funding structure, not a hierarchy.</p>
+      </div>
+    </div>
+
+    <div class="products-grid reveal">
+      <div class="product-card">
+        <p class="product-tag">The Proof · Public Layer</p>
+        <div class="product-name">Guided<br>Silence<br>Sessions</div>
+        <p class="product-desc">The public-facing demonstration of the philosophy. Structured silence sessions with a five-phase architecture. No narration, no guidance, no reward loops. The session is valid even if nothing "happens." Available across three philosophical presets and eight duration lengths.</p>
+        <a href="guided-silence-sessions.html" class="product-link">Access Sessions →</a>
+      </div>
+      <div class="product-card" style="border-left:1px solid var(--border); border-right:1px solid var(--border);">
+        <p class="product-tag">The Cash · Revenue Engine</p>
+        <div class="product-name">B2B<br>Audio<br>Branding</div>
+        <p class="product-desc">Enterprise sonic identity. Audio logo, UI sound system, environmental audio, and the complete Sonic Guidelines PDF — a codified architecture your team owns and deploys without us. Every engagement begins with a free Silence Audit. No discovery calls before diagnostics.</p>
+        <a href="the-cash-b2b.html" class="product-link">View Engagement Model →</a>
+      </div>
+      <div class="product-card">
+        <p class="product-tag">The Floor · Recurring Base</p>
+        <div class="product-name">Audio<br>Field<br>Library</div>
+        <p class="product-desc">Subscription access to the MA-ZEN audio field collection. Designed for environments — commercial spaces, hospitality, digital products — not for individuals. Licensed for commercial deployment. The recurring revenue floor beneath both other products.</p>
+        <a href="the-floor-library.html" class="product-link">Browse Library →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ───────────────────────────────── -->
+<section id="stats">
+  <div class="stats-strip reveal">
+    <div class="stat-cell">
+      <span class="stat-v">$515K</span>
+      <span class="stat-l">18-month conservative projection</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-v">48h</span>
+      <span class="stat-l">Silence Audit delivery — always free</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-v">$500</span>
+      <span class="stat-l">Effective hourly rate · Complete Identity tier</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-v">0</span>
+      <span class="stat-l">Emotional manipulation mechanisms in any product</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── METHOD ──────────────────────────────── -->
+<section id="method">
+  <div class="wrap">
+    <p class="lbl">Method snapshot</p>
+    <h2 style="margin-bottom:0.5rem;">Research · <em>Lab</em> · Protocol</h2>
+    <p style="max-width:54ch; margin-bottom:0; font-size:13px;">
+      Public explanation layer only. MA-ZEN draws from psychoacoustics, DMN research, and contemplative traditions. We are explicit about where evidence is strong and where it is philosophical.
+    </p>
+
+    <div class="method-grid" style="margin-top:3.5rem;">
+      <div class="method-steps reveal">
+        <div class="m-step">
+          <div class="m-n">01</div>
+          <div class="m-content">
+            <h4>Silence Audit</h4>
+            <p>Diagnose before designing. Audio inventory review, silence ratio measurement, competitive sonic gap analysis, preliminary Ma interval map. Delivered in 48 hours.</p>
+            <span class="m-badge">Always free</span>
+          </div>
+        </div>
+        <div class="m-step">
+          <div class="m-n">02</div>
+          <div class="m-content">
+            <h4>Sonic Discovery</h4>
+            <p>Structured workshop to identify the Ma interval of your brand. What does your brand not say? Where does it breathe? This becomes the generative constraint.</p>
+            <span class="m-badge">1–3 days</span>
+          </div>
+        </div>
+        <div class="m-step">
+          <div class="m-n">03</div>
+          <div class="m-content">
+            <h4>Identity Creation</h4>
+            <p>Every audio element tested against three principles: Ma (interval), Sunyata (absence), Wu Wei (effortlessness). Elements that fail are removed, not revised.</p>
+            <span class="m-badge">2–5 weeks</span>
+          </div>
+        </div>
+        <div class="m-step">
+          <div class="m-n">04</div>
+          <div class="m-content">
+            <h4>Sonic Guidelines</h4>
+            <p>A codified document your team owns. Permitted sounds, prohibited sounds, silence ratios, interval rules, implementation notes per context. Designed to work without us.</p>
+            <span class="m-badge">3–5 days</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="method-right reveal">
+        <div class="method-principle">
+          <p class="mp-label">Psychoacoustics</p>
+          <p>Silence is not neutral. The auditory system processes absence as a perceptual event with its own signature — one MA-ZEN designs deliberately.</p>
+        </div>
+        <div class="method-principle" style="border-top:none;">
+          <p class="mp-label">Epistemic Restraint</p>
+          <p>We distinguish signal from proof. MA-ZEN identifies patterns worth designing around — not outcomes worth promising. No therapeutic claims.</p>
+        </div>
+        <div class="method-principle" style="border-top:none;">
+          <p class="mp-label">Contemplative Frame</p>
+          <p><em>Ma</em> (間) · <em>Sunyata</em> (शून्यता) · <em>Wu Wei</em> (無為). Structural metaphors treated as design constraints, not scientific evidence.</p>
+        </div>
+        <a href="research.html" class="btn btn-ghost" style="margin-top:1.5rem; width:100%; text-align:center; display:block;">Full Research Foundation →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ENTERPRISE CTA ──────────────────────── -->
+<section id="enterprise">
+  <div class="wrap">
+    <div class="enterprise-inner">
+      <div>
+        <p class="lbl">Enterprise · Pilots · Consultation</p>
+        <h2>Begin with a<br><em>Silence Audit.</em></h2>
+        <p>No discovery calls before diagnostics. Submit a brief and receive the Silence Audit in 48 hours — a structured diagnostic of your current sonic presence. Yours to keep regardless of whether you proceed.</p>
+        <div class="enterprise-actions">
+          <a href="contact.html" class="btn btn-primary">Request Audit →</a>
+          <a href="the-cash-b2b.html" class="btn btn-ghost">View THE CASH →</a>
+        </div>
+      </div>
+      <div>
+        <div class="audit-box reveal">
+          <p class="audit-tag">Silence Audit · What you receive</p>
+          <h3>The <em>diagnostic</em> first.</h3>
+          <p>A structured PDF delivered before any engagement decision. Value delivered upfront — because the brief should already contain something worth having.</p>
+          <ul class="audit-list">
+            <li>Current audio inventory review</li>
+            <li>Silence ratio measurement</li>
+            <li>Competitive sonic gap analysis</li>
+            <li>Preliminary Ma interval map</li>
+            <li>Delivered as PDF — no call required</li>
+          </ul>
+          <div class="audit-price">
+            <span class="price">Free</span>
+            <span class="price-note">Always · Regardless of whether you proceed · 48-hour delivery</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────── -->
+<footer>
+  <span class="f-brand">MA·ZEN</span>
+  <ul class="f-links">
+    <li><a href="guided-silence-sessions.html">The Proof</a></li>
+    <li><a href="the-cash-b2b.html">The Cash</a></li>
+    <li><a href="the-floor-library.html">The Floor</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <span class="f-copy">© MA-ZEN Studio · Finite Silence Architecture</span>
+</footer>
+
+<script>
+// Ticker
+const items = [
+  'Finite Silence Architecture',
+  'Structured Absence',
+  'The Interval Is The Design',
+  'Ma · 間 · Negative Space',
+  'No Manipulation Mechanisms',
+  'Sonic Restraint Index',
+  'Sunyata · शून्यता · Emptiness',
+  'Wu Wei · 無為 · Non-Action',
+  'The Boundary Is The Product',
+  'No Discovery Calls Before Diagnostics',
+  'Silence Audit · 48h · Always Free',
+];
+const track = document.getElementById('ticker');
+// Double for seamless loop
+[...items, ...items].forEach(t => {
+  const el = document.createElement('span');
+  el.className = 'ticker-item';
+  el.textContent = t;
+  track.appendChild(el);
+});
+
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Nav active
+document.querySelectorAll('.nav-links a').forEach(a => {
+  if (a.getAttribute('href') === (location.pathname.split('/').pop() || 'index.html')) {
+    a.style.color = 'var(--accent)';
+  }
+});
+</script>
+</body>
+</html>

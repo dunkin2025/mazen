@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact · MA-ZEN</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">MA·ZEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="contact.html" class="nav-cta active">Contact →</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section style="padding: 6rem 0 4rem; border-bottom: 1px solid var(--border); min-height:auto;">
+    <div class="container">
+      <p class="section-label">Contact · Inquiry · Enterprise</p>
+      <h1>Start with <em>a brief.</em></h1>
+      <p class="hero-body" style="margin-top:1rem;">No discovery calls before diagnostics. Select your inquiry type below, complete the form, and we will respond within 48 hours with a structured proposal or the appropriate next step.</p>
+    </div>
+  </section>
+
+  <!-- INQUIRY TYPES -->
+  <section>
+    <div class="container">
+      <p class="section-label">01 · Inquiry Type</p>
+      <h2>What brings <em>you here?</em></h2>
+      <p style="margin-bottom:3rem;">Select the inquiry type that best matches your intent. Each has a different response path.</p>
+
+      <div class="grid-3" style="margin-bottom:4rem;">
+        <div class="card" id="type-enterprise" style="cursor:pointer; border-color:var(--accent-dim);" onclick="selectType('enterprise')">
+          <p class="card-label">Inquiry A</p>
+          <h3>Enterprise / B2B</h3>
+          <p>Sonic branding, audio identity, or large-scale silence architecture deployment. Minimum engagement: $12K.</p>
+        </div>
+        <div class="card" id="type-pilot" style="cursor:pointer;" onclick="selectType('pilot')">
+          <p class="card-label">Inquiry B</p>
+          <h3>Pilot Program</h3>
+          <p>Testing MA-ZEN in a specific organizational or commercial context before committing to a full engagement.</p>
+        </div>
+        <div class="card" id="type-press" style="cursor:pointer;" onclick="selectType('press')">
+          <p class="card-label">Inquiry C</p>
+          <h3>Press / Research</h3>
+          <p>Editorial coverage, academic inquiry, or independent research into the MA-ZEN methodology and design philosophy.</p>
+        </div>
+      </div>
+
+      <!-- CONTACT FORM -->
+      <div style="border:1px solid var(--border); padding:3rem; background:var(--surface); max-width:700px;">
+        <p style="font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); margin-bottom:2rem;">Contact Form · All fields required unless marked optional</p>
+
+        <form class="form-grid" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="field">
+              <label for="company">Company / Organisation *</label>
+              <input type="text" id="company" required placeholder="Your company name" />
+            </div>
+            <div class="field">
+              <label for="name">Contact Name *</label>
+              <input type="text" id="name" required placeholder="Your full name" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" required placeholder="you@company.com" />
+            </div>
+            <div class="field">
+              <label for="role">Your Role *</label>
+              <select id="role" required>
+                <option value="">Select role</option>
+                <option>Founder / CEO</option>
+                <option>CMO / Head of Brand</option>
+                <option>Creative Director</option>
+                <option>Marketing Manager</option>
+                <option>Researcher / Academic</option>
+                <option>Journalist / Editor</option>
+                <option>Procurement</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="inquiry">Inquiry Type *</label>
+            <select id="inquiry" required>
+              <option value="">Select inquiry type</option>
+              <option>Enterprise / B2B Sonic Branding</option>
+              <option>Pilot Program</option>
+              <option>Guided Silence Sessions — Deployment</option>
+              <option>Press / Media Inquiry</option>
+              <option>Research / Academic</option>
+              <option>THE FLOOR — Library Licensing</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="timeline">Timeline</label>
+              <select id="timeline">
+                <option value="">Select timeline</option>
+                <option>Immediate (under 4 weeks)</option>
+                <option>4–8 weeks</option>
+                <option>2–3 months</option>
+                <option>Flexible / Exploratory</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="budget">Budget Band (optional)</label>
+              <select id="budget">
+                <option value="">Select budget</option>
+                <option>Under $10K</option>
+                <option>$10–20K (Foundation)</option>
+                <option>$20–50K (Complete Identity)</option>
+                <option>$50K+ (Enterprise)</option>
+                <option>Retainer ($4–8K/mo)</option>
+                <option>Research / Non-commercial</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="context">Brief Context *</label>
+            <textarea id="context" required rows="4" placeholder="What brings you here? Describe your situation, project, or question in a few sentences. No pitch decks, no formalities."></textarea>
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:0.5rem; flex-wrap:wrap; gap:1rem;">
+            <p style="font-size:10px; color:var(--text-dim); max-width:40ch;">No drafts saved · No data sold · We respond within 48 hours</p>
+            <button type="submit" class="btn btn-primary">Submit Inquiry →</button>
+          </div>
+        </form>
+
+        <div id="form-success" style="display:none; padding:2rem; text-align:center; border:1px solid var(--border-light); margin-top:1.5rem;">
+          <p style="color:var(--accent); margin-bottom:0.5rem; font-size:14px;">Brief received.</p>
+          <p>We will respond within 48 hours with a structured next step. No call required until you've seen something of substance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIRECT CONTACT -->
+  <section>
+    <div class="container">
+      <p class="section-label">02 · Direct</p>
+      <h2>Other <em>Channels</em></h2>
+
+      <div class="grid-2" style="max-width:700px; margin-top:2rem; gap:1px; background:var(--border); border:1px solid var(--border);">
+        <div style="padding:2rem; background:var(--bg);">
+          <p class="card-label">Email</p>
+          <p><a href="mailto:studio@ma-zen.com" style="color:var(--accent); text-decoration:none;">studio@ma-zen.com</a></p>
+          <p style="font-size:11px; margin-top:0.5rem;">For all general inquiries, press, and enterprise briefs.</p>
+        </div>
+        <div style="padding:2rem; background:var(--bg);">
+          <p class="card-label">Response Protocol</p>
+          <p>48 hours</p>
+          <p style="font-size:11px; margin-top:0.5rem;">All inquiries receive a structured response — not an auto-reply. If 48 hours passes, follow up without hesitation.</p>
+        </div>
+        <div style="padding:2rem; background:var(--bg); border-top:1px solid var(--border);">
+          <p class="card-label">For Press Only</p>
+          <p><a href="mailto:press@ma-zen.com" style="color:var(--accent); text-decoration:none;">press@ma-zen.com</a></p>
+          <p style="font-size:11px; margin-top:0.5rem;">Editorial requests, interviews, asset access. A media kit is available on request.</p>
+        </div>
+        <div style="padding:2rem; background:var(--bg); border-top:1px solid var(--border);">
+          <p class="card-label">No Calls First</p>
+          <p>Brief before call</p>
+          <p style="font-size:11px; margin-top:0.5rem;">MA-ZEN does not take cold discovery calls. Submit a brief first. A call follows only when both sides have something to discuss.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SILENCE AUDIT NOTE -->
+  <section style="border-bottom:none;">
+    <div class="container">
+      <blockquote>
+        <p>The Silence Audit is always the first deliverable. Free. 48 hours. Yours to keep regardless of whether you proceed. We deliver value before the engagement begins — because the brief should already contain something worth having.</p>
+        <cite>MA-ZEN · Engagement Principle</cite>
+      </blockquote>
+      <div style="margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href="the-cash-b2b.html" class="btn btn-ghost">Learn about THE CASH →</a>
+        <a href="solutions.html" class="btn btn-ghost">View All Solutions →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-brand">MA·ZEN</span>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <span class="footer-copy">© MA-ZEN Studio · Finite Silence Architecture</span>
+</footer>
+
+<script src="main.js"></script>
+<script>
+function selectType(type) {
+  ['enterprise','pilot','press'].forEach(t => {
+    const el = document.getElementById('type-'+t);
+    el.style.borderColor = t === type ? 'var(--accent-dim)' : 'var(--border)';
+  });
+  const map = {
+    enterprise: 'Enterprise / B2B Sonic Branding',
+    pilot: 'Pilot Program',
+    press: 'Press / Media Inquiry'
+  };
+  document.getElementById('inquiry').value = map[type];
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  document.getElementById('form-success').style.display = 'block';
+  e.target.style.opacity = '0.3';
+  e.target.style.pointerEvents = 'none';
+}
+</script>
+</body>
+</html>
