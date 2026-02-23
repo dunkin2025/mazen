@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THE CASH — B2B Audio Branding · MA-ZEN</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Syne:wght@400;500;600;700&family=Syne+Mono&display=swap');
 
@@ -749,7 +750,189 @@ body::before{
   .method-flow{grid-template-columns:1fr}
   .revenue-layout{grid-template-columns:1fr}
   .hero-stat-row{flex-direction:column;gap:20px}
+  .aeria-demo-grid{grid-template-columns:1fr}
+  .aeria-header-inner{flex-direction:column;gap:16px;align-items:flex-start}
 }
+
+/* ══════════════════════════════════════════
+   AERIA CASE STUDY SECTION
+══════════════════════════════════════════ */
+.aeria-section{
+  background:var(--charcoal);
+  color:#e8e4de;
+  border-top:1px solid var(--gold-rule);
+  border-bottom:1px solid var(--gold-rule);
+}
+.aeria-inner{
+  max-width:1080px;margin:0 auto;
+  padding:80px 40px;
+}
+.aeria-kicker{
+  font-family:'Syne Mono',monospace;
+  font-size:8px;letter-spacing:.36em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.aeria-kicker::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold)}
+.aeria-header-inner{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:48px;gap:32px;flex-wrap:wrap;
+}
+.aeria-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(32px,4vw,56px);
+  font-weight:400;line-height:1.0;
+  letter-spacing:-.01em;color:#f0ede8;
+}
+.aeria-title em{font-style:italic;color:var(--gold)}
+.aeria-sub{
+  font-family:'Playfair Display',serif;
+  font-style:italic;font-size:15px;
+  color:#5a5650;line-height:1.8;
+  max-width:400px;text-align:right;
+}
+@media(max-width:840px){.aeria-sub{text-align:left;max-width:none}}
+.aeria-cta-link{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Syne Mono',monospace;
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);text-decoration:none;
+  border:1px solid var(--gold-rule);
+  padding:10px 20px;
+  transition:all 250ms;white-space:nowrap;
+  margin-top:8px;
+}
+.aeria-cta-link:hover{background:var(--gold-dim);border-color:var(--gold)}
+.aeria-meta-strip{
+  display:flex;gap:0;
+  border:1px solid rgba(255,255,255,.08);
+  margin-bottom:48px;
+  flex-wrap:wrap;
+}
+.aeria-meta-cell{
+  flex:1;min-width:120px;padding:16px 20px;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.aeria-meta-cell:last-child{border-right:none}
+.amc-label{
+  font-family:'Syne Mono',monospace;font-size:7px;
+  letter-spacing:.24em;text-transform:uppercase;
+  color:#5a5650;margin-bottom:4px;
+}
+.amc-val{
+  font-family:'Playfair Display',serif;font-size:18px;
+  font-weight:400;color:var(--gold);
+}
+/* Demo grid */
+.aeria-demo-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.05);
+  margin-bottom:48px;
+}
+.aeria-demo-card{
+  background:#0b0b0b;
+  padding:28px 28px 24px;
+  display:flex;flex-direction:column;gap:0;
+  transition:background 180ms;
+}
+.aeria-demo-card:hover{background:#111}
+.adc-num{
+  font-family:'Syne Mono',monospace;font-size:7px;
+  letter-spacing:.28em;text-transform:uppercase;
+  color:#3a3630;margin-bottom:12px;
+}
+.adc-space{
+  font-family:'Syne Mono',monospace;font-size:8px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:#5a5650;margin-bottom:6px;
+}
+.adc-title{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:400;letter-spacing:.02em;
+  color:#e8e4de;margin-bottom:10px;line-height:1.2;
+}
+.adc-title em{font-style:italic;color:var(--gold)}
+.adc-desc{
+  font-family:'Playfair Display',serif;
+  font-size:12px;font-style:italic;line-height:1.75;
+  color:#5a5650;flex:1;margin-bottom:16px;
+}
+.adc-stats{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:12px}
+.adc-stat{display:flex;flex-direction:column;gap:1px}
+.adc-stat-val{
+  font-family:'Syne Mono',monospace;font-size:13px;
+  color:var(--gold-lt);letter-spacing:.04em;
+}
+.adc-stat-lbl{
+  font-family:'Syne Mono',monospace;font-size:7px;
+  letter-spacing:.16em;text-transform:uppercase;color:#3a3630;
+}
+.adc-tags{display:flex;flex-wrap:wrap;gap:4px}
+.adc-tag{
+  font-family:'Syne Mono',monospace;font-size:7px;
+  letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.07);
+  padding:2px 7px;color:#3a3630;
+}
+/* Work-done summary */
+.aeria-work-wrap{
+  background:rgba(184,146,74,.05);
+  border:1px solid var(--gold-rule);
+  padding:36px;
+  margin-bottom:40px;
+}
+.aww-title{
+  font-family:'Playfair Display',serif;font-size:18px;
+  font-weight:400;font-style:italic;color:#f0ede8;
+  margin-bottom:20px;
+}
+.aww-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px 32px;
+  margin-bottom:24px;
+}
+@media(max-width:680px){.aww-grid{grid-template-columns:1fr 1fr}}
+.aww-item{display:flex;flex-direction:column;gap:3px}
+.aww-item-label{
+  font-family:'Syne Mono',monospace;font-size:7px;
+  letter-spacing:.22em;text-transform:uppercase;color:#5a5650;
+}
+.aww-item-val{font-size:12px;color:#9c9589;line-height:1.55}
+.aww-quote{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:14px;line-height:1.85;color:#5a5650;
+  border-top:1px solid rgba(255,255,255,.05);
+  padding-top:20px;
+}
+/* Logo section */
+.mazen-logo-section{
+  max-width:1080px;margin:0 auto;
+  padding:80px 40px;
+  border-top:1px solid var(--border);
+}
+.logo-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);
+  margin-top:40px;
+}
+.logo-variant{
+  background:var(--paper);padding:36px 32px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:16px;
+}
+.logo-variant.dark{background:var(--ink)}
+.logo-variant.cream{background:var(--cream)}
+.lv-label{
+  font-family:'Syne Mono',monospace;font-size:7px;
+  letter-spacing:.24em;text-transform:uppercase;
+  color:var(--mist);text-align:center;
+}
+.logo-variant.dark .lv-label{color:#3a3630}
+@media(max-width:680px){.logo-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -804,47 +987,6 @@ body::before{
   <p class="phil-quote">"Most sonic branding fills space. MA-ZEN structures it. The interval between sounds is not dead air — it is the architecture your audience inhabits."</p>
   <div class="phil-attr">MA-ZEN · Sonic Identity Principle · 2024</div>
 </div>
-
-<!-- ── SILENCE FRAMING ── -->
-<section class="page-section" style="border-top:1px solid var(--border);">
-  <div class="section-kicker">00 · On Silence</div>
-  <h2 class="section-heading">The system is the<br><em>deliverable</em></h2>
-  <p class="section-body">MA-ZEN is not sold as "silence." Silence is a design parameter inside a complete sonic identity system — the same way negative space is a parameter inside visual identity.</p>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border-lt);border:1px solid var(--border);margin-top:40px;">
-
-    <div style="background:var(--paper);padding:32px 28px;">
-      <div style="font-family:'Syne Mono',monospace;font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--mist);margin-bottom:16px;">What B2B receives</div>
-      <div style="font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--ink);margin-bottom:12px;">A governed system</div>
-      <p style="font-size:11px;line-height:1.75;color:var(--dust);">Interval specification per context. Permitted and prohibited elements. Silence-ratio targets per deployment zone. Sonic Guidelines PDF your team owns and operates without us. The files are outputs of the system. The system is the product.</p>
-    </div>
-
-    <div style="background:var(--paper);padding:32px 28px;">
-      <div style="font-family:'Syne Mono',monospace;font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--mist);margin-bottom:16px;">How silence appears in B2B</div>
-      <div style="font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--ink);margin-bottom:12px;">A calibrated parameter</div>
-      <p style="font-size:11px;line-height:1.75;color:var(--dust);">Not a fixed number. Not a philosophy. A defined range per environment: lobby audio differs from executive meeting room differs from product UI. Each context gets its own interval specification — governed by the same architecture, calibrated for each use.</p>
-    </div>
-
-    <div style="background:var(--ink);padding:32px 28px;">
-      <div style="font-family:'Syne Mono',monospace;font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--mist);margin-bottom:16px;">The buying logic</div>
-      <div style="font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--gold-lt);margin-bottom:12px;">Acoustic governance</div>
-      <p style="font-size:11px;line-height:1.75;color:rgba(244,240,232,0.55);">You are not buying audio files. You are buying the architecture that makes every future audio decision coherent — without needing MA-ZEN present. A brand style guide is not "just fonts." A Sonic Guidelines PDF is not "just silence." It is the rules that govern both.</p>
-    </div>
-
-  </div>
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border-lt);border:1px solid var(--border);border-top:none;margin-bottom:0;">
-    <div style="background:var(--warm);padding:20px 28px;display:flex;align-items:center;gap:20px;">
-      <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);flex-shrink:0;">≠</div>
-      <p style="font-size:11px;color:var(--dust);line-height:1.6;margin:0;max-width:none;">MA-ZEN is not a meditation app. Not white noise. Not an ambient music service. It is a sonic identity architecture firm that uses structured restraint as its primary design material.</p>
-    </div>
-    <div style="background:var(--warm);padding:20px 28px;display:flex;align-items:center;gap:20px;border-left:1px solid var(--border-lt);">
-      <div style="font-family:'Playfair Display',serif;font-size:28px;color:var(--gold);flex-shrink:0;">=</div>
-      <p style="font-size:11px;color:var(--dust);line-height:1.6;margin:0;max-width:none;">The Silence Audit is the diagnostic entry point. Free, 48 hours, delivered as a PDF. It shows what your brand currently sounds like — and what it doesn't. That gap is where the engagement begins.</p>
-    </div>
-  </div>
-
-</section>
 
 <!-- ── INQUIRY ── -->
 <section class="page-section fade-up" id="inquiry-section">
@@ -1260,6 +1402,302 @@ body::before{
 
   </div>
 </section>
+
+<!-- ── AERIA CASE STUDY ── -->
+<section class="aeria-section fade-up" id="aeria-section">
+  <div class="aeria-inner">
+
+    <div class="aeria-kicker">05 · Work in Progress · Hospitality</div>
+    <div class="aeria-header-inner">
+      <div>
+        <h2 class="aeria-title">AERIA Hotel —<br><em>Sonic Identity</em> Program</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+        <p class="aeria-sub">Six-space sonic architecture demonstrating what MA-ZEN builds before the engagement is signed.</p>
+        <a class="aeria-cta-link" href="aeria-demos.html">Explore Full Demonstration Suite →</a>
+      </div>
+    </div>
+
+    <!-- Meta strip -->
+    <div class="aeria-meta-strip">
+      <div class="aeria-meta-cell">
+        <div class="amc-label">Client</div>
+        <div class="amc-val">AERIA Hotel</div>
+      </div>
+      <div class="aeria-meta-cell">
+        <div class="amc-label">Sector</div>
+        <div class="amc-val">Luxury Hospitality</div>
+      </div>
+      <div class="aeria-meta-cell">
+        <div class="amc-label">Scope</div>
+        <div class="amc-val">6 Spaces</div>
+      </div>
+      <div class="aeria-meta-cell">
+        <div class="amc-label">Demo runtime</div>
+        <div class="amc-val">~48 min</div>
+      </div>
+      <div class="aeria-meta-cell">
+        <div class="amc-label">Melodies</div>
+        <div class="amc-val">0</div>
+      </div>
+      <div class="aeria-meta-cell">
+        <div class="amc-label">Status</div>
+        <div class="amc-val" style="color:#4a7c5a">Demo · Active</div>
+      </div>
+    </div>
+
+    <!-- What we did -->
+    <div class="aeria-work-wrap">
+      <div class="aww-title">What MA-ZEN built for AERIA</div>
+      <div class="aww-grid">
+        <div class="aww-item">
+          <div class="aww-item-label">Lobby Environment</div>
+          <div class="aww-item-val">12-min silence-dominant spatial field. 78% silence ratio. No melody — tonal presence exists as barely-perceptible resonance. Guests register space, not music.</div>
+        </div>
+        <div class="aww-item">
+          <div class="aww-item-label">Spa / Wellness Floor</div>
+          <div class="aww-item-val">Warmer harmonic content. 8–12s amplitude modulation cycles. 200–800 Hz focus. 72% silence. Inhabited warmth rather than architectural distance.</div>
+        </div>
+        <div class="aww-item">
+          <div class="aww-item-label">Audio Logo + UI Kit</div>
+          <div class="aww-item-val">Eight discrete sonic elements derived from a single tonal root. Audio logo: 4 seconds. Every UI sound traces the same interval architecture as the spatial fields.</div>
+        </div>
+        <div class="aww-item">
+          <div class="aww-item-label">Elevator / Vertical Transit</div>
+          <div class="aww-item-val">8–45s adaptive field matched to floor ascent rate. Infrasonic sub-bass sweep + single 432 Hz tone. Guests arrive calmer. They won't know why. That is the goal.</div>
+        </div>
+        <div class="aww-item">
+          <div class="aww-item-label">Dining Room · 3-Phase Arc</div>
+          <div class="aww-item-val">Arrival (82% silence) → Dining peak (68%) → Close (85%). Behaviorally manages table arc without urgency. No guest will register the mechanism.</div>
+        </div>
+        <div class="aww-item">
+          <div class="aww-item-label">Guestroom Wake + Departure</div>
+          <div class="aww-item-val">4-min sonic emergence replaces the conventional alarm: 40→180 Hz gradual rise, no percussion. 90-sec Departure Seal closes the stay without words. 90% silence ratio.</div>
+        </div>
+      </div>
+      <div class="aww-quote">
+        "The stay begins in the lobby. It ends in the room. The goodbye is the last impression. Design it — or lose it to silence you didn't choose."
+        <span style="display:block;font-size:10px;font-family:'Syne Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#3a3630;margin-top:8px;font-style:normal">MA-ZEN · AERIA Program Principle</span>
+      </div>
+    </div>
+
+    <!-- Demo grid -->
+    <div class="aeria-demo-grid">
+
+      <div class="aeria-demo-card">
+        <div class="adc-num">Demo 01 · Flagship</div>
+        <div class="adc-space">Lobby · Arrival</div>
+        <div class="adc-title"><em>Lobby Sonic Environment</em></div>
+        <div class="adc-desc">A 12-minute silence-dominant spatial field. No melody. No rhythm. Tonal presence exists only as barely-perceptible resonance — the acoustic equivalent of light through frosted glass.</div>
+        <div class="adc-stats">
+          <div class="adc-stat"><span class="adc-stat-val">78%</span><span class="adc-stat-lbl">Silence ratio</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">12 min</span><span class="adc-stat-lbl">Duration</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">60–400 Hz</span><span class="adc-stat-lbl">Freq range</span></div>
+        </div>
+        <div class="adc-tags">
+          <span class="adc-tag">spatial</span><span class="adc-tag">no melody</span><span class="adc-tag">arrival</span>
+        </div>
+      </div>
+
+      <div class="aeria-demo-card">
+        <div class="adc-num">Demo 02</div>
+        <div class="adc-space">Spa · Wellness</div>
+        <div class="adc-title"><em>Spa / Relaxation Floor</em></div>
+        <div class="adc-desc">Warmer harmonic content. Slower amplitude modulation cycles. Lower fundamental tones. Silence-forward — but the silence here feels inhabited rather than architectural.</div>
+        <div class="adc-stats">
+          <div class="adc-stat"><span class="adc-stat-val">72%</span><span class="adc-stat-lbl">Silence ratio</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">10 min</span><span class="adc-stat-lbl">Duration</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">200–800 Hz</span><span class="adc-stat-lbl">Freq range</span></div>
+        </div>
+        <div class="adc-tags">
+          <span class="adc-tag">warm</span><span class="adc-tag">somatic</span><span class="adc-tag">modulated</span>
+        </div>
+      </div>
+
+      <div class="aeria-demo-card">
+        <div class="adc-num">Demo 03</div>
+        <div class="adc-space">Identity · UI Kit</div>
+        <div class="adc-title"><em>Audio Logo & UI Sound Kit</em></div>
+        <div class="adc-desc">Eight discrete sonic elements. Each is a precise interval — not a decorative gesture. The 4-second audio logo and every UI element share the same tonal root.</div>
+        <div class="adc-stats">
+          <div class="adc-stat"><span class="adc-stat-val">8</span><span class="adc-stat-lbl">Elements</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">4.0s</span><span class="adc-stat-lbl">Logo duration</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">1 root</span><span class="adc-stat-lbl">Tonal basis</span></div>
+        </div>
+        <div class="adc-tags">
+          <span class="adc-tag">identity</span><span class="adc-tag">UI sounds</span><span class="adc-tag">logo</span>
+        </div>
+      </div>
+
+      <div class="aeria-demo-card">
+        <div class="adc-num">Demo 04 · Original Concept</div>
+        <div class="adc-space">Elevator · Transit</div>
+        <div class="adc-title"><em>Vertical Transit Sonic Field</em></div>
+        <div class="adc-desc">Infrasonic sub-bass sweep matched to floor ascent rate + single sustained tone at 432 Hz. The most psychologically compressed space in any hotel — designed rather than abandoned.</div>
+        <div class="adc-stats">
+          <div class="adc-stat"><span class="adc-stat-val">85%</span><span class="adc-stat-lbl">Silence ratio</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">8–45s</span><span class="adc-stat-lbl">Adaptive duration</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">432 Hz</span><span class="adc-stat-lbl">Anchor tone</span></div>
+        </div>
+        <div class="adc-tags">
+          <span class="adc-tag">adaptive</span><span class="adc-tag">transit</span><span class="adc-tag">liminal</span>
+        </div>
+      </div>
+
+      <div class="aeria-demo-card">
+        <div class="adc-num">Demo 05 · Original Concept</div>
+        <div class="adc-space">Dining · F&B</div>
+        <div class="adc-title"><em>Dining Room Sonic Architecture</em></div>
+        <div class="adc-desc">A three-phase sonic program aligned with meal pacing. Arrival → Peak → Close. Manages table arc without urgency. No guest will register the mechanism. That is the standard.</div>
+        <div class="adc-stats">
+          <div class="adc-stat"><span class="adc-stat-val">68–85%</span><span class="adc-stat-lbl">Phase range</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">3-phase</span><span class="adc-stat-lbl">Architecture</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">7 min</span><span class="adc-stat-lbl">Demo runtime</span></div>
+        </div>
+        <div class="adc-tags">
+          <span class="adc-tag">behavioral</span><span class="adc-tag">3-phase</span><span class="adc-tag">dining</span>
+        </div>
+      </div>
+
+      <div class="aeria-demo-card">
+        <div class="adc-num">Demo 06 · Original Concept · Signature</div>
+        <div class="adc-space">Guestroom · Stay Arc</div>
+        <div class="adc-title"><em>Wake Protocol & Departure Seal</em></div>
+        <div class="adc-desc">4-minute sonic emergence replaces the alarm: 40→180 Hz gradual rise. 90-second Departure Seal closes the stay without words. Guests check out emotionally before physically.</div>
+        <div class="adc-stats">
+          <div class="adc-stat"><span class="adc-stat-val">90%</span><span class="adc-stat-lbl">Silence ratio</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">4 min + 1:30</span><span class="adc-stat-lbl">Duration</span></div>
+          <div class="adc-stat"><span class="adc-stat-val">40→180 Hz</span><span class="adc-stat-lbl">Wake sweep</span></div>
+        </div>
+        <div class="adc-tags">
+          <span class="adc-tag">intimate</span><span class="adc-tag">stay arc</span><span class="adc-tag">departure</span>
+        </div>
+      </div>
+
+    </div><!-- /aeria-demo-grid -->
+
+    <div style="text-align:center">
+      <a class="aeria-cta-link" href="aeria-demos.html" style="display:inline-flex">
+        Listen to all six demonstrations →
+      </a>
+    </div>
+
+  </div><!-- /aeria-inner -->
+</section>
+
+<!-- ── MA-ZEN LOGO SYSTEM ── -->
+<div class="mazen-logo-section fade-up" id="logo-section">
+  <div class="section-kicker">06 · Brand Identity</div>
+  <h2 class="section-heading">MA-ZEN<br><em>Logo System</em></h2>
+  <p class="section-body">The mark is built on two principles: the interval (Ma) and the path of least resistance (Wu Wei). The letterforms are constructed from a single weight. The glyph is the space between — not the shape around it.</p>
+
+  <div class="logo-grid">
+
+    <!-- Light version -->
+    <div class="logo-variant">
+      <svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="MA-ZEN logo on light background">
+        <!-- M -->
+        <path d="M14 46V14h2.5l11 22 11-22H41v32h-3V20.5L27.5 42h-2L15 20.5V46z" fill="#0b0a09"/>
+        <!-- A -->
+        <path d="M52 46L63 14h3l11 32h-3.2l-2.8-8.5H58l-2.8 8.5H52zm7-11.5h9.8L64 22l-5 12.5z" fill="#0b0a09"/>
+        <!-- dash -->
+        <rect x="80" y="29" width="8" height="2" fill="#b8924a"/>
+        <!-- Z -->
+        <path d="M96 14h18v2.8L98.5 43H114v3H96v-2.8L111.5 17H96z" fill="#0b0a09"/>
+        <!-- E -->
+        <path d="M120 14h16v3h-13v10.5h11v3h-11V43h13v3h-16z" fill="#0b0a09"/>
+        <!-- N -->
+        <path d="M143 14h3l15 26.5V14h3v32h-3L146 19.5V46h-3z" fill="#0b0a09"/>
+        <!-- Ma glyph — the interval mark -->
+        <path d="M168 46V38" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M171 46V34" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M174 46V38" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="lv-label">Light · Primary</div>
+    </div>
+
+    <!-- Dark version -->
+    <div class="logo-variant dark">
+      <svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="MA-ZEN logo on dark background">
+        <path d="M14 46V14h2.5l11 22 11-22H41v32h-3V20.5L27.5 42h-2L15 20.5V46z" fill="#f4f0e8"/>
+        <path d="M52 46L63 14h3l11 32h-3.2l-2.8-8.5H58l-2.8 8.5H52zm7-11.5h9.8L64 22l-5 12.5z" fill="#f4f0e8"/>
+        <rect x="80" y="29" width="8" height="2" fill="#b8924a"/>
+        <path d="M96 14h18v2.8L98.5 43H114v3H96v-2.8L111.5 17H96z" fill="#f4f0e8"/>
+        <path d="M120 14h16v3h-13v10.5h11v3h-11V43h13v3h-16z" fill="#f4f0e8"/>
+        <path d="M143 14h3l15 26.5V14h3v32h-3L146 19.5V46h-3z" fill="#f4f0e8"/>
+        <path d="M168 46V38" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M171 46V34" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M174 46V38" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="lv-label">Dark · Primary</div>
+    </div>
+
+    <!-- Gold version -->
+    <div class="logo-variant cream">
+      <svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="MA-ZEN logo gold variant">
+        <path d="M14 46V14h2.5l11 22 11-22H41v32h-3V20.5L27.5 42h-2L15 20.5V46z" fill="#b8924a"/>
+        <path d="M52 46L63 14h3l11 32h-3.2l-2.8-8.5H58l-2.8 8.5H52zm7-11.5h9.8L64 22l-5 12.5z" fill="#b8924a"/>
+        <rect x="80" y="29" width="8" height="2" fill="#b8924a"/>
+        <path d="M96 14h18v2.8L98.5 43H114v3H96v-2.8L111.5 17H96z" fill="#b8924a"/>
+        <path d="M120 14h16v3h-13v10.5h11v3h-11V43h13v3h-16z" fill="#b8924a"/>
+        <path d="M143 14h3l15 26.5V14h3v32h-3L146 19.5V46h-3z" fill="#b8924a"/>
+        <path d="M168 46V38" stroke="#0b0a09" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M171 46V34" stroke="#0b0a09" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M174 46V38" stroke="#0b0a09" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <div class="lv-label">Gold · Premium</div>
+    </div>
+
+    <!-- Mark only (glyph) -->
+    <div class="logo-variant" style="background:#f9f6f0">
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="MA-ZEN mark — interval glyph">
+        <!-- Three vertical bars representing the Ma interval -->
+        <rect x="18" y="14" width="3" height="32" fill="#0b0a09"/>
+        <rect x="28.5" y="20" width="3" height="20" fill="#b8924a"/>
+        <rect x="39" y="14" width="3" height="32" fill="#0b0a09"/>
+        <!-- Silence gap indicators -->
+        <rect x="21" y="30" width="7.5" height="1" fill="rgba(11,10,9,.15)"/>
+        <rect x="31.5" y="30" width="7.5" height="1" fill="rgba(11,10,9,.15)"/>
+      </svg>
+      <div class="lv-label">Mark · Glyph only</div>
+    </div>
+
+    <!-- Wordmark with tagline -->
+    <div class="logo-variant" style="background:#f4f0e8;grid-column:span 2">
+      <svg width="320" height="72" viewBox="0 0 320 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="MA-ZEN full wordmark with tagline">
+        <!-- MA-ZEN wordmark -->
+        <path d="M14 52V20h2.5l11 22 11-22H41v32h-3V26.5L27.5 48h-2L15 26.5V52z" fill="#0b0a09"/>
+        <path d="M52 52L63 20h3l11 32h-3.2l-2.8-8.5H58l-2.8 8.5H52zm7-11.5h9.8L64 28l-5 12.5z" fill="#0b0a09"/>
+        <rect x="80" y="35" width="8" height="2" fill="#b8924a"/>
+        <path d="M96 20h18v2.8L98.5 49H114v3H96v-2.8L111.5 23H96z" fill="#0b0a09"/>
+        <path d="M120 20h16v3h-13v10.5h11v3h-11V49h13v3h-16z" fill="#0b0a09"/>
+        <path d="M143 20h3l15 26.5V20h3v32h-3L146 25.5V52h-3z" fill="#0b0a09"/>
+        <!-- Interval mark -->
+        <path d="M168 52V44" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M171 52V40" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M174 52V44" stroke="#b8924a" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Rule -->
+        <line x1="14" y1="62" x2="174" y2="62" stroke="#b8924a" stroke-width="0.6" opacity="0.4"/>
+        <!-- Tagline -->
+        <text x="14" y="70" font-family="monospace" font-size="6.5" fill="#9c9589" letter-spacing="2">THE SOUND OF WHAT YOU DON'T SAY</text>
+        <!-- Tagline separator -->
+        <line x1="182" y1="20" x2="182" y2="52" stroke="rgba(11,10,9,.12)" stroke-width="1"/>
+        <!-- Concept marks on right -->
+        <text x="192" y="33" font-family="monospace" font-size="6" fill="#9c9589" letter-spacing="1.5">MA · INTERVAL</text>
+        <text x="192" y="43" font-family="monospace" font-size="6" fill="#9c9589" letter-spacing="1.5">WU WEI · EASE</text>
+        <text x="192" y="53" font-family="monospace" font-size="6" fill="#9c9589" letter-spacing="1.5">SUNYATA · VOID</text>
+      </svg>
+      <div class="lv-label">Full Wordmark · With Tagline & Concept Marks</div>
+    </div>
+
+  </div><!-- /logo-grid -->
+
+  <div style="margin-top:24px;padding:20px;background:var(--cream);border:1px solid var(--border)">
+    <p style="font-family:'Syne Mono',monospace;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);line-height:2">
+      Usage: The gold dash (—) between MA and ZEN is the Ma interval mark — it is not decorative. The three vertical bars in the glyph represent silence ratio: outer bars are tone, center is the interval. Do not fill or remove the space between letterforms. Minimum reproduction: 80px width.
+    </p>
+  </div>
+</div>
 
 <!-- ── FOOTER ── -->
 <footer class="site-footer">
