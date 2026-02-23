@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ · MA-ZEN</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .faq-item {
+      border-top: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .faq-item:last-child { border-bottom: 1px solid var(--border); }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 2rem 0;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+    .faq-q-text {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+    .faq-icon {
+      font-family: var(--mono);
+      font-size: 1.2rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+    .faq-item.open .faq-a { max-height: 400px; padding-bottom: 2rem; }
+    .faq-a p { max-width: 680px; color: var(--ink-dim); }
+    .faq-a a { color: var(--accent); text-decoration: none; }
+    .faq-a a:hover { text-decoration: underline; }
+    .faq-category {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 3rem 0 1rem;
+    }
+    .faq-category:first-of-type { margin-top: 0; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">MA·ZEN</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="method.html">Method</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <div class="hero">
+    <div class="eyebrow fade-up"><span>FAQ</span> · Frequently Asked</div>
+    <h1 class="fade-up">Answers<br><em>without spin</em>.</h1>
+    <p class="hero-sub fade-up">Common questions, answered directly. If you don't find what you need here, contact us — one reply, no follow-up sequence.</p>
+  </div>
+
+  <section>
+
+    <div class="faq-category">General</div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Is this meditation?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>No. MA-ZEN does not use the word "meditation" and does not position its sessions as meditative practice. Sessions are structured silence environments — perceptual containers with defined phase sequences. What you do inside them is yours. We do not guide, narrate, or assess your experience.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Do you collect data from sessions?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>The session ledger logs session index, preset used, duration completed, and timestamp. This is stored locally in your browser. We do not track subjective outcomes, mood signals, completion rates for behavioral purposes, or any identifiable health data. The ledger is an archive — not a progress tracker. See our <a href="legal.html">Privacy Policy</a> for full detail.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What do you need to use it?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>A modern web browser and optionally headphones. Sessions are web-based — no download, no app install, no account required to begin. Some features (session ledger, preferences) store data locally in your browser.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Why do sessions sometimes end abruptly?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Abrupt edges are a design choice, not a bug. The "soft landing" — gentle audio fade, affirming message, completion chime — is a form of emotional management we deliberately exclude. The session ends when it ends. The boundary is the product. What you do next belongs to you.</p>
+      </div>
+    </div>
+
+    <div class="faq-category">Enterprise & B2B</div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What is a Silence Audit?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>A Silence Audit is a diagnostic of your current sonic presence — or its absence. We review your existing audio inventory, measure your silence ratio, analyze the competitive sonic landscape, and produce a preliminary Ma interval map. Delivered as a PDF in 48 hours. Free. Yours to keep regardless of whether you proceed further. No call required before the audit.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Why free? What's the catch?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>No catch. The Silence Audit is our proof of concept. We demonstrate value before requesting attention or engagement. If the audit is useful, you may want to work with us. If it isn't, you've lost nothing and gained a sonic diagnostic. This is our operating principle: value before engagement.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What industries do you work with?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Wellness, luxury, technology, SaaS, hospitality, finance, healthcare, and media/entertainment. MA-ZEN is most effective for brands where sonic identity has been either neglected or overdone — where the interval between sounds is unexamined. If you're unsure whether we're a fit, the Silence Audit will make it clear.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">How long does a full engagement take?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>The Foundation tier takes 3–4 weeks. Complete Identity runs 6–8 weeks. Retainer is ongoing with a 3-month minimum. All engagements begin with the Silence Audit (48h), which is always free and delivered before any commercial discussion begins.</p>
+      </div>
+    </div>
+
+    <div class="faq-category">Research & Claims</div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Does MA-ZEN make health or wellness claims?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>No. MA-ZEN makes no clinical claims. Sessions are not medical interventions. We do not assert neurological effects, stress reduction outcomes, or wellness metrics. We operate on signals — observed patterns that warrant further investigation — not verified claims. This distinction is labeled clearly across all public materials. See <a href="research.html">Research</a> for our full evidence stance.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What is the difference between a signal and a claim?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>A signal is an observed pattern that warrants further investigation. A claim is a verified, reproducible finding. MA-ZEN operates on signals until claims can be substantiated. We never promote signals as claims, and we never inflate hypothesis into certainty. This discipline applies to all client-facing materials.</p>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Can I contact you for research collaboration?</span>
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-a">
+        <p>Yes. Research collaboration inquiries can be directed to <a href="mailto:press@ma-zen.com">press@ma-zen.com</a>. We're open to structured research partnerships, particularly in the areas of sonic environment design, perceptual attention, and interval-based aesthetics.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- NOT FOUND -->
+  <section>
+    <div class="section-label">Still looking?</div>
+    <h2>We'll answer <em>directly</em>.</h2>
+    <p style="margin-bottom:2rem;">One question. One reply. No follow-up sequence.</p>
+    <a href="contact.html" class="btn">Ask a Question →</a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-brand">© MA-ZEN Studio · FAQ</div>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="legal.html">Legal</a></li>
+  </ul>
+</footer>
+
+<script>
+function toggle(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+
+</body>
+</html>
