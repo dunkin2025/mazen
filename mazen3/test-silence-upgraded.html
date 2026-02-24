@@ -1,0 +1,1177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MA‑ZEN // FIELD‑A · Boundary‑Calm (30:00)</title>
+  <meta name="description" content="FIELD‑A / Boundary‑Calm — a 30‑minute MAZEN protocol with ≤8% structural silence. Low‑entropy floor remains present except short intentional gaps." />
+  <meta name="color-scheme" content="dark" />
+  <style>
+    :root{
+      --bg:#05060a;
+      --panel:#0c0e14;
+      --panel2:#0a0c12;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.16);
+      --text:rgba(255,255,255,.88);
+      --muted:rgba(255,255,255,.62);
+      --faint:rgba(255,255,255,.40);
+      --accent:#a6fff0;
+      --accent2:#8fb6ff;
+      --warn:#ffd28f;
+      --ok:#a8ffb0;
+      --bad:#ff9aa8;
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --focus: 0 0 0 3px rgba(166,255,240,.18);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 30% -10%, rgba(166,255,240,.10), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, rgba(143,182,255,.09), transparent 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(255,210,143,.06), transparent 65%),
+        var(--bg);
+      letter-spacing:.2px;
+    }
+    a{color:inherit;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1180px;margin:0 auto;padding:22px 18px 80px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:10px 12px;border:1px solid var(--line);border-radius:999px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      position:sticky; top:12px; z-index:20;
+    }
+    .brand{display:flex;align-items:center;gap:10px;padding-left:6px;font-weight:700}
+    .dot{width:9px;height:9px;border-radius:999px;background:var(--accent);box-shadow:0 0 20px rgba(166,255,240,.55)}
+    .kicker{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+    .pill{
+      font-family:var(--mono);font-size:12px;padding:7px 10px;border:1px solid var(--line2);
+      border-radius:999px;color:var(--muted);background:rgba(255,255,255,.03);white-space:nowrap;
+    }
+
+    .hero{margin-top:16px}
+    .heroCard{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .heroInner{padding:18px 18px 16px;border-bottom:1px solid var(--line)}
+    h1{margin:6px 0 6px;font-size:22px;letter-spacing:.3px}
+    .sub{color:var(--muted);font-size:14px;line-height:1.55;max-width:78ch}
+
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}
+    @media (max-width: 960px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:16px 18px 12px;border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    }
+    .bd{padding:16px 18px 18px}
+
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+    button{
+      appearance:none;border:none;cursor:pointer;
+      padding:10px 12px;border-radius:12px;
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border:1px solid var(--line);
+      transition:transform .08s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+      font-weight:700;
+      line-height:1;
+    }
+    button:hover{background:rgba(255,255,255,.085);border-color:rgba(255,255,255,.18)}
+    button:active{transform:translateY(1px)}
+    button:focus-visible{outline:none;box-shadow:var(--focus)}
+    button.primary{
+      background:rgba(166,255,240,.12);
+      border-color:rgba(166,255,240,.25);
+      box-shadow:0 0 0 2px rgba(166,255,240,.06) inset;
+    }
+    button.danger{
+      background:rgba(255,154,168,.10);
+      border-color:rgba(255,154,168,.25);
+    }
+    button.ghost{
+      background:rgba(0,0,0,.12);
+    }
+    button[disabled]{opacity:.45;cursor:not-allowed}
+    input[type="range"]{accent-color:var(--accent)}
+
+    .badge{
+      font-family:var(--mono);
+      font-size:12px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .badge.ok{border-color:rgba(168,255,176,.30);background:rgba(168,255,176,.10);color:rgba(232,255,236,.92)}
+    .badge.warn{border-color:rgba(255,210,143,.28);background:rgba(255,210,143,.10);color:rgba(255,246,232,.90)}
+    .badge.bad{border-color:rgba(255,154,168,.28);background:rgba(255,154,168,.10);color:rgba(255,230,236,.92)}
+
+    .meter{
+      width:100%;height:12px;border-radius:999px;background:rgba(255,255,255,.06);
+      border:1px solid var(--line);overflow:hidden;position:relative;
+    }
+    .meter > span{
+      display:block;height:100%;width:0%;
+      background:linear-gradient(90deg, rgba(166,255,240,.92), rgba(143,182,255,.92));
+      box-shadow:0 0 22px rgba(166,255,240,.25);
+      transition:width .18s linear;
+    }
+    .meter .tick{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.10)}
+
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+    @media (max-width: 720px){.stats{grid-template-columns:repeat(2,1fr)}}
+    .stat{
+      padding:12px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(0,0,0,.12);
+      min-height:84px;
+    }
+    .stat .t{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+    .stat .v{margin-top:6px;font-size:16px;font-weight:800}
+    .stat .s{margin-top:4px;color:var(--muted);font-size:12px;line-height:1.35}
+
+    .mini{font-family:var(--mono);font-size:12px;color:var(--muted)}
+    .hint{color:var(--muted);font-size:13px;line-height:1.55;margin-top:10px}
+    .divider{height:1px;background:var(--line);margin:14px 0}
+
+    .tableWrap{margin-top:10px;overflow:auto;border-radius:var(--radius2)}
+    table.table{
+      width:100%;border-collapse:separate;border-spacing:0;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+      border-radius:var(--radius2);
+      overflow:hidden;
+      min-width:760px;
+    }
+    .table th,.table td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+    .table th{
+      font-family:var(--mono);font-size:11px;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.6px;background:rgba(255,255,255,.04);
+      position:sticky;top:0;
+    }
+    .table tr:last-child td{border-bottom:none}
+    .table tr{transition:background .12s ease}
+    .table tr.isActive{background:rgba(166,255,240,.06)}
+    .table tr:hover{background:rgba(255,255,255,.04)}
+    .table td:last-child{white-space:nowrap}
+
+    .toggle{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    label.switch{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
+      cursor:pointer; user-select:none;color:var(--muted); font-weight:700;
+    }
+    label.switch input{accent-color:var(--accent)}
+    .labelsOff .table .colHide{display:none}
+
+    .canvasBox{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.12);
+      margin-top:12px;
+    }
+    canvas{width:180px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03)}
+
+    details{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+      border-radius:14px;
+      padding:10px 12px;
+    }
+    details summary{cursor:pointer;font-weight:800;color:rgba(255,255,255,.84)}
+    details summary:focus-visible{outline:none;box-shadow:var(--focus);border-radius:12px}
+    details .hint{margin-top:10px}
+
+    /* Ritual mode overlay */
+    .ritualOverlay{
+      position:fixed;inset:0;background:rgba(5,6,10,.92);
+      display:none;align-items:center;justify-content:center;
+      z-index:999;
+    }
+    .ritualOverlay.on{display:flex}
+    .ritualPanel{
+      width:min(860px, 92vw);
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow:0 28px 90px rgba(0,0,0,.70);
+      overflow:hidden;
+    }
+    .ritualPanel .hd{padding:22px 22px 14px;border-bottom:1px solid var(--line)}
+    .ritualPanel .bd{padding:18px 22px 22px}
+    .ritualBig{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .ritualTime{font-family:var(--mono);font-size:44px;letter-spacing:1px}
+    .ritualState{font-family:var(--mono);color:var(--muted)}
+    .srOnly{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand" aria-label="MA-ZEN">
+        <span class="dot" aria-hidden="true"></span>
+        <div>
+          <div class="kicker">MA‑ZEN</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">Finite Silence Architecture · boundary-as-product</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <span class="pill">Protocol: <b>FIELD‑A / Boundary‑Calm</b></span>
+        <span class="pill">Duration: <b>30:00</b></span>
+        <span class="pill">Silence budget: <b>≤ 8%</b> (≤ 2:24)</span>
+      </div>
+    </div>
+
+    <section class="hero" aria-label="Protocol overview">
+      <div class="heroCard">
+        <div class="heroInner">
+          <div class="kicker">Core structure</div>
+          <h1>Low‑entropy floor stays present — gaps are rare, explicit boundary resets</h1>
+          <div class="sub">
+            This is a demonstration protocol runner built in-browser (no audio files). It encodes MA‑ZEN principles:
+            interval as substance (Ma), no clinging (Sunyata), and non‑forcing (Wu Wei).
+            The session is valid even if nothing “happens”.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card" aria-label="Player">
+        <div class="hd">
+          <div class="kicker">Session controls</div>
+          <div class="sub">Enable audio once, then run the boundary. Structural gaps are hard mutes with click-safe fades.</div>
+        </div>
+        <div class="bd" id="appRoot">
+          <div class="row" style="margin-bottom:10px">
+            <div class="controls" role="group" aria-label="Playback controls">
+              <button id="btnInit" class="primary">Enable Audio</button>
+              <button id="btnPlay" class="primary" disabled>Play</button>
+              <button id="btnPause" disabled>Pause</button>
+              <button id="btnStop" class="danger" disabled>Stop</button>
+              <span class="badge" id="statusBadge" aria-live="polite">Stopped · No boundary active</span>
+            </div>
+            <div class="controls" role="group" aria-label="Volume and time">
+              <span class="mini">VOL</span>
+              <input id="vol" type="range" min="0" max="1" step="0.01" value="0.45" aria-label="Volume" />
+              <span class="mini" id="clock" aria-label="Elapsed time">00:00</span>
+            </div>
+          </div>
+
+          <div class="meter" aria-label="Session progress">
+            <span id="prog"></span>
+            <span class="tick" style="left:25%" aria-hidden="true"></span>
+            <span class="tick" style="left:50%" aria-hidden="true"></span>
+            <span class="tick" style="left:75%" aria-hidden="true"></span>
+          </div>
+
+          <div class="stats" aria-label="Session status">
+            <div class="stat">
+              <div class="t">Current layer</div>
+              <div class="v" id="layerNow">—</div>
+              <div class="s" id="whatNow">Select “Enable Audio”, then Play.</div>
+            </div>
+            <div class="stat">
+              <div class="t">Segment</div>
+              <div class="v"><span id="segNow">—</span></div>
+              <div class="s"><span class="muted" id="segRange">—</span></div>
+            </div>
+            <div class="stat">
+              <div class="t">Structural silence used</div>
+              <div class="v"><span id="silUsed">0:00</span></div>
+              <div class="s"><span class="muted">Budget ≤ 2:24</span></div>
+            </div>
+            <div class="stat">
+              <div class="t">Budget status</div>
+              <div class="v"><span id="budgetPct">0.0%</span></div>
+              <div class="s" id="budgetBadgeRow"></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row" style="align-items:flex-start">
+            <div>
+              <div class="kicker">Timeline (exact)</div>
+              <div class="hint">
+                Click a row to jump (testing). Micro‑events are neutral (non‑musical). Gaps are structural resets.
+              </div>
+            </div>
+            <div class="toggle" aria-label="Display toggles">
+              <label class="switch"><input id="labelsToggle" type="checkbox" checked /> Labels</label>
+              <label class="switch"><input id="ritualToggle" type="checkbox" /> Ritual mode</label>
+              <label class="switch"><input id="safeToggle" type="checkbox" checked /> Safe loudness</label>
+            </div>
+          </div>
+
+          <div class="tableWrap">
+            <table class="table" id="timelineTable" aria-label="Timeline table">
+              <thead>
+                <tr>
+                  <th class="colHide" style="width:140px">Time</th>
+                  <th class="colHide" style="width:190px">Layer state</th>
+                  <th class="colHide">What happens (simple)</th>
+                  <th class="colHide" style="width:140px">Silence used?</th>
+                </tr>
+              </thead>
+              <tbody><!-- injected --></tbody>
+            </table>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <details style="flex:1">
+              <summary>Why this is not “silent service”</summary>
+              <div class="hint">
+                The product is the boundary: a stable, low‑entropy field that prevents the “dead air” problem in B2B contexts.
+                Silence here is <b>architectural</b> (explicit intervals), not “nothing playing”.
+              </div>
+            </details>
+
+            <button id="btnExport" class="ghost" disabled title="Export a small session report JSON (local)">
+              Export Report
+            </button>
+          </div>
+
+          <div class="hint" style="margin-top:12px">
+            Validity principle: this runner produces no achievement metrics. Zero markers is still a complete session.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="card" aria-label="Engine">
+        <div class="hd">
+          <div class="kicker">Engine</div>
+          <h1 style="margin:6px 0 4px;font-size:20px">FIELD engine (floor + markers + structural gaps)</h1>
+          <div class="sub">
+            Web Audio API generator — no files. Floor = filtered noise bed. Markers = tiny neutral micro‑bursts. Gaps = explicit gain mutes.
+          </div>
+        </div>
+        <div class="bd">
+          <div class="kicker">Visualizer</div>
+          <div class="canvasBox">
+            <div>
+              <div class="hint" style="margin-top:6px">
+                Driven by audio state. Shows floor energy + recent marker hits. Not decorative.
+              </div>
+            </div>
+            <canvas id="viz" width="360" height="76"></canvas>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="kicker">Method (modular breakdown)</div>
+          <div class="hint" style="margin-top:8px">
+            This page’s “Method” is engineered as small modules (clear boundaries, minimal coupling).
+          </div>
+          <div class="tableWrap" style="margin-top:10px">
+            <table class="table" aria-label="Method modules">
+              <thead>
+                <tr>
+                  <th style="width:220px">Module</th>
+                  <th>What it does (concise)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><b>01 · Consent & Init</b></td><td>Creates AudioContext only after a user gesture; avoids autoplay failures and makes state visible.</td></tr>
+                <tr><td><b>02 · Floor Synth</b></td><td>Generates a looping noise bed and filters it into a neutral “room tone” field (low‑entropy baseline).</td></tr>
+                <tr><td><b>03 · Gap Gate</b></td><td>Mutes the floor during structural gaps with short anti‑click fades; makes resets explicit.</td></tr>
+                <tr><td><b>04 · Marker Synth</b></td><td>Produces non‑musical micro‑events (filtered noise + ultra‑soft edge) for orientation without melody.</td></tr>
+                <tr><td><b>05 · Timeline Scheduler</b></td><td>Schedules marker timeouts against the protocol clock; cancels reliably on pause/stop/jump.</td></tr>
+                <tr><td><b>06 · State Machine</b></td><td>Play/Pause/Stop/Jump logic maintains time mapping + updates UI consistently (visibility of system status).</td></tr>
+                <tr><td><b>07 · Safety Layer</b></td><td>Soft limiter + optional loudness clamp (“safe loudness”) to prevent spikes and support groggy use.</td></tr>
+                <tr><td><b>08 · Visualization</b></td><td>Draws energy bar + marker hits from analyser/time data; supports recognition rather than recall.</td></tr>
+                <tr><td><b>09 · Ritual Mode</b></td><td>Fullscreen overlay with minimal UI and a clear exit; reduces stimulation while keeping control.</td></tr>
+                <tr><td><b>10 · Reporting</b></td><td>Exports a minimal local JSON report (no tracking). Useful for debugging and iteration.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="divider"></div>
+
+          <details>
+            <summary>Upgrade ideas (next functions)</summary>
+            <div class="hint">
+              <ul style="margin:10px 0 0;padding-left:18px">
+                <li><b>Preset schema loader:</b> load FIELD‑A configs from JSON and share deep links.</li>
+                <li><b>Entropy dial:</b> “marker density” knob (bounded) mapped to Hick’s Law (few choices).</li>
+                <li><b>Environment profiles:</b> Lobby / Work / Ritual calibration with safe defaults.</li>
+                <li><b>Silence budget validator:</b> enforce max gap time at compile-time (config lint).</li>
+                <li><b>Pro gating placeholder:</b> demo-only gate like THE FLOOR (server token in prod).</li>
+              </ul>
+            </div>
+          </details>
+
+          <div class="divider"></div>
+
+          <div class="kicker">Debug</div>
+          <div class="hint">If you hear nothing: click <b>Enable Audio</b>, then <b>Play</b>. Some browsers require a user gesture.</div>
+          <pre id="log" style="margin-top:10px;white-space:pre-wrap;background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:14px;padding:10px;color:rgba(255,255,255,.72);font-family:var(--mono);font-size:12px;max-height:260px;overflow:auto">Log ready.</pre>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Ritual overlay -->
+  <div class="ritualOverlay" id="ritualOverlay" aria-hidden="true">
+    <div class="ritualPanel" role="dialog" aria-modal="true" aria-label="Ritual mode">
+      <div class="hd">
+        <div class="kicker">Ritual</div>
+        <div class="sub">Fullscreen boundary · minimal UI · time only</div>
+      </div>
+      <div class="bd">
+        <div class="ritualBig">
+          <div>
+            <div class="ritualTime" id="ritualTime">00:00</div>
+            <div class="ritualState" id="ritualState">Stopped · No boundary active</div>
+          </div>
+          <div class="controls">
+            <button id="ritualPlay" class="primary">Play</button>
+            <button id="ritualPause">Pause</button>
+            <button id="ritualStop" class="danger">Stop</button>
+            <button id="ritualExit">Exit</button>
+          </div>
+        </div>
+        <div style="margin-top:14px" class="meter"><span id="ritualProg"></span></div>
+        <div class="hint" style="margin-top:12px">
+          Boundary gaps are intentional resets. The field remains valid even if nothing “happens”.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   MA‑ZEN · FIELD‑A / Boundary‑Calm (30:00)
+   Upgraded prototype:
+   - Fix: marker scheduling cancels reliably on pause/stop/jump
+   - Fix: labels toggle uses CSS class (no “opacity 0” trap)
+   - Fix: segment transition applies gain correctly after jump/play
+   - Add: method modular breakdown + export report
+   ============================================================ */
+
+const PROTOCOL = {
+  name: "FIELD‑A / Boundary‑Calm",
+  durationSec: 30 * 60,
+  silenceBudgetSec: 2*60 + 24, // 2:24
+  structuralSilenceSec: 70,    // 1:10 (15+15+20+20)
+  floor: {
+    type: "neutralNoise",
+    filterType: "lowpass",
+    filterHz: 1800,
+    q: 0.55,
+    baseGain: 0.045
+  },
+  marker: {
+    gain: 0.12,
+    durMs: 320,
+    hpHz: 900,
+    lpHz: 5200
+  },
+  gap: { fadeMs: 18 },
+  segments: [
+    { t0:"00:00", t1:"02:30", layer:"Floor only",           what:"“Acoustic floor” stabilizes (room tone / neutral field)", silence:false, markers:0 },
+    { t0:"02:30", t1:"03:10", layer:"Floor + micro-event",  what:"1 gentle neutral marker (non-musical)",                    silence:false, markers:1 },
+    { t0:"03:10", t1:"05:40", layer:"Floor only",           what:"Long settle period",                                       silence:false, markers:0 },
+    { t0:"05:40", t1:"05:55", layer:"Structural gap",       what:"Boundary gap (clear “reset”)",                             silence:true,  markers:0 },
+    { t0:"05:55", t1:"07:20", layer:"Floor + micro-events", what:"2 sparse markers (soft)",                                  silence:false, markers:2 },
+    { t0:"07:20", t1:"10:10", layer:"Floor only",           what:"Quiet continuity",                                         silence:false, markers:0 },
+    { t0:"10:10", t1:"10:25", layer:"Structural gap",       what:"Gap used as “breath”",                                    silence:true,  markers:0 },
+    { t0:"10:25", t1:"13:00", layer:"Floor + micro-event",  what:"1 marker, then return",                                   silence:false, markers:1 },
+    { t0:"13:00", t1:"15:45", layer:"Floor only",           what:"Deep continuity",                                         silence:false, markers:0 },
+    { t0:"15:45", t1:"16:10", layer:"Floor + micro-events", what:"Short cluster (3 tiny cues over 25s)",                    silence:false, markers:3 },
+    { t0:"16:10", t1:"18:30", layer:"Floor only",           what:"Quiet line",                                               silence:false, markers:0 },
+    { t0:"18:30", t1:"18:50", layer:"Structural gap",       what:"Boundary gap",                                             silence:true,  markers:0 },
+    { t0:"18:50", t1:"21:40", layer:"Floor only",           what:"Long settle",                                              silence:false, markers:0 },
+    { t0:"21:40", t1:"22:20", layer:"Floor + micro-event",  what:"1 marker + fade back",                                    silence:false, markers:1 },
+    { t0:"22:20", t1:"24:55", layer:"Floor only",           what:"Quiet line",                                               silence:false, markers:0 },
+    { t0:"24:55", t1:"25:15", layer:"Structural gap",       what:"Final reset gap",                                          silence:true,  markers:0 },
+    { t0:"25:15", t1:"27:40", layer:"Floor + micro-events", what:"2 markers (end-phase orientation)",                        silence:false, markers:2 },
+    { t0:"27:40", t1:"30:00", layer:"Floor only",           what:"Exit without trace",                                       silence:false, markers:0 }
+  ]
+};
+
+function mmssToSec(s){ const [m,ss]=s.split(":").map(Number); return m*60+ss; }
+function secToMMSS(sec){
+  sec=Math.max(0, Math.floor(sec));
+  const m=Math.floor(sec/60), s=sec%60;
+  return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+}
+function clamp(x,a,b){ return Math.min(b,Math.max(a,x)); }
+
+PROTOCOL.segments = PROTOCOL.segments.map((seg,i)=>({
+  ...seg, i,
+  start: mmssToSec(seg.t0),
+  end: mmssToSec(seg.t1),
+  dur: mmssToSec(seg.t1)-mmssToSec(seg.t0)
+}));
+
+/* =========================
+   UI build
+   ========================= */
+const appRoot = document.getElementById("appRoot");
+const tbody = document.querySelector("#timelineTable tbody");
+const labelsToggle = document.getElementById("labelsToggle");
+const ritualToggle = document.getElementById("ritualToggle");
+const safeToggle   = document.getElementById("safeToggle");
+
+function buildTimeline(){
+  tbody.innerHTML = "";
+  for(const seg of PROTOCOL.segments){
+    const tr=document.createElement("tr");
+    tr.dataset.segIndex = String(seg.i);
+
+    const td0=document.createElement("td"); td0.className="colHide"; td0.textContent = `${seg.t0}–${seg.t1}`;
+    const td1=document.createElement("td"); td1.className="colHide"; td1.textContent = seg.layer;
+    const td2=document.createElement("td"); td2.className="colHide"; td2.textContent = seg.what;
+    const td3=document.createElement("td"); td3.className="colHide";
+    td3.innerHTML = seg.silence
+      ? `<span class="badge warn">Yes (${secToMMSS(seg.dur)})</span>`
+      : `<span class="badge ok">No</span>`;
+
+    tr.append(td0,td1,td2,td3);
+    tr.addEventListener("click", ()=> jumpTo(seg.start));
+    tbody.appendChild(tr);
+  }
+}
+buildTimeline();
+
+labelsToggle.addEventListener("change", ()=>{
+  appRoot.classList.toggle("labelsOff", !labelsToggle.checked);
+});
+
+/* =========================
+   Audio Engine
+   ========================= */
+let audio = {
+  ctx:null,
+  master:null,
+  limiter:null,
+  analyser:null,
+  floorNoise:null,
+  floorFilter:null,
+  floorGain:null,
+
+  running:false,
+  startedAt:0,     // ctx time when play began
+  offsetSec:0,     // position for pause/resume
+  tickTimer:null,
+
+  markerTimers:[], // NEW: cancelable timers
+  markerHits:[],
+  lastSegIndex:-1
+};
+
+const btnInit  = document.getElementById("btnInit");
+const btnPlay  = document.getElementById("btnPlay");
+const btnPause = document.getElementById("btnPause");
+const btnStop  = document.getElementById("btnStop");
+const btnExport= document.getElementById("btnExport");
+
+const vol      = document.getElementById("vol");
+const prog     = document.getElementById("prog");
+const clock    = document.getElementById("clock");
+const statusBadge = document.getElementById("statusBadge");
+const layerNow = document.getElementById("layerNow");
+const whatNow  = document.getElementById("whatNow");
+const segNow   = document.getElementById("segNow");
+const segRange = document.getElementById("segRange");
+const silUsed  = document.getElementById("silUsed");
+const budgetPct = document.getElementById("budgetPct");
+const budgetBadgeRow = document.getElementById("budgetBadgeRow");
+const logEl = document.getElementById("log");
+
+const ritualOverlay = document.getElementById("ritualOverlay");
+const ritualTime = document.getElementById("ritualTime");
+const ritualState = document.getElementById("ritualState");
+const ritualProg = document.getElementById("ritualProg");
+const ritualPlay = document.getElementById("ritualPlay");
+const ritualPause = document.getElementById("ritualPause");
+const ritualStop = document.getElementById("ritualStop");
+const ritualExit = document.getElementById("ritualExit");
+
+function log(msg){
+  const t = new Date().toLocaleTimeString();
+  logEl.textContent = `[${t}] ${msg}\n` + logEl.textContent;
+}
+
+function ensureAudio(){
+  if(audio.ctx) return true;
+
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC){ alert("Web Audio API not supported in this browser."); return false; }
+
+  const ctx = new AC();
+
+  const master = ctx.createGain();
+  master.gain.value = parseFloat(vol.value);
+
+  const limiter = ctx.createDynamicsCompressor();
+  limiter.threshold.value = -14;
+  limiter.knee.value = 18;
+  limiter.ratio.value = 8;
+  limiter.attack.value = 0.003;
+  limiter.release.value = 0.12;
+
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize = 1024;
+
+  master.connect(limiter);
+  limiter.connect(analyser);
+  analyser.connect(ctx.destination);
+
+  // Floor: looping noise buffer -> filter -> gain -> master
+  const noise = ctx.createBufferSource();
+  noise.buffer = makeNoiseBuffer(ctx, 2.0);
+  noise.loop = true;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = PROTOCOL.floor.filterType;
+  filter.frequency.value = PROTOCOL.floor.filterHz;
+  filter.Q.value = PROTOCOL.floor.q;
+
+  const floorGain = ctx.createGain();
+  floorGain.gain.value = 0; // unmuted on play
+
+  noise.connect(filter);
+  filter.connect(floorGain);
+  floorGain.connect(master);
+
+  noise.start();
+
+  audio.ctx = ctx;
+  audio.master = master;
+  audio.limiter = limiter;
+  audio.analyser = analyser;
+  audio.floorNoise = noise;
+  audio.floorFilter = filter;
+  audio.floorGain = floorGain;
+
+  log("Audio initialized. Floor source started (muted until Play).");
+  return true;
+}
+
+function makeNoiseBuffer(ctx, seconds){
+  const sr = ctx.sampleRate;
+  const len = Math.floor(sr * seconds);
+  const buf = ctx.createBuffer(1, len, sr);
+  const data = buf.getChannelData(0);
+  let last = 0;
+  for(let i=0;i<len;i++){
+    const w = (Math.random()*2 - 1);
+    last = last*0.985 + w*0.015;
+    data[i] = last;
+  }
+  return buf;
+}
+
+function setMasterGain(v){
+  if(!audio.master) return;
+  audio.master.gain.setTargetAtTime(v, audio.ctx.currentTime, 0.015);
+}
+function setFloorGain(v){
+  if(!audio.floorGain) return;
+  audio.floorGain.gain.setTargetAtTime(v, audio.ctx.currentTime, 0.02);
+}
+function muteFloorForGap(isGap){
+  const fade = PROTOCOL.gap.fadeMs/1000;
+  const g = audio.floorGain.gain;
+  const now = audio.ctx.currentTime;
+  g.cancelScheduledValues(now);
+  g.setValueAtTime(g.value, now);
+  g.linearRampToValueAtTime(isGap ? 0 : PROTOCOL.floor.baseGain, now + fade);
+}
+
+/* ===== Marker scheduling (FIXED) =====
+   Old issue: markers were audio-scheduled and could not be canceled on pause/stop.
+   New: schedule timeouts; on fire, create marker now. Cancelable always. */
+function clearMarkerTimers(){
+  for(const id of audio.markerTimers) clearTimeout(id);
+  audio.markerTimers = [];
+}
+function scheduleMarkers(fromOffsetSec=0){
+  clearMarkerTimers();
+
+  const nowElapsed = fromOffsetSec;
+  for(const seg of PROTOCOL.segments){
+    if(seg.markers<=0) continue;
+    if(seg.end <= nowElapsed) continue;
+
+    const segStart = Math.max(seg.start, nowElapsed);
+    const segEnd = seg.end;
+
+    const usable = Math.max(0.6, (segEnd - segStart) - 0.4);
+    const step = usable / (seg.markers + 1);
+
+    for(let k=1;k<=seg.markers;k++){
+      let t = segStart + k*step;
+      const jitter = (Math.random()*0.30 - 0.15) * step;
+      t = clamp(t + jitter, segStart + 0.15, segEnd - 0.15);
+
+      const delayMs = (t - nowElapsed) * 1000;
+      if(delayMs <= 0) continue;
+
+      const id = setTimeout(()=>{
+        if(!audio.running || !audio.ctx) return;
+        // safety: if we somehow land inside a gap, skip marker
+        const s = segmentAt(getElapsed());
+        if(s && s.silence) return;
+        fireMarker(audio.ctx.currentTime);
+      }, delayMs);
+
+      audio.markerTimers.push(id);
+    }
+  }
+  log(`Markers scheduled from offset ${secToMMSS(fromOffsetSec)} (cancelable).`);
+}
+
+function fireMarker(when){
+  const ctx = audio.ctx;
+
+  const src = ctx.createBufferSource();
+  src.buffer = makeNoiseBuffer(ctx, 0.25);
+  src.loop = false;
+
+  const hp = ctx.createBiquadFilter();
+  hp.type = "highpass";
+  hp.frequency.value = PROTOCOL.marker.hpHz;
+
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = PROTOCOL.marker.lpHz;
+
+  const g = ctx.createGain();
+  g.gain.value = 0;
+
+  const osc = ctx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.value = 210 + Math.random()*70;
+
+  const og = ctx.createGain();
+  og.gain.value = 0;
+
+  src.connect(hp); hp.connect(lp); lp.connect(g);
+  osc.connect(og);
+  g.connect(audio.master);
+  og.connect(audio.master);
+
+  const dur = PROTOCOL.marker.durMs/1000;
+  const a = 0.010, r = Math.max(0.06, dur - 0.02);
+  const peak = PROTOCOL.marker.gain;
+
+  g.gain.setValueAtTime(0, when);
+  g.gain.linearRampToValueAtTime(peak, when + a);
+  g.gain.exponentialRampToValueAtTime(0.0008, when + a + r);
+
+  og.gain.setValueAtTime(0, when);
+  og.gain.linearRampToValueAtTime(peak*0.10, when + a);
+  og.gain.exponentialRampToValueAtTime(0.0006, when + a + r);
+
+  src.start(when);
+  src.stop(when + dur + 0.12);
+  osc.start(when);
+  osc.stop(when + dur + 0.10);
+
+  audio.markerHits.push(when);
+}
+
+/* =========================
+   Playback logic
+   ========================= */
+function play(){
+  if(!audio.ctx) return;
+  audio.ctx.resume();
+
+  audio.running = true;
+  audio.startedAt = audio.ctx.currentTime - audio.offsetSec;
+
+  audio.lastSegIndex = -1; // FIX: force re-apply current segment rules
+  scheduleMarkers(audio.offsetSec);
+
+  startTick();
+
+  btnPlay.disabled = true;
+  btnPause.disabled = false;
+  btnStop.disabled = false;
+  btnExport.disabled = true;
+
+  setStatus("Playing · Boundary active", "ok");
+  log("Play.");
+}
+
+function pause(){
+  if(!audio.running) return;
+  audio.running = false;
+
+  audio.offsetSec = getElapsed();
+
+  clearMarkerTimers();
+  setFloorGain(0);
+
+  stopTick();
+
+  btnPlay.disabled = false;
+  btnPause.disabled = true;
+  btnStop.disabled = false;
+  btnExport.disabled = false;
+
+  setStatus("Paused · Boundary held", "warn");
+  log(`Pause at ${secToMMSS(audio.offsetSec)}.`);
+}
+
+function stop(){
+  audio.running = false;
+  audio.offsetSec = 0;
+
+  clearMarkerTimers();
+  setFloorGain(0);
+
+  stopTick();
+  updateUI(0);
+
+  btnPlay.disabled = false;
+  btnPause.disabled = true;
+  btnStop.disabled = true;
+  btnExport.disabled = true;
+
+  setStatus("Stopped · No boundary active", null);
+  log("Stop.");
+}
+
+function jumpTo(sec){
+  sec = clamp(sec, 0, PROTOCOL.durationSec);
+  audio.offsetSec = sec;
+  audio.lastSegIndex = -1; // FIX: apply correct gain immediately
+  clearMarkerTimers();
+
+  if(audio.running){
+    audio.startedAt = audio.ctx.currentTime - audio.offsetSec;
+    scheduleMarkers(audio.offsetSec);
+  }
+
+  updateUI(sec);
+  log(`Jump to ${secToMMSS(sec)}.`);
+}
+
+function getElapsed(){
+  if(!audio.ctx) return 0;
+  if(!audio.running) return audio.offsetSec || 0;
+  return clamp(audio.ctx.currentTime - audio.startedAt, 0, PROTOCOL.durationSec);
+}
+
+function startTick(){
+  stopTick();
+  audio.tickTimer = setInterval(()=>{
+    const t = getElapsed();
+    updateUI(t);
+    if(t >= PROTOCOL.durationSec - 0.02){
+      stop();
+    }
+  }, 120);
+}
+function stopTick(){
+  if(audio.tickTimer){ clearInterval(audio.tickTimer); audio.tickTimer = null; }
+}
+
+function setStatus(text, kind){
+  statusBadge.textContent = text;
+  statusBadge.className = "badge";
+  if(kind==="ok") statusBadge.classList.add("ok");
+  if(kind==="warn") statusBadge.classList.add("warn");
+  if(kind==="bad") statusBadge.classList.add("bad");
+  ritualState.textContent = text;
+}
+
+function segmentAt(t){
+  for(const seg of PROTOCOL.segments){
+    if(t >= seg.start && t < seg.end) return seg;
+  }
+  return PROTOCOL.segments[PROTOCOL.segments.length-1];
+}
+
+function computeStructuralSilenceUsed(t){
+  let used = 0;
+  for(const seg of PROTOCOL.segments){
+    if(!seg.silence) continue;
+    if(t <= seg.start) continue;
+    used += clamp(Math.min(seg.end, t) - seg.start, 0, seg.dur);
+  }
+  return used;
+}
+
+function highlightActiveRow(segIndex){
+  const rows = tbody.querySelectorAll("tr");
+  rows.forEach(r => r.classList.toggle("isActive", r.dataset.segIndex === String(segIndex)));
+}
+
+/* =========================
+   UI update + gap gating
+   ========================= */
+function updateUI(t){
+  clock.textContent = secToMMSS(t);
+  ritualTime.textContent = secToMMSS(t);
+
+  const pct = (t / PROTOCOL.durationSec) * 100;
+  prog.style.width = `${pct}%`;
+  ritualProg.style.width = `${pct}%`;
+
+  const seg = segmentAt(t);
+  segNow.textContent = `#${String(seg.i+1).padStart(2,"0")}`;
+  segRange.textContent = `${seg.t0}–${seg.t1}`;
+  layerNow.textContent = seg.layer;
+  whatNow.textContent = seg.what;
+
+  highlightActiveRow(seg.i);
+
+  if(audio.running){
+    if(seg.i !== audio.lastSegIndex){
+      audio.lastSegIndex = seg.i;
+      if(seg.silence){
+        setStatus("Playing · Structural gap (boundary reset)", "warn");
+        muteFloorForGap(true);
+      }else{
+        setStatus("Playing · Boundary active", "ok");
+        muteFloorForGap(false);
+      }
+    }
+  }
+
+  const used = computeStructuralSilenceUsed(t);
+  silUsed.textContent = secToMMSS(used);
+
+  const usedPct = (used / PROTOCOL.durationSec) * 100;
+  budgetPct.textContent = `${usedPct.toFixed(1)}%`;
+
+  const budgetOk = used <= PROTOCOL.silenceBudgetSec + 0.001;
+  budgetBadgeRow.innerHTML = `<span class="badge ${budgetOk ? "ok":"bad"}">${budgetOk ? "Within budget":"Over budget"}</span>`;
+
+  if(audio.master){
+    const v = parseFloat(vol.value);
+    const safe = safeToggle.checked ? Math.min(v, 0.70) : v;
+    setMasterGain(safe);
+  }
+}
+
+/* =========================
+   Visualizer
+   ========================= */
+const canvas = document.getElementById("viz");
+const g2 = canvas.getContext("2d");
+let vizTimer = null;
+
+function startViz(){
+  if(vizTimer) return;
+  vizTimer = setInterval(drawViz, 60);
+}
+function stopViz(){
+  if(vizTimer){ clearInterval(vizTimer); vizTimer=null; }
+  drawViz(true);
+}
+function drawViz(forceClear=false){
+  const w = canvas.width, h = canvas.height;
+  g2.clearRect(0,0,w,h);
+  g2.fillStyle = "rgba(255,255,255,0.03)";
+  g2.fillRect(0,0,w,h);
+
+  let rms = 0;
+  if(audio.analyser && audio.running && !forceClear){
+    const arr = new Uint8Array(audio.analyser.frequencyBinCount);
+    audio.analyser.getByteTimeDomainData(arr);
+    let sum = 0;
+    for(let i=0;i<arr.length;i++){
+      const v = (arr[i]-128)/128;
+      sum += v*v;
+    }
+    rms = Math.sqrt(sum/arr.length);
+  }
+
+  const barW = Math.floor((w-20) * clamp(rms*3.2, 0, 1));
+  g2.fillStyle = "rgba(166,255,240,0.75)";
+  g2.fillRect(10, Math.floor(h*0.58), barW, 10);
+
+  const now = audio.ctx ? audio.ctx.currentTime : 0;
+  const windowSec = 8;
+  if(audio.ctx && !forceClear){
+    audio.markerHits = audio.markerHits.filter(t=> (now - t) < 12);
+    for(const hit of audio.markerHits){
+      const age = now - hit;
+      if(age<0 || age>windowSec) continue;
+      const x = w - 10 - (age/windowSec) * (w-20);
+      g2.fillStyle = "rgba(143,182,255,0.85)";
+      g2.fillRect(x, Math.floor(h*0.20), 2, Math.floor(h*0.35));
+    }
+  }
+
+  g2.strokeStyle = "rgba(255,255,255,0.10)";
+  g2.strokeRect(0.5,0.5,w-1,h-1);
+}
+
+/* =========================
+   Export report
+   ========================= */
+function exportReport(){
+  const t = getElapsed();
+  const used = computeStructuralSilenceUsed(t);
+  const seg = segmentAt(t);
+
+  const report = {
+    product: "MA‑ZEN",
+    protocol: PROTOCOL.name,
+    durationSec: PROTOCOL.durationSec,
+    elapsedSec: Math.round(t),
+    structuralSilenceUsedSec: Math.round(used),
+    silenceBudgetSec: PROTOCOL.silenceBudgetSec,
+    currentSegment: {
+      index: seg.i+1,
+      time: `${seg.t0}–${seg.t1}`,
+      layer: seg.layer,
+      silence: seg.silence
+    },
+    notes: "No tracking. Local export only. Zero events is valid."
+  };
+
+  const blob = new Blob([JSON.stringify(report, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `mazen-${PROTOCOL.name.replace(/[^\w\-]+/g,"_").toLowerCase()}-report.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+  log("Exported session report JSON.");
+}
+
+/* =========================
+   Events
+   ========================= */
+btnInit.addEventListener("click", async ()=>{
+  if(!ensureAudio()) return;
+  await audio.ctx.resume();
+  btnPlay.disabled = false;
+  btnInit.disabled = true;
+  setStatus("Ready · Press Play", "ok");
+  updateUI(0);
+  drawViz(true);
+  log("Ready.");
+});
+
+btnPlay.addEventListener("click", ()=>{
+  if(!audio.ctx){ log("Enable Audio first."); return; }
+  play();
+  startViz();
+});
+
+btnPause.addEventListener("click", ()=> pause());
+btnStop.addEventListener("click", ()=> { stop(); stopViz(); });
+
+btnExport.addEventListener("click", exportReport);
+
+vol.addEventListener("input", ()=>{
+  if(audio.master){
+    const v = parseFloat(vol.value);
+    const safe = safeToggle.checked ? Math.min(v, 0.70) : v;
+    setMasterGain(safe);
+  }
+});
+
+safeToggle.addEventListener("change", ()=>{
+  if(audio.master){
+    const v = parseFloat(vol.value);
+    const safe = safeToggle.checked ? Math.min(v, 0.70) : v;
+    setMasterGain(safe);
+  }
+});
+
+ritualToggle.addEventListener("change", ()=>{
+  if(ritualToggle.checked){
+    ritualOverlay.classList.add("on");
+    ritualOverlay.setAttribute("aria-hidden","false");
+    if(document.documentElement.requestFullscreen){
+      document.documentElement.requestFullscreen().catch(()=>{});
+    }
+  }else{
+    ritualOverlay.classList.remove("on");
+    ritualOverlay.setAttribute("aria-hidden","true");
+    if(document.fullscreenElement){
+      document.exitFullscreen().catch(()=>{});
+    }
+  }
+});
+
+// Ritual controls mirror main
+ritualPlay.addEventListener("click", ()=>{
+  if(!audio.ctx){
+    btnInit.click();
+    setTimeout(()=>{ btnPlay.click(); }, 120);
+    return;
+  }
+  btnPlay.click();
+});
+ritualPause.addEventListener("click", ()=> btnPause.click());
+ritualStop.addEventListener("click", ()=> btnStop.click());
+ritualExit.addEventListener("click", ()=>{
+  ritualToggle.checked = false;
+  ritualToggle.dispatchEvent(new Event("change"));
+});
+
+// Click outside panel exits ritual
+ritualOverlay.addEventListener("click", (e)=>{
+  if(e.target === ritualOverlay){
+    ritualToggle.checked = false;
+    ritualToggle.dispatchEvent(new Event("change"));
+  }
+});
+
+// Keyboard shortcuts
+window.addEventListener("keydown",(e)=>{
+  if(e.code==="Space"){
+    e.preventDefault();
+    if(!audio.ctx) return;
+    if(audio.running) pause(); else play();
+  }
+  if(e.key==="Escape" && ritualOverlay.classList.contains("on")){
+    ritualToggle.checked = false;
+    ritualToggle.dispatchEvent(new Event("change"));
+  }
+});
+
+// Initial UI
+(function init(){
+  const usedPct = (PROTOCOL.structuralSilenceSec / PROTOCOL.durationSec) * 100;
+  budgetPct.textContent = `${usedPct.toFixed(1)}%`;
+  silUsed.textContent = "0:00";
+  budgetBadgeRow.innerHTML = `<span class="badge ok">Within budget</span>`;
+  drawViz(true);
+  appRoot.classList.remove("labelsOff");
+})();
+</script>
+</body>
+</html>
