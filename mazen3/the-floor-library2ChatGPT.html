@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark" />
+<title>THE FLOOR — Soundscape Library · MA-ZEN</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+/* ── Design System ──────────────────────────────────────────── */
+:root{
+  --bg:#0c0b09;
+  --bg-card:#131109;
+  --bg-hover:#1a1814;
+  --border:rgba(200,180,130,0.07);
+  --border-md:rgba(200,180,130,0.13);
+  --border-g:rgba(184,147,58,0.28);
+  --text:#ddd8cc;
+  --text-dim:#9a9080;
+  --text-mute:#5a5448;
+  --gold:#b8933a;
+  --gold-lt:#d4ab4a;
+  --gold-bg:rgba(184,147,58,0.07);
+  --green:#5a8060;
+  --font-d:'Cormorant Garamond', Georgia, serif;
+  --font-m:'DM Mono','Courier New', monospace;
+  --ease:200ms ease;
+  --ease-slow:360ms ease;
+  --focus:0 0 0 3px rgba(184,147,58,0.25);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-d);
+  font-size:1.05rem;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--gold-bg);color:var(--gold-lt)}
+a{color:inherit}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* Skip link */
+.skip{
+  position:absolute;left:16px;top:-60px;z-index:1000;
+  font-family:var(--font-m);font-size:0.65rem;letter-spacing:0.12em;
+  padding:10px 14px;border:1px solid var(--border-g);
+  background:rgba(12,11,9,0.95);color:var(--gold);
+  transition:transform var(--ease);
+}
+.skip:focus{top:12px;outline:none;box-shadow:var(--focus)}
+
+/* Focus */
+:focus-visible{
+  outline:none;
+  box-shadow:var(--focus);
+}
+
+/* ── Navigation ─────────────────────────────────────────────── */
+nav{
+  position:fixed;inset:0 0 auto 0;z-index:100;
+  height:56px;display:flex;align-items:center;
+  border-bottom:1px solid var(--border);
+  background:rgba(12,11,9,0.92);
+  backdrop-filter:blur(12px);
+}
+.nav-inner{
+  width:100%;max-width:1120px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.nav-logo{
+  font-family:var(--font-d);font-size:0.95rem;letter-spacing:0.12em;
+  color:var(--text);text-decoration:none;font-weight:400;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.nav-logo span{color:var(--gold)}
+.nav-links{
+  display:flex;align-items:center;gap:32px;
+}
+.nav-links a{
+  font-family:var(--font-m);font-size:0.7rem;font-weight:300;
+  color:var(--text-dim);text-decoration:none;letter-spacing:0.08em;
+  transition:color var(--ease);
+}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-cta{
+  display:flex;align-items:center;gap:10px;
+}
+.plan-chip{
+  font-family:var(--font-m);font-size:0.62rem;font-weight:300;
+  letter-spacing:0.1em;padding:5px 14px;border:1px solid var(--border-md);
+  color:var(--text-dim);cursor:pointer;transition:all var(--ease);
+  background:transparent;
+}
+.plan-chip:hover{border-color:var(--border-g);color:var(--gold)}
+.plan-chip.pro{border-color:var(--border-g);color:var(--gold);background:var(--gold-bg)}
+.icon-btn{
+  width:40px;height:40px;border:1px solid var(--border-md);
+  background:transparent;color:var(--text);cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  transition:all var(--ease);
+}
+.icon-btn:hover{border-color:var(--border-g);color:var(--gold)}
+.mobile-drawer{
+  display:none;
+  position:fixed;top:56px;left:0;right:0;
+  background:rgba(12,11,9,0.98);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(14px);
+}
+.mobile-drawer .drawer-inner{
+  max-width:1120px;margin:0 auto;padding:18px 20px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.mobile-drawer a{
+  font-family:var(--font-m);font-size:0.72rem;font-weight:300;
+  color:var(--text-dim);text-decoration:none;letter-spacing:0.08em;
+  padding:10px 8px;border:1px solid transparent;
+}
+.mobile-drawer a:focus-visible{box-shadow:var(--focus)}
+.mobile-drawer a.active{color:var(--text);border-color:var(--border)}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.container{max-width:1120px;margin:0 auto;padding:0 32px}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.hero{padding:120px 0 64px;border-bottom:1px solid var(--border)}
+.hero-label{
+  font-family:var(--font-m);font-size:0.65rem;font-weight:300;
+  letter-spacing:0.2em;color:var(--text-mute);margin-bottom:24px;
+}
+.hero-label span{color:var(--gold);margin-right:8px}
+.hero-title{
+  font-size:clamp(3.5rem,8vw,7rem);
+  font-weight:300;line-height:0.95;letter-spacing:-0.02em;
+  margin-bottom:24px;
+}
+.hero-title em{font-style:italic;color:var(--gold)}
+.hero-sub{
+  font-size:1.2rem;font-weight:300;color:var(--text-dim);
+  max-width:720px;line-height:1.7;margin-bottom:32px;
+}
+.hero-compare{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);max-width:820px;
+}
+.compare-item{background:var(--bg-card);padding:20px 24px}
+.compare-item.highlight{background:var(--bg-hover)}
+.compare-brand{
+  font-family:var(--font-m);font-size:0.62rem;color:var(--text-mute);
+  letter-spacing:0.1em;margin-bottom:8px
+}
+.compare-brand.gold{color:var(--gold)}
+.compare-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.55}
+
+/* ── Sticky Player ───────────────────────────────────────────── */
+.player-section{
+  position:sticky;top:56px;z-index:90;
+  background:rgba(12,11,9,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.player-inner{
+  max-width:1120px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;gap:24px;height:72px;
+}
+.player-info{min-width:200px}
+.player-name{font-size:1rem;font-weight:300;color:var(--text);line-height:1.2}
+.player-status{font-family:var(--font-m);font-size:0.58rem;color:var(--text-mute);letter-spacing:0.1em;margin-top:2px}
+.player-waveform{flex:1;height:40px;cursor:pointer;min-width:120px}
+#waveCanvas{width:100%;height:40px;display:block}
+.player-controls{display:flex;align-items:center;gap:16px}
+.btn-play{
+  width:44px;height:44px;border:1px solid var(--border-md);
+  background:transparent;color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.9rem;transition:all var(--ease);flex-shrink:0;
+}
+.btn-play:hover{border-color:var(--border-g);color:var(--gold)}
+.btn-play.playing{border-color:var(--border-g);background:var(--gold-bg);color:var(--gold)}
+.volume-wrap{display:flex;align-items:center;gap:10px}
+.vol-label{font-family:var(--font-m);font-size:0.58rem;color:var(--text-mute);letter-spacing:0.1em}
+.vol-slider{
+  width:96px;height:2px;appearance:none;background:var(--border-md);
+  outline:none;cursor:pointer;
+}
+.vol-slider::-webkit-slider-thumb{
+  appearance:none;width:12px;height:12px;background:var(--gold);
+  border-radius:50%;cursor:pointer;
+}
+.vol-slider::-moz-range-thumb{
+  width:12px;height:12px;background:var(--gold);border-radius:50%;
+  border:none;cursor:pointer;
+}
+.player-time{
+  font-family:var(--font-m);font-size:0.65rem;color:var(--text-mute);
+  min-width:70px;text-align:right;letter-spacing:0.06em;
+}
+
+/* ── Quick Mix ───────────────────────────────────────────────── */
+.quick-mix{padding:40px 0;border-bottom:1px solid var(--border)}
+.qm-label{font-family:var(--font-m);font-size:0.6rem;color:var(--text-mute);letter-spacing:0.16em;margin-bottom:20px}
+.qm-chips{display:flex;gap:12px;flex-wrap:wrap}
+.qm-chip{
+  font-family:var(--font-m);font-size:0.68rem;font-weight:300;
+  color:var(--text-dim);border:1px solid var(--border-md);
+  padding:10px 20px;cursor:pointer;transition:all var(--ease);
+  background:transparent;letter-spacing:0.06em;
+}
+.qm-chip:hover{border-color:var(--border-g);color:var(--text)}
+.qm-chip.active{border-color:var(--border-g);color:var(--gold);background:var(--gold-bg)}
+.qm-chip-meta{font-size:0.55rem;color:var(--text-mute);display:block;margin-top:2px}
+
+/* ── Library ─────────────────────────────────────────────────── */
+.library-section{padding:64px 0}
+.library-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap;gap:16px}
+.lib-title{font-size:2rem;font-weight:300}
+.lib-title em{font-style:italic;color:var(--gold)}
+.lib-count{font-family:var(--font-m);font-size:0.65rem;color:var(--text-mute);letter-spacing:0.1em}
+
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 32px}
+.filter-tag{
+  font-family:var(--font-m);font-size:0.6rem;font-weight:300;
+  color:var(--text-mute);border:1px solid var(--border);
+  padding:8px 14px;cursor:pointer;transition:all var(--ease);
+  background:transparent;letter-spacing:0.08em;
+}
+.filter-tag:hover{border-color:var(--border-md);color:var(--text-dim)}
+.filter-tag.active{border-color:var(--border-g);color:var(--gold);background:var(--gold-bg)}
+
+.presets-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);
+}
+.preset-card{
+  background:var(--bg-card);padding:28px 24px;
+  cursor:pointer;transition:background var(--ease);
+  display:flex;flex-direction:column;position:relative;
+}
+.preset-card:hover{background:var(--bg-hover)}
+.preset-card.active{background:var(--bg-hover)}
+.preset-card.locked{cursor:not-allowed}
+.preset-card.locked:hover{background:var(--bg-card)}
+.preset-card.hidden{display:none}
+
+.preset-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.preset-plan-badge{
+  font-family:var(--font-m);font-size:0.55rem;letter-spacing:0.12em;
+  padding:3px 8px;border:1px solid var(--border);color:var(--text-mute);
+}
+.preset-plan-badge.free{border-color:var(--green);color:var(--green)}
+.preset-plan-badge.pro{border-color:var(--border-g);color:var(--gold)}
+
+.preset-silence-bar{width:44px;height:3px;background:var(--border-md);margin-top:4px}
+.preset-silence-fill{height:100%;background:var(--gold);transition:width 600ms ease}
+
+.preset-name{font-size:1.3rem;font-weight:300;color:var(--text);margin-bottom:6px}
+.preset-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.6;margin-bottom:16px;flex:1}
+.preset-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.preset-tag{
+  font-family:var(--font-m);font-size:0.55rem;color:var(--text-mute);
+  border:1px solid var(--border);padding:2px 8px;letter-spacing:0.06em;
+}
+.preset-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px}
+.preset-silence-pct{font-family:var(--font-m);font-size:1.1rem;color:var(--gold)}
+.preset-play-hint{font-family:var(--font-m);font-size:0.55rem;color:var(--text-mute);letter-spacing:0.1em}
+
+.locked-overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(12,11,9,0.62);backdrop-filter:blur(2px);
+}
+.locked-overlay-inner{text-align:center}
+.locked-icon{font-size:1.4rem;color:var(--text-mute);margin-bottom:8px}
+.locked-text{font-family:var(--font-m);font-size:0.6rem;color:var(--text-mute);letter-spacing:0.12em}
+
+/* ── Upgrade CTA ─────────────────────────────────────────────── */
+.upgrade-cta{
+  margin-top:32px;padding:40px 40px;
+  border:1px solid var(--border-g);background:var(--bg-card);
+  display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;
+}
+.upgrade-text h3{font-size:1.6rem;font-weight:300;margin-bottom:8px}
+.upgrade-text h3 em{font-style:italic;color:var(--gold)}
+.upgrade-text p{font-size:0.95rem;color:var(--text-dim);max-width:720px}
+.btn-primary{
+  font-family:var(--font-m);font-size:0.7rem;font-weight:300;letter-spacing:0.12em;
+  color:var(--bg);background:var(--gold);border:none;cursor:pointer;
+  padding:14px 32px;transition:all var(--ease);text-decoration:none;white-space:nowrap;
+}
+.btn-primary:hover{background:var(--gold-lt)}
+
+/* ── Plans ───────────────────────────────────────────────────── */
+.plan-compare{padding:80px 0;border-top:1px solid var(--border)}
+.plans-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);max-width:760px;
+}
+.plan-card{background:var(--bg-card);padding:40px 32px}
+.plan-card.featured{background:var(--bg-hover)}
+.plan-label{font-family:var(--font-m);font-size:0.6rem;color:var(--text-mute);letter-spacing:0.16em;margin-bottom:16px}
+.plan-label.gold{color:var(--gold)}
+.plan-name{font-size:2rem;font-weight:300;margin-bottom:8px}
+.plan-price{font-size:1.8rem;font-weight:300;color:var(--gold);margin-bottom:4px}
+.plan-meta{font-family:var(--font-m);font-size:0.62rem;color:var(--text-mute);margin-bottom:28px}
+.plan-features{list-style:none}
+.plan-features li{
+  font-size:0.9rem;padding:8px 0;border-bottom:1px solid var(--border);
+  display:flex;gap:10px;align-items:flex-start;color:var(--text-dim);
+}
+.plan-features li:last-child{border-bottom:none}
+.plan-features li.active::before{
+  content:'—';color:var(--gold);flex-shrink:0;font-family:var(--font-m);
+  font-size:0.7rem;margin-top:2px
+}
+.plan-features li.inactive{color:var(--text-mute)}
+.plan-features li.inactive::before{
+  content:'—';color:var(--text-mute);flex-shrink:0;font-family:var(--font-m);
+  font-size:0.7rem;margin-top:2px
+}
+
+/* ── Method ──────────────────────────────────────────────────── */
+.method-section{padding:80px 0;border-top:1px solid var(--border)}
+.method-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);margin-top:48px;
+}
+.method-item{background:var(--bg-card);padding:32px 24px}
+.method-num{font-family:var(--font-m);font-size:0.58rem;color:var(--text-mute);letter-spacing:0.16em;margin-bottom:16px}
+.method-item-name{font-size:1.2rem;font-weight:300;color:var(--text);margin-bottom:12px}
+.method-item-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.65}
+
+.section-num{font-family:var(--font-m);font-size:0.6rem;color:var(--text-mute);letter-spacing:0.2em;margin-bottom:16px}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:300;line-height:1.15}
+.section-title em{font-style:italic;color:var(--gold)}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+footer{padding:48px 0;border-top:1px solid var(--border)}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+.footer-logo{font-family:var(--font-d);font-size:0.9rem;letter-spacing:0.14em;color:var(--text-dim)}
+.footer-logo span{color:var(--gold)}
+.footer-nav{display:flex;gap:28px}
+.footer-nav a{
+  font-family:var(--font-m);font-size:0.62rem;font-weight:300;
+  color:var(--text-mute);text-decoration:none;letter-spacing:0.08em;
+  transition:color var(--ease);
+}
+.footer-nav a:hover{color:var(--text-dim)}
+
+/* ── Toast ───────────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:32px;right:32px;z-index:999;
+  background:var(--bg-hover);border:1px solid var(--border-g);
+  padding:14px 18px;font-family:var(--font-m);font-size:0.68rem;
+  color:var(--text);letter-spacing:0.06em;
+  transform:translateY(20px);opacity:0;
+  transition:all 300ms ease;pointer-events:none;max-width:min(420px,calc(100vw - 64px));
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── Reduced Motion ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important;animation:none !important}
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 900px){
+  .presets-grid{grid-template-columns:1fr 1fr}
+  .method-grid{grid-template-columns:1fr 1fr}
+  .hero-compare{grid-template-columns:1fr}
+}
+@media (max-width: 720px){
+  .nav-links{display:none}
+  .icon-btn{display:flex}
+  .mobile-drawer.open{display:block}
+}
+@media (max-width: 640px){
+  .container{padding:0 20px}
+  .presets-grid{grid-template-columns:1fr}
+  .player-inner{gap:12px}
+  .player-info{min-width:140px}
+  .volume-wrap{display:none}
+  .plans-grid{grid-template-columns:1fr}
+  .method-grid{grid-template-columns:1fr}
+  .toast{right:20px;bottom:20px;max-width:calc(100vw - 40px)}
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#main">SKIP TO CONTENT</a>
+
+<!-- Navigation -->
+<nav role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="MA-ZEN home">MA<span>·</span>ZEN</a>
+
+    <div class="nav-links" aria-label="Primary links">
+      <a href="guided-silence-sessions.html">THE PROOF</a>
+      <a href="the-floor-library.html" class="active" aria-current="page">THE FLOOR</a>
+      <a href="the-cash-b2b.html">THE CASH</a>
+      <a href="index.html#method">Method</a>
+    </div>
+
+    <div class="nav-cta">
+      <button class="plan-chip" id="planBadge" type="button" aria-label="Current plan. Click to toggle demo plan.">FREE PLAN</button>
+      <button class="icon-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <rect x="2" y="3" width="12" height="1.6"></rect>
+          <rect x="2" y="7.2" width="12" height="1.6"></rect>
+          <rect x="2" y="11.4" width="12" height="1.6"></rect>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-drawer" id="mobileDrawer" role="dialog" aria-label="Mobile navigation">
+  <div class="drawer-inner">
+    <a href="guided-silence-sessions.html">THE PROOF</a>
+    <a href="the-floor-library.html" class="active" aria-current="page">THE FLOOR</a>
+    <a href="the-cash-b2b.html">THE CASH</a>
+    <a href="index.html#method">Method</a>
+  </div>
+</div>
+
+<!-- Sticky Player -->
+<div class="player-section" role="region" aria-label="Audio player" aria-live="polite">
+  <div class="player-inner">
+    <div class="player-info">
+      <div class="player-name" id="playerName">No track playing</div>
+      <div class="player-status" id="playerStatus">Stopped · Select a preset below</div>
+    </div>
+
+    <div class="player-waveform" id="waveWrap" title="Waveform (visual only)">
+      <canvas id="waveCanvas" width="600" height="40" aria-hidden="true"></canvas>
+    </div>
+
+    <div class="player-controls">
+      <button class="btn-play" id="playBtn" type="button" aria-label="Play or pause (Space)">
+        <svg id="playIcon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+          <polygon points="3,2 12,7 3,12"></polygon>
+        </svg>
+      </button>
+
+      <div class="volume-wrap" aria-label="Volume">
+        <span class="vol-label">VOL</span>
+        <input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.01" value="0.7" aria-label="Volume slider">
+      </div>
+
+      <div class="player-time" id="playerTime" aria-label="Elapsed time">00:00</div>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-label"><span>// THE FLOOR</span> Soundscape Library · MA-ZEN</p>
+      <h1 class="hero-title">THE <em>FLOOR</em></h1>
+      <p class="hero-sub">
+        Silence, curated. The catalogue grows; the price doesn’t.
+        Every session is structured around the Ma interval principle — silence is the material, not the gap between content.
+      </p>
+
+      <div class="hero-compare" role="list" aria-label="Product comparison">
+        <div class="compare-item" role="listitem">
+          <div class="compare-brand">Calm / Headspace</div>
+          <div class="compare-desc">Guided meditation apps. Silence is incidental filler between narration. Sessions require a guide to be valid.</div>
+        </div>
+        <div class="compare-item" role="listitem">
+          <div class="compare-brand">Ambient / Lofi</div>
+          <div class="compare-desc">Music with silence as texture. Event density is decorative. No philosophy-encoded structure.</div>
+        </div>
+        <div class="compare-item highlight" role="listitem">
+          <div class="compare-brand gold">MA-ZEN · THE FLOOR</div>
+          <div class="compare-desc">Philosophy-curated silence library. Silence is the material. Texture defines the boundary. Sessions valid with zero events.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Mix -->
+  <section class="quick-mix">
+    <div class="container">
+      <p class="qm-label">QUICK MIX — Generated in-browser · Choose a card and press Play · No filler</p>
+      <div class="qm-chips" role="list" aria-label="Quick mix presets">
+        <button class="qm-chip" type="button" data-preset="paperQuiet">
+          Paper Quiet
+          <span class="qm-chip-meta">Sparse · Neutral · Free</span>
+        </button>
+        <button class="qm-chip" type="button" data-preset="stoneBoundary">
+          Stone Boundary
+          <span class="qm-chip-meta">Low · Dense · Free</span>
+        </button>
+        <button class="qm-chip" type="button" data-preset="airOpen">
+          Air Open
+          <span class="qm-chip-meta">High · Clear · Free</span>
+        </button>
+        <button class="qm-chip" type="button" data-preset="ma94">
+          MA 94 ·· <span style="color:var(--gold);">PRO</span>
+          <span class="qm-chip-meta">94% silence · Ritual</span>
+        </button>
+        <button class="qm-chip" type="button" data-preset="focusField">
+          Focus Field ·· <span style="color:var(--gold);">PRO</span>
+          <span class="qm-chip-meta">Deep work · Steady</span>
+        </button>
+        <button class="qm-chip" type="button" data-preset="exitWithoutTrace">
+          Exit Without Trace ·· <span style="color:var(--gold);">PRO</span>
+          <span class="qm-chip-meta">Dissolve · Minimal</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Library -->
+  <section class="library-section">
+    <div class="container">
+      <div class="library-header">
+        <div>
+          <h2 class="lib-title">Full <em>Library</em></h2>
+          <p class="lib-count" id="libCount">10 presets · 3 free · 7 pro</p>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar" role="group" aria-label="Filter presets">
+        <button class="filter-tag active" type="button" data-filter="all">All</button>
+        <button class="filter-tag" type="button" data-filter="free">Free</button>
+        <button class="filter-tag" type="button" data-filter="pro">Pro</button>
+        <button class="filter-tag" type="button" data-filter="silence-dominant">Silence-dominant</button>
+        <button class="filter-tag" type="button" data-filter="minimal">Minimal</button>
+        <button class="filter-tag" type="button" data-filter="grounded">Grounded</button>
+        <button class="filter-tag" type="button" data-filter="work">Work</button>
+        <button class="filter-tag" type="button" data-filter="ritual">Ritual</button>
+        <button class="filter-tag" type="button" data-filter="sleep">Sleep</button>
+      </div>
+
+      <div class="presets-grid" id="presetsGrid" role="list" aria-label="Preset library">
+
+        <!-- FREE PRESETS -->
+        <article class="preset-card" data-id="paperQuiet" data-plan="free" data-tags="free silence-dominant neutral work" tabindex="0" role="listitem" aria-label="Paper Quiet — free — 88% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge free">Free</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:88%"></div></div>
+          </div>
+          <h3 class="preset-name">Paper Quiet</h3>
+          <p class="preset-desc">A light paper-like bed that often disappears. Sparse neutral events. Minimal texture that recedes under attention.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">silence-dominant</span>
+            <span class="preset-tag">neutral</span>
+            <span class="preset-tag">work</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">88%</span>
+            <span class="preset-play-hint">CLICK TO LOAD</span>
+          </div>
+        </article>
+
+        <article class="preset-card" data-id="stoneBoundary" data-plan="free" data-tags="free boundary low grounded" tabindex="0" role="listitem" aria-label="Stone Boundary — free — 72% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge free">Free</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:72%"></div></div>
+          </div>
+          <h3 class="preset-name">Stone Boundary</h3>
+          <p class="preset-desc">Lower, denser texture. A boundary that feels physical without melody. Rumble-adjacent. Present without tonal identity.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">boundary</span>
+            <span class="preset-tag">low</span>
+            <span class="preset-tag">grounded</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">72%</span>
+            <span class="preset-play-hint">CLICK TO LOAD</span>
+          </div>
+        </article>
+
+        <article class="preset-card" data-id="airOpen" data-plan="free" data-tags="free open clean minimal" tabindex="0" role="listitem" aria-label="Air Open — free — 91% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge free">Free</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:91%"></div></div>
+          </div>
+          <h3 class="preset-name">Air Open</h3>
+          <p class="preset-desc">Higher filter profile with frequent gaps. Clear, quiet, empty-first. Designed to feel like space rather than sound.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">open</span>
+            <span class="preset-tag">clean</span>
+            <span class="preset-tag">minimal</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">91%</span>
+            <span class="preset-play-hint">CLICK TO LOAD</span>
+          </div>
+        </article>
+
+        <!-- PRO PRESETS -->
+        <article class="preset-card locked" data-id="ma94" data-plan="pro" data-tags="pro silence-dominant ritual minimal" tabindex="0" role="listitem" aria-label="MA 94 — Pro required — 94% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge pro">Pro</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:94%"></div></div>
+          </div>
+          <h3 class="preset-name">MA 94</h3>
+          <p class="preset-desc">Silence-first architecture. Events are rare and short. Designed as proof that silence is material.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">proof</span>
+            <span class="preset-tag">94% silence</span>
+            <span class="preset-tag">ritual</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">94%</span>
+            <span class="preset-play-hint">PRO</span>
+          </div>
+          <div class="locked-overlay" aria-hidden="true">
+            <div class="locked-overlay-inner">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-text">PRO</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="preset-card locked" data-id="focusField" data-plan="pro" data-tags="pro work silence-dominant" tabindex="0" role="listitem" aria-label="Focus Field — Pro required — 83% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge pro">Pro</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:83%"></div></div>
+          </div>
+          <h3 class="preset-name">Focus Field</h3>
+          <p class="preset-desc">For deep work blocks. Silence-dominant but steady enough to hold attention without pulling it.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">deep work</span>
+            <span class="preset-tag">field</span>
+            <span class="preset-tag">steady</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">83%</span>
+            <span class="preset-play-hint">PRO</span>
+          </div>
+          <div class="locked-overlay" aria-hidden="true">
+            <div class="locked-overlay-inner">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-text">PRO</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="preset-card locked" data-id="exitWithoutTrace" data-plan="pro" data-tags="pro minimal silence-dominant" tabindex="0" role="listitem" aria-label="Exit Without Trace — Pro required — 96% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge pro">Pro</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:96%"></div></div>
+          </div>
+          <h3 class="preset-name">Exit Without Trace</h3>
+          <p class="preset-desc">Almost nothing. A boundary that dissolves. Not relaxation — structural release. Events decrease over time.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">dissolve</span>
+            <span class="preset-tag">impermanence</span>
+            <span class="preset-tag">minimal</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">96%</span>
+            <span class="preset-play-hint">PRO</span>
+          </div>
+          <div class="locked-overlay" aria-hidden="true">
+            <div class="locked-overlay-inner">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-text">PRO</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="preset-card locked" data-id="softNeutral" data-plan="pro" data-tags="pro silence-dominant neutral" tabindex="0" role="listitem" aria-label="Soft Neutral — Pro required — 80% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge pro">Pro</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:80%"></div></div>
+          </div>
+          <h3 class="preset-name">Soft Neutral</h3>
+          <p class="preset-desc">Gentle warmth with long gaps. For those who want a human-safe edge. Entry point for silence-dominant practice.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">gentle</span>
+            <span class="preset-tag">neutral</span>
+            <span class="preset-tag">safe</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">80%</span>
+            <span class="preset-play-hint">PRO</span>
+          </div>
+          <div class="locked-overlay" aria-hidden="true">
+            <div class="locked-overlay-inner">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-text">PRO</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="preset-card locked" data-id="theGate" data-plan="pro" data-tags="pro ritual silence-dominant" tabindex="0" role="listitem" aria-label="The Gate — Pro required — 86% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge pro">Pro</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:86%"></div></div>
+          </div>
+          <h3 class="preset-name">The Gate</h3>
+          <p class="preset-desc">Structured acoustic intervals. A brief tonal marker arrives, names the silence interval, and withdraws. Morning use.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">Ma</span>
+            <span class="preset-tag">interval</span>
+            <span class="preset-tag">morning</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">86%</span>
+            <span class="preset-play-hint">PRO</span>
+          </div>
+          <div class="locked-overlay" aria-hidden="true">
+            <div class="locked-overlay-inner">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-text">PRO</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="preset-card locked" data-id="formIntoAbsence" data-plan="pro" data-tags="pro silence-dominant ritual" tabindex="0" role="listitem" aria-label="Form Into Absence — Pro required — 93% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge pro">Pro</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:93%"></div></div>
+          </div>
+          <h3 class="preset-name">Form Into Absence</h3>
+          <p class="preset-desc">Sound that points beyond itself. Amplitude and events fade over session until audio exits entirely. Field dissolves, silence remains.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">Sunyata</span>
+            <span class="preset-tag">dissolution</span>
+            <span class="preset-tag">deep</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">93%</span>
+            <span class="preset-play-hint">PRO</span>
+          </div>
+          <div class="locked-overlay" aria-hidden="true">
+            <div class="locked-overlay-inner">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-text">PRO</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="preset-card locked" data-id="followingWater" data-plan="pro" data-tags="pro sleep silence-dominant" tabindex="0" role="listitem" aria-label="Following Water — Pro required — 85% silence">
+          <div class="preset-header">
+            <span class="preset-plan-badge pro">Pro</span>
+            <div class="preset-silence-bar"><div class="preset-silence-fill" style="width:85%"></div></div>
+          </div>
+          <h3 class="preset-name">Following Water</h3>
+          <p class="preset-desc">Event timing loosely follows a breath-tempo rhythm. Flow-aligned. Not synchronized — approximate. For rest and sleep.</p>
+          <div class="preset-tags">
+            <span class="preset-tag">Wu Wei</span>
+            <span class="preset-tag">effortless</span>
+            <span class="preset-tag">sleep</span>
+          </div>
+          <div class="preset-footer">
+            <span class="preset-silence-pct">85%</span>
+            <span class="preset-play-hint">PRO</span>
+          </div>
+          <div class="locked-overlay" aria-hidden="true">
+            <div class="locked-overlay-inner">
+              <div class="locked-icon">🔒</div>
+              <div class="locked-text">PRO</div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="upgrade-cta" aria-label="Upgrade call to action">
+        <div class="upgrade-text">
+          <h3>Unlock <em>Full Library</em></h3>
+          <p>Pro plan: full library · 10 presets · unlimited session length · download access · Ritual + Ma modes. The catalogue grows; the price doesn’t.</p>
+        </div>
+        <button class="btn-primary" id="upgradeBtn" type="button">Unlock Pro — Free Trial →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Plan Compare -->
+  <section class="plan-compare">
+    <div class="container">
+      <p class="section-num">PLANS</p>
+      <h2 class="section-title">Choose your <em>plan</em></h2>
+
+      <div class="plans-grid" style="margin-top:40px;" role="list" aria-label="Plan comparison">
+        <div class="plan-card" role="listitem" aria-label="Free plan">
+          <div class="plan-label">Current Plan</div>
+          <div class="plan-name">Free</div>
+          <div class="plan-price">$0</div>
+          <div class="plan-meta">No account required</div>
+          <ul class="plan-features">
+            <li class="active">3 foundational fields</li>
+            <li class="active">30-min session boundary</li>
+            <li class="active">Browser playback</li>
+            <li class="inactive">Extended presets</li>
+            <li class="inactive">Download access</li>
+            <li class="inactive">Ritual sessions</li>
+          </ul>
+        </div>
+
+        <div class="plan-card featured" role="listitem" aria-label="Pro plan">
+          <div class="plan-label gold">Pro</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">$8<span style="font-size:1.2rem;">/mo</span></div>
+          <div class="plan-meta">Billed monthly · Cancel anytime</div>
+          <ul class="plan-features">
+            <li class="active">Full library · 10 presets</li>
+            <li class="active">Unlimited session length</li>
+            <li class="active">Browser playback</li>
+            <li class="active">All exclusive presets</li>
+            <li class="active">Download to keep</li>
+            <li class="active">Ritual + Ma modes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Method -->
+  <section class="method-section">
+    <div class="container">
+      <p class="section-num">METHOD</p>
+      <h2 class="section-title">Modular <em>Architecture</em></h2>
+      <div class="method-grid" role="list" aria-label="Method components">
+        <div class="method-item" role="listitem">
+          <div class="method-num">01</div>
+          <h3 class="method-item-name">Silence Bias Engine</h3>
+          <p class="method-item-desc">Each preset carries a defined silence percentage (72–96%). The engine uses this value as an event suppression probability. Silence is structurally encoded, not manually edited.</p>
+        </div>
+        <div class="method-item" role="listitem">
+          <div class="method-num">02</div>
+          <h3 class="method-item-name">Texture Generator</h3>
+          <p class="method-item-desc">Web Audio API nodes (noise buffer, filters, gain envelopes) generate spectral texture in-browser. No audio files are loaded. Each preset configures filter frequency and energy profile.</p>
+        </div>
+        <div class="method-item" role="listitem">
+          <div class="method-num">03</div>
+          <h3 class="method-item-name">Event Scheduler</h3>
+          <p class="method-item-desc">Events are scheduled probabilistically using bias-weighted random intervals. Short-attack, long-release. Silence is the default; events only mark boundaries.</p>
+        </div>
+        <div class="method-item" role="listitem">
+          <div class="method-num">04</div>
+          <h3 class="method-item-name">Validity Principle</h3>
+          <p class="method-item-desc">No performance data. No achievement layer. Zero events is a valid, complete session. The library’s job is to create the boundary.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-logo">MA<span>·</span>ZEN Studio</div>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="guided-silence-sessions.html">THE PROOF</a>
+      <a href="the-floor-library.html">THE FLOOR</a>
+      <a href="the-cash-b2b.html">THE CASH</a>
+      <a href="index.html">Home</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+/* ============================================================
+   MA-ZEN — THE FLOOR (Premium MVP Rebuild)
+   - Cleaner JS (no inline handlers)
+   - Better a11y & keyboard support
+   - More reliable Web Audio lifecycle
+   - Free plan boundary enforcement (30 min)
+   - LocalStorage persistence (plan, preset, volume)
+============================================================ */
+
+/* ── Preset Configurations ──────────────────────────────────── */
+const PRESETS = Object.freeze({
+  paperQuiet: {
+    name: "Paper Quiet", plan: "free", silenceBias: 0.88,
+    filterType: "lowpass", frequency: 4000, Q: 0.8,
+    gainBase: 0.035, eventInterval: [6, 20], toneFreq: [300, 800]
+  },
+  stoneBoundary: {
+    name: "Stone Boundary", plan: "free", silenceBias: 0.72,
+    filterType: "bandpass", frequency: 180, Q: 1.5,
+    gainBase: 0.06, eventInterval: [3, 12], toneFreq: [80, 200]
+  },
+  airOpen: {
+    name: "Air Open", plan: "free", silenceBias: 0.91,
+    filterType: "highpass", frequency: 3000, Q: 0.6,
+    gainBase: 0.025, eventInterval: [8, 25], toneFreq: [2000, 4000]
+  },
+
+  ma94: {
+    name: "MA 94", plan: "pro", silenceBias: 0.94,
+    filterType: "bandpass", frequency: 400, Q: 1.2,
+    gainBase: 0.02, eventInterval: [12, 40], toneFreq: [200, 600]
+  },
+  focusField: {
+    name: "Focus Field", plan: "pro", silenceBias: 0.83,
+    filterType: "bandpass", frequency: 900, Q: 1.0,
+    gainBase: 0.04, eventInterval: [8, 20], toneFreq: [400, 900]
+  },
+  exitWithoutTrace: {
+    name: "Exit Without Trace", plan: "pro", silenceBias: 0.96,
+    filterType: "highpass", frequency: 2000, Q: 0.5,
+    gainBase: 0.015, eventInterval: [20, 60], toneFreq: [800, 2000]
+  },
+  softNeutral: {
+    name: "Soft Neutral", plan: "pro", silenceBias: 0.80,
+    filterType: "lowpass", frequency: 2000, Q: 1.0,
+    gainBase: 0.04, eventInterval: [15, 30], toneFreq: [300, 800]
+  },
+  theGate: {
+    name: "The Gate", plan: "pro", silenceBias: 0.86,
+    filterType: "bandpass", frequency: 600, Q: 1.4,
+    gainBase: 0.03, eventInterval: [10, 25], toneFreq: [300, 700]
+  },
+  formIntoAbsence: {
+    name: "Form Into Absence", plan: "pro", silenceBias: 0.93,
+    filterType: "bandpass", frequency: 350, Q: 1.2,
+    gainBase: 0.018, eventInterval: [15, 45], toneFreq: [150, 500]
+  },
+  followingWater: {
+    name: "Following Water", plan: "pro", silenceBias: 0.85,
+    filterType: "lowpass", frequency: 1500, Q: 0.8,
+    gainBase: 0.03, eventInterval: [4, 7], toneFreq: [200, 600]
+  }
+});
+
+/* ── Constants ──────────────────────────────────────────────── */
+const FREE_MAX_SECONDS = 30 * 60; // 30 min boundary
+const LS = Object.freeze({
+  plan: "mz_floor_plan",
+  preset: "mz_floor_last_preset",
+  volume: "mz_floor_volume"
+});
+
+/* ── DOM ────────────────────────────────────────────────────── */
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+const el = Object.freeze({
+  planBadge: $("#planBadge"),
+  upgradeBtn: $("#upgradeBtn"),
+  playBtn: $("#playBtn"),
+  playIcon: $("#playIcon"),
+  volSlider: $("#volSlider"),
+  playerName: $("#playerName"),
+  playerStatus: $("#playerStatus"),
+  playerTime: $("#playerTime"),
+  toast: $("#toast"),
+  presetsGrid: $("#presetsGrid"),
+  libCount: $("#libCount"),
+  filterTags: $$(".filter-tag"),
+  presetCards: $$(".preset-card"),
+  chips: $$(".qm-chip"),
+  waveCanvas: $("#waveCanvas"),
+  waveWrap: $("#waveWrap"),
+  menuBtn: $("#menuBtn"),
+  mobileDrawer: $("#mobileDrawer")
+});
+
+/* ── State ──────────────────────────────────────────────────── */
+const state = {
+  isPro: false,
+  currentPreset: null,
+  isPlaying: false,
+
+  audioCtx: null,
+  masterGain: null,
+  analyser: null,
+  compressor: null,
+
+  noiseSource: null,
+  filterNode: null,
+  noiseGain: null,
+
+  eventTimer: null,
+  timerInterval: null,
+  sessionStartMs: null,
+
+  animFrame: null,
+  lastWaveW: 0,
+  lastDpr: 1
+};
+
+/* ── Helpers ────────────────────────────────────────────────── */
+function showToast(msg){
+  el.toast.textContent = msg;
+  el.toast.classList.add("show");
+  clearTimeout(el.toast._timer);
+  el.toast._timer = setTimeout(() => el.toast.classList.remove("show"), 3200);
+}
+
+function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+function safeNumber(v, fallback){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function setPlan(isPro){
+  state.isPro = !!isPro;
+  localStorage.setItem(LS.plan, state.isPro ? "pro" : "free");
+
+  el.planBadge.textContent = state.isPro ? "PRO PLAN" : "FREE PLAN";
+  el.planBadge.classList.toggle("pro", state.isPro);
+
+  // lock/unlock UI
+  el.presetCards.forEach(card => {
+    const isLockedCard = card.dataset.plan === "pro";
+    if (!isLockedCard) return;
+
+    card.classList.toggle("locked", !state.isPro);
+    const overlay = card.querySelector(".locked-overlay");
+    if (overlay) overlay.style.display = state.isPro ? "none" : "";
+  });
+
+  showToast(state.isPro ? "Pro plan activated — full library unlocked" : "Free plan restored");
+}
+
+function updateLibraryCount(){
+  const total = Object.keys(PRESETS).length;
+  const free = Object.values(PRESETS).filter(p => p.plan === "free").length;
+  const pro = total - free;
+  el.libCount.textContent = `${total} presets · ${free} free · ${pro} pro`;
+}
+
+function iconPlay(){
+  el.playIcon.innerHTML = '<polygon points="3,2 12,7 3,12"></polygon>';
+}
+function iconPause(){
+  el.playIcon.innerHTML = '<rect x="3" y="2" width="3" height="10"></rect><rect x="8" y="2" width="3" height="10"></rect>';
+}
+
+/* ── Audio Engine ───────────────────────────────────────────── */
+function ensureAudio(){
+  if (state.audioCtx) return true;
+
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC){
+    showToast("Web Audio not supported in this browser");
+    return false;
+  }
+
+  const ctx = new AC();
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize = 256;
+
+  const master = ctx.createGain();
+  const vol = safeNumber(localStorage.getItem(LS.volume), 0.7);
+  const v = clamp(vol, 0, 1);
+  master.gain.value = v;
+  el.volSlider.value = String(v);
+
+  // Gentle safety net (prevents surprises)
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -18;
+  comp.knee.value = 24;
+  comp.ratio.value = 6;
+  comp.attack.value = 0.015;
+  comp.release.value = 0.25;
+
+  // Chain: master -> compressor -> analyser -> destination
+  master.connect(comp);
+  comp.connect(analyser);
+  analyser.connect(ctx.destination);
+
+  state.audioCtx = ctx;
+  state.analyser = analyser;
+  state.masterGain = master;
+  state.compressor = comp;
+
+  return true;
+}
+
+function createNoiseBuffer(ctx){
+  const sr = ctx.sampleRate;
+  const seconds = 3;
+  const buf = ctx.createBuffer(1, sr * seconds, sr);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.loop = true;
+  return src;
+}
+
+function stopEngine({keepPlayingFlag=false} = {}){
+  clearTimeout(state.eventTimer);
+  state.eventTimer = null;
+
+  if (state.noiseSource){
+    try{
+      const ctx = state.audioCtx;
+      if (ctx && state.noiseGain){
+        state.noiseGain.gain.setTargetAtTime(0, ctx.currentTime, 0.35);
+      }
+      const src = state.noiseSource;
+      setTimeout(() => { try{ src.stop(); }catch(e){} }, 800);
+    }catch(e){}
+    state.noiseSource = null;
+  }
+
+  // Best-effort disconnect (prevents node build-up across loads)
+  try{ state.filterNode && state.filterNode.disconnect(); }catch(e){}
+  try{ state.noiseGain && state.noiseGain.disconnect(); }catch(e){}
+  state.filterNode = null;
+  state.noiseGain = null;
+
+  cancelAnimationFrame(state.animFrame);
+  state.animFrame = null;
+
+  if (!keepPlayingFlag){
+    state.isPlaying = false;
+    el.playBtn.classList.remove("playing");
+    iconPlay();
+  }
+}
+
+function startEngine(presetId){
+  const p = PRESETS[presetId];
+  if (!p) return;
+
+  stopEngine({keepPlayingFlag:true});
+
+  if (!ensureAudio()) return;
+
+  const ctx = state.audioCtx;
+
+  // Must be resumed on user gesture; togglePlay calls this from button/keyboard.
+  if (ctx.state === "suspended") ctx.resume().catch(() => {});
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = p.filterType;
+  filter.frequency.value = p.frequency;
+  filter.Q.value = p.Q;
+
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.value = 0;
+
+  const src = createNoiseBuffer(ctx);
+  src.connect(filter);
+  filter.connect(noiseGain);
+  noiseGain.connect(state.masterGain);
+
+  state.noiseSource = src;
+  state.filterNode = filter;
+  state.noiseGain = noiseGain;
+
+  src.start();
+
+  // Fade in
+  noiseGain.gain.setValueAtTime(0, ctx.currentTime);
+  noiseGain.gain.linearRampToValueAtTime(p.gainBase, ctx.currentTime + 2);
+
+  scheduleEvent(presetId);
+  startWaveform();
+}
+
+function scheduleEvent(presetId){
+  const p = PRESETS[presetId];
+  if (!p) return;
+  if (!state.isPlaying || state.currentPreset !== presetId) return;
+
+  // Silence bias: most of the time do nothing.
+  if (Math.random() > p.silenceBias){
+    triggerTone(p);
+  }
+
+  const [minS, maxS] = p.eventInterval;
+  const delay = minS + Math.random() * (maxS - minS);
+  state.eventTimer = setTimeout(() => scheduleEvent(presetId), delay * 1000);
+}
+
+function triggerTone(p){
+  const ctx = state.audioCtx;
+  if (!ctx || !state.masterGain) return;
+
+  const osc = ctx.createOscillator();
+  const env = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.value = p.toneFreq[0] + Math.random() * (p.toneFreq[1] - p.toneFreq[0]);
+
+  osc.connect(env);
+  env.connect(state.masterGain);
+
+  const now = ctx.currentTime;
+  const attack = 0.6 + Math.random() * 0.9;
+  const decay = 1.8 + Math.random() * 3.2;
+
+  env.gain.setValueAtTime(0.00001, now);
+  env.gain.linearRampToValueAtTime(0.02, now + attack);
+  env.gain.exponentialRampToValueAtTime(0.00001, now + attack + decay);
+
+  osc.start(now);
+  osc.stop(now + attack + decay + 0.05);
+
+  // cleanup
+  osc.onended = () => {
+    try{ osc.disconnect(); }catch(e){}
+    try{ env.disconnect(); }catch(e){}
+  };
+}
+
+/* ── Waveform Canvas ─────────────────────────────────────────── */
+const waveCtx = el.waveCanvas.getContext("2d");
+
+function drawIdleWaveform(){
+  const W = el.waveWrap.clientWidth || 600;
+  const H = 40;
+  const dpr = window.devicePixelRatio || 1;
+
+  if (state.lastWaveW !== W || state.lastDpr !== dpr){
+    el.waveCanvas.width = Math.floor(W * dpr);
+    el.waveCanvas.height = Math.floor(H * dpr);
+    el.waveCanvas.style.height = H + "px";
+    state.lastWaveW = W;
+    state.lastDpr = dpr;
+  }
+
+  waveCtx.setTransform(dpr,0,0,dpr,0,0);
+  waveCtx.clearRect(0,0,W,H);
+  waveCtx.beginPath();
+  waveCtx.strokeStyle = "rgba(90,84,72,0.45)";
+  waveCtx.lineWidth = 1;
+  waveCtx.moveTo(0, H/2);
+  waveCtx.lineTo(W, H/2);
+  waveCtx.stroke();
+}
+
+function startWaveform(){
+  cancelAnimationFrame(state.animFrame);
+
+  const H = 40;
+  const dpr = window.devicePixelRatio || 1;
+
+  function frame(){
+    state.animFrame = requestAnimationFrame(frame);
+
+    const W = el.waveWrap.clientWidth || 600;
+
+    if (state.lastWaveW !== W || state.lastDpr !== dpr){
+      el.waveCanvas.width = Math.floor(W * dpr);
+      el.waveCanvas.height = Math.floor(H * dpr);
+      el.waveCanvas.style.height = H + "px";
+      state.lastWaveW = W;
+      state.lastDpr = dpr;
+    }
+
+    waveCtx.setTransform(dpr,0,0,dpr,0,0);
+    waveCtx.clearRect(0, 0, W, H);
+
+    if (!state.analyser){
+      drawIdleWaveform();
+      return;
+    }
+
+    const data = new Uint8Array(state.analyser.frequencyBinCount);
+    state.analyser.getByteTimeDomainData(data);
+
+    waveCtx.beginPath();
+    waveCtx.strokeStyle = "rgba(184,147,58,0.55)";
+    waveCtx.lineWidth = 1.5;
+
+    const slice = W / data.length;
+    for (let i = 0; i < data.length; i++){
+      const x = i * slice;
+      const y = (data[i] / 128) * (H / 2);
+      if (i === 0) waveCtx.moveTo(x, y);
+      else waveCtx.lineTo(x, y);
+    }
+    waveCtx.stroke();
+  }
+
+  frame();
+}
+
+window.addEventListener("resize", () => {
+  if (!state.isPlaying) drawIdleWaveform();
+});
+
+/* ── Playback Control ────────────────────────────────────────── */
+function setPlayerText({name, status}){
+  if (typeof name === "string") el.playerName.textContent = name;
+  if (typeof status === "string") el.playerStatus.textContent = status;
+}
+
+function loadPreset(id){
+  const p = PRESETS[id];
+  if (!p) return;
+
+  if (p.plan === "pro" && !state.isPro){
+    showToast('Pro plan required — click "FREE PLAN" to upgrade (demo)');
+    return;
+  }
+
+  state.currentPreset = id;
+  localStorage.setItem(LS.preset, id);
+
+  // Active card UI
+  el.presetCards.forEach(c => c.classList.toggle("active", c.dataset.id === id));
+  el.chips.forEach(c => c.classList.toggle("active", c.dataset.preset === id));
+
+  setPlayerText({
+    name: p.name,
+    status: `Loaded · ${Math.round(p.silenceBias * 100)}% silence · Press play`
+  });
+
+  if (state.isPlaying){
+    startEngine(id);
+  }
+}
+
+function startSessionTimers(){
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(updateTimer, 1000);
+}
+
+function stopSessionTimers(){
+  clearInterval(state.timerInterval);
+  state.timerInterval = null;
+}
+
+function togglePlay(){
+  if (!state.currentPreset){
+    loadPreset("paperQuiet");
+  }
+  const p = PRESETS[state.currentPreset];
+
+  // Gate pro preset
+  if (p.plan === "pro" && !state.isPro){
+    showToast("Pro plan required — toggle plan to Pro (demo)");
+    return;
+  }
+
+  if (state.isPlaying){
+    state.isPlaying = false;
+    stopEngine();
+    stopSessionTimers();
+    setPlayerText({ status: `Paused · ${p.name}` });
+    drawIdleWaveform();
+    return;
+  }
+
+  // Start
+  state.isPlaying = true;
+  state.sessionStartMs = Date.now();
+  el.playBtn.classList.add("playing");
+  iconPause();
+
+  startEngine(state.currentPreset);
+  startSessionTimers();
+
+  setPlayerText({ status: `Playing · ${p.name} · ${Math.round(p.silenceBias * 100)}% silence` });
+  updateTimer();
+}
+
+function updateTimer(){
+  if (!state.sessionStartMs){
+    el.playerTime.textContent = "00:00";
+    return;
+  }
+  const elapsed = Math.floor((Date.now() - state.sessionStartMs) / 1000);
+  const m = Math.floor(elapsed / 60).toString().padStart(2, "0");
+  const s = (elapsed % 60).toString().padStart(2, "0");
+  el.playerTime.textContent = `${m}:${s}`;
+
+  // Free plan boundary enforcement
+  if (!state.isPro && elapsed >= FREE_MAX_SECONDS){
+    showToast("Free plan boundary reached (30 min). Session stopped.");
+    state.isPlaying = false;
+    stopEngine();
+    stopSessionTimers();
+    setPlayerText({ status: `Stopped · ${PRESETS[state.currentPreset].name}` });
+    drawIdleWaveform();
+  }
+}
+
+function setFilter(filter){
+  el.filterTags.forEach(t => t.classList.toggle("active", t.dataset.filter === filter));
+
+  el.presetCards.forEach(card => {
+    const tags = (card.dataset.tags || "").split(" ").filter(Boolean);
+    const show = (filter === "all") || tags.includes(filter);
+    card.classList.toggle("hidden", !show);
+  });
+}
+
+/* ── Plan Toggle (demo) ──────────────────────────────────────── */
+function togglePlan(){
+  setPlan(!state.isPro);
+
+  // If user drops from Pro to Free while listening to Pro preset — stop.
+  const cur = state.currentPreset && PRESETS[state.currentPreset];
+  if (!state.isPro && cur && cur.plan === "pro"){
+    state.isPlaying = false;
+    stopEngine();
+    stopSessionTimers();
+    setPlayerText({ name: "No track playing", status: "Stopped · Select a preset below" });
+    drawIdleWaveform();
+  }
+}
+
+/* ── Events wiring ───────────────────────────────────────────── */
+function init(){
+  updateLibraryCount();
+
+  // Restore plan/preset/volume
+  const savedPlan = (localStorage.getItem(LS.plan) || "free").toLowerCase();
+  setPlan(savedPlan === "pro");
+
+  const savedPreset = localStorage.getItem(LS.preset);
+  if (savedPreset && PRESETS[savedPreset]){
+    loadPreset(savedPreset);
+  }else{
+    loadPreset("paperQuiet");
+  }
+
+  // Menu
+  el.menuBtn.addEventListener("click", () => {
+    const open = el.mobileDrawer.classList.toggle("open");
+    el.menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+
+  // Plan toggles
+  el.planBadge.addEventListener("click", togglePlan);
+  el.upgradeBtn.addEventListener("click", () => togglePlan());
+
+  // Play
+  el.playBtn.addEventListener("click", togglePlay);
+
+  // Quick chips
+  el.chips.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.preset;
+      loadPreset(id);
+      const p = PRESETS[id];
+      if (p && (p.plan !== "pro" || state.isPro)){
+        if (!state.isPlaying) togglePlay();
+      }
+    });
+  });
+
+  // Preset cards click + keyboard
+  el.presetCards.forEach(card => {
+    const id = card.dataset.id;
+
+    card.addEventListener("click", () => loadPreset(id));
+    card.addEventListener("keydown", (e) => {
+      if (e.code === "Enter" || e.code === "Space"){
+        e.preventDefault();
+        loadPreset(id);
+      }
+    });
+  });
+
+  // Filter
+  el.filterTags.forEach(tag => {
+    tag.addEventListener("click", () => setFilter(tag.dataset.filter));
+  });
+
+  // Volume
+  el.volSlider.addEventListener("input", () => {
+    const v = clamp(parseFloat(el.volSlider.value), 0, 1);
+    localStorage.setItem(LS.volume, String(v));
+    if (state.masterGain && state.audioCtx){
+      state.masterGain.gain.setTargetAtTime(v, state.audioCtx.currentTime, 0.05);
+    }
+  });
+
+  // Keyboard shortcuts (Space)
+  document.addEventListener("keydown", (e) => {
+    const tag = (e.target && e.target.tagName) ? e.target.tagName : "";
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (e.code === "Space"){
+      e.preventDefault();
+      togglePlay();
+    }
+  });
+
+  // Handle tab visibility: stop waveform draw + optionally pause audio
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden){
+      // Keep audio running (ritual/field). But reduce CPU visuals.
+      cancelAnimationFrame(state.animFrame);
+      state.animFrame = null;
+    }else{
+      if (state.isPlaying) startWaveform();
+      else drawIdleWaveform();
+    }
+  });
+
+  drawIdleWaveform();
+}
+
+init();
+</script>
+</body>
+</html>
