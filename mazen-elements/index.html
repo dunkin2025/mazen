@@ -25,6 +25,8 @@
   --border:  rgba(196,148,74,0.15);
   --border-active: rgba(196,148,74,0.45);
   --surface-hover: rgba(14,30,48,0.8);
+  --entropy-color: #7B9EC0;
+  --rate-color: #9E8BBB;
 
   --font-display: 'Cormorant Garamond', 'Shippori Mincho', Georgia, serif;
   --font-mono: 'DM Mono', 'Courier New', monospace;
@@ -34,9 +36,6 @@
   --transition-slow: 600ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ═══════════════════════════════════════════
-   RESET + BASE
-═══════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; scroll-behavior: smooth; }
 body {
@@ -53,9 +52,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 input, select { font-family: inherit; }
 a { color: inherit; text-decoration: none; }
 
-/* ═══════════════════════════════════════════
-   NOISE TEXTURE OVERLAY
-═══════════════════════════════════════════ */
 body::before {
   content: '';
   position: fixed; inset: 0;
@@ -65,16 +61,10 @@ body::before {
   z-index: 999;
 }
 
-/* ═══════════════════════════════════════════
-   SCROLLBAR
-═══════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: var(--void); }
 ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 0; }
 
-/* ═══════════════════════════════════════════
-   LAYOUT SHELL
-═══════════════════════════════════════════ */
 #app { display: flex; flex-direction: column; min-height: 100vh; }
 
 /* ═══════════════════════════════════════════
@@ -89,954 +79,307 @@ body::before {
   display: flex; align-items: center; justify-content: space-between;
   height: 52px;
 }
-.header-brand {
-  display: flex; align-items: baseline; gap: 16px;
-}
+.header-brand { display: flex; align-items: baseline; gap: 16px; }
 .brand-logo {
   font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 400;
-  letter-spacing: 0.22em;
-  color: var(--type);
+  font-size: 1.25rem; font-weight: 400;
+  letter-spacing: 0.22em; color: var(--type);
 }
-.brand-sub {
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
-  color: var(--type-dim);
-  font-weight: 300;
-}
-.brand-sep {
-  width: 1px; height: 14px;
-  background: var(--border);
-  align-self: center;
-}
-.header-meta {
-  display: flex; align-items: center; gap: 20px;
-}
+.brand-sub { font-size: 0.62rem; letter-spacing: 0.18em; color: var(--type-dim); font-weight: 300; }
+.brand-sep { width: 1px; height: 14px; background: var(--border); align-self: center; }
+.header-meta { display: flex; align-items: center; gap: 20px; }
 .season-badge {
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  color: var(--gold);
-  padding: 3px 8px;
-  border: 1px solid var(--border);
-  background: var(--gold-glow);
-  font-weight: 400;
+  font-size: 0.6rem; letter-spacing: 0.14em; color: var(--gold);
+  padding: 3px 8px; border: 1px solid var(--border); background: var(--gold-glow); font-weight: 400;
 }
-.header-status {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  color: var(--type-faint);
-}
-.status-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--type-faint);
-  transition: background var(--transition);
-}
+.header-status { display: flex; align-items: center; gap: 6px; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--type-faint); }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--type-faint); transition: background var(--transition); }
 .status-dot.active { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
 
 /* ═══════════════════════════════════════════
-   MAIN VIEWS
+   VIEWS
 ═══════════════════════════════════════════ */
 .view { display: none; }
 .view.active { display: block; }
 
 /* ═══════════════════════════════════════════
-   THE FLOOR — PROTOCOL LIBRARY
+   FLOOR
 ═══════════════════════════════════════════ */
-#view-floor {
-  padding: 40px 32px 80px;
-  max-width: 1280px;
-  margin: 0 auto;
-  width: 100%;
-}
+#view-floor { padding: 40px 32px 80px; max-width: 1280px; margin: 0 auto; width: 100%; }
+.floor-masthead { margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.floor-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 300; letter-spacing: 0.08em; line-height: 1.1; margin-bottom: 12px; }
+.floor-title em { font-style: italic; color: var(--gold); }
+.floor-desc { font-size: 0.68rem; letter-spacing: 0.12em; color: var(--type-dim); max-width: 480px; line-height: 1.8; }
 
-.floor-masthead {
-  margin-bottom: 48px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid var(--border);
-}
-.floor-title {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 300;
-  letter-spacing: 0.08em;
-  line-height: 1.1;
-  margin-bottom: 12px;
-}
-.floor-title em {
-  font-style: italic;
-  color: var(--gold);
-}
-.floor-desc {
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  color: var(--type-dim);
-  max-width: 480px;
-  line-height: 1.8;
-}
-
-/* Season Filter */
-.season-filter {
-  display: flex; align-items: center; gap: 0;
-  margin-bottom: 36px;
-  border-bottom: 1px solid var(--border);
-}
+.season-filter { display: flex; align-items: center; gap: 0; margin-bottom: 36px; border-bottom: 1px solid var(--border); }
 .season-tab {
-  padding: 10px 20px;
-  font-size: 0.63rem;
-  letter-spacing: 0.16em;
-  color: var(--type-faint);
-  background: none;
-  border-bottom: 1px solid transparent;
-  margin-bottom: -1px;
-  transition: all var(--transition);
-  position: relative;
-  font-family: var(--font-mono);
-  font-weight: 400;
+  padding: 10px 20px; font-size: 0.63rem; letter-spacing: 0.16em; color: var(--type-faint);
+  background: none; border-bottom: 1px solid transparent; margin-bottom: -1px;
+  transition: all var(--transition); font-family: var(--font-mono); font-weight: 400;
 }
 .season-tab:hover { color: var(--type-dim); }
-.season-tab.active {
-  color: var(--gold);
-  border-bottom-color: var(--gold);
-}
-.season-tab .tab-count {
-  margin-left: 6px;
-  opacity: 0.5;
-  font-size: 0.55rem;
-}
+.season-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.season-tab .tab-count { margin-left: 6px; opacity: 0.5; font-size: 0.55rem; }
 
-/* Protocol Grid */
-.protocol-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-}
+.protocol-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
 .protocol-card {
-  background: var(--navy);
-  padding: 28px 28px 24px;
-  cursor: pointer;
-  transition: background var(--transition);
-  position: relative;
-  overflow: hidden;
+  background: var(--navy); padding: 28px 28px 24px; cursor: pointer;
+  transition: background var(--transition); position: relative; overflow: hidden;
 }
 .protocol-card::before {
-  content: '';
-  position: absolute; left: 0; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--gold);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform var(--transition-slow);
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--gold); transform: scaleY(0); transform-origin: bottom; transition: transform var(--transition-slow);
 }
 .protocol-card:hover { background: var(--deep); }
 .protocol-card:hover::before { transform: scaleY(1); }
-
-.card-kanji {
-  font-family: var(--font-display);
-  font-size: 2.8rem;
-  font-weight: 300;
-  line-height: 1;
-  color: var(--type-faint);
-  margin-bottom: 16px;
-  transition: color var(--transition);
-  letter-spacing: -0.02em;
-}
+.card-kanji { font-family: var(--font-display); font-size: 2.8rem; font-weight: 300; line-height: 1; color: var(--type-faint); margin-bottom: 16px; transition: color var(--transition); letter-spacing: -0.02em; }
 .protocol-card:hover .card-kanji { color: rgba(196,148,74,0.35); }
-
-.card-header {
-  display: flex; align-items: baseline; justify-content: space-between;
-  margin-bottom: 8px;
-}
-.card-name {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 400;
-  letter-spacing: 0.06em;
-}
-.card-code {
-  font-size: 0.58rem;
-  letter-spacing: 0.12em;
-  color: var(--gold);
-  font-weight: 300;
-}
-.card-subtitle {
-  font-size: 0.63rem;
-  letter-spacing: 0.14em;
-  color: var(--type-dim);
-  margin-bottom: 16px;
-}
-.card-desc {
-  font-size: 0.65rem;
-  letter-spacing: 0.04em;
-  color: var(--type-faint);
-  line-height: 1.75;
-  margin-bottom: 20px;
-}
-.card-meta {
-  display: flex; align-items: center; gap: 16px;
-  flex-wrap: wrap;
-}
-.card-seasons {
-  display: flex; gap: 4px;
-}
-.season-pip {
-  font-size: 0.55rem;
-  letter-spacing: 0.1em;
-  padding: 2px 6px;
-  background: var(--signal);
-  color: var(--type-dim);
-}
-.card-durations {
-  display: flex; gap: 4px;
-}
-.dur-pip {
-  font-size: 0.55rem;
-  letter-spacing: 0.08em;
-  color: var(--type-faint);
-}
+.card-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.card-name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 400; letter-spacing: 0.06em; }
+.card-code { font-size: 0.58rem; letter-spacing: 0.12em; color: var(--gold); font-weight: 300; }
+.card-subtitle { font-size: 0.63rem; letter-spacing: 0.14em; color: var(--type-dim); margin-bottom: 16px; }
+.card-desc { font-size: 0.65rem; letter-spacing: 0.04em; color: var(--type-faint); line-height: 1.75; margin-bottom: 20px; }
+.card-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.card-seasons { display: flex; gap: 4px; }
+.season-pip { font-size: 0.55rem; letter-spacing: 0.1em; padding: 2px 6px; background: var(--signal); color: var(--type-dim); }
+.card-durations { display: flex; gap: 4px; }
+.dur-pip { font-size: 0.55rem; letter-spacing: 0.08em; color: var(--type-faint); }
 .dur-pip::after { content: "'"; }
-.card-arrow {
-  position: absolute; right: 20px; bottom: 22px;
-  font-size: 0.65rem;
-  color: var(--type-faint);
-  transition: all var(--transition);
-}
-.protocol-card:hover .card-arrow {
-  color: var(--gold);
-  transform: translateX(4px);
-}
+.card-arrow { position: absolute; right: 20px; bottom: 22px; font-size: 0.65rem; color: var(--type-faint); transition: all var(--transition); }
+.protocol-card:hover .card-arrow { color: var(--gold); transform: translateX(4px); }
 
 /* ═══════════════════════════════════════════
-   PROTOCOL DETAIL PANEL
+   DETAIL PANEL
 ═══════════════════════════════════════════ */
-#view-detail {
-  padding: 40px 32px 80px;
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.back-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  color: var(--type-faint);
-  margin-bottom: 40px;
-  padding: 0;
-  transition: color var(--transition);
-}
+#view-detail { padding: 40px 32px 80px; max-width: 960px; margin: 0 auto; width: 100%; }
+.back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 0.6rem; letter-spacing: 0.14em; color: var(--type-faint); margin-bottom: 40px; padding: 0; transition: color var(--transition); }
 .back-btn:hover { color: var(--gold); }
 .back-btn::before { content: '←'; font-size: 0.75rem; }
 
-.detail-header {
-  display: flex; gap: 48px; align-items: flex-start;
-  margin-bottom: 48px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid var(--border);
-}
-.detail-kanji {
-  font-family: var(--font-display);
-  font-size: 6rem;
-  font-weight: 300;
-  line-height: 1;
-  color: rgba(196,148,74,0.2);
-  flex-shrink: 0;
-  letter-spacing: -0.04em;
-}
+.detail-header { display: flex; gap: 48px; align-items: flex-start; margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+.detail-kanji { font-family: var(--font-display); font-size: 6rem; font-weight: 300; line-height: 1; color: rgba(196,148,74,0.2); flex-shrink: 0; letter-spacing: -0.04em; }
 .detail-info { flex: 1; }
-.detail-code {
-  font-size: 0.6rem;
-  letter-spacing: 0.16em;
-  color: var(--gold);
-  margin-bottom: 10px;
-}
-.detail-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
-}
-.detail-subtitle {
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  color: var(--type-dim);
-  margin-bottom: 20px;
-}
-.detail-philosophy {
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-style: italic;
-  color: var(--type-dim);
-  line-height: 1.7;
-  padding-left: 16px;
-  border-left: 1px solid var(--gold-dim);
-}
+.detail-code { font-size: 0.6rem; letter-spacing: 0.16em; color: var(--gold); margin-bottom: 10px; }
+.detail-name { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 400; letter-spacing: 0.06em; margin-bottom: 6px; }
+.detail-subtitle { font-size: 0.7rem; letter-spacing: 0.14em; color: var(--type-dim); margin-bottom: 20px; }
+.detail-philosophy { font-family: var(--font-display); font-size: 0.95rem; font-style: italic; color: var(--type-dim); line-height: 1.7; padding-left: 16px; border-left: 1px solid var(--gold-dim); }
 
-/* Session Config */
-.session-config {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  margin-bottom: 40px;
-}
+/* ── Phase 2: 3-column config ── */
+.session-config { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px; }
 .config-section { }
-.config-label {
-  font-size: 0.6rem;
-  letter-spacing: 0.16em;
-  color: var(--gold);
-  margin-bottom: 16px;
-  display: block;
-}
-.config-desc {
-  font-size: 0.62rem;
-  letter-spacing: 0.06em;
-  color: var(--type-faint);
-  margin-bottom: 12px;
-  line-height: 1.7;
-}
+.config-label { font-size: 0.6rem; letter-spacing: 0.16em; color: var(--gold); margin-bottom: 12px; display: block; }
+.config-label.entropy-label-col { color: var(--entropy-color); }
+.config-label.rate-label-col { color: var(--rate-color); }
+.config-desc { font-size: 0.62rem; letter-spacing: 0.04em; color: var(--type-faint); margin-bottom: 12px; line-height: 1.7; }
 
-/* Duration selector */
-.duration-options {
-  display: flex; gap: 6px; flex-wrap: wrap;
-}
-.dur-option {
-  padding: 8px 16px;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  border: 1px solid var(--border);
-  color: var(--type-dim);
-  background: var(--navy);
-  transition: all var(--transition);
-  font-family: var(--font-mono);
-}
+.duration-options { display: flex; gap: 6px; flex-wrap: wrap; }
+.dur-option { padding: 8px 14px; font-size: 0.65rem; letter-spacing: 0.1em; border: 1px solid var(--border); color: var(--type-dim); background: var(--navy); transition: all var(--transition); font-family: var(--font-mono); }
 .dur-option:hover { border-color: var(--gold-dim); color: var(--type); }
-.dur-option.selected {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: var(--gold-glow);
-}
+.dur-option.selected { border-color: var(--gold); color: var(--gold); background: var(--gold-glow); }
 .dur-option::after { content: " min"; font-size: 0.55rem; opacity: 0.6; }
 
-/* Silence density slider */
-.density-control { }
-.density-display {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 10px;
-}
-.density-value {
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-}
-.density-label-right {
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
-  color: var(--type-faint);
-}
-input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 2px;
-  background: var(--signal);
-  outline: none;
-  cursor: pointer;
-  border-radius: 0;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 12px; height: 12px;
-  background: var(--gold);
-  border-radius: 50%;
-  border: 2px solid var(--void);
-  box-shadow: 0 0 8px rgba(196,148,74,0.4);
-}
-input[type="range"]::-moz-range-thumb {
-  width: 12px; height: 12px;
-  background: var(--gold);
-  border-radius: 50%;
-  border: 2px solid var(--void);
-}
+.param-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.param-value { font-size: 0.75rem; letter-spacing: 0.1em; color: var(--gold); }
+.param-value.entropy-val { color: var(--entropy-color); }
+.param-value.rate-val { color: var(--rate-color); }
+.param-sublabel { font-size: 0.55rem; letter-spacing: 0.1em; color: var(--type-faint); }
 
-/* Stems preview */
-.stems-preview {
-  border: 1px solid var(--border);
-  background: var(--void);
-}
-.stems-preview-header {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.58rem;
-  letter-spacing: 0.14em;
-  color: var(--type-faint);
-}
-.stem-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 1px solid rgba(14,30,48,0.5);
-}
+input[type="range"] { -webkit-appearance: none; width: 100%; height: 2px; background: var(--signal); outline: none; cursor: pointer; border-radius: 0; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: var(--gold); border-radius: 50%; border: 2px solid var(--void); box-shadow: 0 0 8px rgba(196,148,74,0.4); }
+input[type="range"]::-moz-range-thumb { width: 12px; height: 12px; background: var(--gold); border-radius: 50%; border: 2px solid var(--void); }
+input[type="range"].entropy-range::-webkit-slider-thumb { background: var(--entropy-color); box-shadow: 0 0 8px rgba(123,158,192,0.4); }
+input[type="range"].entropy-range::-moz-range-thumb { background: var(--entropy-color); }
+input[type="range"].rate-range::-webkit-slider-thumb { background: var(--rate-color); box-shadow: 0 0 8px rgba(158,139,187,0.4); }
+input[type="range"].rate-range::-moz-range-thumb { background: var(--rate-color); }
+
+/* Stem preview */
+.stems-preview { border: 1px solid var(--border); background: var(--void); }
+.stems-preview-header { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.58rem; letter-spacing: 0.14em; color: var(--type-faint); }
+.stem-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid rgba(14,30,48,0.5); }
 .stem-row:last-child { border-bottom: none; }
-.stem-type {
-  font-size: 0.55rem;
-  letter-spacing: 0.08em;
-  padding: 2px 6px;
-  background: var(--signal);
-  color: var(--type-faint);
-  flex-shrink: 0;
-  min-width: 42px;
-  text-align: center;
-}
-.stem-file {
-  font-size: 0.62rem;
-  letter-spacing: 0.06em;
-  color: var(--type-dim);
-  flex: 1;
-}
-.stem-dots {
-  display: flex; gap: 2px;
-}
-.stem-dot {
-  width: 3px; height: 3px;
-  background: var(--type-faint);
-  border-radius: 50%;
-}
+.stem-type { font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 6px; background: var(--signal); color: var(--type-faint); flex-shrink: 0; min-width: 46px; text-align: center; }
+.stem-type.tail { background: rgba(123,158,192,0.1); color: var(--entropy-color); }
+.stem-file { font-size: 0.62rem; letter-spacing: 0.06em; color: var(--type-dim); flex: 1; }
+.stem-meta { font-size: 0.55rem; color: var(--type-faint); }
 
-/* Begin Session CTA */
-.begin-btn {
-  display: flex; align-items: center; justify-content: center;
-  gap: 16px;
-  width: 100%;
-  padding: 18px 32px;
-  background: var(--gold-glow);
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
-  font-weight: 400;
-  transition: all var(--transition);
-  position: relative;
-  overflow: hidden;
+/* Playback rules preview */
+.rules-preview {
+  border: 1px solid var(--border); background: var(--void);
+  padding: 14px 16px; margin-bottom: 24px;
 }
-.begin-btn::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: var(--gold);
-  transform: translateX(-101%);
-  transition: transform var(--transition-slow);
-}
+.rules-preview-title { font-size: 0.58rem; letter-spacing: 0.14em; color: var(--type-faint); margin-bottom: 12px; }
+.rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+.rules-row { display: flex; justify-content: space-between; align-items: center; }
+.rules-key { font-size: 0.58rem; letter-spacing: 0.06em; color: var(--type-faint); }
+.rules-val { font-size: 0.6rem; letter-spacing: 0.06em; color: var(--type-dim); }
+
+/* Begin btn */
+.begin-btn { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; padding: 18px 32px; background: var(--gold-glow); border: 1px solid var(--gold); color: var(--gold); font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.22em; font-weight: 400; transition: all var(--transition); position: relative; overflow: hidden; }
+.begin-btn::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: translateX(-101%); transition: transform var(--transition-slow); }
 .begin-btn:hover::before { transform: translateX(0); }
 .begin-btn:hover { color: var(--void); }
 .begin-btn span { position: relative; z-index: 1; }
-
-.begin-note {
-  margin-top: 14px;
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
-  color: var(--type-faint);
-  text-align: center;
-}
+.begin-note { margin-top: 14px; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--type-faint); text-align: center; }
 
 /* ═══════════════════════════════════════════
-   ACTIVE SESSION VIEW
+   SESSION VIEW
 ═══════════════════════════════════════════ */
-#view-session {
-  position: fixed; inset: 0;
-  background: var(--void);
-  display: none;
-  flex-direction: column;
-  z-index: 200;
-}
+#view-session { position: fixed; inset: 0; background: var(--void); display: none; flex-direction: column; z-index: 200; }
 #view-session.active { display: flex; }
 
-/* Session Header Strip */
-.session-strip {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px;
-  height: 48px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(6,8,15,0.9);
-  flex-shrink: 0;
-}
-.session-protocol-id {
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  color: var(--gold);
-}
-.session-phase-text {
-  font-size: 0.58rem;
-  letter-spacing: 0.12em;
-  color: var(--type-faint);
-  transition: color var(--transition);
-}
+.session-strip { display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 48px; border-bottom: 1px solid var(--border); background: rgba(6,8,15,0.9); flex-shrink: 0; }
+.session-protocol-id { font-size: 0.6rem; letter-spacing: 0.18em; color: var(--gold); }
+.session-phase-text { font-size: 0.58rem; letter-spacing: 0.12em; color: var(--type-faint); transition: color var(--transition); }
 .session-phase-text.in-silence { color: var(--type-dim); }
-.end-session-btn {
-  font-size: 0.58rem;
-  letter-spacing: 0.14em;
-  color: var(--type-faint);
-  padding: 5px 12px;
-  border: 1px solid var(--type-faint);
-  font-family: var(--font-mono);
-  transition: all var(--transition);
-}
+.end-session-btn { font-size: 0.58rem; letter-spacing: 0.14em; color: var(--type-faint); padding: 5px 12px; border: 1px solid var(--type-faint); font-family: var(--font-mono); transition: all var(--transition); }
 .end-session-btn:hover { color: var(--type); border-color: var(--type); }
 
-/* Session Body */
-.session-body {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  overflow: hidden;
-}
+.session-body { flex: 1; display: grid; grid-template-columns: 1fr 380px; overflow: hidden; }
 
-/* Left: Timer + Entropy */
-.session-main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  position: relative;
-  border-right: 1px solid var(--border);
-}
+/* Left: timer + entropy */
+.session-main { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 40px; position: relative; border-right: 1px solid var(--border); }
+.session-identity { text-align: center; margin-bottom: 36px; }
+.session-kanji { font-family: var(--font-display); font-size: 4rem; font-weight: 300; color: rgba(196,148,74,0.15); line-height: 1; margin-bottom: 8px; transition: color var(--transition-slow); }
+.session-kanji.event-flash { color: rgba(196,148,74,0.45); }
+.session-name { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; letter-spacing: 0.1em; color: var(--type-dim); margin-bottom: 4px; }
+.session-subtitle { font-size: 0.6rem; letter-spacing: 0.18em; color: var(--type-faint); }
 
-.session-identity {
-  text-align: center;
-  margin-bottom: 48px;
-}
-.session-kanji {
-  font-family: var(--font-display);
-  font-size: 4rem;
-  font-weight: 300;
-  color: rgba(196,148,74,0.15);
-  line-height: 1;
-  margin-bottom: 8px;
-  transition: color var(--transition-slow);
-}
-.session-kanji.event-flash {
-  color: rgba(196,148,74,0.4);
-}
-.session-name {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  color: var(--type-dim);
-  margin-bottom: 4px;
-}
-.session-subtitle {
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  color: var(--type-faint);
-}
-
-/* Timer */
-.timer-block {
-  text-align: center;
-  margin-bottom: 48px;
-}
-.timer-label {
-  font-size: 0.58rem;
-  letter-spacing: 0.16em;
-  color: var(--type-faint);
-  margin-bottom: 8px;
-  display: block;
-}
-.timer-display {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 300;
-  letter-spacing: 0.04em;
-  color: var(--type);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  transition: color var(--transition);
-}
+.timer-block { text-align: center; margin-bottom: 32px; }
+.timer-label { font-size: 0.58rem; letter-spacing: 0.16em; color: var(--type-faint); margin-bottom: 8px; display: block; }
+.timer-display { font-family: var(--font-display); font-size: clamp(3rem, 6vw, 5rem); font-weight: 300; letter-spacing: 0.04em; color: var(--type); line-height: 1; font-variant-numeric: tabular-nums; transition: color var(--transition); }
 .timer-display.in-silence { color: var(--type-dim); }
-.timer-progress {
-  margin-top: 16px;
-  width: 280px;
-  height: 1px;
-  background: var(--signal);
-  position: relative;
-  overflow: hidden;
-}
-.timer-progress-fill {
-  position: absolute; left: 0; top: 0; bottom: 0;
-  background: var(--gold);
-  transition: width 1s linear;
-  transform-origin: left;
-}
+.timer-progress { margin-top: 16px; width: 280px; height: 1px; background: var(--signal); position: relative; overflow: hidden; }
+.timer-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--gold); transition: width 1s linear; transform-origin: left; }
 
-/* Entropy Canvas */
-.entropy-block {
-  width: 100%;
-  max-width: 520px;
-}
-.entropy-label {
-  font-size: 0.58rem;
-  letter-spacing: 0.14em;
-  color: var(--type-faint);
-  margin-bottom: 8px;
-  display: flex; justify-content: space-between;
-}
-#entropy-canvas {
-  width: 100%;
-  height: 64px;
-  display: block;
-  image-rendering: crisp-edges;
-}
-.entropy-legend {
-  display: flex; align-items: center; gap: 16px;
-  margin-top: 8px;
-}
-.legend-item {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.55rem;
-  letter-spacing: 0.1em;
-  color: var(--type-faint);
-}
-.legend-swatch {
-  width: 12px; height: 3px;
-}
+/* Entropy canvas - Phase 2: taller with 3 tracks */
+.entropy-block { width: 100%; max-width: 560px; }
+.entropy-label { font-size: 0.58rem; letter-spacing: 0.14em; color: var(--type-faint); margin-bottom: 8px; display: flex; justify-content: space-between; }
+#entropy-canvas { width: 100%; height: 96px; display: block; image-rendering: crisp-edges; }
+.entropy-legend { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.55rem; letter-spacing: 0.1em; color: var(--type-faint); }
+.legend-swatch { width: 12px; height: 3px; }
 
-/* Event Log */
-.event-log {
-  position: absolute; bottom: 24px; left: 40px;
-}
-.event-log-label {
-  font-size: 0.55rem;
-  letter-spacing: 0.12em;
-  color: var(--type-faint);
-  margin-bottom: 8px;
-}
-.event-entry {
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  color: var(--type-faint);
-  line-height: 1.8;
-  transition: all 0.4s ease;
-  opacity: 0;
-}
+/* Event log */
+.event-log { position: absolute; bottom: 20px; left: 40px; }
+.event-log-label { font-size: 0.55rem; letter-spacing: 0.12em; color: var(--type-faint); margin-bottom: 8px; }
+.event-entry { font-size: 0.62rem; letter-spacing: 0.08em; color: var(--type-faint); line-height: 1.8; transition: all 0.4s ease; opacity: 0; }
 .event-entry.visible { opacity: 1; }
 .event-entry .ev-time { color: var(--gold-dim); margin-right: 8px; }
 .event-entry .ev-name { color: var(--type-dim); }
+.event-entry .ev-tail { font-size: 0.52rem; color: var(--entropy-color); margin-left: 6px; }
 
 /* ───────────────────────────────────────────
-   Right Panel: Controls
+   Right Panel — Phase 2 redesign
 ─────────────────────────────────────────── */
-.session-controls {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  background: var(--navy);
-}
-.controls-section {
-  padding: 24px 24px 20px;
-  border-bottom: 1px solid var(--border);
-}
+.session-controls { display: flex; flex-direction: column; overflow-y: auto; background: var(--navy); }
+.controls-section { padding: 18px 20px 16px; border-bottom: 1px solid var(--border); }
 .controls-section:last-child { border-bottom: none; }
-.ctrl-label {
-  font-size: 0.58rem;
-  letter-spacing: 0.16em;
-  color: var(--gold);
-  margin-bottom: 16px;
-  display: block;
-}
+.ctrl-label { font-size: 0.58rem; letter-spacing: 0.16em; color: var(--gold); margin-bottom: 14px; display: block; }
+.ctrl-label.entropy-lbl { color: var(--entropy-color); }
+.ctrl-label.rate-lbl { color: var(--rate-color); }
+
+/* PARAMETER MAP — 3 sliders stacked */
+.param-map-row { margin-bottom: 14px; }
+.param-map-row:last-child { margin-bottom: 0; }
+.param-map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.param-map-name { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--type-dim); }
+.param-map-name .param-symbol { font-size: 0.55rem; color: var(--type-faint); margin-left: 4px; }
+.param-map-val { font-size: 0.65rem; color: var(--gold); }
+.param-map-val.ev { color: var(--entropy-color); }
+.param-map-val.rt { color: var(--rate-color); }
 
 /* Master Volume */
-.volume-row {
-  display: flex; align-items: center; gap: 12px;
-}
-.mute-btn {
-  width: 28px; height: 28px;
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem;
-  color: var(--type-dim);
-  flex-shrink: 0;
-  transition: all var(--transition);
-}
+.volume-row { display: flex; align-items: center; gap: 12px; }
+.mute-btn { width: 28px; height: 28px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--type-dim); flex-shrink: 0; transition: all var(--transition); }
 .mute-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
 .mute-btn.muted { color: var(--type-faint); }
-.volume-val {
-  font-size: 0.62rem;
-  color: var(--type-faint);
-  min-width: 28px;
-  text-align: right;
-}
+.volume-val { font-size: 0.62rem; color: var(--type-faint); min-width: 28px; text-align: right; }
+
+/* Anti-Chaos Guard */
+.guard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.guard-cell { background: var(--void); padding: 10px 12px; }
+.guard-key { font-size: 0.52rem; letter-spacing: 0.1em; color: var(--type-faint); margin-bottom: 4px; }
+.guard-val { font-size: 0.68rem; letter-spacing: 0.06em; color: var(--type-dim); font-variant-numeric: tabular-nums; }
+.guard-val.ok { color: #7BC0A0; }
+.guard-val.blocked { color: #C08080; }
+.guard-val.active { color: var(--gold); }
 
 /* Stem Mixer */
-.mixer-grid { }
-.mixer-stem {
-  margin-bottom: 14px;
-}
+.mixer-stem { margin-bottom: 12px; }
 .mixer-stem:last-child { margin-bottom: 0; }
-.mixer-stem-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 6px;
-}
-.mixer-stem-name {
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  color: var(--type-dim);
-}
-.mixer-stem-val {
-  font-size: 0.58rem;
-  color: var(--type-faint);
-}
-.mixer-stem-type {
-  font-size: 0.52rem;
-  letter-spacing: 0.08em;
-  color: var(--type-faint);
-  padding: 1px 5px;
-  background: var(--signal);
-  margin-left: 6px;
-}
+.mixer-stem-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.mixer-stem-name { font-size: 0.62rem; letter-spacing: 0.08em; color: var(--type-dim); }
+.mixer-stem-val { font-size: 0.58rem; color: var(--type-faint); }
+.mixer-stem-type { font-size: 0.52rem; letter-spacing: 0.08em; color: var(--type-faint); padding: 1px 5px; background: var(--signal); margin-left: 6px; }
 
-/* Silence Density */
-.density-live {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 10px;
-}
-.density-live-val {
-  font-size: 0.72rem;
-  color: var(--gold);
-}
-.density-live-ma {
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-  color: var(--type-faint);
-}
-
-/* Silence Frame Indicator */
-.silence-indicator {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px;
-  background: var(--void);
-  border: 1px solid var(--border);
-  transition: all var(--transition);
-}
-.silence-indicator.in-silence {
-  border-color: rgba(240,237,232,0.1);
-  background: rgba(240,237,232,0.02);
-}
+/* Silence frame indicator */
+.silence-indicator { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--void); border: 1px solid var(--border); transition: all var(--transition); }
+.silence-indicator.in-silence { border-color: rgba(240,237,232,0.1); background: rgba(240,237,232,0.02); }
 .silence-indicator.in-silence .sil-label { color: var(--type-dim); }
-.sil-dot {
-  width: 6px; height: 6px;
-  background: var(--type-faint);
-  border-radius: 50%;
-  flex-shrink: 0;
-  transition: all var(--transition-slow);
-}
-.silence-indicator.in-silence .sil-dot {
-  background: var(--type-dim);
-  box-shadow: 0 0 8px rgba(240,237,232,0.3);
-}
-.sil-label {
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
-  color: var(--type-faint);
-}
+.sil-dot { width: 6px; height: 6px; background: var(--type-faint); border-radius: 50%; flex-shrink: 0; transition: all var(--transition-slow); }
+.silence-indicator.in-silence .sil-dot { background: var(--type-dim); box-shadow: 0 0 8px rgba(240,237,232,0.3); }
+.sil-label { font-size: 0.62rem; letter-spacing: 0.1em; color: var(--type-faint); }
 
-/* Keyboard Hints */
-.key-hints {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-.key-hint {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 0.58rem;
-  letter-spacing: 0.06em;
-  color: var(--type-faint);
-}
-.key {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 18px;
-  border: 1px solid var(--type-faint);
-  font-size: 0.55rem;
-  flex-shrink: 0;
-  color: var(--type-faint);
-}
+/* Keyboard hints */
+.key-hints { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.key-hint { display: flex; align-items: center; gap: 8px; font-size: 0.55rem; letter-spacing: 0.06em; color: var(--type-faint); }
+.key { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 18px; border: 1px solid var(--type-faint); font-size: 0.5rem; flex-shrink: 0; color: var(--type-faint); }
 
 /* ═══════════════════════════════════════════
    SESSION COMPLETE
 ═══════════════════════════════════════════ */
-#view-complete {
-  position: fixed; inset: 0;
-  background: var(--void);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 300;
-  padding: 40px;
-}
+#view-complete { position: fixed; inset: 0; background: var(--void); display: none; align-items: center; justify-content: center; flex-direction: column; z-index: 300; padding: 40px; }
 #view-complete.active { display: flex; }
-
-.complete-inner {
-  text-align: center;
-  max-width: 480px;
-}
-.complete-kanji {
-  font-family: var(--font-display);
-  font-size: 5rem;
-  font-weight: 300;
-  color: rgba(196,148,74,0.2);
-  margin-bottom: 24px;
-  line-height: 1;
-}
-.complete-title {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  letter-spacing: 0.22em;
-  color: var(--type-dim);
-  margin-bottom: 32px;
-}
-.complete-stats {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  margin-bottom: 40px;
-}
-.stat-cell {
-  background: var(--navy);
-  padding: 20px 16px;
-  text-align: center;
-}
-.stat-val {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 300;
-  color: var(--gold);
-  display: block;
-  margin-bottom: 6px;
-}
-.stat-lbl {
-  font-size: 0.55rem;
-  letter-spacing: 0.12em;
-  color: var(--type-faint);
-}
-.complete-btns {
-  display: flex; gap: 12px; justify-content: center;
-}
-.btn-secondary {
-  padding: 10px 24px;
-  font-size: 0.63rem;
-  letter-spacing: 0.14em;
-  border: 1px solid var(--border);
-  color: var(--type-dim);
-  font-family: var(--font-mono);
-  transition: all var(--transition);
-}
+.complete-inner { text-align: center; max-width: 520px; }
+.complete-kanji { font-family: var(--font-display); font-size: 5rem; font-weight: 300; color: rgba(196,148,74,0.2); margin-bottom: 24px; line-height: 1; }
+.complete-title { font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.22em; color: var(--type-dim); margin-bottom: 32px; }
+.complete-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 40px; }
+.stat-cell { background: var(--navy); padding: 18px 12px; text-align: center; }
+.stat-val { font-family: var(--font-display); font-size: 1.6rem; font-weight: 300; color: var(--gold); display: block; margin-bottom: 6px; }
+.stat-lbl { font-size: 0.52rem; letter-spacing: 0.12em; color: var(--type-faint); }
+.complete-btns { display: flex; gap: 12px; justify-content: center; }
+.btn-secondary { padding: 10px 24px; font-size: 0.63rem; letter-spacing: 0.14em; border: 1px solid var(--border); color: var(--type-dim); font-family: var(--font-mono); transition: all var(--transition); }
 .btn-secondary:hover { border-color: var(--gold-dim); color: var(--gold); }
-.btn-primary {
-  padding: 10px 24px;
-  font-size: 0.63rem;
-  letter-spacing: 0.14em;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  background: var(--gold-glow);
-  font-family: var(--font-mono);
-  transition: all var(--transition);
-}
+.btn-primary { padding: 10px 24px; font-size: 0.63rem; letter-spacing: 0.14em; border: 1px solid var(--gold); color: var(--gold); background: var(--gold-glow); font-family: var(--font-mono); transition: all var(--transition); }
 .btn-primary:hover { background: var(--gold); color: var(--void); }
 
-/* Audio Error Banner */
-#audio-banner {
-  display: none;
-  background: rgba(18, 28, 46, 0.9);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 32px;
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  color: var(--type-faint);
-  align-items: center;
-  gap: 12px;
-}
+/* Audio banner */
+#audio-banner { display: none; background: rgba(18,28,46,0.9); border-bottom: 1px solid var(--border); padding: 8px 32px; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--type-faint); align-items: center; gap: 12px; }
 #audio-banner.visible { display: flex; }
-.banner-dot {
-  width: 4px; height: 4px;
-  background: var(--gold-dim);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.banner-dot { width: 4px; height: 4px; background: var(--gold-dim); border-radius: 50%; flex-shrink: 0; }
 
 /* Loading overlay */
-#loading-overlay {
-  position: fixed; inset: 0;
-  background: var(--void);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 500;
-  transition: opacity var(--transition-slow);
-}
+#loading-overlay { position: fixed; inset: 0; background: var(--void); display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 500; transition: opacity var(--transition-slow); }
 #loading-overlay.hidden { opacity: 0; pointer-events: none; }
-.loading-name {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 300;
-  letter-spacing: 0.12em;
-  color: var(--type-dim);
-  margin-bottom: 8px;
-}
-.loading-sub {
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  color: var(--type-faint);
-  margin-bottom: 32px;
-}
-.loading-bar {
-  width: 200px; height: 1px;
-  background: var(--signal);
-  position: relative;
-  overflow: hidden;
-}
-.loading-bar-fill {
-  position: absolute; left: 0; top: 0; bottom: 0;
-  background: var(--gold);
-  transition: width 0.3s ease;
-}
-.loading-files {
-  margin-top: 16px;
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
-  color: var(--type-faint);
-  height: 16px;
-}
+.loading-name { font-family: var(--font-display); font-size: 1.6rem; font-weight: 300; letter-spacing: 0.12em; color: var(--type-dim); margin-bottom: 8px; }
+.loading-sub { font-size: 0.6rem; letter-spacing: 0.18em; color: var(--type-faint); margin-bottom: 32px; }
+.loading-bar { width: 200px; height: 1px; background: var(--signal); position: relative; overflow: hidden; }
+.loading-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--gold); transition: width 0.3s ease; }
+.loading-files { margin-top: 16px; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--type-faint); height: 16px; }
 
 /* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .protocol-card { animation: fadeIn 0.4s ease both; }
 .protocol-card:nth-child(1) { animation-delay: 0.05s; }
 .protocol-card:nth-child(2) { animation-delay: 0.10s; }
 .protocol-card:nth-child(3) { animation-delay: 0.15s; }
 .protocol-card:nth-child(4) { animation-delay: 0.20s; }
 .protocol-card:nth-child(5) { animation-delay: 0.25s; }
+@keyframes guardBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.guard-val.blocked { animation: guardBlink 1.2s ease infinite; }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   #header { padding: 0 16px; }
   #view-floor { padding: 24px 16px 60px; }
   #view-detail { padding: 24px 16px 60px; }
   .detail-header { flex-direction: column; gap: 16px; }
   .detail-kanji { font-size: 3.5rem; }
-  .session-config { grid-template-columns: 1fr; gap: 24px; }
+  .session-config { grid-template-columns: 1fr; gap: 20px; }
   .session-body { grid-template-columns: 1fr; }
-  .session-controls { border-top: 1px solid var(--border); max-height: 280px; }
-  .session-main { padding: 24px; }
-  .complete-stats { grid-template-columns: 1fr; }
+  .session-controls { border-top: 1px solid var(--border); max-height: 300px; }
+  .session-main { padding: 20px; }
+  .complete-stats { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
@@ -1045,7 +388,7 @@ input[type="range"]::-moz-range-thumb {
 <!-- ═══ LOADING OVERLAY ═══ -->
 <div id="loading-overlay">
   <div class="loading-name">MA-ZEN</div>
-  <div class="loading-sub">INITIALISING PROTOCOL ENGINE</div>
+  <div class="loading-sub">INITIALISING PROTOCOL ENGINE · PHASE 2</div>
   <div class="loading-bar"><div class="loading-bar-fill" id="loading-fill"></div></div>
   <div class="loading-files" id="loading-files">—</div>
 </div>
@@ -1081,7 +424,6 @@ input[type="range"]::-moz-range-thumb {
       <h1 class="floor-title">The <em>Floor</em></h1>
       <p class="floor-desc">A governed catalogue of silence protocols. Accessed by specification, not by emotional state. Each session is a finite architectural event.</p>
     </div>
-
     <div class="season-filter" id="season-filter">
       <button class="season-tab active" data-season="ALL">ALL <span class="tab-count"></span></button>
       <button class="season-tab" data-season="SPRING">SPRING</button>
@@ -1089,7 +431,6 @@ input[type="range"]::-moz-range-thumb {
       <button class="season-tab" data-season="AUTUMN">AUTUMN</button>
       <button class="season-tab" data-season="WINTER">WINTER</button>
     </div>
-
     <div class="protocol-grid" id="protocol-grid"></div>
   </div>
 
@@ -1107,40 +448,69 @@ input[type="range"]::-moz-range-thumb {
       </div>
     </div>
 
-    <p style="font-size:0.68rem;letter-spacing:0.06em;color:var(--type-dim);line-height:1.85;margin-bottom:36px;max-width:600px;" id="d-desc">—</p>
+    <p style="font-size:0.68rem;letter-spacing:0.06em;color:var(--type-dim);line-height:1.85;margin-bottom:32px;max-width:640px;" id="d-desc">—</p>
 
+    <!-- Phase 2: 3-column parameter config -->
     <div class="session-config">
       <!-- Duration -->
       <div class="config-section">
         <span class="config-label">SESSION DURATION</span>
-        <p class="config-desc">Select the protocol duration. Sessions are finite by design — the end is part of the architecture.</p>
+        <p class="config-desc">Finite by design — the end is part of the architecture.</p>
         <div class="duration-options" id="duration-options"></div>
       </div>
 
-      <!-- Density -->
+      <!-- Silence % -->
       <div class="config-section">
-        <span class="config-label">SILENCE DENSITY · MA 間</span>
-        <p class="config-desc">Governs the ratio of governed silence to event-active intervals. Higher density = more structural silence.</p>
-        <div class="density-control">
-          <div class="density-display">
-            <span class="density-value" id="density-display-val">—%</span>
-            <span class="density-label-right">MA RATIO</span>
-          </div>
-          <input type="range" id="density-slider" min="60" max="95" step="1" value="82">
+        <span class="config-label">SILENCE % · MA 間</span>
+        <p class="config-desc">Governs the ratio of governed silence frames to event-active intervals.</p>
+        <div class="param-display">
+          <span class="param-value" id="silence-display-val">—%</span>
+          <span class="param-sublabel">MA RATIO</span>
         </div>
-        <div style="margin-top:16px;">
+        <input type="range" id="silence-slider" min="60" max="95" step="1" value="82">
+        <div style="margin-top:12px;">
           <div class="silence-indicator" id="detail-silence-indicator">
             <div class="sil-dot"></div>
-            <span class="sil-label" id="detail-sil-label">Protocol default: — %</span>
+            <span class="sil-label" id="detail-sil-label">Protocol default: —%</span>
           </div>
         </div>
       </div>
+
+      <!-- Entropy φ -->
+      <div class="config-section">
+        <span class="config-label entropy-label-col">ENTROPY φ · 変化</span>
+        <p class="config-desc">Controls curve amplitude — how much the phase arc deviates from its mean.</p>
+        <div class="param-display">
+          <span class="param-value entropy-val" id="entropy-display-val">—%</span>
+          <span class="param-sublabel">ARC DEVIATION</span>
+        </div>
+        <input type="range" class="entropy-range" id="entropy-slider" min="0" max="100" step="1" value="60">
+      </div>
     </div>
 
-    <!-- Stem Preview -->
-    <div style="margin-bottom:32px;">
-      <span class="config-label">STEM ARCHITECTURE · VERTICAL LAYERS</span>
-      <div class="stems-preview" id="stems-preview"></div>
+    <!-- Row 2: Event Rate -->
+    <div class="session-config" style="margin-top:-12px;">
+      <div class="config-section">
+        <span class="config-label rate-label-col">EVENT RATE · 密度</span>
+        <p class="config-desc">Controls interval compression — how frequently events are permitted within active windows.</p>
+        <div class="param-display">
+          <span class="param-value rate-val" id="rate-display-val">—%</span>
+          <span class="param-sublabel">INTERVAL COMPRESSION</span>
+        </div>
+        <input type="range" class="rate-range" id="rate-slider" min="10" max="100" step="1" value="50">
+      </div>
+
+      <!-- Stem preview -->
+      <div class="config-section" style="grid-column: span 2;">
+        <span class="config-label">STEM ARCHITECTURE · VERTICAL LAYERS</span>
+        <div class="stems-preview" id="stems-preview"></div>
+      </div>
+    </div>
+
+    <!-- Playback rules preview -->
+    <div class="rules-preview">
+      <div class="rules-preview-title">PLAYBACK RULES · ANTI-CHAOS CONSTRAINTS</div>
+      <div class="rules-grid" id="rules-preview-grid"></div>
     </div>
 
     <!-- Begin -->
@@ -1152,7 +522,7 @@ input[type="range"]::-moz-range-thumb {
 
 </div><!-- /app -->
 
-<!-- ─── VIEW: SESSION (outside app, fixed) ─── -->
+<!-- ─── VIEW: SESSION (fixed fullscreen) ─── -->
 <div id="view-session">
   <div class="session-strip">
     <div class="session-protocol-id" id="s-proto-id">—</div>
@@ -1161,7 +531,7 @@ input[type="range"]::-moz-range-thumb {
   </div>
 
   <div class="session-body">
-    <!-- Main area -->
+    <!-- Left: Timer + Entropy Canvas -->
     <div class="session-main">
       <div class="session-identity">
         <div class="session-kanji" id="s-kanji">—</div>
@@ -1179,18 +549,22 @@ input[type="range"]::-moz-range-thumb {
 
       <div class="entropy-block">
         <div class="entropy-label">
-          <span>ENTROPY PHASE TIMELINE</span>
-          <span id="s-entropy-val">—</span>
+          <span>3-PARAMETER PHASE TIMELINE</span>
+          <span id="s-entropy-val">φ —</span>
         </div>
-        <canvas id="entropy-canvas" width="520" height="64"></canvas>
+        <canvas id="entropy-canvas" width="560" height="96"></canvas>
         <div class="entropy-legend">
           <div class="legend-item">
             <div class="legend-swatch" style="background:var(--gold);opacity:0.5;"></div>
             EVENT ACTIVE
           </div>
           <div class="legend-item">
-            <div class="legend-swatch" style="background:var(--type-faint);opacity:0.3;"></div>
+            <div class="legend-swatch" style="background:var(--signal);opacity:0.8;"></div>
             SILENCE FRAME
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:var(--entropy-color);opacity:0.5;height:2px;"></div>
+            ENTROPY φ
           </div>
           <div class="legend-item">
             <div class="legend-swatch" style="background:var(--gold);width:2px;height:10px;"></div>
@@ -1206,7 +580,7 @@ input[type="range"]::-moz-range-thumb {
       </div>
     </div>
 
-    <!-- Controls panel -->
+    <!-- Right: Controls Panel -->
     <div class="session-controls">
 
       <!-- Master Volume -->
@@ -1219,20 +593,34 @@ input[type="range"]::-moz-range-thumb {
         </div>
       </div>
 
-      <!-- Stem Mixer -->
+      <!-- PARAMETER MAP — 3 live controls -->
       <div class="controls-section">
-        <span class="ctrl-label">STEM MIXER · VERTICAL LAYERS</span>
-        <div class="mixer-grid" id="mixer-grid"></div>
-      </div>
+        <span class="ctrl-label">PARAMETER MAP · LIVE</span>
 
-      <!-- Live Silence Density -->
-      <div class="controls-section">
-        <span class="ctrl-label">SILENCE DENSITY · LIVE</span>
-        <div class="density-live">
-          <span class="density-live-val" id="live-density-val">—%</span>
-          <span class="density-live-ma">間 MA</span>
+        <div class="param-map-row">
+          <div class="param-map-header">
+            <span class="param-map-name">SILENCE % <span class="param-symbol">間</span></span>
+            <span class="param-map-val" id="live-silence-val">—%</span>
+          </div>
+          <input type="range" id="live-silence" min="60" max="95" step="1" value="82">
         </div>
-        <input type="range" id="live-density" min="60" max="95" step="1" value="82">
+
+        <div class="param-map-row">
+          <div class="param-map-header">
+            <span class="param-map-name">ENTROPY <span class="param-symbol">φ</span></span>
+            <span class="param-map-val ev" id="live-entropy-val">—%</span>
+          </div>
+          <input type="range" class="entropy-range" id="live-entropy" min="0" max="100" step="1" value="60">
+        </div>
+
+        <div class="param-map-row">
+          <div class="param-map-header">
+            <span class="param-map-name">EVENT RATE <span class="param-symbol">密</span></span>
+            <span class="param-map-val rt" id="live-rate-val">—%</span>
+          </div>
+          <input type="range" class="rate-range" id="live-rate" min="10" max="100" step="1" value="50">
+        </div>
+
         <div style="margin-top:14px;">
           <div class="silence-indicator" id="session-silence-indicator">
             <div class="sil-dot"></div>
@@ -1241,14 +629,52 @@ input[type="range"]::-moz-range-thumb {
         </div>
       </div>
 
+      <!-- ANTI-CHAOS GUARD — live readouts -->
+      <div class="controls-section">
+        <span class="ctrl-label">ANTI-CHAOS GUARD</span>
+        <div class="guard-grid">
+          <div class="guard-cell">
+            <div class="guard-key">SPACING</div>
+            <div class="guard-val ok" id="g-spacing">OPEN</div>
+          </div>
+          <div class="guard-cell">
+            <div class="guard-key">SIMULTANEOUS</div>
+            <div class="guard-val" id="g-simul">0 / 3</div>
+          </div>
+          <div class="guard-cell">
+            <div class="guard-key">COOLDOWN</div>
+            <div class="guard-val ok" id="g-cooldown">CLEAR</div>
+          </div>
+          <div class="guard-cell">
+            <div class="guard-key">NEXT EVENT</div>
+            <div class="guard-val active" id="g-next">—s</div>
+          </div>
+          <div class="guard-cell">
+            <div class="guard-key">TAILS ACTIVE</div>
+            <div class="guard-val" id="g-tails">0</div>
+          </div>
+          <div class="guard-cell">
+            <div class="guard-key">BLOCKED</div>
+            <div class="guard-val ok" id="g-blocked">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stem Mixer -->
+      <div class="controls-section">
+        <span class="ctrl-label">STEM MIXER · VERTICAL LAYERS</span>
+        <div class="mixer-grid" id="mixer-grid"></div>
+      </div>
+
       <!-- Keyboard hints -->
       <div class="controls-section">
         <span class="ctrl-label">KEYBOARD</span>
         <div class="key-hints">
           <div class="key-hint"><span class="key">K</span>MUTE</div>
           <div class="key-hint"><span class="key">↑↓</span>VOLUME</div>
-          <div class="key-hint"><span class="key">M</span>DENSITY +</div>
-          <div class="key-hint"><span class="key">N</span>DENSITY −</div>
+          <div class="key-hint"><span class="key">E/R</span>ENTROPY ±</div>
+          <div class="key-hint"><span class="key">T/Y</span>RATE ±</div>
+          <div class="key-hint"><span class="key">M/N</span>SILENCE ±</div>
           <div class="key-hint"><span class="key">ESC</span>END</div>
         </div>
       </div>
@@ -1269,7 +695,11 @@ input[type="range"]::-moz-range-thumb {
       </div>
       <div class="stat-cell">
         <span class="stat-val" id="c-events">—</span>
-        <span class="stat-lbl">EVENTS GOVERNED</span>
+        <span class="stat-lbl">EVENTS</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-val" id="c-tails-count">—</span>
+        <span class="stat-lbl">TAILS</span>
       </div>
       <div class="stat-cell">
         <span class="stat-val" id="c-density">—</span>
@@ -1284,119 +714,96 @@ input[type="range"]::-moz-range-thumb {
 </div>
 
 <!-- ═══════════════════════════════════════════
-     JAVASCRIPT ENGINE
+     JAVASCRIPT ENGINE — PHASE 2
 ═══════════════════════════════════════════ -->
 <script>
 'use strict';
 
 /* ────────────────────────────────────────────
-   PROTOCOL DEFINITIONS
+   PROTOCOL DEFINITIONS — Phase 2
+   Each event now carries: tailChance, tailFile
+   Protocol carries: tails[] (resonance tail pool)
 ──────────────────────────────────────────── */
 const PROTOCOLS = {
   SEIJAKU: {
-    id: 'SEIJAKU',
-    name: 'Seijaku',
-    kanji: '静寂',
-    subtitle: 'Mineral Silence',
-    code: 'W-ST-20 · SP-ST-30',
-    seasons: ['WINTER','SPRING'],
-    durations: [20,30,45],
+    id: 'SEIJAKU', name: 'Seijaku', kanji: '静寂',
+    subtitle: 'Mineral Silence', code: 'W-ST-20 · SP-ST-30',
+    seasons: ['WINTER','SPRING'], durations: [20,30,45],
     description: 'Stone and water at maximum interval. Events are sparse mineral interventions in deep structural silence. The practitioner does not wait for sound — the practitioner inhabits the silence between.',
     philosophy: 'Ma at maximum density. The interval between strikes governs the discipline, not the strikes themselves.',
-    beds: [
-      { file: 'air_hollow', label: 'Air Hollow', baseGain: 0.28 }
-    ],
+    beds: [{ file: 'air_hollow', label: 'Air Hollow', baseGain: 0.28 }],
     events: [
-      { file: 'water_droplet', label: 'Water Droplet', weight: 0.40, minInterval: 8,  maxInterval: 28 },
-      { file: 'stone_strike',  label: 'Stone Strike',  weight: 0.35, minInterval: 18, maxInterval: 50 },
-      { file: 'sand_fall',     label: 'Sand Fall',     weight: 0.25, minInterval: 22, maxInterval: 65 }
+      { file: 'water_droplet', label: 'Water Droplet', weight: 0.40, minInterval: 8,  maxInterval: 28, tailChance: 0.20, tailFiles: ['air_hollow'] },
+      { file: 'stone_strike',  label: 'Stone Strike',  weight: 0.35, minInterval: 18, maxInterval: 50, tailChance: 0.15, tailFiles: ['sand_fall'] },
+      { file: 'sand_fall',     label: 'Sand Fall',     weight: 0.25, minInterval: 22, maxInterval: 65, tailChance: 0.00, tailFiles: [] }
     ],
-    defaultDensity: 82,
+    defaultSilence: 82, defaultEntropy: 55, defaultRate: 40,
     entropyPhase: 0.0,
+    playbackRules: { minGlobalSpacing: 1400, maxSimultaneous: 2, tailDelay: [600, 1800] }
   },
   GAKE: {
-    id: 'GAKE',
-    name: 'Gake',
-    kanji: '崖',
-    subtitle: 'Cliff Exposure',
-    code: 'AU-WD-30 · W-WD-45',
-    seasons: ['AUTUMN','WINTER'],
-    durations: [20,30,45],
+    id: 'GAKE', name: 'Gake', kanji: '崖',
+    subtitle: 'Cliff Exposure', code: 'AU-WD-30 · W-WD-45',
+    seasons: ['AUTUMN','WINTER'], durations: [20,30,45],
     description: 'Wind and geological event at the threshold of exposure. Structured encounter with entropic force. The protocol does not shelter the practitioner — it places them at the edge.',
     philosophy: 'Sunyata through dissolution. The cliff does not resist the wind. The practitioner learns to stand in that non-resistance.',
-    beds: [
-      { file: 'wind_rush', label: 'Wind Bed', baseGain: 0.38 }
-    ],
+    beds: [{ file: 'wind_rush', label: 'Wind Bed', baseGain: 0.38 }],
     events: [
-      { file: 'thunder_distant', label: 'Thunder',      weight: 0.28, minInterval: 35, maxInterval: 95 },
-      { file: 'stone_scrape',    label: 'Stone Scrape', weight: 0.42, minInterval: 10, maxInterval: 32 },
-      { file: 'ice_crack',       label: 'Ice Crack',    weight: 0.30, minInterval: 20, maxInterval: 55 }
+      { file: 'thunder_distant', label: 'Thunder',      weight: 0.28, minInterval: 35, maxInterval: 95, tailChance: 0.35, tailFiles: ['wind_rush'] },
+      { file: 'stone_scrape',    label: 'Stone Scrape', weight: 0.42, minInterval: 10, maxInterval: 32, tailChance: 0.10, tailFiles: ['ice_crack'] },
+      { file: 'ice_crack',       label: 'Ice Crack',    weight: 0.30, minInterval: 20, maxInterval: 55, tailChance: 0.20, tailFiles: ['stone_scrape'] }
     ],
-    defaultDensity: 75,
+    defaultSilence: 75, defaultEntropy: 70, defaultRate: 55,
     entropyPhase: 1.047,
+    playbackRules: { minGlobalSpacing: 1000, maxSimultaneous: 3, tailDelay: [400, 1200] }
   },
   AKANE: {
-    id: 'AKANE',
-    name: 'Akane',
-    kanji: '茜',
-    subtitle: 'Governed Dissolution',
-    code: 'AU-EM-30 · AU-EM-60',
-    seasons: ['AUTUMN'],
-    durations: [20,30,45,60],
+    id: 'AKANE', name: 'Akane', kanji: '茜',
+    subtitle: 'Governed Dissolution', code: 'AU-EM-30 · AU-EM-60',
+    seasons: ['AUTUMN'], durations: [20,30,45,60],
     description: 'Ember and organic dissolution. The entropy of dusk — decay that follows its own law. Events arise and pass within a bed of low combustion. Each pop is a complete event: it does not anticipate the next.',
     philosophy: 'Wu Wei — dissolution without forcing. The ember does not decide to extinguish. The practitioner observes the law of ending.',
-    beds: [
-      { file: 'ember_crackle', label: 'Ember Bed', baseGain: 0.32 }
-    ],
+    beds: [{ file: 'ember_crackle', label: 'Ember Bed', baseGain: 0.32 }],
     events: [
-      { file: 'ember_pop',  label: 'Ember Pop',  weight: 0.45, minInterval: 4,  maxInterval: 18 },
-      { file: 'sand_fall',  label: 'Sand Fall',  weight: 0.30, minInterval: 10, maxInterval: 38 },
-      { file: 'wood_creak', label: 'Wood Creak', weight: 0.25, minInterval: 20, maxInterval: 58 }
+      { file: 'ember_pop',  label: 'Ember Pop',  weight: 0.45, minInterval: 4,  maxInterval: 18, tailChance: 0.30, tailFiles: ['ember_crackle'] },
+      { file: 'sand_fall',  label: 'Sand Fall',  weight: 0.30, minInterval: 10, maxInterval: 38, tailChance: 0.00, tailFiles: [] },
+      { file: 'wood_creak', label: 'Wood Creak', weight: 0.25, minInterval: 20, maxInterval: 58, tailChance: 0.15, tailFiles: ['ember_pop'] }
     ],
-    defaultDensity: 70,
+    defaultSilence: 70, defaultEntropy: 65, defaultRate: 65,
     entropyPhase: 2.094,
+    playbackRules: { minGlobalSpacing: 800, maxSimultaneous: 3, tailDelay: [300, 900] }
   },
   MIYABI: {
-    id: 'MIYABI',
-    name: 'Miyabi',
-    kanji: '雅',
-    subtitle: 'Refined Discipline',
-    code: 'SP-SK-20 · SU-SK-30',
-    seasons: ['SPRING','SUMMER'],
-    durations: [15,20,30],
-    description: 'Silk, paper and bamboo in elegant sequence. The most refined protocol in the library. Events are placed with precision — not permitted, but chosen. Each interval demonstrates the practitioner\'s understanding of space.',
+    id: 'MIYABI', name: 'Miyabi', kanji: '雅',
+    subtitle: 'Refined Discipline', code: 'SP-SK-20 · SU-SK-30',
+    seasons: ['SPRING','SUMMER'], durations: [15,20,30],
+    description: "Silk, paper and bamboo in elegant sequence. The most refined protocol in the library. Events are placed with precision — not permitted, but chosen. Each interval demonstrates the practitioner's understanding of space.",
     philosophy: 'Precision without force. The tea master does not hurry the water. Each gesture is complete before the next begins.',
-    beds: [
-      { file: 'silk_slide', label: 'Silk Bed', baseGain: 0.22 }
-    ],
+    beds: [{ file: 'silk_slide', label: 'Silk Bed', baseGain: 0.22 }],
     events: [
-      { file: 'paper_turn', label: 'Paper Turn', weight: 0.38, minInterval: 7,  maxInterval: 22 },
-      { file: 'bamboo_tap', label: 'Bamboo Tap', weight: 0.37, minInterval: 9,  maxInterval: 30 },
-      { file: 'metal_ring', label: 'Metal Ring', weight: 0.25, minInterval: 16, maxInterval: 48 }
+      { file: 'paper_turn', label: 'Paper Turn', weight: 0.38, minInterval: 7,  maxInterval: 22, tailChance: 0.25, tailFiles: ['silk_slide'] },
+      { file: 'bamboo_tap', label: 'Bamboo Tap', weight: 0.37, minInterval: 9,  maxInterval: 30, tailChance: 0.20, tailFiles: ['paper_crumple'] },
+      { file: 'metal_ring', label: 'Metal Ring', weight: 0.25, minInterval: 16, maxInterval: 48, tailChance: 0.45, tailFiles: ['metal_ring'] }
     ],
-    defaultDensity: 78,
+    defaultSilence: 78, defaultEntropy: 50, defaultRate: 45,
     entropyPhase: 3.142,
+    playbackRules: { minGlobalSpacing: 1200, maxSimultaneous: 2, tailDelay: [800, 2400] }
   },
   SHINKIRO: {
-    id: 'SHINKIRO',
-    name: 'Shinkiro',
-    kanji: '蜃気楼',
-    subtitle: 'Spectral Interval',
-    code: 'SU-IC-30 · SP-IC-45',
-    seasons: ['SUMMER','SPRING'],
-    durations: [20,30,45],
+    id: 'SHINKIRO', name: 'Shinkiro', kanji: '蜃気楼',
+    subtitle: 'Spectral Interval', code: 'SU-IC-30 · SP-IC-45',
+    seasons: ['SUMMER','SPRING'], durations: [20,30,45],
     description: 'Ice and resonant metal in sparse sequence. The mirage protocol — events that seem to dissolve at their own edge. The practitioner cannot distinguish whether a sound occurred or was anticipated. The interval is the subject.',
     philosophy: 'The practice is the space between the ping and its echo. The mirage is not an illusion — it is a form of attention.',
-    beds: [
-      { file: 'air_hollow', label: 'Air Hollow', baseGain: 0.18 }
-    ],
+    beds: [{ file: 'air_hollow', label: 'Air Hollow', baseGain: 0.18 }],
     events: [
-      { file: 'ice_fracture',  label: 'Ice Fracture',  weight: 0.28, minInterval: 14, maxInterval: 42 },
-      { file: 'metal_ping',    label: 'Metal Ping',    weight: 0.42, minInterval: 7,  maxInterval: 26 },
-      { file: 'water_droplet', label: 'Water Droplet', weight: 0.30, minInterval: 9,  maxInterval: 32 }
+      { file: 'ice_fracture',  label: 'Ice Fracture',  weight: 0.28, minInterval: 14, maxInterval: 42, tailChance: 0.50, tailFiles: ['metal_ping', 'metal_ring'] },
+      { file: 'metal_ping',    label: 'Metal Ping',    weight: 0.42, minInterval: 7,  maxInterval: 26, tailChance: 0.60, tailFiles: ['metal_ring'] },
+      { file: 'water_droplet', label: 'Water Droplet', weight: 0.30, minInterval: 9,  maxInterval: 32, tailChance: 0.25, tailFiles: ['ice_fracture'] }
     ],
-    defaultDensity: 85,
+    defaultSilence: 85, defaultEntropy: 45, defaultRate: 35,
     entropyPhase: 4.189,
+    playbackRules: { minGlobalSpacing: 1800, maxSimultaneous: 2, tailDelay: [1200, 3200] }
   }
 };
 
@@ -1410,35 +817,41 @@ function getCurrentSeason() {
   if (m >= 9 && m <= 11) return 'AUTUMN';
   return 'WINTER';
 }
-
 const CURRENT_SEASON = getCurrentSeason();
 const SEASON_NAMES = { SPRING:'Spring', SUMMER:'Summer', AUTUMN:'Autumn', WINTER:'Winter' };
 
-/* ────────────────────────────────────────────
-   ENTROPY ENGINE
-──────────────────────────────────────────── */
+/* ════════════════════════════════════════════
+   ENTROPY ENGINE — Phase 2
+   Three parameters:
+   - silenceRatio  : 0.60–0.95  (% of time in silence)
+   - entropyAmp    : 0.0–1.0    (compound sine amplitude)
+   - eventRate     : 0.1–1.0    (interval compression)
+════════════════════════════════════════════ */
 class EntropyEngine {
-  constructor(protocol, density) {
-    this.phase = protocol.entropyPhase;
-    this.density = density / 100; // 0.0–1.0
+  constructor(protocol, silenceRatio, entropyAmp, eventRate) {
+    this.phase      = protocol.entropyPhase;
+    this.silenceRatio = silenceRatio / 100; // normalise
+    this.entropyAmp   = entropyAmp   / 100;
+    this.eventRate    = eventRate    / 100;
   }
 
-  // Compound sine curve at time t (seconds) → 0.0 to 1.0
+  // Compound sine curve → 0.0–1.0
+  // entropyAmp scales the deviation: 0=nearly flat at 0.5, 1=full range
   curve(t) {
     const φ = this.phase;
-    const p1 = Math.sin(t * 0.019 + φ);
-    const p2 = Math.sin(t * 0.034 + φ * 1.618);
-    const p3 = Math.sin(t * 0.011 + φ * 2.414);
-    const compound = (p1 * 0.50 + p2 * 0.35 + p3 * 0.15);
-    return (compound + 1) / 2; // normalise 0–1
+    const amp = 0.15 + this.entropyAmp * 0.85; // 0.15 min floor so curve always moves
+    const p1 = Math.sin(t * 0.019 + φ)           * amp;
+    const p2 = Math.sin(t * 0.034 + φ * 1.618)   * amp * 0.70;
+    const p3 = Math.sin(t * 0.011 + φ * 2.414)   * amp * 0.30;
+    const compound = p1 * 0.50 + p2 * 0.35 + p3 * 0.15;
+    return (compound + 1) / 2; // normalise to 0–1
   }
 
-  // True if in governed silence frame at t
   isSilent(t) {
-    return this.curve(t) > this.density;
+    return this.curve(t) > this.silenceRatio;
   }
 
-  // Weighted random event from protocol events
+  // Pick a weighted event from protocol
   pickEvent(protocol) {
     const total = protocol.events.reduce((s, e) => s + e.weight, 0);
     let r = Math.random() * total;
@@ -1449,41 +862,114 @@ class EntropyEngine {
     return protocol.events[protocol.events.length - 1];
   }
 
-  // Next event interval in ms, modulated by entropy
+  // Next interval in ms, modulated by entropy + event rate
+  // eventRate: 0.1 = very sparse (long intervals), 1.0 = compressed
   nextInterval(protocol, t) {
     const ev = this.pickEvent(protocol);
     const silP = this.curve(t);
+    // interval base: varies with entropy curve position
     const base = ev.minInterval + (ev.maxInterval - ev.minInterval) * silP;
-    const jitter = (Math.random() - 0.5) * 2; // ±2s
-    return { event: ev, ms: Math.max(ev.minInterval * 1000, (base + jitter) * 1000) };
+    // rate compression: high rate = shorter intervals
+    const rateMultiplier = 2.2 - this.eventRate * 1.8; // range ~0.4–2.2×
+    // jitter scaled by entropy amplitude
+    const jitterRange = (ev.maxInterval - ev.minInterval) * 0.12 * this.entropyAmp;
+    const jitter = (Math.random() - 0.5) * jitterRange;
+    const finalSecs = Math.max(ev.minInterval * 0.5, (base + jitter) * rateMultiplier);
+    return { event: ev, ms: finalSecs * 1000 };
+  }
+
+  // Update parameters live
+  setSilenceRatio(v) { this.silenceRatio = v / 100; }
+  setEntropyAmp(v)   { this.entropyAmp   = v / 100; }
+  setEventRate(v)    { this.eventRate     = v / 100; }
+}
+
+/* ════════════════════════════════════════════
+   PLAYBACK RULES — Phase 2
+   Anti-clutter guard system
+════════════════════════════════════════════ */
+class PlaybackRules {
+  constructor(protocol) {
+    this.minGlobalSpacing  = (protocol.playbackRules || {}).minGlobalSpacing || 1200; // ms
+    this.maxSimultaneous   = (protocol.playbackRules || {}).maxSimultaneous  || 3;
+    this.antiRepeatWindow  = 3;  // don't pick same file as any of the last N events
+
+    // Per-file cooldown: 70% of minInterval
+    this.fileCooldowns = {};
+    for (const ev of protocol.events) {
+      this.fileCooldowns[ev.file] = {
+        lastFire: 0,
+        minCooldown: ev.minInterval * 700 // 70% of minInterval in ms
+      };
+    }
+
+    this.lastEventTime  = 0;
+    this.activeCount    = 0;    // currently playing event nodes
+    this.tailCount      = 0;    // currently playing tail nodes
+    this.recentFiles    = [];   // circular recent fire queue
+    this.blockedCount   = 0;    // times blocked this session
+    this.nextEventIn    = 0;    // ms until next expected event
+  }
+
+  canFire(file, now) {
+    // 1. Global spacing guard
+    if (now - this.lastEventTime < this.minGlobalSpacing) return { ok: false, reason: 'SPACING' };
+    // 2. Simultaneous cap
+    if (this.activeCount >= this.maxSimultaneous) return { ok: false, reason: 'SIMUL' };
+    // 3. Per-file cooldown
+    const cd = this.fileCooldowns[file];
+    if (cd && (now - cd.lastFire < cd.minCooldown)) return { ok: false, reason: 'COOLDOWN' };
+    // 4. Anti-repeat: don't fire same file twice in a row
+    if (this.recentFiles.length > 0 && this.recentFiles[this.recentFiles.length - 1] === file) {
+      return { ok: false, reason: 'REPEAT' };
+    }
+    return { ok: true, reason: null };
+  }
+
+  recordFire(file, now) {
+    this.lastEventTime = now;
+    if (this.fileCooldowns[file]) this.fileCooldowns[file].lastFire = now;
+    this.recentFiles.push(file);
+    if (this.recentFiles.length > 8) this.recentFiles.shift();
+    this.activeCount++;
+  }
+
+  recordBlock() { this.blockedCount++; }
+  recordEnd()   { this.activeCount = Math.max(0, this.activeCount - 1); }
+  recordTailStart() { this.tailCount++; }
+  recordTailEnd()   { this.tailCount = Math.max(0, this.tailCount - 1); }
+
+  // Read guard status for UI
+  guardStatus(now) {
+    const spacing  = (now - this.lastEventTime) >= this.minGlobalSpacing;
+    const simul    = this.activeCount < this.maxSimultaneous;
+    return { spacing, simul, activeCount: this.activeCount, tailCount: this.tailCount, blocked: this.blockedCount };
   }
 }
 
-/* ────────────────────────────────────────────
-   SILENCE ENGINE (WebAudio)
-──────────────────────────────────────────── */
+/* ════════════════════════════════════════════
+   SILENCE ENGINE — Phase 2
+   Integrates: EntropyEngine, PlaybackRules,
+   Resonance Tails, live parameter updates
+════════════════════════════════════════════ */
 class SilenceEngine {
   constructor() {
-    this.ctx = null;
-    this.master = null;
-    this.protocol = null;
-    this.entropy = null;
-    this.buffers = {};
-    this.beds = {};       // file → { source, gainNode, baseGain }
+    this.ctx = null; this.master = null;
+    this.protocol = null; this.entropy = null; this.rules = null;
+    this.buffers = {}; this.beds = {};
     this.playing = false;
-    this.sessionStart = 0;
-    this.sessionDuration = 0;
-    this.eventTimer = null;
-    this.silenceTimer = null;
-    this.eventCount = 0;
-    this.demoMode = false;
-    this._muted = false;
+    this.sessionStart = 0; this.sessionDuration = 0;
+    this.eventTimer = null; this.silenceTimer = null;
+    this.demoMode = false; this._muted = false;
+    this._tailCount = 0;
 
     // Callbacks
-    this.onEvent = null;
+    this.onEvent       = null;
+    this.onTail        = null;
     this.onSilenceChange = null;
-    this.onSessionEnd = null;
-    this.onProgress = null;
+    this.onSessionEnd  = null;
+    this.onProgress    = null;
+    this.onGuardUpdate = null;
   }
 
   async init() {
@@ -1495,14 +981,19 @@ class SilenceEngine {
 
   async loadProtocol(protocol, onProgress) {
     this.protocol = protocol;
-
-    const allFiles = [
+    // Collect unique files: beds + events + all tail files
+    const tailFilesSet = new Set();
+    for (const ev of protocol.events) {
+      (ev.tailFiles || []).forEach(f => tailFilesSet.add(f));
+    }
+    const allFiles = [...new Set([
       ...protocol.beds.map(b => b.file),
-      ...protocol.events.map(e => e.file)
-    ];
+      ...protocol.events.map(e => e.file),
+      ...tailFilesSet
+    ])];
+
     const total = allFiles.length;
-    let loaded = 0;
-    let failCount = 0;
+    let loaded = 0, failCount = 0;
 
     await Promise.all(allFiles.map(async (file) => {
       try {
@@ -1522,34 +1013,22 @@ class SilenceEngine {
     return { failCount, total };
   }
 
-  startSession(durationMinutes, density) {
-    this.entropy = new EntropyEngine(this.protocol, density);
+  startSession(durationMinutes, silenceRatio, entropyAmp, eventRate) {
+    this.entropy = new EntropyEngine(this.protocol, silenceRatio, entropyAmp, eventRate);
+    this.rules   = new PlaybackRules(this.protocol);
     this.playing = true;
-    this.sessionStart = Date.now();
+    this.sessionStart    = Date.now();
     this.sessionDuration = durationMinutes * 60 * 1000;
-    this.eventCount = 0;
 
-    // Start beds
-    for (const bed of this.protocol.beds) {
-      this._startBed(bed);
-    }
-
-    // Start event scheduler
+    for (const bed of this.protocol.beds) this._startBed(bed);
     this._scheduleEvent();
-
-    // Start silence frame monitor
     this._monitorSilence();
-
-    // Progress ticker
     this._tickProgress();
-
-    // Auto-end
     setTimeout(() => this.endSession(), this.sessionDuration);
   }
 
   _startBed(bed) {
     if (!this.buffers[bed.file]) {
-      // Demo mode: create oscillator-based synthetic drone
       if (this.demoMode) {
         const osc = this.ctx.createOscillator();
         const gainNode = this.ctx.createGain();
@@ -1558,65 +1037,133 @@ class SilenceEngine {
         filter.frequency.value = 200 + Math.random() * 100;
         osc.type = 'sine';
         osc.frequency.value = 40 + Math.random() * 20;
-        gainNode.gain.value = bed.baseGain * 0.3;
+        gainNode.gain.value = bed.baseGain * 0.25;
         osc.connect(filter); filter.connect(gainNode); gainNode.connect(this.master);
         osc.start();
-        this.beds[bed.file] = { source: osc, gainNode, baseGain: bed.baseGain * 0.3 };
+        this.beds[bed.file] = { source: osc, gainNode, baseGain: bed.baseGain * 0.25 };
       }
       return;
     }
     const gainNode = this.ctx.createGain();
     gainNode.gain.value = bed.baseGain;
     gainNode.connect(this.master);
-
     const source = this.ctx.createBufferSource();
     source.buffer = this.buffers[bed.file];
     source.loop = true;
-    source.loopStart = 0;
-    source.loopEnd = source.buffer.duration;
     source.connect(gainNode);
     source.start();
-
     this.beds[bed.file] = { source, gainNode, baseGain: bed.baseGain };
   }
 
   _scheduleEvent() {
     if (!this.playing) return;
-    const elapsed = (Date.now() - this.sessionStart) / 1000;
+    const elapsed   = (Date.now() - this.sessionStart) / 1000;
     const remaining = this.sessionDuration / 1000 - elapsed;
     if (remaining <= 2) return;
 
     const { event, ms } = this.entropy.nextInterval(this.protocol, elapsed);
+    const clampedMs = Math.min(ms, remaining * 950);
+    this.rules.nextEventIn = clampedMs;
+
     this.eventTimer = setTimeout(() => {
       if (!this.playing) return;
-      const t = (Date.now() - this.sessionStart) / 1000;
+      const now  = Date.now();
+      const t    = (now - this.sessionStart) / 1000;
+
       if (!this.entropy.isSilent(t)) {
-        this._fireEvent(event.file);
-        this.eventCount++;
-        if (this.onEvent) this.onEvent(event, t);
+        const check = this.rules.canFire(event.file, now);
+        if (check.ok) {
+          this.rules.recordFire(event.file, now);
+          this._fireEvent(event);
+          if (this.onEvent) this.onEvent(event, t);
+        } else {
+          this.rules.recordBlock();
+        }
       }
+
+      // Emit guard update
+      if (this.onGuardUpdate) this.onGuardUpdate(this.rules.guardStatus(Date.now()));
+
       this._scheduleEvent();
-    }, Math.min(ms, remaining * 1000));
+    }, clampedMs);
   }
 
-  _fireEvent(file) {
-    const buf = this.buffers[file];
+  _fireEvent(event) {
+    const buf = this.buffers[event.file];
     if (!buf) {
-      if (this.demoMode) this._fireSynthEvent();
+      if (this.demoMode) this._fireSynthEvent(event);
+      this.rules.recordEnd();
       return;
     }
+
+    const gainVal = 0.65 + Math.random() * 0.25;
     const gain = this.ctx.createGain();
-    gain.gain.value = 0.75 + Math.random() * 0.2;
+    gain.gain.value = gainVal;
     gain.connect(this.master);
     const src = this.ctx.createBufferSource();
     src.buffer = buf;
     src.connect(gain);
     src.start();
-    src.onended = () => { try { gain.disconnect(); } catch(e){} };
+    src.onended = () => {
+      try { gain.disconnect(); } catch(e) {}
+      this.rules.recordEnd();
+      if (this.onGuardUpdate) this.onGuardUpdate(this.rules.guardStatus(Date.now()));
+    };
+
+    // Resonance tail
+    if (Math.random() < (event.tailChance || 0) && event.tailFiles && event.tailFiles.length > 0) {
+      this._fireTail(event);
+    }
   }
 
-  _fireSynthEvent() {
-    // Synthetic event for demo mode
+  _fireTail(event) {
+    const protocol = this.protocol.playbackRules || {};
+    const [minDelay, maxDelay] = protocol.tailDelay || [600, 2000];
+    const delay = minDelay + Math.random() * (maxDelay - minDelay);
+
+    // Pick a loaded tail file
+    const candidates = (event.tailFiles || []).filter(f => this.buffers[f]);
+    if (!candidates.length) return;
+    const tailFile = candidates[Math.floor(Math.random() * candidates.length)];
+
+    this.rules.recordTailStart();
+    this._tailCount++;
+
+    setTimeout(() => {
+      if (!this.playing) {
+        this.rules.recordTailEnd();
+        this._tailCount = Math.max(0, this._tailCount - 1);
+        return;
+      }
+      const buf = this.buffers[tailFile];
+      if (!buf) { this.rules.recordTailEnd(); return; }
+
+      const gain = this.ctx.createGain();
+      const tailVol = 0.10 + Math.random() * 0.12; // quiet tails
+      gain.gain.value = tailVol;
+
+      // Long fade out for resonance character
+      const t = this.ctx.currentTime;
+      gain.gain.setValueAtTime(tailVol, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 3.5);
+      gain.connect(this.master);
+
+      const src = this.ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(gain);
+      src.start();
+      src.onended = () => {
+        try { gain.disconnect(); } catch(e) {}
+        this.rules.recordTailEnd();
+        this._tailCount = Math.max(0, this._tailCount - 1);
+        if (this.onGuardUpdate) this.onGuardUpdate(this.rules.guardStatus(Date.now()));
+      };
+
+      if (this.onTail) this.onTail({ file: tailFile, label: tailFile.replace(/_/g,' ') });
+    }, delay);
+  }
+
+  _fireSynthEvent(event) {
     const osc = this.ctx.createOscillator();
     const env = this.ctx.createGain();
     env.gain.value = 0;
@@ -1624,13 +1171,13 @@ class SilenceEngine {
     const freqs = [220, 330, 440, 660, 880, 1320];
     osc.frequency.value = freqs[Math.floor(Math.random() * freqs.length)];
     osc.type = 'sine';
-    const t = this.ctx.currentTime;
-    env.gain.setValueAtTime(0, t);
-    env.gain.linearRampToValueAtTime(0.15, t + 0.01);
-    env.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
-    osc.start(t);
-    osc.stop(t + 1.5);
-    osc.onended = () => { try { env.disconnect(); } catch(e){} };
+    const ct = this.ctx.currentTime;
+    env.gain.setValueAtTime(0, ct);
+    env.gain.linearRampToValueAtTime(0.12, ct + 0.01);
+    env.gain.exponentialRampToValueAtTime(0.001, ct + 1.0);
+    osc.start(ct);
+    osc.stop(ct + 1.4);
+    osc.onended = () => { try { env.disconnect(); } catch(e) {} this.rules.recordEnd(); };
   }
 
   _monitorSilence() {
@@ -1638,15 +1185,14 @@ class SilenceEngine {
     const t = (Date.now() - this.sessionStart) / 1000;
     const silent = this.entropy.isSilent(t);
 
-    // Duck/raise beds
     for (const key of Object.keys(this.beds)) {
       const b = this.beds[key];
-      const target = silent ? b.baseGain * 0.02 : b.baseGain;
-      b.gainNode.gain.setTargetAtTime(target, this.ctx.currentTime, silent ? 0.8 : 3.0);
+      const target = silent ? b.baseGain * 0.015 : b.baseGain;
+      b.gainNode.gain.setTargetAtTime(target, this.ctx.currentTime, silent ? 0.6 : 2.8);
     }
 
     if (this.onSilenceChange) this.onSilenceChange(silent, t);
-    this.silenceTimer = setTimeout(() => this._monitorSilence(), 1000);
+    this.silenceTimer = setTimeout(() => this._monitorSilence(), 800);
   }
 
   _tickProgress() {
@@ -1657,6 +1203,11 @@ class SilenceEngine {
       setTimeout(() => this._tickProgress(), 500);
     }
   }
+
+  // Live parameter updates
+  setSilenceRatio(v) { if (this.entropy) this.entropy.setSilenceRatio(v); }
+  setEntropyAmp(v)   { if (this.entropy) this.entropy.setEntropyAmp(v);   }
+  setEventRate(v)    { if (this.entropy) this.entropy.setEventRate(v);     }
 
   setBedGain(file, value) {
     if (this.beds[file]) {
@@ -1669,20 +1220,15 @@ class SilenceEngine {
   }
 
   setMasterVolume(v) {
-    if (this.master) {
-      this.master.gain.setTargetAtTime(this._muted ? 0 : v, this.ctx.currentTime, 0.1);
-    }
+    if (this.master) this.master.gain.setTargetAtTime(this._muted ? 0 : v, this.ctx.currentTime, 0.1);
   }
 
   setMuted(m) {
     this._muted = m;
     if (this.master) {
-      this.master.gain.setTargetAtTime(m ? 0 : parseFloat(document.getElementById('master-vol').value) / 100, this.ctx.currentTime, 0.2);
+      const vol = m ? 0 : (parseFloat(document.getElementById('master-vol').value) / 100);
+      this.master.gain.setTargetAtTime(vol, this.ctx.currentTime, 0.2);
     }
-  }
-
-  setDensity(d) {
-    if (this.entropy) this.entropy.density = d / 100;
   }
 
   endSession() {
@@ -1690,25 +1236,24 @@ class SilenceEngine {
     this.playing = false;
     clearTimeout(this.eventTimer);
     clearTimeout(this.silenceTimer);
-
-    // Fade out
-    if (this.master) {
-      this.master.gain.setTargetAtTime(0, this.ctx.currentTime, 2.0);
-    }
+    if (this.master) this.master.gain.setTargetAtTime(0, this.ctx.currentTime, 2.0);
     setTimeout(() => {
       for (const key of Object.keys(this.beds)) {
         try { this.beds[key].source.stop(); } catch(e) {}
       }
       this.beds = {};
     }, 8000);
-
     if (this.onSessionEnd) this.onSessionEnd();
   }
 }
 
-/* ────────────────────────────────────────────
-   ENTROPY CANVAS RENDERER
-──────────────────────────────────────────── */
+/* ════════════════════════════════════════════
+   ENTROPY CANVAS — Phase 2
+   3 visual tracks in 96px canvas:
+   Track 0–64: silence/active bands + entropy curve
+   Track 64–80: event rate density indicator
+   Track 80–96: tail probability heatmap
+════════════════════════════════════════════ */
 function drawEntropyCanvas(canvas, engine, elapsed, total) {
   const ctx2 = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
@@ -1718,79 +1263,103 @@ function drawEntropyCanvas(canvas, engine, elapsed, total) {
   ctx2.fillStyle = '#06080F';
   ctx2.fillRect(0, 0, W, H);
 
-  // Draw silence/active bands
-  const steps = W;
-  for (let px = 0; px < steps; px++) {
-    const t = (px / steps) * total;
-    const v = engine.curve(t);
-    const isSil = v > engine.density;
-    const norm = v;
+  const mainH = 64, rateH = 16, tailH = 16;
 
-    if (isSil) {
-      // Silence frame: dark blue band
-      ctx2.fillStyle = `rgba(14,30,48,${0.3 + norm * 0.5})`;
+  // ─── Track 1: Silence/Active bands + entropy curve (0–64) ───
+  for (let px = 0; px < W; px++) {
+    const t   = (px / W) * total;
+    const v   = engine.curve(t);
+    const sil = v > engine.silenceRatio;
+
+    if (sil) {
+      ctx2.fillStyle = `rgba(14,30,48,${0.25 + v * 0.55})`;
     } else {
-      // Event-active: warm gold band
-      ctx2.fillStyle = `rgba(196,148,74,${0.08 + (1 - norm) * 0.25})`;
+      ctx2.fillStyle = `rgba(196,148,74,${0.06 + (1 - v) * 0.22})`;
     }
-    ctx2.fillRect(px, 0, 1, H);
+    ctx2.fillRect(px, 0, 1, mainH);
   }
 
-  // Draw the curve itself
+  // Entropy curve line
   ctx2.beginPath();
-  ctx2.strokeStyle = 'rgba(196,148,74,0.55)';
+  ctx2.strokeStyle = 'rgba(123,158,192,0.65)';
   ctx2.lineWidth = 1.5;
   for (let px = 0; px < W; px++) {
     const t = (px / W) * total;
     const v = engine.curve(t);
-    const y = H - v * (H - 4) - 2;
+    const y = mainH - v * (mainH - 4) - 2;
     px === 0 ? ctx2.moveTo(px, y) : ctx2.lineTo(px, y);
   }
   ctx2.stroke();
 
-  // Density threshold line
-  const threshY = H - engine.density * (H - 4) - 2;
+  // Silence threshold line
+  const threshY = mainH - engine.silenceRatio * (mainH - 4) - 2;
   ctx2.beginPath();
-  ctx2.strokeStyle = 'rgba(196,148,74,0.2)';
+  ctx2.strokeStyle = 'rgba(196,148,74,0.25)';
   ctx2.lineWidth = 1;
   ctx2.setLineDash([4, 6]);
-  ctx2.moveTo(0, threshY);
-  ctx2.lineTo(W, threshY);
+  ctx2.moveTo(0, threshY); ctx2.lineTo(W, threshY);
   ctx2.stroke();
   ctx2.setLineDash([]);
 
-  // Now marker
+  // ─── Track 2: Event Rate (64–80) ───
+  ctx2.fillStyle = 'rgba(6,8,15,0.8)';
+  ctx2.fillRect(0, mainH, W, rateH);
+  // Rate bar — color represents interval compression
+  const rateW = Math.round(engine.eventRate * W);
+  const rateGrd = ctx2.createLinearGradient(0, mainH, rateW, mainH);
+  rateGrd.addColorStop(0, 'rgba(158,139,187,0.15)');
+  rateGrd.addColorStop(1, 'rgba(158,139,187,0.45)');
+  ctx2.fillStyle = rateGrd;
+  ctx2.fillRect(0, mainH + 2, rateW, rateH - 4);
+  ctx2.fillStyle = 'rgba(158,139,187,0.3)';
+  ctx2.fillRect(0, mainH, W, 1);
+
+  // ─── Track 3: Tail probability heatmap (80–96) ───
+  ctx2.fillStyle = 'rgba(6,8,15,0.8)';
+  ctx2.fillRect(0, mainH + rateH, W, tailH);
+  ctx2.fillStyle = 'rgba(123,158,192,0.2)';
+  ctx2.fillRect(0, mainH + rateH, W, 1);
+  // Draw time-varying tail probability based on entropy
+  for (let px = 0; px < W; px++) {
+    const t = (px / W) * total;
+    const v = engine.curve(t);
+    const sil = v > engine.silenceRatio;
+    if (!sil) {
+      const tailProb = v * 0.5 * engine.entropyAmp;
+      ctx2.fillStyle = `rgba(123,158,192,${tailProb * 0.6})`;
+      ctx2.fillRect(px, mainH + rateH + 2, 1, tailH - 4);
+    }
+  }
+
+  // ─── NOW marker ───
   const nowX = Math.floor((elapsed / total) * W);
   ctx2.fillStyle = '#C4944A';
   ctx2.fillRect(nowX - 1, 0, 2, H);
 
-  // Glow under cursor
   const grd = ctx2.createLinearGradient(nowX - 8, 0, nowX + 8, 0);
   grd.addColorStop(0, 'transparent');
-  grd.addColorStop(0.5, 'rgba(196,148,74,0.25)');
+  grd.addColorStop(0.5, 'rgba(196,148,74,0.2)');
   grd.addColorStop(1, 'transparent');
   ctx2.fillStyle = grd;
   ctx2.fillRect(nowX - 8, 0, 16, H);
 }
 
-/* ────────────────────────────────────────────
-   APPLICATION CONTROLLER
-──────────────────────────────────────────── */
+/* ════════════════════════════════════════════
+   APPLICATION CONTROLLER — Phase 2
+════════════════════════════════════════════ */
 const App = (() => {
-  let engine = null;
+  let engine          = null;
   let currentProtocol = null;
-  let selectedDuration = 20;
-  let selectedDensity = 82;
-  let currentSeason = 'ALL';
-  let sessionActive = false;
-  let sessionTotalSecs = 0;
-  let eventLogs = [];
-  let canvasTimer = null;
-  let sessionStats = { duration: 0, events: 0, density: 0 };
+  let selectedDuration  = 20;
+  let selectedSilence   = 82;
+  let selectedEntropy   = 60;
+  let selectedRate      = 50;
+  let currentSeason     = 'ALL';
+  let sessionActive     = false;
+  let sessionTotalSecs  = 0;
+  let sessionStats      = { duration: 0, events: 0, tails: 0, density: 0 };
 
-  /* ── DOM refs ── */
   const $ = id => document.getElementById(id);
-  const views = { floor: $('view-floor'), detail: $('view-detail') };
 
   /* ── Utility ── */
   function showView(id) {
@@ -1802,9 +1371,7 @@ const App = (() => {
 
   function formatTime(ms) {
     const secs = Math.max(0, Math.ceil(ms / 1000));
-    const m = String(Math.floor(secs / 60)).padStart(2, '0');
-    const s = String(secs % 60).padStart(2, '0');
-    return `${m}:${s}`;
+    return `${String(Math.floor(secs / 60)).padStart(2,'0')}:${String(secs % 60).padStart(2,'0')}`;
   }
 
   function setEngineStatus(text, active = false) {
@@ -1816,7 +1383,7 @@ const App = (() => {
   function buildGrid(seasonFilter) {
     const grid = $('protocol-grid');
     grid.innerHTML = '';
-    const all = Object.values(PROTOCOLS);
+    const all      = Object.values(PROTOCOLS);
     const filtered = seasonFilter === 'ALL' ? all : all.filter(p => p.seasons.includes(seasonFilter));
     filtered.forEach((p, i) => {
       const card = document.createElement('div');
@@ -1842,7 +1409,6 @@ const App = (() => {
       card.addEventListener('click', () => openDetail(p));
       grid.appendChild(card);
     });
-    // Update count in ALL tab
     document.querySelector('[data-season="ALL"] .tab-count').textContent = `(${all.length})`;
   }
 
@@ -1850,14 +1416,16 @@ const App = (() => {
   function openDetail(protocol) {
     currentProtocol = protocol;
     selectedDuration = protocol.durations[0];
-    selectedDensity = protocol.defaultDensity;
+    selectedSilence  = protocol.defaultSilence;
+    selectedEntropy  = protocol.defaultEntropy;
+    selectedRate     = protocol.defaultRate;
 
-    $('d-kanji').textContent = protocol.kanji;
-    $('d-code').textContent = protocol.code;
-    $('d-name').textContent = protocol.name;
-    $('d-subtitle').textContent = protocol.subtitle;
+    $('d-kanji').textContent      = protocol.kanji;
+    $('d-code').textContent       = protocol.code;
+    $('d-name').textContent       = protocol.name;
+    $('d-subtitle').textContent   = protocol.subtitle;
     $('d-philosophy').textContent = protocol.philosophy;
-    $('d-desc').textContent = protocol.description;
+    $('d-desc').textContent       = protocol.description;
 
     // Duration options
     const durCont = $('duration-options');
@@ -1874,31 +1442,72 @@ const App = (() => {
       durCont.appendChild(btn);
     });
 
-    // Density slider
-    const slider = $('density-slider');
-    slider.value = selectedDensity;
-    $('density-display-val').textContent = `${selectedDensity}%`;
-    $('detail-sil-label').textContent = `Protocol default: ${protocol.defaultDensity}%`;
-    slider.oninput = () => {
-      selectedDensity = parseInt(slider.value);
-      $('density-display-val').textContent = `${selectedDensity}%`;
+    // Silence slider
+    const silSlider = $('silence-slider');
+    silSlider.value = selectedSilence;
+    $('silence-display-val').textContent = `${selectedSilence}%`;
+    $('detail-sil-label').textContent = `Protocol default: ${protocol.defaultSilence}%`;
+    silSlider.oninput = () => {
+      selectedSilence = parseInt(silSlider.value);
+      $('silence-display-val').textContent = `${selectedSilence}%`;
     };
 
-    // Stems preview
+    // Entropy slider
+    const entSlider = $('entropy-slider');
+    entSlider.value = selectedEntropy;
+    $('entropy-display-val').textContent = `${selectedEntropy}%`;
+    entSlider.oninput = () => {
+      selectedEntropy = parseInt(entSlider.value);
+      $('entropy-display-val').textContent = `${selectedEntropy}%`;
+    };
+
+    // Rate slider
+    const rateSlider = $('rate-slider');
+    rateSlider.value = selectedRate;
+    $('rate-display-val').textContent = `${selectedRate}%`;
+    rateSlider.oninput = () => {
+      selectedRate = parseInt(rateSlider.value);
+      $('rate-display-val').textContent = `${selectedRate}%`;
+    };
+
+    // Stems preview — beds + events + tails
     const stemsPrev = $('stems-preview');
-    stemsPrev.innerHTML = `<div class="stems-preview-header">STEMS · ${protocol.beds.length + protocol.events.length} LAYERS</div>`;
+    const tailFilesAll = new Set();
+    protocol.events.forEach(e => (e.tailFiles||[]).forEach(f => tailFilesAll.add(f)));
+    const totalLayers = protocol.beds.length + protocol.events.length + tailFilesAll.size;
+    stemsPrev.innerHTML = `<div class="stems-preview-header">STEMS · ${totalLayers} LAYERS</div>`;
+
     protocol.beds.forEach(b => {
       const row = document.createElement('div');
       row.className = 'stem-row';
-      row.innerHTML = `<span class="stem-type">BED</span><span class="stem-file">${b.file.replace(/_/g,' ')}</span><span style="font-size:0.55rem;color:var(--gold-dim);">${Math.round(b.baseGain * 100)}%</span>`;
+      row.innerHTML = `<span class="stem-type">BED</span><span class="stem-file">${b.file.replace(/_/g,' ')}</span><span class="stem-meta">${Math.round(b.baseGain * 100)}%</span>`;
       stemsPrev.appendChild(row);
     });
     protocol.events.forEach(e => {
       const row = document.createElement('div');
       row.className = 'stem-row';
-      row.innerHTML = `<span class="stem-type">EVT</span><span class="stem-file">${e.file.replace(/_/g,' ')}</span><span style="font-size:0.55rem;color:var(--type-faint);">${e.minInterval}–${e.maxInterval}s</span>`;
+      const tailInfo = e.tailChance > 0 ? ` <span style="color:var(--entropy-color);font-size:0.52rem;">⟐ ${Math.round(e.tailChance*100)}%</span>` : '';
+      row.innerHTML = `<span class="stem-type">EVT</span><span class="stem-file">${e.file.replace(/_/g,' ')}${tailInfo}</span><span class="stem-meta">${e.minInterval}–${e.maxInterval}s</span>`;
       stemsPrev.appendChild(row);
     });
+    tailFilesAll.forEach(f => {
+      const row = document.createElement('div');
+      row.className = 'stem-row';
+      row.innerHTML = `<span class="stem-type tail">TAIL</span><span class="stem-file">${f.replace(/_/g,' ')}</span><span class="stem-meta" style="color:var(--entropy-color);">resonance</span>`;
+      stemsPrev.appendChild(row);
+    });
+
+    // Playback rules preview
+    const rulesGrid = $('rules-preview-grid');
+    const r = protocol.playbackRules || {};
+    rulesGrid.innerHTML = `
+      <div class="rules-row"><span class="rules-key">MIN GLOBAL SPACING</span><span class="rules-val">${r.minGlobalSpacing||1200}ms</span></div>
+      <div class="rules-row"><span class="rules-key">MAX SIMULTANEOUS</span><span class="rules-val">${r.maxSimultaneous||3}</span></div>
+      <div class="rules-row"><span class="rules-key">ANTI-REPEAT WINDOW</span><span class="rules-val">3 EVENTS</span></div>
+      <div class="rules-row"><span class="rules-key">TAIL DELAY RANGE</span><span class="rules-val">${(r.tailDelay||[600,2000]).join('–')}ms</span></div>
+      <div class="rules-row"><span class="rules-key">FILE COOLDOWN</span><span class="rules-val">70% MIN INTERVAL</span></div>
+      <div class="rules-row"><span class="rules-key">SILENCE DUCKING</span><span class="rules-val">1.5% GAIN</span></div>
+    `;
 
     showView('detail');
   }
@@ -1907,79 +1516,117 @@ const App = (() => {
   async function beginSession() {
     if (!currentProtocol) return;
 
-    // Show session view
     $('view-session').classList.add('active');
     document.querySelector('.view.active')?.classList.remove('active');
 
-    // Populate session UI
-    $('s-kanji').textContent = currentProtocol.kanji;
-    $('s-name').textContent = currentProtocol.name;
+    $('s-kanji').textContent    = currentProtocol.kanji;
+    $('s-name').textContent     = currentProtocol.name;
     $('s-subtitle').textContent = currentProtocol.subtitle;
-    $('s-proto-id').textContent = `${currentProtocol.id} · ${selectedDuration}′ · ${selectedDensity}% MA`;
-    $('s-phase').textContent = 'LOADING STEMS';
+    $('s-proto-id').textContent = `${currentProtocol.id} · ${selectedDuration}′ · S:${selectedSilence}% E:${selectedEntropy}% R:${selectedRate}%`;
+    $('s-phase').textContent    = 'LOADING STEMS';
 
-    // Build mixer
     buildMixer();
 
-    // Build entropy engine instance for canvas (independent of audio engine)
-    const entropyForCanvas = new EntropyEngine(currentProtocol, selectedDensity);
+    // Entropy engine for canvas (independent of audio)
+    const entropyForCanvas = new EntropyEngine(currentProtocol, selectedSilence, selectedEntropy, selectedRate);
 
-    // Init audio engine
     engine = new SilenceEngine();
     await engine.init();
-
     setEngineStatus('LOADING', false);
 
-    // Load with progress
     let loadPct = 0;
     const { failCount, total } = await engine.loadProtocol(currentProtocol, (pct, file) => {
       loadPct = pct;
       $('s-phase').textContent = `LOADING ${Math.round(pct * 100)}%`;
     });
 
-    if (failCount > 0) {
-      $('audio-banner').classList.add('visible');
-    }
+    if (failCount > 0) $('audio-banner').classList.add('visible');
 
     // Wire callbacks
     engine.onEvent = (event, t) => {
-      logEvent(event, t);
+      logEvent(event, t, false);
       flashKanji();
+      sessionStats.events++;
+    };
+    engine.onTail = (tail) => {
+      sessionStats.tails++;
+      // Log tail if recent event entry exists
+      const entries = $('event-log-entries').querySelectorAll('.event-entry');
+      if (entries.length > 0) {
+        const tailBadge = document.createElement('span');
+        tailBadge.className = 'ev-tail';
+        tailBadge.textContent = `⟐ ${tail.label}`;
+        entries[0].appendChild(tailBadge);
+      }
     };
     engine.onSilenceChange = (silent, t) => {
       updateSilenceIndicator(silent);
-      $('s-phase').textContent = silent ? 'SILENCE FRAME · 間' : 'EVENT ACTIVE · 事';
+      $('s-phase').textContent = silent ? 'SILENCE FRAME · 間' : 'EVENT WINDOW · 事';
       $('s-phase').classList.toggle('in-silence', silent);
       $('s-timer').classList.toggle('in-silence', silent);
     };
     engine.onProgress = (elapsed, total) => {
       const remaining = total - elapsed;
       $('s-timer').textContent = formatTime(remaining);
-      const pct = (elapsed / total) * 100;
-      $('s-progress').style.width = `${pct}%`;
-      // Update entropy canvas
+      $('s-progress').style.width = `${(elapsed / total) * 100}%`;
       const elapsedSecs = elapsed / 1000;
-      const totalSecs = total / 1000;
+      const totalSecs   = total   / 1000;
       drawEntropyCanvas($('entropy-canvas'), entropyForCanvas, elapsedSecs, totalSecs);
       $('s-entropy-val').textContent = `φ ${entropyForCanvas.curve(elapsedSecs).toFixed(3)}`;
     };
+    engine.onGuardUpdate = (status) => {
+      const spacingEl = $('g-spacing');
+      const simulEl   = $('g-simul');
+      const tailEl    = $('g-tails');
+      const blkEl     = $('g-blocked');
+      const nextEl    = $('g-next');
+      const cdEl      = $('g-cooldown');
+
+      spacingEl.textContent = status.spacing  ? 'OPEN'   : 'HOLD';
+      spacingEl.className   = 'guard-val ' + (status.spacing ? 'ok' : 'blocked');
+      simulEl.textContent   = `${status.activeCount} / ${engine.rules.maxSimultaneous}`;
+      simulEl.className     = 'guard-val ' + (status.simul ? '' : 'blocked');
+      tailEl.textContent    = status.tailCount;
+      tailEl.className      = 'guard-val ' + (status.tailCount > 0 ? 'active' : '');
+      blkEl.textContent     = status.blocked;
+      blkEl.className       = 'guard-val ' + (status.blocked > 0 ? '' : 'ok');
+      cdEl.textContent      = status.spacing ? 'CLEAR' : 'WAIT';
+      cdEl.className        = 'guard-val ' + (status.spacing ? 'ok' : 'blocked');
+    };
     engine.onSessionEnd = () => {
       sessionActive = false;
-      clearTimeout(canvasTimer);
       showComplete();
     };
 
-    sessionTotalSecs = selectedDuration * 60;
-    sessionStats = { duration: selectedDuration, density: selectedDensity, events: 0 };
-    sessionActive = true;
+    // Wire live parameter controls
+    const silLive = $('live-silence');
+    silLive.value = selectedSilence;
+    $('live-silence-val').textContent = `${selectedSilence}%`;
+    silLive.oninput = () => {
+      const v = parseInt(silLive.value);
+      $('live-silence-val').textContent = `${v}%`;
+      engine.setSilenceRatio(v);
+      entropyForCanvas.setSilenceRatio(v);
+    };
 
-    // Live density
-    $('live-density').value = selectedDensity;
-    $('live-density-val').textContent = `${selectedDensity}%`;
-    $('live-density').oninput = () => {
-      const d = parseInt($('live-density').value);
-      $('live-density-val').textContent = `${d}%`;
-      engine.setDensity(d);
+    const entLive = $('live-entropy');
+    entLive.value = selectedEntropy;
+    $('live-entropy-val').textContent = `${selectedEntropy}%`;
+    entLive.oninput = () => {
+      const v = parseInt(entLive.value);
+      $('live-entropy-val').textContent = `${v}%`;
+      engine.setEntropyAmp(v);
+      entropyForCanvas.setEntropyAmp(v);
+    };
+
+    const rateLive = $('live-rate');
+    rateLive.value = selectedRate;
+    $('live-rate-val').textContent = `${selectedRate}%`;
+    rateLive.oninput = () => {
+      const v = parseInt(rateLive.value);
+      $('live-rate-val').textContent = `${v}%`;
+      engine.setEventRate(v);
+      entropyForCanvas.setEventRate(v);
     };
 
     // Master volume
@@ -1995,22 +1642,45 @@ const App = (() => {
     $('mute-btn').onclick = toggleMute;
 
     // Initial canvas render
+    sessionTotalSecs = selectedDuration * 60;
+    sessionStats = { duration: selectedDuration, events: 0, tails: 0, density: selectedSilence };
+    sessionActive = true;
+
     drawEntropyCanvas($('entropy-canvas'), entropyForCanvas, 0, sessionTotalSecs);
 
-    // Start session
-    engine.startSession(selectedDuration, selectedDensity);
+    engine.startSession(selectedDuration, selectedSilence, selectedEntropy, selectedRate);
     setEngineStatus('ACTIVE', true);
     $('s-phase').textContent = 'SESSION ACTIVE';
     $('s-timer').textContent = formatTime(selectedDuration * 60000);
+
+    // Kick guard display
+    if (engine.rules) {
+      $('g-spacing').textContent = 'OPEN';
+      $('g-simul').textContent = `0 / ${engine.rules.maxSimultaneous}`;
+    }
+    // Start next-event countdown
+    startNextEventCounter();
+  }
+
+  let nextEventInterval = null;
+  function startNextEventCounter() {
+    clearInterval(nextEventInterval);
+    nextEventInterval = setInterval(() => {
+      if (!sessionActive || !engine || !engine.rules) { clearInterval(nextEventInterval); return; }
+      const remaining = engine.rules.nextEventIn - (Date.now() - engine.rules.lastEventTime);
+      const secs = Math.max(0, remaining / 1000).toFixed(1);
+      const nextEl = $('g-next');
+      if (nextEl) { nextEl.textContent = `${secs}s`; nextEl.className = 'guard-val active'; }
+    }, 200);
   }
 
   function buildMixer() {
     const grid = $('mixer-grid');
     grid.innerHTML = '';
     currentProtocol.beds.forEach(bed => {
+      const pct = Math.round(bed.baseGain * 100);
       const div = document.createElement('div');
       div.className = 'mixer-stem';
-      const pct = Math.round(bed.baseGain * 100);
       div.innerHTML = `
         <div class="mixer-stem-header">
           <span class="mixer-stem-name">${bed.label} <span class="mixer-stem-type">BED</span></span>
@@ -2019,7 +1689,6 @@ const App = (() => {
         <input type="range" id="mix-${bed.file}" min="0" max="100" value="${pct}">
       `;
       grid.appendChild(div);
-
       setTimeout(() => {
         const sl = document.getElementById(`mix-${bed.file}`);
         if (sl) sl.oninput = () => {
@@ -2031,7 +1700,7 @@ const App = (() => {
     });
   }
 
-  function logEvent(event, t) {
+  function logEvent(event, t, isTail) {
     const el = $('event-log-entries');
     const mins = Math.floor(t / 60);
     const secs = Math.floor(t % 60);
@@ -2041,12 +1710,8 @@ const App = (() => {
     entry.innerHTML = `<span class="ev-time">${timeStr}</span><span class="ev-name">${event.label}</span>`;
     el.insertBefore(entry, el.firstChild);
     requestAnimationFrame(() => entry.classList.add('visible'));
-    // Keep only last 4
     const entries = el.querySelectorAll('.event-entry');
-    if (entries.length > 4) {
-      entries[entries.length - 1].remove();
-    }
-    sessionStats.events++;
+    if (entries.length > 5) entries[entries.length - 1].remove();
   }
 
   function flashKanji() {
@@ -2072,6 +1737,7 @@ const App = (() => {
   }
 
   function endSession() {
+    clearInterval(nextEventInterval);
     if (engine) engine.endSession();
     else showComplete();
   }
@@ -2079,56 +1745,59 @@ const App = (() => {
   function showComplete() {
     $('view-session').classList.remove('active');
     setEngineStatus('STANDBY', false);
-
-    $('c-kanji').textContent = currentProtocol ? currentProtocol.kanji : '—';
-    $('c-duration').textContent = `${sessionStats.duration}′`;
-    $('c-events').textContent = sessionStats.events;
-    $('c-density').textContent = `${sessionStats.density}%`;
-
+    $('c-kanji').textContent       = currentProtocol ? currentProtocol.kanji : '—';
+    $('c-duration').textContent    = `${sessionStats.duration}′`;
+    $('c-events').textContent      = sessionStats.events;
+    $('c-tails-count').textContent = sessionStats.tails;
+    $('c-density').textContent     = `${sessionStats.density}%`;
     $('view-complete').classList.add('active');
   }
 
-  /* ── Keyboard Shortcuts ── */
+  /* ── Keyboard Shortcuts — Phase 2 ── */
   document.addEventListener('keydown', (e) => {
     if (!sessionActive) return;
     const key = e.key.toUpperCase();
     if (key === 'K') { e.preventDefault(); toggleMute(); }
     if (key === 'ESCAPE') { e.preventDefault(); endSession(); }
-    if (key === 'ARROWUP') {
+
+    // Volume
+    if (e.key === 'ArrowUp') {
       e.preventDefault();
       const sl = $('master-vol');
       sl.value = Math.min(100, parseInt(sl.value) + 5);
       sl.dispatchEvent(new Event('input'));
     }
-    if (key === 'ARROWDOWN') {
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
       const sl = $('master-vol');
       sl.value = Math.max(0, parseInt(sl.value) - 5);
       sl.dispatchEvent(new Event('input'));
     }
-    if (key === 'M') {
-      e.preventDefault();
-      const sl = $('live-density');
-      sl.value = Math.min(95, parseInt(sl.value) + 2);
-      sl.dispatchEvent(new Event('input'));
-    }
-    if (key === 'N') {
-      e.preventDefault();
-      const sl = $('live-density');
-      sl.value = Math.max(60, parseInt(sl.value) - 2);
-      sl.dispatchEvent(new Event('input'));
-    }
+
+    // Silence ±  (M/N)
+    if (key === 'M') { e.preventDefault(); nudgeSlider('live-silence', 2, 60, 95); }
+    if (key === 'N') { e.preventDefault(); nudgeSlider('live-silence', -2, 60, 95); }
+
+    // Entropy ±  (E/R)
+    if (key === 'E') { e.preventDefault(); nudgeSlider('live-entropy', 5, 0, 100); }
+    if (key === 'R') { e.preventDefault(); nudgeSlider('live-entropy', -5, 0, 100); }
+
+    // Event Rate ± (T/Y)
+    if (key === 'T') { e.preventDefault(); nudgeSlider('live-rate', 5, 10, 100); }
+    if (key === 'Y') { e.preventDefault(); nudgeSlider('live-rate', -5, 10, 100); }
   });
+
+  function nudgeSlider(id, delta, min, max) {
+    const sl = $(id);
+    sl.value = Math.max(min, Math.min(max, parseInt(sl.value) + delta));
+    sl.dispatchEvent(new Event('input'));
+  }
 
   /* ── Init ── */
   function init() {
-    // Season badge
     $('current-season-badge').textContent = SEASON_NAMES[CURRENT_SEASON];
-
-    // Build grid
     buildGrid('ALL');
 
-    // Season filter
     document.querySelectorAll('.season-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.season-tab').forEach(t => t.classList.remove('active'));
@@ -2138,18 +1807,11 @@ const App = (() => {
       });
     });
 
-    // Back button
     $('back-btn').addEventListener('click', () => showView('floor'));
-
-    // Begin button
     $('begin-btn').addEventListener('click', () => beginSession());
-
-    // End session
     $('end-btn').addEventListener('click', () => {
       if (confirm('End this session? The remaining time will be released.')) endSession();
     });
-
-    // Complete buttons
     $('c-return-btn').addEventListener('click', () => {
       $('view-complete').classList.remove('active');
       showView('floor');
@@ -2159,10 +1821,7 @@ const App = (() => {
       if (currentProtocol) beginSession();
     });
 
-    // Hide loader
-    setTimeout(() => {
-      $('loading-overlay').classList.add('hidden');
-    }, 900);
+    setTimeout(() => $('loading-overlay').classList.add('hidden'), 900);
   }
 
   return { init };
@@ -2171,14 +1830,14 @@ const App = (() => {
 /* ── Simulated Load Progress ── */
 (function simulateLoad() {
   let p = 0;
-  const fill = document.getElementById('loading-fill');
+  const fill  = document.getElementById('loading-fill');
   const files = document.getElementById('loading-files');
-  const labels = ['CALIBRATING ENTROPY ENGINE', 'LOADING PROTOCOL DEFINITIONS', 'INITIALISING SILENCE FRAMEWORK', 'READY'];
+  const labels = ['CALIBRATING ENTROPY ENGINE', 'LOADING PLAYBACK RULES', 'INITIALISING SILENCE FRAMEWORK', 'BUILDING TAIL SCHEDULER', 'READY'];
   const iv = setInterval(() => {
     p += Math.random() * 28 + 12;
     if (p >= 100) { p = 100; clearInterval(iv); }
     fill.style.width = `${p}%`;
-    files.textContent = labels[Math.min(Math.floor(p / 26), labels.length - 1)];
+    files.textContent = labels[Math.min(Math.floor(p / 22), labels.length - 1)];
   }, 160);
 })();
 
