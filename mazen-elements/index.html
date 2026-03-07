@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MA-ZEN — THE FLOOR</title>
+<title>MA-ZEN — THE FLOOR · Phase 4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -454,6 +454,319 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
   .complete-stats { grid-template-columns: 1fr 1fr; }
   .floor-masthead { flex-direction: column; gap: 16px; }
 }
+
+/* ══════════════════════════════════════════════
+   PHASE 4 — SUBSCRIPTION & ACCOUNT SYSTEM
+══════════════════════════════════════════════ */
+
+/* ── Plan pill in header ── */
+.plan-pill {
+  font-size: 0.55rem; letter-spacing: 0.16em; padding: 3px 9px;
+  border: 1px solid; cursor: pointer; transition: all var(--transition);
+  font-family: var(--font-mono);
+}
+.plan-pill.FREE       { color: var(--type-faint); border-color: var(--type-faint); }
+.plan-pill.TRIAL      { color: var(--outcome-transition); border-color: var(--outcome-transition); background: var(--outcome-transition-glow); }
+.plan-pill.SUBSCRIBER { color: var(--gold); border-color: var(--gold); background: var(--gold-glow); }
+.plan-pill:hover { opacity: 0.7; }
+
+.account-btn {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 0.6rem; letter-spacing: 0.12em; color: var(--type-dim);
+  padding: 5px 10px; border: 1px solid var(--border);
+  transition: all var(--transition); font-family: var(--font-mono);
+}
+.account-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+.account-btn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--type-faint); }
+.account-btn-dot.TRIAL      { background: var(--outcome-transition); }
+.account-btn-dot.SUBSCRIBER { background: var(--gold); box-shadow: 0 0 5px var(--gold); }
+
+/* ── MY PRACTICE shelf ── */
+#my-practice {
+  margin-bottom: 36px; padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  display: none;
+}
+#my-practice.has-content { display: block; }
+.practice-section-label {
+  font-size: 0.57rem; letter-spacing: 0.18em; color: var(--type-faint);
+  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.practice-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.practice-shelves { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 860px) { .practice-shelves { grid-template-columns: 1fr; } }
+
+.practice-shelf { }
+.shelf-label { font-size: 0.55rem; letter-spacing: 0.14em; color: var(--type-faint); margin-bottom: 10px; }
+
+/* Recent sessions row */
+.recents-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.recent-card {
+  background: var(--navy); border: 1px solid var(--border);
+  padding: 10px 14px; cursor: pointer; transition: all var(--transition);
+  display: flex; align-items: center; gap: 12px; min-width: 180px; flex: 1;
+}
+.recent-card:hover { border-color: var(--gold-dim); background: var(--deep); }
+.recent-kanji { font-family: var(--font-display); font-size: 1.5rem; font-weight: 300; color: var(--type-faint); line-height: 1; flex-shrink: 0; }
+.recent-meta { flex: 1; min-width: 0; }
+.recent-name { font-size: 0.65rem; letter-spacing: 0.05em; color: var(--type-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recent-detail { font-size: 0.55rem; letter-spacing: 0.08em; color: var(--type-faint); margin-top: 2px; }
+.recent-resume { font-size: 0.5rem; letter-spacing: 0.12em; color: var(--gold); margin-top: 4px; }
+
+/* Favorites row */
+.favs-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.fav-pill {
+  background: var(--navy); border: 1px solid var(--border);
+  padding: 8px 14px; cursor: pointer; transition: all var(--transition);
+  display: flex; align-items: center; gap: 8px;
+}
+.fav-pill:hover { border-color: var(--gold-dim); background: var(--deep); }
+.fav-pill-kanji { font-family: var(--font-display); font-size: 1.1rem; color: var(--type-faint); line-height: 1; }
+.fav-pill-name { font-size: 0.6rem; letter-spacing: 0.08em; color: var(--type-dim); }
+.fav-pill-outcome { font-size: 0.5rem; letter-spacing: 0.1em; color: var(--type-faint); }
+
+/* ── Protocol card — LOCKED state ── */
+.protocol-card.locked { opacity: 0.72; }
+.protocol-card.locked::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    135deg, transparent, transparent 3px,
+    rgba(6,8,15,0.08) 3px, rgba(6,8,15,0.08) 4px
+  );
+  pointer-events: none;
+}
+.lock-badge {
+  font-size: 0.48rem; letter-spacing: 0.14em; padding: 2px 6px;
+  background: var(--signal); color: var(--type-faint);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.lock-badge.free-badge {
+  color: var(--outcome-transition); background: var(--outcome-transition-glow);
+  border-color: rgba(139,168,123,0.2);
+}
+.card-lock-icon {
+  position: absolute; right: 14px; top: 14px;
+  font-size: 0.68rem; color: var(--type-faint); opacity: 0.5;
+}
+
+/* ── Favorite button ── */
+.fav-btn {
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); color: var(--type-faint); font-size: 0.72rem;
+  transition: all var(--transition); flex-shrink: 0; position: relative; z-index: 2;
+  font-family: var(--font-mono);
+}
+.fav-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+.fav-btn.active { color: var(--gold); border-color: var(--gold); background: var(--gold-glow); }
+.fav-btn.active::after { content: ''; position: absolute; inset: -1px; box-shadow: 0 0 8px rgba(196,148,74,0.3); pointer-events: none; }
+
+/* Fav btn in detail header */
+.detail-fav-btn {
+  margin-top: 12px; display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.6rem; letter-spacing: 0.12em; color: var(--type-faint);
+  padding: 6px 14px; border: 1px solid var(--border); transition: all var(--transition);
+  font-family: var(--font-mono);
+}
+.detail-fav-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+.detail-fav-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-glow); }
+
+/* ── Detail view — locked overlay ── */
+.locked-config-overlay {
+  position: relative; margin-bottom: 0;
+}
+.locked-config-mask {
+  position: absolute; inset: 0; z-index: 10;
+  background: linear-gradient(180deg, rgba(6,8,15,0) 0%, rgba(6,8,15,0.85) 60%);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  padding-bottom: 24px; gap: 10px; pointer-events: all;
+}
+.locked-config-label { font-size: 0.58rem; letter-spacing: 0.14em; color: var(--type-dim); }
+
+/* ── Begin button variants ── */
+.begin-btn.locked-btn {
+  background: var(--outcome-transition-glow); border-color: var(--outcome-transition);
+  color: var(--outcome-transition);
+}
+.begin-btn.locked-btn::before { background: var(--outcome-transition); }
+.begin-btn.preview-btn {
+  background: rgba(123,168,192,0.05); border-color: var(--outcome-decomp);
+  color: var(--outcome-decomp);
+}
+.begin-btn.preview-btn::before { background: var(--outcome-decomp); }
+
+/* ── PAYWALL MODAL ── */
+#paywall-modal {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(6,8,15,0.92); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center; padding: 24px;
+}
+#paywall-modal.open { display: flex; }
+.paywall-inner {
+  background: var(--navy); border: 1px solid var(--border);
+  max-width: 580px; width: 100%; position: relative;
+  animation: slideUp 0.3s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.paywall-close {
+  position: absolute; top: 14px; right: 16px; font-size: 0.7rem; color: var(--type-faint);
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); transition: all var(--transition);
+}
+.paywall-close:hover { color: var(--type); border-color: var(--type-dim); }
+
+.paywall-header { padding: 28px 28px 20px; border-bottom: 1px solid var(--border); }
+.paywall-kicker { font-size: 0.55rem; letter-spacing: 0.18em; color: var(--gold); margin-bottom: 8px; }
+.paywall-locked-name { font-family: var(--font-display); font-size: 1.6rem; font-weight: 300; letter-spacing: 0.06em; color: var(--type); margin-bottom: 4px; }
+.paywall-locked-why { font-size: 0.62rem; letter-spacing: 0.04em; color: var(--type-dim); line-height: 1.65; }
+
+.paywall-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+.paywall-plan { background: var(--void); padding: 18px 20px; }
+.paywall-plan.featured { background: var(--navy); }
+.pp-name { font-size: 0.57rem; letter-spacing: 0.18em; color: var(--type-faint); margin-bottom: 8px; }
+.pp-name.gold { color: var(--gold); }
+.pp-price { font-family: var(--font-display); font-size: 1.4rem; font-weight: 300; color: var(--type-dim); margin-bottom: 12px; line-height: 1; }
+.pp-price sup { font-size: 0.65rem; font-family: var(--font-mono); vertical-align: top; margin-top: 4px; display: inline-block; }
+.pp-price sub { font-size: 0.55rem; font-family: var(--font-mono); color: var(--type-faint); }
+.pp-features { display: flex; flex-direction: column; gap: 5px; }
+.pp-feat { font-size: 0.6rem; letter-spacing: 0.04em; color: var(--type-dim); display: flex; gap: 7px; line-height: 1.5; }
+.pp-feat::before { content: '—'; color: var(--type-faint); flex-shrink: 0; }
+.pp-feat.highlight::before { content: '✦'; color: var(--gold); }
+.pp-feat.locked-feat { color: var(--type-faint); }
+.pp-feat.locked-feat::before { content: '✕'; color: var(--type-faint); }
+
+.paywall-footer { padding: 20px 28px; display: flex; flex-direction: column; gap: 10px; }
+.trial-btn {
+  width: 100%; padding: 14px 24px; background: var(--gold-glow); border: 1px solid var(--gold);
+  color: var(--gold); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.18em;
+  transition: all var(--transition); cursor: pointer; position: relative; overflow: hidden;
+}
+.trial-btn::before { content: ''; position: absolute; inset: 0; background: var(--gold); transform: translateX(-101%); transition: transform var(--transition-slow); }
+.trial-btn:hover::before { transform: translateX(0); }
+.trial-btn span { position: relative; z-index: 1; }
+.trial-btn:hover span { color: var(--void); }
+.paywall-fine { font-size: 0.54rem; letter-spacing: 0.08em; color: var(--type-faint); text-align: center; line-height: 1.7; }
+.preview-link { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--outcome-decomp); cursor: pointer; text-align: center; padding: 6px; transition: opacity var(--transition); }
+.preview-link:hover { opacity: 0.7; }
+
+/* ── ACCOUNT PANEL (slide from right) ── */
+#account-panel {
+  position: fixed; top: 0; right: -380px; bottom: 0; width: 360px; z-index: 300;
+  background: var(--navy); border-left: 1px solid var(--border);
+  transition: right var(--transition-slow); overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+#account-panel.open { right: 0; }
+#account-overlay {
+  position: fixed; inset: 0; z-index: 290; background: rgba(6,8,15,0.5);
+  display: none; backdrop-filter: blur(2px);
+}
+#account-overlay.open { display: block; }
+
+.account-panel-header {
+  padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: var(--navy); z-index: 1;
+}
+.account-panel-title { font-size: 0.6rem; letter-spacing: 0.18em; color: var(--gold); }
+.account-panel-close { font-size: 0.7rem; color: var(--type-faint); width: 26px; height: 26px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
+.account-panel-close:hover { color: var(--type); border-color: var(--type-dim); }
+
+.account-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.account-section:last-child { border-bottom: none; }
+.account-section-label { font-size: 0.55rem; letter-spacing: 0.16em; color: var(--type-faint); margin-bottom: 12px; }
+
+/* Plan block */
+.plan-block { background: var(--void); border: 1px solid var(--border); padding: 14px 16px; margin-bottom: 12px; }
+.plan-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 300; letter-spacing: 0.08em; margin-bottom: 4px; }
+.plan-desc { font-size: 0.6rem; letter-spacing: 0.04em; color: var(--type-dim); line-height: 1.65; margin-bottom: 10px; }
+.plan-actions { display: flex; gap: 8px; }
+.plan-action-btn { flex: 1; padding: 8px 12px; font-size: 0.6rem; letter-spacing: 0.12em; border: 1px solid; transition: all var(--transition); font-family: var(--font-mono); cursor: pointer; }
+.plan-action-btn.primary { border-color: var(--gold); color: var(--gold); background: var(--gold-glow); }
+.plan-action-btn.primary:hover { background: var(--gold); color: var(--void); }
+.plan-action-btn.secondary { border-color: var(--border); color: var(--type-dim); background: none; }
+.plan-action-btn.secondary:hover { border-color: var(--type-dim); color: var(--type); }
+
+.trial-bar-wrap { margin-top: 8px; }
+.trial-bar-label { display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--type-faint); letter-spacing: 0.08em; margin-bottom: 5px; }
+.trial-bar { height: 2px; background: var(--signal); }
+.trial-bar-fill { height: 100%; background: var(--outcome-transition); transition: width 0.8s ease; }
+
+/* Usage stats */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.stat-mini { background: var(--void); padding: 10px 12px; }
+.stat-mini-val { font-family: var(--font-display); font-size: 1.2rem; font-weight: 300; color: var(--gold); line-height: 1; }
+.stat-mini-lbl { font-size: 0.5rem; letter-spacing: 0.1em; color: var(--type-faint); margin-top: 3px; }
+
+/* Protocol entitlement list */
+.entitlement-list { display: flex; flex-direction: column; gap: 3px; }
+.entitlement-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; background: var(--void); }
+.entitlement-name { font-size: 0.6rem; letter-spacing: 0.06em; color: var(--type-dim); }
+.entitlement-state { font-size: 0.52rem; letter-spacing: 0.1em; }
+.entitlement-state.unlocked { color: var(--outcome-transition); }
+.entitlement-state.locked   { color: var(--type-faint); }
+.entitlement-state.free     { color: var(--outcome-focus); }
+
+/* Favorites in panel */
+.panel-favs { display: flex; flex-direction: column; gap: 3px; }
+.panel-fav-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; background: var(--void); cursor: pointer; transition: background var(--transition); }
+.panel-fav-row:hover { background: var(--signal); }
+.panel-fav-kanji { font-family: var(--font-display); font-size: 1.2rem; color: var(--type-faint); line-height: 1; flex-shrink: 0; }
+.panel-fav-meta { flex: 1; }
+.panel-fav-name { font-size: 0.6rem; letter-spacing: 0.06em; color: var(--type-dim); }
+.panel-fav-out { font-size: 0.52rem; letter-spacing: 0.1em; color: var(--type-faint); }
+.panel-fav-remove { font-size: 0.6rem; color: var(--type-faint); width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.panel-empty { font-size: 0.6rem; color: var(--type-faint); font-style: italic; letter-spacing: 0.06em; padding: 8px 0; }
+
+/* ── PREVIEW BANNER in session ── */
+.preview-banner {
+  background: rgba(123,168,192,0.05); border-bottom: 1px solid rgba(123,168,192,0.2);
+  padding: 6px 32px; display: none; align-items: center; justify-content: space-between;
+  font-size: 0.58rem; letter-spacing: 0.1em; color: var(--outcome-decomp);
+}
+.preview-banner.active { display: flex; }
+.preview-countdown { font-family: var(--font-display); font-size: 0.75rem; color: var(--outcome-decomp); }
+
+/* ── Plan-gate on sliders ── */
+.slider-gate {
+  position: relative;
+}
+.slider-gate-mask {
+  display: none; position: absolute; inset: 0; z-index: 5;
+  background: rgba(6,8,15,0.0); cursor: not-allowed;
+  align-items: center; justify-content: flex-start;
+  padding-left: 2px;
+}
+.slider-gate.gated .slider-gate-mask { display: flex; }
+.slider-gate.gated input[type=range] { opacity: 0.25; pointer-events: none; }
+.slider-gate-label { font-size: 0.52rem; letter-spacing: 0.1em; color: var(--type-faint); }
+
+/* ── Upgrade nudge in detail ── */
+.upgrade-nudge {
+  background: var(--gold-glow); border: 1px solid var(--border);
+  padding: 12px 16px; margin-bottom: 16px;
+  display: none; align-items: center; justify-content: space-between; gap: 12px;
+}
+.upgrade-nudge.visible { display: flex; }
+.upgrade-nudge-text { font-size: 0.6rem; letter-spacing: 0.06em; color: var(--type-dim); line-height: 1.6; }
+.upgrade-nudge-btn { flex-shrink: 0; padding: 6px 14px; font-size: 0.6rem; letter-spacing: 0.14em; border: 1px solid var(--gold); color: var(--gold); background: none; font-family: var(--font-mono); transition: all var(--transition); cursor: pointer; white-space: nowrap; }
+.upgrade-nudge-btn:hover { background: var(--gold); color: var(--void); }
+
+/* ── Post-preview paywall in complete screen ── */
+.preview-upsell {
+  display: none; background: rgba(123,168,192,0.04); border: 1px solid rgba(123,168,192,0.2);
+  padding: 20px 24px; margin-bottom: 24px; text-align: left;
+}
+.preview-upsell.visible { display: block; }
+.preview-upsell-title { font-size: 0.6rem; letter-spacing: 0.16em; color: var(--outcome-decomp); margin-bottom: 6px; }
+.preview-upsell-body { font-size: 0.62rem; color: var(--type-dim); line-height: 1.7; margin-bottom: 14px; }
+.preview-upsell-btn { padding: 8px 20px; font-size: 0.62rem; letter-spacing: 0.14em; border: 1px solid var(--outcome-decomp); color: var(--outcome-decomp); font-family: var(--font-mono); transition: all var(--transition); cursor: pointer; background: none; }
+.preview-upsell-btn:hover { background: var(--outcome-decomp); color: var(--void); }
+
+/* Duration option locked state */
+.dur-opt.dur-locked { opacity: 0.32; cursor: not-allowed; position: relative; }
+.dur-opt.dur-locked::after { content: " ✕"; color: var(--type-faint); }
+
 </style>
 </head>
 <body>
@@ -474,6 +787,11 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
     </div>
     <div class="header-meta">
       <div class="season-badge" id="current-season-badge">—</div>
+      <div class="plan-pill FREE" id="plan-pill">FREE</div>
+      <button class="account-btn" id="account-btn">
+        <span class="account-btn-dot" id="account-btn-dot"></span>
+        MY PRACTICE
+      </button>
       <div class="header-status">
         <div class="status-dot" id="engine-dot"></div>
         <span id="engine-status">STANDBY</span>
@@ -497,6 +815,21 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
         <div class="floor-count">
           <strong id="visible-count">12</strong>
           PROTOCOLS AVAILABLE
+        </div>
+      </div>
+    </div>
+
+    <!-- MY PRACTICE SHELF — shown when user has favorites or recents -->
+    <div id="my-practice">
+      <div class="practice-section-label">MY PRACTICE</div>
+      <div class="practice-shelves">
+        <div class="practice-shelf" id="recents-shelf">
+          <div class="shelf-label">RECENT SESSIONS</div>
+          <div class="recents-row" id="recents-row"></div>
+        </div>
+        <div class="practice-shelf" id="favs-shelf">
+          <div class="shelf-label">SAVED PROTOCOLS</div>
+          <div class="favs-row" id="favs-row"></div>
         </div>
       </div>
     </div>
@@ -542,6 +875,13 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
           <div class="detail-outcome-label" id="d-outcome-label">—</div>
         </div>
         <p class="detail-philosophy" id="d-philosophy">—</p>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:14px;">
+          <button class="detail-fav-btn" id="detail-fav-btn">♡ SAVE PROTOCOL</button>
+        </div>
+        <div class="upgrade-nudge" id="detail-upgrade-nudge">
+          <div class="upgrade-nudge-text">Full parameter control and longer sessions require a subscription. You can preview this protocol for 5 minutes at default settings.</div>
+          <button class="upgrade-nudge-btn" id="detail-upgrade-btn">START TRIAL</button>
+        </div>
       </div>
     </div>
 
@@ -648,6 +988,10 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
 
 <!-- ─── SESSION (fixed fullscreen) ─── -->
 <div id="view-session">
+  <div class="preview-banner" id="preview-banner">
+    <span>PREVIEW MODE · Parameters fixed at protocol defaults</span>
+    <span class="preview-countdown" id="preview-countdown">5:00</span>
+  </div>
   <div class="session-strip">
     <div class="session-strip-left">
       <div class="session-protocol-id" id="s-proto-id">—</div>
@@ -759,8 +1103,13 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
 <div id="view-complete">
   <div class="complete-inner">
     <div class="complete-kanji" id="c-kanji">—</div>
-    <div class="complete-title">SESSION COMPLETE</div>
+    <div class="complete-title" id="c-title">SESSION COMPLETE</div>
     <p class="complete-reflection" id="c-reflection">—</p>
+    <div class="preview-upsell" id="preview-upsell">
+      <div class="preview-upsell-title">PREVIEW ENDED</div>
+      <div class="preview-upsell-body">You experienced 5 minutes of this protocol. A full session runs 20–45 minutes and includes parameter control, resonance tails, and a post-session reflection prompt.<br><br>Start your 14-day trial to access all 12 protocols.</div>
+      <button class="preview-upsell-btn" id="preview-upsell-btn">START FREE TRIAL →</button>
+    </div>
     <div class="complete-stats">
       <div class="stat-cell"><span class="stat-val" id="c-duration">—</span><span class="stat-lbl">DURATION</span></div>
       <div class="stat-cell"><span class="stat-val" id="c-events">—</span><span class="stat-lbl">EVENTS</span></div>
@@ -775,7 +1124,7 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
 </div>
 
 <!-- ═══════════════════════════════════════════
-     JAVASCRIPT ENGINE — PHASE 3
+     JAVASCRIPT — PHASE 4: SUBSCRIPTION CATALOG
 ═══════════════════════════════════════════ -->
 <script>
 'use strict';
@@ -1200,6 +1549,141 @@ const PROTOCOLS = {
 
 };
 
+/* ════════════════════════════════════════════
+   ACCOUNT SYSTEM — Phase 4
+   Plans: FREE | TRIAL | SUBSCRIBER
+   FREE protocols: KAZE, SEIJAKU, TAKE
+   TRIAL: all protocols, 20min max, 14-day expiry
+   SUBSCRIBER: all, full durations, full params
+════════════════════════════════════════════ */
+const FREE_PROTOCOLS = new Set(['KAZE','SEIJAKU','TAKE']);
+const FREE_MAX_DURATION  = 20;
+const TRIAL_MAX_DURATION = 20;
+const TRIAL_DAYS         = 14;
+
+class AccountSystem {
+  constructor() {
+    this.plan         = 'FREE';    // FREE | TRIAL | SUBSCRIBER
+    this.trialExpiry  = null;
+    this.favorites    = new Set();
+    this.recentSessions = [];      // [{id,name,kanji,outcome,duration,date}] max 3
+    this.totalSessions  = 0;
+    this.totalMinutes   = 0;
+    this.streak         = 0;
+    this._load();
+  }
+
+  /* ── Persistence ── */
+  _load() {
+    try {
+      const raw = localStorage.getItem('mazen_account_v4');
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      this.plan           = d.plan || 'FREE';
+      this.trialExpiry    = d.trialExpiry ? new Date(d.trialExpiry) : null;
+      this.favorites      = new Set(d.favorites || []);
+      this.recentSessions = d.recentSessions || [];
+      this.totalSessions  = d.totalSessions || 0;
+      this.totalMinutes   = d.totalMinutes || 0;
+      this.streak         = d.streak || 0;
+      // auto-expire trial
+      if (this.plan === 'TRIAL' && this.trialExpiry && new Date() > this.trialExpiry) {
+        this.plan = 'FREE'; this._save();
+      }
+    } catch(e) {}
+  }
+  _save() {
+    try {
+      localStorage.setItem('mazen_account_v4', JSON.stringify({
+        plan: this.plan, trialExpiry: this.trialExpiry?.toISOString(),
+        favorites: [...this.favorites], recentSessions: this.recentSessions,
+        totalSessions: this.totalSessions, totalMinutes: this.totalMinutes, streak: this.streak
+      }));
+    } catch(e) {}
+  }
+
+  /* ── Entitlement checks ── */
+  canAccess(protocolId) {
+    if (this.plan === 'SUBSCRIBER') return true;
+    if (this.plan === 'TRIAL')      return !this._trialExpired();
+    return FREE_PROTOCOLS.has(protocolId);
+  }
+  canPreview(protocolId) {
+    // Anyone can preview any protocol for 5 min
+    return true;
+  }
+  canCustomize() {
+    return this.plan === 'SUBSCRIBER' || (this.plan === 'TRIAL' && !this._trialExpired());
+  }
+  maxDuration(protocolId) {
+    if (this.plan === 'SUBSCRIBER') return 999;
+    if (this.plan === 'TRIAL')      return TRIAL_MAX_DURATION;
+    if (FREE_PROTOCOLS.has(protocolId)) return FREE_MAX_DURATION;
+    return 5; // preview only
+  }
+  _trialExpired() {
+    return this.trialExpiry && new Date() > this.trialExpiry;
+  }
+  trialDaysRemaining() {
+    if (!this.trialExpiry) return 0;
+    return Math.max(0, Math.ceil((this.trialExpiry - new Date()) / 86400000));
+  }
+  trialProgress() {
+    if (!this.trialExpiry) return 0;
+    const start = new Date(this.trialExpiry - TRIAL_DAYS * 86400000);
+    const elapsed = (new Date() - start) / (TRIAL_DAYS * 86400000);
+    return Math.min(1, Math.max(0, elapsed));
+  }
+
+  /* ── Plan changes ── */
+  startTrial() {
+    this.plan = 'TRIAL';
+    this.trialExpiry = new Date(Date.now() + TRIAL_DAYS * 86400000);
+    this._save();
+  }
+  subscribe() {
+    this.plan = 'SUBSCRIBER';
+    this.trialExpiry = null;
+    this._save();
+  }
+  downgrade() {
+    this.plan = 'FREE';
+    this.trialExpiry = null;
+    this._save();
+  }
+
+  /* ── Favorites ── */
+  toggleFavorite(id) {
+    if (this.favorites.has(id)) this.favorites.delete(id);
+    else this.favorites.add(id);
+    this._save();
+    return this.favorites.has(id);
+  }
+  isFavorite(id) { return this.favorites.has(id); }
+
+  /* ── Session history ── */
+  recordSession(protocol, duration, events) {
+    this.recentSessions.unshift({
+      id: protocol.id, name: protocol.name, kanji: protocol.kanji,
+      outcome: protocol.outcome, duration, date: new Date().toISOString()
+    });
+    if (this.recentSessions.length > 3) this.recentSessions.pop();
+    this.totalSessions++;
+    this.totalMinutes += duration;
+    this._save();
+  }
+
+  planLabel() {
+    if (this.plan === 'FREE')        return 'FREE';
+    if (this.plan === 'TRIAL')       return `TRIAL · ${this.trialDaysRemaining()}d left`;
+    if (this.plan === 'SUBSCRIBER')  return 'SUBSCRIBER';
+    return 'FREE';
+  }
+  planShort() { return this.plan; }
+}
+
+const Account = new AccountSystem();
+
 /* ────────────────────────────────────────────
    OUTCOME CONFIG
 ──────────────────────────────────────────── */
@@ -1479,17 +1963,17 @@ function drawEntropyCanvas(canvas, engine, elapsed, total) {
 }
 
 /* ════════════════════════════════════════════
-   APPLICATION CONTROLLER — Phase 3
+   APPLICATION CONTROLLER — Phase 4
 ════════════════════════════════════════════ */
 const App = (() => {
   let engine=null, currentProtocol=null;
   let selectedDuration=20, selectedSilence=82, selectedEntropy=60, selectedRate=50;
   let currentOutcomeFilter='ALL', currentSeasonFilter='ALL';
-  let sessionActive=false, sessionTotalSecs=0;
+  let sessionActive=false, sessionTotalSecs=0, isPreviewMode=false;
   let sessionStats={ duration:0, events:0, tails:0, density:0 };
+  let previewTimer=null;
 
   const $=id=>document.getElementById(id);
-
   function showView(id) {
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     const v=document.getElementById(`view-${id}`); if(v) v.classList.add('active');
@@ -1500,37 +1984,203 @@ const App = (() => {
     return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
   }
   function setEngineStatus(text,active=false) { $('engine-status').textContent=text; $('engine-dot').classList.toggle('active',active); }
+  function outcomeClass(o) { return {FOCUS:'focus',DECOMPRESSION:'decomp',RESET:'reset',TRANSITION:'trans',REFLECTION:'reflect'}[o]||'focus'; }
 
-  /* ── Outcome color helper ── */
-  function outcomeClass(outcome) {
-    const map={ FOCUS:'focus', DECOMPRESSION:'decomp', RESET:'reset', TRANSITION:'trans', REFLECTION:'reflect' };
-    return map[outcome] || 'focus';
+  /* ── ACCOUNT UI ── */
+  function refreshAccountUI() {
+    const plan = Account.planShort();
+
+    // Header pill
+    const pill=$('plan-pill');
+    pill.textContent = Account.planLabel();
+    pill.className = `plan-pill ${plan}`;
+
+    // Account btn dot
+    const dot=$('account-btn-dot');
+    dot.className = `account-btn-dot ${plan}`;
   }
+
+  /* ── MY PRACTICE shelf ── */
+  function refreshPracticeShelf() {
+    const hasFavs    = Account.favorites.size > 0;
+    const hasRecents = Account.recentSessions.length > 0;
+    const shelf = $('my-practice');
+    if (!hasFavs && !hasRecents) { shelf.classList.remove('has-content'); return; }
+    shelf.classList.add('has-content');
+
+    // Recents
+    const recRow = $('recents-row'); recRow.innerHTML='';
+    $('recents-shelf').style.display = hasRecents ? '' : 'none';
+    Account.recentSessions.forEach(s=>{
+      const p = PROTOCOLS[s.id]; if(!p) return;
+      const card=document.createElement('div'); card.className='recent-card';
+      const d = new Date(s.date);
+      const dateStr = `${d.getMonth()+1}/${d.getDate()}`;
+      card.innerHTML=`
+        <div class="recent-kanji">${p.kanji}</div>
+        <div class="recent-meta">
+          <div class="recent-name">${p.name}</div>
+          <div class="recent-detail">${s.duration}′ · ${dateStr}</div>
+          <div class="recent-resume">→ OPEN</div>
+        </div>`;
+      card.addEventListener('click',()=>openDetail(p));
+      recRow.appendChild(card);
+    });
+
+    // Favs
+    const favRow = $('favs-row'); favRow.innerHTML='';
+    $('favs-shelf').style.display = hasFavs ? '' : 'none';
+    [...Account.favorites].slice(0,5).forEach(id=>{
+      const p=PROTOCOLS[id]; if(!p) return;
+      const pill=document.createElement('div'); pill.className='fav-pill';
+      pill.innerHTML=`<div class="fav-pill-kanji">${p.kanji}</div><div><div class="fav-pill-name">${p.name}</div><div class="fav-pill-outcome">${p.outcome}</div></div>`;
+      pill.addEventListener('click',()=>openDetail(p));
+      favRow.appendChild(pill);
+    });
+  }
+
+  /* ── ACCOUNT PANEL ── */
+  function openAccountPanel() {
+    $('account-panel').classList.add('open');
+    $('account-overlay').classList.add('open');
+    renderAccountPanel();
+  }
+  function closeAccountPanel() {
+    $('account-panel').classList.remove('open');
+    $('account-overlay').classList.remove('open');
+  }
+  function renderAccountPanel() {
+    const plan = Account.planShort();
+
+    // Plan block
+    const planNames = { FREE:'Free Plan', TRIAL:'Trial', SUBSCRIBER:'Subscriber' };
+    const planDescs = {
+      FREE:'Access to 3 core protocols. Upgrade to unlock the full library of 12 protocols with parameter control.',
+      TRIAL:`Full library access during your ${TRIAL_DAYS}-day trial. ${Account.trialDaysRemaining()} days remaining.`,
+      SUBSCRIBER:'Full library access. All protocols, durations, and parameter control.'
+    };
+    $('ap-plan-name').textContent = planNames[plan] || 'Free';
+    $('ap-plan-name').style.color = plan==='SUBSCRIBER'?'var(--gold)':plan==='TRIAL'?'var(--outcome-transition)':'var(--type-dim)';
+    $('ap-plan-desc').textContent = planDescs[plan] || '';
+
+    // Trial bar
+    const trialWrap = $('ap-trial-bar-wrap');
+    if (plan === 'TRIAL') {
+      trialWrap.style.display='';
+      $('ap-trial-days').textContent=`${Account.trialDaysRemaining()} DAYS LEFT`;
+      $('ap-trial-fill').style.width=`${Account.trialProgress()*100}%`;
+    } else { trialWrap.style.display='none'; }
+
+    // Actions
+    const actions=$('ap-plan-actions'); actions.innerHTML='';
+    if (plan === 'FREE') {
+      const tb=document.createElement('button'); tb.className='plan-action-btn primary'; tb.textContent='START FREE TRIAL';
+      tb.addEventListener('click',()=>{ Account.startTrial(); closeAccountPanel(); refreshAccountUI(); });
+      actions.appendChild(tb);
+      const sb=document.createElement('button'); sb.className='plan-action-btn secondary'; sb.textContent='SUBSCRIBE $12/MO';
+      sb.addEventListener('click',()=>{ Account.subscribe(); closeAccountPanel(); refreshAccountUI(); buildGrid(); refreshPracticeShelf(); });
+      actions.appendChild(sb);
+    } else if (plan === 'TRIAL') {
+      const sb=document.createElement('button'); sb.className='plan-action-btn primary'; sb.textContent='SUBSCRIBE NOW';
+      sb.addEventListener('click',()=>{ Account.subscribe(); closeAccountPanel(); refreshAccountUI(); buildGrid(); });
+      actions.appendChild(sb);
+      const db=document.createElement('button'); db.className='plan-action-btn secondary'; db.textContent='DOWNGRADE';
+      db.addEventListener('click',()=>{ if(confirm('Return to free plan?')){ Account.downgrade(); closeAccountPanel(); refreshAccountUI(); buildGrid(); refreshPracticeShelf(); } });
+      actions.appendChild(db);
+    } else {
+      const db=document.createElement('button'); db.className='plan-action-btn secondary'; db.textContent='MANAGE PLAN';
+      db.addEventListener('click',()=>{ if(confirm('Return to free plan (demo)?')){ Account.downgrade(); closeAccountPanel(); refreshAccountUI(); buildGrid(); } });
+      actions.appendChild(db);
+    }
+
+    // Stats
+    $('ap-sessions').textContent = Account.totalSessions;
+    $('ap-minutes').textContent  = Account.totalMinutes;
+    $('ap-streak').textContent   = Account.streak;
+    $('ap-favcount').textContent = Account.favorites.size;
+
+    // Favs in panel
+    const apFavs = $('ap-favs'); apFavs.innerHTML='';
+    if (Account.favorites.size === 0) {
+      const e=document.createElement('div'); e.className='panel-empty'; e.textContent='No saved protocols yet. Use ♡ on any protocol card.';
+      apFavs.appendChild(e);
+    } else {
+      [...Account.favorites].forEach(id=>{
+        const p=PROTOCOLS[id]; if(!p) return;
+        const row=document.createElement('div'); row.className='panel-fav-row';
+        row.innerHTML=`<div class="panel-fav-kanji">${p.kanji}</div><div class="panel-fav-meta"><div class="panel-fav-name">${p.name}</div><div class="panel-fav-out">${p.outcome}</div></div><span class="panel-fav-remove">✕</span>`;
+        row.querySelector('.panel-fav-remove').addEventListener('click',(e)=>{ e.stopPropagation(); Account.toggleFavorite(id); renderAccountPanel(); refreshPracticeShelf(); buildGrid(); });
+        row.addEventListener('click',(e)=>{ if(!e.target.classList.contains('panel-fav-remove')){ closeAccountPanel(); openDetail(p); }});
+        apFavs.appendChild(row);
+      });
+    }
+
+    // Entitlements list
+    const entList=$('ap-entitlements'); entList.innerHTML='';
+    Object.values(PROTOCOLS).forEach(p=>{
+      const row=document.createElement('div'); row.className='entitlement-row';
+      const isFree=FREE_PROTOCOLS.has(p.id);
+      const hasAccess=Account.canAccess(p.id);
+      const stateText = isFree ? 'FREE' : hasAccess ? 'UNLOCKED' : 'LOCKED';
+      const stateCls  = isFree ? 'free' : hasAccess ? 'unlocked' : 'locked';
+      row.innerHTML=`<span class="entitlement-name">${p.name}</span><span class="entitlement-state ${stateCls}">${stateText}</span>`;
+      entList.appendChild(row);
+    });
+  }
+
+  /* ── PAYWALL ── */
+  function openPaywall(protocol, fromPreview=false) {
+    $('paywall-proto-name').textContent = protocol.name;
+    $('paywall-locked-why').textContent = protocol.outcomeLabel + ' — ' + protocol.subtitle;
+    $('paywall-modal').classList.add('open');
+    $('paywall-preview-link').textContent = fromPreview ? '' : `Preview this protocol for 5 minutes →`;
+    $('paywall-preview-link').style.display = fromPreview ? 'none' : 'block';
+
+    $('paywall-trial-btn').onclick = ()=>{
+      Account.startTrial(); closePaywall(); refreshAccountUI(); buildGrid();
+      openDetail(protocol);
+    };
+    $('paywall-preview-link').onclick = ()=>{
+      closePaywall(); startPreviewSession(protocol);
+    };
+  }
+  function closePaywall() { $('paywall-modal').classList.remove('open'); }
 
   /* ── BUILD GRID ── */
   function buildGrid() {
-    const grid=$('protocol-grid');
-    grid.innerHTML='';
+    const grid=$('protocol-grid'); grid.innerHTML='';
     const all=Object.values(PROTOCOLS);
-    const filtered=all.filter(p => {
-      const byOutcome = currentOutcomeFilter==='ALL' || p.outcome===currentOutcomeFilter;
-      const bySeason  = currentSeasonFilter==='ALL'  || p.seasons.includes(currentSeasonFilter);
-      return byOutcome && bySeason;
+    const filtered=all.filter(p=>{
+      const byOut = currentOutcomeFilter==='ALL' || p.outcome===currentOutcomeFilter;
+      const bySea = currentSeasonFilter==='ALL'  || p.seasons.includes(currentSeasonFilter);
+      return byOut && bySea;
     });
     $('visible-count').textContent=filtered.length;
 
     filtered.forEach((p,i)=>{
+      const locked = !Account.canAccess(p.id);
+      const isFree = FREE_PROTOCOLS.has(p.id);
+      const isFav  = Account.isFavorite(p.id);
+
       const card=document.createElement('div');
-      card.className='protocol-card'; card.style.animationDelay=`${i*0.04}s`;
+      card.className='protocol-card'+(locked?' locked':'');
+      card.style.animationDelay=`${i*0.04}s`;
       card.dataset.id=p.id; card.dataset.outcome=p.outcome;
 
-      const seaPips=p.seasons.map(s=>`<span class="material-pip">${s.slice(0,3)}</span>`).join('');
+      const lockEl = locked
+        ? `<span class="card-lock-icon">⌒</span><span class="lock-badge">SUBSCRIBER</span>`
+        : isFree
+          ? `<span class="lock-badge free-badge">FREE</span>`
+          : '';
       const matPips=p.material.split('·').map(m=>`<span class="material-pip">${m.trim()}</span>`).join('');
 
       card.innerHTML=`
         <div class="card-top">
           <div class="card-kanji">${p.kanji}</div>
-          <span class="outcome-badge" data-outcome="${p.outcome}">${p.outcome}</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${lockEl}
+            <span class="outcome-badge" data-outcome="${p.outcome}">${p.outcome}</span>
+          </div>
         </div>
         <div class="card-name">${p.name}</div>
         <div class="card-subtitle">${p.subtitle}</div>
@@ -1538,45 +2188,73 @@ const App = (() => {
         <div class="card-when">${p.whenToUse[0]}</div>
         <div class="card-footer">
           <div class="card-materials">${matPips}</div>
-          <div class="card-durs">${p.durations.join('·')}′</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="card-durs">${p.durations.join('·')}′</div>
+            <button class="fav-btn${isFav?' active':''}" data-id="${p.id}" title="${isFav?'Remove from saved':'Save protocol'}">${isFav?'♥':'♡'}</button>
+          </div>
         </div>
-        <span class="card-arrow">→</span>
-      `;
+        <span class="card-arrow">→</span>`;
+
+      // Fav button — stop propagation so it doesn't open detail
+      card.querySelector('.fav-btn').addEventListener('click',(e)=>{
+        e.stopPropagation();
+        const isNowFav = Account.toggleFavorite(p.id);
+        const btn=e.currentTarget;
+        btn.textContent=isNowFav?'♥':'♡';
+        btn.classList.toggle('active',isNowFav);
+        refreshPracticeShelf();
+        if(document.getElementById('account-panel').classList.contains('open')) renderAccountPanel();
+      });
+
       card.addEventListener('click',()=>openDetail(p));
       grid.appendChild(card);
     });
   }
 
-  /* ── OPEN DETAIL: Full Tuning Sheet ── */
+  /* ── OPEN DETAIL ── */
   function openDetail(protocol) {
     currentProtocol=protocol;
-    selectedDuration=protocol.durationRecommended||protocol.durations[0];
-    selectedSilence=protocol.defaultSilence;
-    selectedEntropy=protocol.defaultEntropy;
-    selectedRate=protocol.defaultRate;
+    const locked = !Account.canAccess(protocol.id);
+    const canCustom = Account.canCustomize();
+    const maxDur = Account.maxDuration(protocol.id);
+
+    selectedDuration = Math.min(protocol.durationRecommended||protocol.durations[0], maxDur);
+    selectedSilence  = protocol.defaultSilence;
+    selectedEntropy  = protocol.defaultEntropy;
+    selectedRate     = protocol.defaultRate;
 
     const oc=outcomeClass(protocol.outcome);
-
-    // Hero
-    $('d-kanji').textContent      = protocol.kanji;
-    $('d-kanji-label').textContent = protocol.kanjiLabel;
-    $('d-code').textContent       = protocol.code;
-    $('d-name').textContent       = protocol.name;
-    $('d-subtitle').textContent   = protocol.subtitle;
-    $('d-philosophy').textContent = protocol.philosophy;
-
-    // Outcome badge
-    const ob=$('d-outcome-badge');
-    ob.textContent=protocol.outcome;
-    ob.dataset.outcome=protocol.outcome;
-    $('d-outcome-label').textContent = (OUTCOME_META[protocol.outcome]||{}).desc || '';
-
-    // Kanji color by outcome
-    const dkj=$('d-kanji');
     const colMap={ FOCUS:'rgba(196,148,74,0.2)', DECOMPRESSION:'rgba(123,168,192,0.2)', RESET:'rgba(192,152,120,0.2)', TRANSITION:'rgba(139,168,123,0.2)', REFLECTION:'rgba(158,139,187,0.2)' };
-    dkj.style.color=colMap[protocol.outcome]||colMap.FOCUS;
 
-    // ── When to use ──
+    $('d-kanji').textContent      = protocol.kanji;
+    $('d-kanji').style.color      = colMap[protocol.outcome]||colMap.FOCUS;
+    $('d-kanji-label').textContent = protocol.kanjiLabel;
+    $('d-code').textContent        = protocol.code;
+    $('d-name').textContent        = protocol.name;
+    $('d-subtitle').textContent    = protocol.subtitle;
+    $('d-philosophy').textContent  = protocol.philosophy;
+
+    const ob=$('d-outcome-badge'); ob.textContent=protocol.outcome; ob.dataset.outcome=protocol.outcome;
+    $('d-outcome-label').textContent=(OUTCOME_META[protocol.outcome]||{}).desc||'';
+
+    // Fav button in detail
+    const dfb=$('detail-fav-btn');
+    const isFav=Account.isFavorite(protocol.id);
+    dfb.textContent = isFav ? '♥ SAVED' : '♡ SAVE PROTOCOL';
+    dfb.className = 'detail-fav-btn'+(isFav?' active':'');
+    dfb.onclick=()=>{
+      const n=Account.toggleFavorite(protocol.id);
+      dfb.textContent=n?'♥ SAVED':'♡ SAVE PROTOCOL';
+      dfb.className='detail-fav-btn'+(n?' active':'');
+      refreshPracticeShelf(); buildGrid();
+    };
+
+    // Upgrade nudge
+    const nudge=$('detail-upgrade-nudge');
+    nudge.classList.toggle('visible', locked);
+    $('detail-upgrade-btn').onclick=()=>openPaywall(protocol);
+
+    // When to use
     const whenTitleEl=$('ts-when-title'); whenTitleEl.className=`sheet-block-title ${oc}`;
     const whenRows=$('ts-when-rows'); whenRows.innerHTML='';
     protocol.whenToUse.forEach(w=>{
@@ -1585,7 +2263,7 @@ const App = (() => {
       whenRows.appendChild(d);
     });
 
-    // ── Materials ──
+    // Materials
     $('ts-season-span').textContent=protocol.seasons.join(' · ');
     const matEl=$('ts-materials'); matEl.innerHTML='';
     protocol.beds.forEach(b=>{ const t=document.createElement('div'); t.className='material-tag bed-tag'; t.textContent=b.file.replace(/_/g,' '); matEl.appendChild(t); });
@@ -1611,7 +2289,7 @@ const App = (() => {
       stemsT.appendChild(tr);
     });
 
-    // ── Behavioral profile ──
+    // Behavioral profile
     const behEl=$('ts-behavior'); behEl.innerHTML='';
     [
       { key:'INTRO',  data:protocol.introBehavior  },
@@ -1620,31 +2298,20 @@ const App = (() => {
       { key:'EVENT RATE', data:{ label:`Default event rate: ${protocol.defaultRate}%`, value:protocol.defaultRate } }
     ].forEach(row=>{
       const d=document.createElement('div'); d.className='behavior-row';
-      d.innerHTML=`
-        <div class="behavior-key">${row.key}</div>
-        <div class="behavior-bar-wrap">
-          <div class="behavior-label">${row.data.label}</div>
-          <div class="behavior-bar"><div class="behavior-fill ${oc}" style="width:${row.data.value}%"></div></div>
-        </div>`;
+      d.innerHTML=`<div class="behavior-key">${row.key}</div><div class="behavior-bar-wrap"><div class="behavior-label">${row.data.label}</div><div class="behavior-bar"><div class="behavior-fill ${oc}" style="width:${row.data.value}%"></div></div></div>`;
       behEl.appendChild(d);
     });
 
-    // ── Silence range viz ──
+    // Silence range
     const [smin,smax]=protocol.silenceRange;
     const fillEl=$('ts-silence-fill');
-    const leftPct  = ((smin-60)/35)*100;
-    const widthPct = ((smax-smin)/35)*100;
-    fillEl.style.left=`${leftPct}%`; fillEl.style.width=`${widthPct}%`;
-    const borderColor = { FOCUS:'var(--outcome-focus)', DECOMPRESSION:'var(--outcome-decomp)', RESET:'var(--outcome-reset)', TRANSITION:'var(--outcome-transition)', REFLECTION:'var(--outcome-reflection)' }[protocol.outcome]||'var(--gold)';
-    fillEl.style.borderColor=borderColor; fillEl.style.background=`${borderColor.replace('var(','').replace(')','').trim()}-glow, ${borderColor}11` ;
-    fillEl.style.background=`rgba(0,0,0,0)`;
-    fillEl.style.borderLeft=`1px solid ${borderColor}`;
-    fillEl.style.borderRight=`1px solid ${borderColor}`;
-    $('ts-silence-center').textContent=`${smin}–${smax}%`;
-    $('ts-silence-center').style.color=borderColor;
+    const borderColor={FOCUS:'var(--outcome-focus)',DECOMPRESSION:'var(--outcome-decomp)',RESET:'var(--outcome-reset)',TRANSITION:'var(--outcome-transition)',REFLECTION:'var(--outcome-reflection)'}[protocol.outcome]||'var(--gold)';
+    fillEl.style.left=`${((smin-60)/35)*100}%`; fillEl.style.width=`${((smax-smin)/35)*100}%`;
+    fillEl.style.background='rgba(0,0,0,0)'; fillEl.style.borderLeft=`1px solid ${borderColor}`; fillEl.style.borderRight=`1px solid ${borderColor}`;
+    $('ts-silence-center').textContent=`${smin}–${smax}%`; $('ts-silence-center').style.color=borderColor;
     $('ts-silence-desc').textContent=protocol.silenceDesc;
 
-    // ── Parameter guide ──
+    // Parameter guide
     const paramsEl=$('ts-params'); paramsEl.innerHTML='';
     const pg=protocol.paramGuide||{};
     [
@@ -1653,70 +2320,109 @@ const App = (() => {
       { key:'EVENT RATE', name:'Event Rate (密)', desc:pg.rate||'—', val:`${protocol.defaultRate}%`, barVal:protocol.defaultRate/100, cls:'rt' }
     ].forEach(p=>{
       const d=document.createElement('div'); d.className='param-row';
-      d.innerHTML=`
-        <div class="param-row-header"><span class="param-row-name">${p.key} · ${p.name}</span><span class="param-row-val">${p.val}</span></div>
-        <div class="param-row-desc">${p.desc}</div>
-        <div class="param-mini-bar"><div class="param-mini-fill ${p.cls}" style="width:${Math.round(p.barVal*100)}%"></div></div>`;
+      d.innerHTML=`<div class="param-row-header"><span class="param-row-name">${p.key} · ${p.name}</span><span class="param-row-val">${p.val}</span></div><div class="param-row-desc">${p.desc}</div><div class="param-mini-bar"><div class="param-mini-fill ${p.cls}" style="width:${Math.round(p.barVal*100)}%"></div></div>`;
       paramsEl.appendChild(d);
     });
 
-    // ── Duration options ──
+    // Duration options
     const durCont=$('duration-options'); durCont.innerHTML='';
     protocol.durations.forEach(d=>{
       const btn=document.createElement('button');
+      const isLocked = d > maxDur;
       const isRec=d===protocol.durationRecommended;
-      btn.className='dur-opt'+(d===selectedDuration?' selected':'')+(isRec?' recommended':'');
+      btn.className='dur-opt'+(d===selectedDuration&&!isLocked?' selected':'')+(isRec&&!isLocked?' recommended':'')+(isLocked?' dur-locked':'');
       btn.textContent=d;
-      btn.addEventListener('click',()=>{ selectedDuration=d; durCont.querySelectorAll('.dur-opt').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); });
+      if (isLocked) {
+        btn.title=`Requires ${d>FREE_MAX_DURATION?'subscription or trial':'subscription'}`;
+      } else {
+        btn.addEventListener('click',()=>{
+          selectedDuration=d;
+          durCont.querySelectorAll('.dur-opt').forEach(b=>b.classList.remove('selected'));
+          btn.classList.add('selected');
+        });
+      }
       durCont.appendChild(btn);
     });
-    $('dur-note').textContent=`✦ ${protocol.durationRecommended}min is the canonical duration for this protocol`;
+    $('dur-note').textContent = locked
+      ? `Preview: 5 minutes at default settings · Trial or subscription for full access`
+      : `✦ ${protocol.durationRecommended}min is the canonical duration for this protocol`;
 
-    // Silence slider
-    const sSl=$('silence-slider'); sSl.value=selectedSilence; $('silence-val').textContent=`${selectedSilence}%`;
-    $('silence-param-note').textContent=`Protocol range: ${protocol.silenceRange[0]}–${protocol.silenceRange[1]}%`;
-    sSl.oninput=()=>{ selectedSilence=parseInt(sSl.value); $('silence-val').textContent=`${selectedSilence}%`; };
+    // Sliders — gated for free plan on locked protocols
+    const gated = !canCustom;
+    function setupSlider(sliderId, valId, noteId, noteText, defVal) {
+      const sl=$(sliderId); sl.value=defVal;
+      $(valId).textContent=`${defVal}%`;
+      $(noteId).textContent=noteText;
+      const wrap=sl.closest('.config-section')||sl.parentElement;
+      // Add gate wrapper if needed
+      const existing=sl.parentElement.querySelector('.slider-gate-mask');
+      if(gated) {
+        sl.parentElement.classList.add('slider-gate','gated');
+        if(!existing){ const m=document.createElement('div'); m.className='slider-gate-mask'; m.innerHTML=`<span class="slider-gate-label">SUBSCRIPTION REQUIRED</span>`; sl.parentElement.appendChild(m); m.addEventListener('click',()=>openPaywall(protocol)); }
+      } else {
+        sl.parentElement.classList.remove('slider-gate','gated');
+        if(existing) existing.remove();
+      }
+      if(!gated) sl.oninput=()=>{ const v=parseInt(sl.value); $(valId).textContent=`${v}%`; };
+    }
+    setupSlider('silence-slider','silence-val','silence-param-note',`Protocol range: ${protocol.silenceRange[0]}–${protocol.silenceRange[1]}%`,selectedSilence);
+    setupSlider('entropy-slider','entropy-val','entropy-param-note','Curve amplitude — how much the phase arc deviates',selectedEntropy);
+    setupSlider('rate-slider','rate-val','rate-param-note','Interval compression — higher = more frequent events',selectedRate);
+    $('silence-slider').oninput=()=>{ selectedSilence=parseInt($('silence-slider').value); $('silence-val').textContent=`${selectedSilence}%`; };
+    $('entropy-slider').oninput=()=>{ selectedEntropy=parseInt($('entropy-slider').value); $('entropy-val').textContent=`${selectedEntropy}%`; };
+    $('rate-slider').oninput=()=>{ selectedRate=parseInt($('rate-slider').value); $('rate-val').textContent=`${selectedRate}%`; };
 
-    // Entropy slider
-    const eSl=$('entropy-slider'); eSl.value=selectedEntropy; $('entropy-val').textContent=`${selectedEntropy}%`;
-    $('entropy-param-note').textContent='Curve amplitude — how much the phase arc deviates';
-    eSl.oninput=()=>{ selectedEntropy=parseInt(eSl.value); $('entropy-val').textContent=`${selectedEntropy}%`; };
-
-    // Rate slider
-    const rSl=$('rate-slider'); rSl.value=selectedRate; $('rate-val').textContent=`${selectedRate}%`;
-    $('rate-param-note').textContent='Interval compression — higher = more frequent events';
-    rSl.oninput=()=>{ selectedRate=parseInt(rSl.value); $('rate-val').textContent=`${selectedRate}%`; };
+    // Begin button
+    const bb=$('begin-btn');
+    if (locked) {
+      bb.innerHTML=`<span>PREVIEW 5 MIN · or START TRIAL FOR FULL ACCESS</span>`;
+      bb.className='begin-btn preview-btn';
+      bb.onclick=()=>{ openPaywall(protocol); };
+    } else {
+      bb.innerHTML=`<span>BEGIN PROTOCOL SESSION</span>`;
+      bb.className='begin-btn';
+      bb.onclick=()=>beginSession(false);
+    }
 
     showView('detail');
   }
 
+  /* ── START PREVIEW SESSION (5min, fixed params) ── */
+  function startPreviewSession(protocol) {
+    currentProtocol=protocol;
+    selectedDuration=5;
+    selectedSilence=protocol.defaultSilence;
+    selectedEntropy=protocol.defaultEntropy;
+    selectedRate=protocol.defaultRate;
+    isPreviewMode=true;
+    beginSession(true);
+  }
+
   /* ── BEGIN SESSION ── */
-  async function beginSession() {
+  async function beginSession(preview=false) {
     if (!currentProtocol) return;
+    isPreviewMode=preview;
+
     $('view-session').classList.add('active');
     document.querySelector('.view.active')?.classList.remove('active');
 
-    // Session strip
-    $('s-kanji').textContent = currentProtocol.kanji;
-    $('s-name').textContent  = currentProtocol.name;
-    $('s-intent').textContent = currentProtocol.outcomeLabel;
-    $('s-proto-id').textContent=`${currentProtocol.id} · ${selectedDuration}′`;
-    $('s-phase').textContent='LOADING STEMS';
+    // Preview banner
+    const banner=$('preview-banner');
+    banner.classList.toggle('active',preview);
 
-    // Outcome pill in session strip
-    const pill=$('s-outcome-pill');
-    pill.textContent=currentProtocol.outcome;
-    pill.dataset.outcome=currentProtocol.outcome;
+    $('s-kanji').textContent  = currentProtocol.kanji;
+    $('s-name').textContent   = currentProtocol.name;
+    $('s-intent').textContent = currentProtocol.outcomeLabel;
+    $('s-proto-id').textContent=`${currentProtocol.id} · ${selectedDuration}′${preview?' PREVIEW':''}`;
+    $('s-phase').textContent='LOADING STEMS';
+    const pill=$('s-outcome-pill'); pill.textContent=currentProtocol.outcome; pill.dataset.outcome=currentProtocol.outcome;
 
     buildMixer();
     const entropyForCanvas=new EntropyEngine(currentProtocol,selectedSilence,selectedEntropy,selectedRate);
     engine=new SilenceEngine();
     await engine.init();
     setEngineStatus('LOADING',false);
-
-    const {failCount}=await engine.loadProtocol(currentProtocol,(pct,file)=>{
-      $('s-phase').textContent=`LOADING ${Math.round(pct*100)}%`;
-    });
+    const {failCount}=await engine.loadProtocol(currentProtocol,(pct)=>{ $('s-phase').textContent=`LOADING ${Math.round(pct*100)}%`; });
     if (failCount>0) $('audio-banner').classList.add('visible');
 
     engine.onEvent=(event,t)=>{ logEvent(event,t); flashKanji(); sessionStats.events++; };
@@ -1735,6 +2441,10 @@ const App = (() => {
       const es=elapsed/1000,ts=total/1000;
       drawEntropyCanvas($('entropy-canvas'),entropyForCanvas,es,ts);
       $('s-entropy-val').textContent=`φ ${entropyForCanvas.curve(es).toFixed(3)}`;
+      if(preview){
+        const remaining=Math.max(0,(total-elapsed)/1000);
+        $('preview-countdown').textContent=formatTime(remaining*1000);
+      }
     };
     engine.onGuardUpdate=(status)=>{
       const sg=$('g-spacing'),sm=$('g-simul'),sc=$('g-cooldown'),gt=$('g-tails'),gb=$('g-blocked');
@@ -1746,17 +2456,21 @@ const App = (() => {
     };
     engine.onSessionEnd=()=>{ sessionActive=false; clearInterval(nextEvInterval); showComplete(); };
 
-    // Wire live params
+    // Live params — disabled in preview
     function wireSlider(id,valId,setter,extraFn) {
       const sl=$(id); sl.oninput=()=>{ const v=parseInt(sl.value); $(valId).textContent=`${v}%`; setter(v); if(extraFn) extraFn(v); };
     }
     $('live-silence').value=selectedSilence; $('live-silence-val').textContent=`${selectedSilence}%`;
-    wireSlider('live-silence','live-silence-val',v=>engine.setSilenceRatio(v),v=>entropyForCanvas.setSilenceRatio(v));
     $('live-entropy').value=selectedEntropy; $('live-entropy-val').textContent=`${selectedEntropy}%`;
-    wireSlider('live-entropy','live-entropy-val',v=>engine.setEntropyAmp(v),v=>entropyForCanvas.setEntropyAmp(v));
-    $('live-rate').value=selectedRate; $('live-rate-val').textContent=`${selectedRate}%`;
-    wireSlider('live-rate','live-rate-val',v=>engine.setEventRate(v),v=>entropyForCanvas.setEventRate(v));
-
+    $('live-rate').value=selectedRate;       $('live-rate-val').textContent=`${selectedRate}%`;
+    if (!preview) {
+      wireSlider('live-silence','live-silence-val',v=>engine.setSilenceRatio(v),v=>entropyForCanvas.setSilenceRatio(v));
+      wireSlider('live-entropy','live-entropy-val',v=>engine.setEntropyAmp(v),v=>entropyForCanvas.setEntropyAmp(v));
+      wireSlider('live-rate','live-rate-val',v=>engine.setEventRate(v),v=>entropyForCanvas.setEventRate(v));
+    } else {
+      // Lock sliders visually in preview
+      ['live-silence','live-entropy','live-rate'].forEach(id=>{ $(id).disabled=true; $(id).style.opacity='0.3'; });
+    }
     $('master-vol').value=80; $('vol-val').textContent='80';
     $('master-vol').oninput=()=>{ const v=parseInt($('master-vol').value); $('vol-val').textContent=v; engine.setMasterVolume(v/100); };
     $('mute-btn').onclick=toggleMute;
@@ -1769,7 +2483,11 @@ const App = (() => {
     setEngineStatus('ACTIVE',true);
     $('s-phase').textContent='SESSION ACTIVE';
     $('s-timer').textContent=formatTime(selectedDuration*60000);
-    if (engine.rules) { $('g-spacing').textContent='OPEN'; $('g-simul').textContent=`0 / ${engine.rules.maxSimultaneous}`; }
+    if(engine.rules){ $('g-spacing').textContent='OPEN'; $('g-simul').textContent=`0 / ${engine.rules.maxSimultaneous}`; }
+    // Re-enable live sliders if not preview
+    if(!preview){
+      ['live-silence','live-entropy','live-rate'].forEach(id=>{ $(id).disabled=false; $(id).style.opacity=''; });
+    }
     startNextEvCounter();
   }
 
@@ -1811,7 +2529,6 @@ const App = (() => {
       entries[0].appendChild(span);
     }
   }
-
   function flashKanji() { const el=$('s-kanji'); el.classList.add('event-flash'); setTimeout(()=>el.classList.remove('event-flash'),1200); }
 
   let _muted=false;
@@ -1820,13 +2537,36 @@ const App = (() => {
 
   function showComplete() {
     $('view-session').classList.remove('active');
+    // Re-enable sliders
+    ['live-silence','live-entropy','live-rate'].forEach(id=>{ $(id).disabled=false; $(id).style.opacity=''; });
     setEngineStatus('STANDBY',false);
-    $('c-kanji').textContent  = currentProtocol?.kanji||'—';
-    $('c-duration').textContent=`${sessionStats.duration}′`;
+
+    // Record session if not preview
+    if (!isPreviewMode && currentProtocol) {
+      Account.recordSession(currentProtocol, sessionStats.duration, sessionStats.events);
+      refreshPracticeShelf();
+      refreshAccountUI();
+    }
+
+    $('c-kanji').textContent   = currentProtocol?.kanji||'—';
+    $('c-duration').textContent= `${sessionStats.duration}′`;
     $('c-events').textContent  = sessionStats.events;
     $('c-tails').textContent   = sessionStats.tails;
     $('c-ma').textContent      = `${sessionStats.density}%`;
-    $('c-reflection').textContent = currentProtocol?.reflection || '—';
+    $('c-reflection').textContent = isPreviewMode ? 'This was a 5-minute preview.' : (currentProtocol?.reflection||'—');
+    $('c-title').textContent   = isPreviewMode ? 'PREVIEW COMPLETE' : 'SESSION COMPLETE';
+
+    // Preview upsell
+    const upsell=$('preview-upsell');
+    upsell.classList.toggle('visible', isPreviewMode);
+    $('preview-upsell-btn').onclick=()=>{
+      Account.startTrial(); refreshAccountUI(); buildGrid();
+      $('view-complete').classList.remove('active');
+      showView('floor');
+    };
+
+    // Hide repeat button for preview (can't repeat a preview)
+    $('c-again-btn').style.display = isPreviewMode ? 'none' : '';
   }
 
   /* ── Keyboard ── */
@@ -1837,19 +2577,21 @@ const App = (() => {
     if (key==='ESCAPE') { e.preventDefault(); endSession(); }
     if (e.key==='ArrowUp')   { e.preventDefault(); nudge('master-vol',5,0,100); }
     if (e.key==='ArrowDown') { e.preventDefault(); nudge('master-vol',-5,0,100); }
-    if (key==='M') { e.preventDefault(); nudge('live-silence',2,60,95); }
-    if (key==='N') { e.preventDefault(); nudge('live-silence',-2,60,95); }
-    if (key==='E') { e.preventDefault(); nudge('live-entropy',5,0,100); }
-    if (key==='R') { e.preventDefault(); nudge('live-entropy',-5,0,100); }
-    if (key==='T') { e.preventDefault(); nudge('live-rate',5,10,100); }
-    if (key==='Y') { e.preventDefault(); nudge('live-rate',-5,10,100); }
+    if (key==='M'&&!isPreviewMode) { e.preventDefault(); nudge('live-silence',2,60,95); }
+    if (key==='N'&&!isPreviewMode) { e.preventDefault(); nudge('live-silence',-2,60,95); }
+    if (key==='E'&&!isPreviewMode) { e.preventDefault(); nudge('live-entropy',5,0,100); }
+    if (key==='R'&&!isPreviewMode) { e.preventDefault(); nudge('live-entropy',-5,0,100); }
+    if (key==='T'&&!isPreviewMode) { e.preventDefault(); nudge('live-rate',5,10,100); }
+    if (key==='Y'&&!isPreviewMode) { e.preventDefault(); nudge('live-rate',-5,10,100); }
   });
   function nudge(id,delta,min,max) { const sl=$(id); sl.value=Math.max(min,Math.min(max,parseInt(sl.value)+delta)); sl.dispatchEvent(new Event('input')); }
 
   /* ── INIT ── */
   function init() {
     $('current-season-badge').textContent=SEASON_NAMES[CURRENT_SEASON];
+    refreshAccountUI();
     buildGrid();
+    refreshPracticeShelf();
 
     // Outcome filter
     document.querySelectorAll('.outcome-tab').forEach(tab=>{
@@ -1866,12 +2608,20 @@ const App = (() => {
       });
     });
 
+    // Account panel
+    $('account-btn').addEventListener('click',openAccountPanel);
+    $('account-panel-close').addEventListener('click',closeAccountPanel);
+    $('account-overlay').addEventListener('click',closeAccountPanel);
+    $('plan-pill').addEventListener('click',openAccountPanel);
+
+    // Paywall
+    $('paywall-close').addEventListener('click',closePaywall);
+    $('paywall-modal').addEventListener('click',(e)=>{ if(e.target===$('paywall-modal')) closePaywall(); });
+
     $('back-btn').addEventListener('click',()=>showView('floor'));
-    $('begin-btn').addEventListener('click',()=>beginSession());
     $('end-btn').addEventListener('click',()=>{ if(confirm('End this session? Remaining time will be released.')) endSession(); });
     $('c-return-btn').addEventListener('click',()=>{ $('view-complete').classList.remove('active'); showView('floor'); });
-    $('c-again-btn').addEventListener('click',()=>{ $('view-complete').classList.remove('active'); if(currentProtocol) beginSession(); });
-    $('view-complete').addEventListener('click',(e)=>{ if(e.target===$('view-complete')){} }); // Don't accidentally close
+    $('c-again-btn').addEventListener('click',()=>{ $('view-complete').classList.remove('active'); if(currentProtocol) beginSession(false); });
 
     setTimeout(()=>$('loading-overlay').classList.add('hidden'),900);
   }
@@ -1888,5 +2638,90 @@ const App = (() => {
 
 window.addEventListener('DOMContentLoaded',()=>App.init());
 </script>
+<!-- ─── PAYWALL MODAL ─── -->
+<div id="paywall-modal">
+  <div class="paywall-inner">
+    <button class="paywall-close" id="paywall-close">✕</button>
+    <div class="paywall-header">
+      <div class="paywall-kicker">SUBSCRIBER PROTOCOL</div>
+      <div class="paywall-locked-name" id="paywall-proto-name">—</div>
+      <div class="paywall-locked-why" id="paywall-locked-why">—</div>
+    </div>
+    <div class="paywall-plans">
+      <div class="paywall-plan">
+        <div class="pp-name">FREE PLAN · CURRENT</div>
+        <div class="pp-price"><sup>$</sup>0<sub>/mo</sub></div>
+        <div class="pp-features">
+          <div class="pp-feat">3 protocols (Kaze, Seijaku, Take)</div>
+          <div class="pp-feat">20 min max session</div>
+          <div class="pp-feat locked-feat">Parameter control</div>
+          <div class="pp-feat locked-feat">9 additional protocols</div>
+          <div class="pp-feat locked-feat">Full durations (45–60 min)</div>
+        </div>
+      </div>
+      <div class="paywall-plan featured">
+        <div class="pp-name gold">SUBSCRIBER · FULL ACCESS</div>
+        <div class="pp-price"><sup>$</sup>12<sub>/mo</sub></div>
+        <div class="pp-features">
+          <div class="pp-feat highlight">All 12 protocols</div>
+          <div class="pp-feat highlight">Full parameter control</div>
+          <div class="pp-feat highlight">All session durations</div>
+          <div class="pp-feat highlight">5-min preview on any protocol</div>
+          <div class="pp-feat highlight">Practice history & favorites</div>
+        </div>
+      </div>
+    </div>
+    <div class="paywall-footer">
+      <button class="trial-btn" id="paywall-trial-btn"><span>START 14-DAY FREE TRIAL</span></button>
+      <div class="preview-link" id="paywall-preview-link">Preview this protocol for 5 minutes →</div>
+      <div class="paywall-fine">No payment required during trial · Cancel any time · Prototype: trial is simulated</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ACCOUNT OVERLAY ─── -->
+<div id="account-overlay"></div>
+
+<!-- ─── ACCOUNT PANEL ─── -->
+<div id="account-panel">
+  <div class="account-panel-header">
+    <span class="account-panel-title">MY PRACTICE</span>
+    <button class="account-panel-close" id="account-panel-close">✕</button>
+  </div>
+
+  <div class="account-section">
+    <div class="account-section-label">SUBSCRIPTION</div>
+    <div class="plan-block" id="ap-plan-block">
+      <div class="plan-name" id="ap-plan-name">—</div>
+      <div class="plan-desc" id="ap-plan-desc">—</div>
+      <div class="trial-bar-wrap" id="ap-trial-bar-wrap" style="display:none">
+        <div class="trial-bar-label"><span>TRIAL PROGRESS</span><span id="ap-trial-days">—</span></div>
+        <div class="trial-bar"><div class="trial-bar-fill" id="ap-trial-fill"></div></div>
+      </div>
+      <div class="plan-actions" id="ap-plan-actions"></div>
+    </div>
+  </div>
+
+  <div class="account-section">
+    <div class="account-section-label">PRACTICE STATS</div>
+    <div class="stats-grid">
+      <div class="stat-mini"><div class="stat-mini-val" id="ap-sessions">0</div><div class="stat-mini-lbl">SESSIONS</div></div>
+      <div class="stat-mini"><div class="stat-mini-val" id="ap-minutes">0</div><div class="stat-mini-lbl">MINUTES</div></div>
+      <div class="stat-mini"><div class="stat-mini-val" id="ap-streak">0</div><div class="stat-mini-lbl">DAY STREAK</div></div>
+      <div class="stat-mini"><div class="stat-mini-val" id="ap-favcount">0</div><div class="stat-mini-lbl">SAVED</div></div>
+    </div>
+  </div>
+
+  <div class="account-section">
+    <div class="account-section-label">SAVED PROTOCOLS</div>
+    <div class="panel-favs" id="ap-favs"></div>
+  </div>
+
+  <div class="account-section">
+    <div class="account-section-label">PROTOCOL ACCESS</div>
+    <div class="entitlement-list" id="ap-entitlements"></div>
+  </div>
+</div>
+
 </body>
 </html>
