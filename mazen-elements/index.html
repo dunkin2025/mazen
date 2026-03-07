@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MA-ZEN — THE FLOOR · Phase 4</title>
+<title>MA-ZEN — THE FLOOR · Phase 5</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
@@ -767,13 +767,261 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
 .dur-opt.dur-locked { opacity: 0.32; cursor: not-allowed; position: relative; }
 .dur-opt.dur-locked::after { content: " ✕"; color: var(--type-faint); }
 
+
+/* ══════════════════════════════════════════════
+   PHASE 5 — PRACTICE UX
+══════════════════════════════════════════════ */
+
+/* ── ONBOARDING OVERLAY ── */
+#ob-overlay {
+  position:fixed; inset:0; z-index:600; background:var(--void);
+  display:none; align-items:center; justify-content:center; padding:24px 20px;
+}
+#ob-overlay.active { display:flex; }
+.ob-wrap { width:100%; max-width:580px; }
+.ob-hd { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:44px; }
+.ob-logo { font-family:var(--font-display); font-size:1.1rem; font-weight:400; letter-spacing:0.22em; color:var(--type-dim); }
+.ob-step-lbl { font-size:0.52rem; letter-spacing:0.18em; color:var(--type-faint); }
+.ob-dots { display:flex; gap:5px; margin-bottom:40px; }
+.ob-dot { width:22px; height:2px; background:var(--signal); transition:background var(--transition); }
+.ob-dot.active { background:var(--gold); }
+.ob-dot.done { background:var(--gold-dim); }
+.ob-scr { display:none; animation:obFadeIn 0.28s cubic-bezier(0.16,1,0.3,1) both; }
+.ob-scr.active { display:block; }
+@keyframes obFadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.ob-eyebrow { font-size:0.52rem; letter-spacing:0.2em; color:var(--gold); margin-bottom:12px; }
+.ob-h { font-family:var(--font-display); font-size:clamp(1.5rem,3.5vw,2.4rem); font-weight:300; letter-spacing:0.05em; line-height:1.2; margin-bottom:8px; }
+.ob-h em { font-style:italic; color:var(--type-dim); }
+.ob-sub { font-size:0.6rem; letter-spacing:0.04em; color:var(--type-faint); margin-bottom:28px; line-height:1.8; max-width:440px; }
+.ob-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:24px; }
+@media(max-width:520px){ .ob-cards{ grid-template-columns:1fr; } }
+.ob-card {
+  background:var(--navy); border:1px solid var(--border);
+  padding:15px 17px; cursor:pointer; transition:all var(--transition);
+  position:relative; overflow:hidden;
+}
+.ob-card:hover { background:var(--deep); border-color:var(--gold-dim); }
+.ob-card.sel { border-color:var(--gold); background:var(--gold-glow); }
+.ob-card.sel::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--gold); }
+.ob-card[data-oc="DECOMPRESSION"].sel { border-color:var(--outcome-decomp); background:var(--outcome-decomp-glow); }
+.ob-card[data-oc="DECOMPRESSION"].sel::before { background:var(--outcome-decomp); }
+.ob-card[data-oc="RESET"].sel { border-color:var(--outcome-reset); background:var(--outcome-reset-glow); }
+.ob-card[data-oc="RESET"].sel::before { background:var(--outcome-reset); }
+.ob-card[data-oc="REFLECTION"].sel { border-color:var(--outcome-reflection); background:var(--outcome-reflection-glow); }
+.ob-card[data-oc="REFLECTION"].sel::before { background:var(--outcome-reflection); }
+.ob-card-gl { font-family:var(--font-display); font-size:1.5rem; color:var(--type-faint); margin-bottom:7px; line-height:1; }
+.ob-card-t { font-size:0.63rem; letter-spacing:0.12em; color:var(--type-dim); margin-bottom:3px; }
+.ob-card-d { font-size:0.56rem; letter-spacing:0.03em; color:var(--type-faint); line-height:1.6; }
+
+.ob-time-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:24px; }
+@media(max-width:520px){ .ob-time-grid{ grid-template-columns:1fr 1fr; } }
+.ob-tb {
+  background:var(--navy); border:1px solid var(--border);
+  padding:16px 10px; text-align:center; cursor:pointer; transition:all var(--transition);
+}
+.ob-tb:hover { background:var(--deep); border-color:var(--gold-dim); }
+.ob-tb.sel { border-color:var(--gold); background:var(--gold-glow); }
+.ob-tnum { font-family:var(--font-display); font-size:1.8rem; font-weight:300; color:var(--type-dim); line-height:1; display:block; }
+.ob-tunit { font-size:0.5rem; letter-spacing:0.12em; color:var(--type-faint); display:block; margin-top:3px; }
+.ob-tdesc { font-size:0.51rem; letter-spacing:0.03em; color:var(--type-faint); display:block; margin-top:5px; }
+
+.ob-rec {
+  background:var(--navy); border:1px solid var(--border);
+  padding:20px 22px; margin-bottom:22px;
+  display:flex; gap:16px; align-items:flex-start; position:relative;
+}
+.ob-rec::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--gold); }
+.ob-rec-k { font-family:var(--font-display); font-size:2.4rem; color:rgba(196,148,74,0.16); line-height:1; flex-shrink:0; }
+.ob-rec-b { flex:1; }
+.ob-rec-ey { font-size:0.49rem; letter-spacing:0.18em; color:var(--gold); margin-bottom:4px; }
+.ob-rec-n { font-family:var(--font-display); font-size:1.35rem; font-weight:400; letter-spacing:0.06em; margin-bottom:5px; }
+.ob-rec-w { font-size:0.59rem; letter-spacing:0.04em; color:var(--type-dim); line-height:1.7; margin-bottom:8px; }
+.ob-rec-m { display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+.ob-rec-d { font-size:0.54rem; letter-spacing:0.1em; color:var(--type-faint); padding:2px 7px; border:1px solid var(--border); }
+
+.ob-nav { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+.ob-skip,.ob-back { font-size:0.56rem; letter-spacing:0.1em; color:var(--type-faint); cursor:pointer; transition:color var(--transition); }
+.ob-skip:hover,.ob-back:hover { color:var(--type-dim); }
+.ob-next,.ob-btn-sec {
+  padding:8px 20px; border:1px solid var(--border); color:var(--type-dim);
+  font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.14em;
+  cursor:pointer; transition:all var(--transition); background:none;
+}
+.ob-next:hover:not(:disabled),.ob-btn-sec:hover { border-color:var(--gold-dim); color:var(--gold); }
+.ob-next:disabled { opacity:0.25; cursor:not-allowed; }
+.ob-btn-row { display:flex; gap:8px; flex-wrap:wrap; }
+.ob-btn-pri {
+  flex:1; padding:13px 22px; background:var(--gold-glow); border:1px solid var(--gold);
+  color:var(--gold); font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.18em;
+  cursor:pointer; transition:all var(--transition); position:relative; overflow:hidden; min-width:150px;
+}
+.ob-btn-pri::before { content:''; position:absolute; inset:0; background:var(--gold); transform:translateX(-101%); transition:transform var(--transition-slow); }
+.ob-btn-pri:hover::before { transform:translateX(0); }
+.ob-btn-pri span { position:relative; z-index:1; }
+.ob-btn-pri:hover span { color:var(--void); }
+
+/* ── STREAK CHIP in header ── */
+.streak-chip { display:none; align-items:center; gap:5px; padding:3px 10px; border:1px solid var(--border); cursor:pointer; transition:all var(--transition); }
+.streak-chip.vis { display:flex; }
+.streak-chip:hover { border-color:var(--gold-dim); }
+.sc-num { font-family:var(--font-display); font-size:0.92rem; font-weight:300; color:var(--gold); line-height:1; }
+.sc-lbl { font-size:0.46rem; letter-spacing:0.1em; color:var(--type-faint); }
+
+/* ── TODAY CARD ── */
+#today-card { margin-bottom:24px; display:none; }
+#today-card.vis { display:block; }
+.tc-inner {
+  background:var(--navy); border:1px solid var(--border);
+  display:grid; grid-template-columns:1fr auto; align-items:stretch; position:relative;
+}
+.tc-inner::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--gold); }
+.tc-left { padding:17px 22px; }
+.tc-ey { font-size:0.49rem; letter-spacing:0.18em; color:var(--gold); margin-bottom:9px; display:flex; align-items:center; gap:8px; }
+.tc-ey-why { color:var(--type-faint); }
+.tc-hero { display:flex; align-items:baseline; gap:11px; margin-bottom:6px; }
+.tc-k { font-family:var(--font-display); font-size:1.9rem; color:rgba(196,148,74,0.15); line-height:1; flex-shrink:0; }
+.tc-n { font-family:var(--font-display); font-size:1.3rem; font-weight:400; letter-spacing:0.06em; }
+.tc-w { font-size:0.59rem; letter-spacing:0.04em; color:var(--type-dim); line-height:1.65; max-width:440px; }
+.tc-meta { display:flex; gap:7px; align-items:center; margin-top:9px; flex-wrap:wrap; }
+.tc-dur { font-size:0.54rem; letter-spacing:0.1em; color:var(--type-faint); padding:2px 7px; border:1px solid var(--border); }
+.tc-right { display:flex; flex-direction:column; border-left:1px solid var(--border); min-width:112px; }
+.tc-begin {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  padding:15px 18px; cursor:pointer; transition:background var(--transition);
+  background:none; font-family:var(--font-mono); border:none; width:100%;
+}
+.tc-begin:hover { background:var(--gold-glow); }
+.tc-begin:hover .tc-bl { color:var(--gold); }
+.tc-bg { font-family:var(--font-display); font-size:1.3rem; color:var(--type-faint); line-height:1; }
+.tc-bl { font-size:0.52rem; letter-spacing:0.18em; color:var(--type-faint); transition:color var(--transition); }
+.tc-vl { padding:8px 14px; border-top:1px solid var(--border); font-size:0.5rem; letter-spacing:0.14em; color:var(--type-faint); cursor:pointer; transition:all var(--transition); text-align:center; font-family:var(--font-mono); }
+.tc-vl:hover { color:var(--gold); background:var(--gold-glow); }
+
+/* ── RETURN DASHBOARD ── */
+#return-dash { margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--border); display:none; }
+#return-dash.vis { display:block; }
+.rd-top { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:18px; }
+.rd-g { font-family:var(--font-display); font-size:1.25rem; font-weight:300; letter-spacing:0.05em; }
+.rd-g em { font-style:italic; color:var(--type-dim); }
+.rd-sa { font-size:0.54rem; letter-spacing:0.12em; color:var(--type-faint); cursor:pointer; transition:color var(--transition); }
+.rd-sa:hover { color:var(--gold); }
+.rd-body { display:grid; grid-template-columns:84px 1fr 140px; gap:18px; align-items:start; }
+@media(max-width:860px){ .rd-body{ grid-template-columns:1fr; gap:14px; } }
+
+/* Streak ring */
+.rd-sc { display:flex; flex-direction:column; align-items:center; gap:9px; }
+.sr {
+  width:68px; height:68px; border-radius:50%; border:2px solid var(--border); background:var(--navy);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.sr.lit { border-color:var(--gold); box-shadow:0 0 12px rgba(196,148,74,0.12); }
+.sr-n { font-family:var(--font-display); font-size:1.5rem; font-weight:300; color:var(--gold); line-height:1; }
+.sr-u { font-size:0.38rem; letter-spacing:0.12em; color:var(--type-faint); }
+.sr-lbl { font-size:0.48rem; letter-spacing:0.12em; color:var(--type-faint); }
+.week-dots { display:flex; gap:3px; }
+.wd { width:7px; height:7px; border-radius:50%; background:var(--signal); }
+.wd.done { background:var(--gold-dim); }
+.wd.today-done { background:var(--gold); box-shadow:0 0 5px rgba(196,148,74,0.4); }
+.wd.today-open { background:var(--signal); border:1px dashed var(--gold-dim); }
+
+/* Center col */
+.rd-center { display:flex; flex-direction:column; gap:7px; }
+.rd-cont {
+  background:var(--navy); border:1px solid var(--border); padding:12px 15px;
+  cursor:pointer; transition:all var(--transition);
+  display:flex; align-items:center; gap:11px; position:relative; overflow:hidden;
+}
+.rd-cont::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--gold); transform:scaleY(0); transform-origin:bottom; transition:transform var(--transition-slow); }
+.rd-cont:hover { background:var(--deep); }
+.rd-cont:hover::before { transform:scaleY(1); }
+.rd-ck { font-family:var(--font-display); font-size:1.6rem; color:var(--type-faint); line-height:1; flex-shrink:0; }
+.rd-cb { flex:1; }
+.rd-cl { font-size:0.46rem; letter-spacing:0.16em; color:var(--type-faint); margin-bottom:2px; }
+.rd-cn { font-size:0.62rem; letter-spacing:0.05em; color:var(--type-dim); }
+.rd-cd { font-size:0.52rem; letter-spacing:0.06em; color:var(--type-faint); margin-top:2px; }
+.rd-ca { font-size:0.52rem; letter-spacing:0.12em; color:var(--type-faint); flex-shrink:0; transition:color var(--transition); }
+.rd-cont:hover .rd-ca { color:var(--gold); }
+
+/* Ladder col */
+.rd-lc { }
+.rd-ll { font-size:0.48rem; letter-spacing:0.14em; color:var(--type-faint); margin-bottom:7px; }
+.lr-rungs { display:flex; flex-direction:column; gap:3px; }
+.lr {
+  display:flex; align-items:center; gap:5px; padding:4px 5px;
+  background:var(--void); border:1px solid transparent; transition:all var(--transition);
+}
+.lr.cur { border-color:var(--gold); background:var(--gold-glow); }
+.lr.done { border-color:rgba(196,148,74,0.07); }
+.lr.lk { opacity:0.28; }
+.lr-n { font-size:0.46rem; letter-spacing:0.1em; color:var(--type-faint); width:11px; flex-shrink:0; }
+.lr-trk { flex:1; height:2px; background:var(--signal); }
+.lr-fill { height:100%; background:var(--type-faint); transition:width 1s ease; }
+.lr.cur .lr-fill { background:var(--gold); }
+.lr.done .lr-fill { background:var(--gold-dim); }
+.lr-name { font-size:0.48rem; letter-spacing:0.06em; color:var(--type-faint); width:66px; flex-shrink:0; text-align:right; }
+.lr.cur .lr-name { color:var(--gold); }
+
+/* Ladder full — in account panel */
+.ladder-full { display:flex; flex-direction:column; gap:4px; }
+.lf-r { background:var(--void); border:1px solid var(--border); padding:9px 11px; }
+.lf-r.cur { border-color:var(--gold); background:var(--gold-glow); }
+.lf-r.done { border-color:rgba(196,148,74,0.1); }
+.lf-r.lk { opacity:0.28; }
+.lf-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:3px; }
+.lf-name { font-size:0.57rem; letter-spacing:0.1em; color:var(--type-dim); }
+.lf-rn { font-size:0.48rem; letter-spacing:0.1em; color:var(--type-faint); }
+.lf-desc { font-size:0.55rem; letter-spacing:0.03em; color:var(--type-faint); line-height:1.6; margin-bottom:5px; }
+.lf-bar { height:2px; background:var(--signal); }
+.lf-fill { height:100%; background:var(--gold); transition:width 0.8s ease; }
+.lf-protos { display:flex; gap:3px; margin-top:5px; flex-wrap:wrap; }
+.lf-p { font-size:0.46rem; letter-spacing:0.06em; color:var(--type-faint); padding:1px 4px; background:var(--signal); }
+.lf-r.cur .lf-p { background:rgba(196,148,74,0.08); color:var(--gold); }
+
+/* ── NEXT ACTION BAR (fixed bottom) ── */
+#nab {
+  display:none; position:fixed; bottom:0; left:0; right:0; z-index:50;
+  background:rgba(6,8,15,0.96); backdrop-filter:blur(12px);
+  border-top:1px solid var(--border); padding:11px 32px;
+  flex-direction:row; align-items:center; justify-content:space-between; gap:18px;
+}
+#nab.vis { display:flex; }
+.nab-t { font-size:0.59rem; letter-spacing:0.06em; color:var(--type-dim); }
+.nab-t em { color:var(--gold); font-style:normal; }
+.nab-btn {
+  padding:8px 18px; border:1px solid var(--gold); color:var(--gold); background:var(--gold-glow);
+  font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.14em; cursor:pointer;
+  transition:all var(--transition); white-space:nowrap;
+}
+.nab-btn:hover { background:var(--gold); color:var(--void); }
+.nab-x { font-size:0.55rem; color:var(--type-faint); cursor:pointer; flex-shrink:0; transition:color var(--transition); }
+.nab-x:hover { color:var(--type-dim); }
+
+/* ── COMPLETE — habit nudge + next suggestion ── */
+.habit-nudge { display:none; padding:13px 17px; margin-bottom:14px; background:rgba(139,168,123,0.04); border:1px solid rgba(139,168,123,0.2); text-align:center; }
+.habit-nudge.vis { display:block; }
+.hn-title { font-size:0.52rem; letter-spacing:0.16em; color:var(--outcome-transition); margin-bottom:4px; }
+.hn-body { font-size:0.6rem; color:var(--type-dim); line-height:1.65; }
+.hn-num { font-family:var(--font-display); font-size:1rem; font-weight:300; color:var(--outcome-transition); }
+
+.next-sugg { display:none; padding:12px 15px; background:var(--navy); border:1px solid var(--border); margin-bottom:16px; cursor:pointer; transition:all var(--transition); }
+.next-sugg.vis { display:block; }
+.next-sugg:hover { background:var(--deep); border-color:var(--gold-dim); }
+.ns-lbl { font-size:0.48rem; letter-spacing:0.16em; color:var(--type-faint); margin-bottom:5px; }
+.ns-body { display:flex; align-items:center; gap:9px; }
+.ns-k { font-family:var(--font-display); font-size:1.3rem; color:var(--type-faint); line-height:1; flex-shrink:0; }
+.ns-txt { flex:1; }
+.ns-name { font-size:0.62rem; letter-spacing:0.05em; color:var(--type-dim); }
+.ns-why { font-size:0.54rem; color:var(--type-faint); margin-top:1px; }
+.ns-arr { font-size:0.62rem; color:var(--type-faint); flex-shrink:0; transition:all var(--transition); }
+.next-sugg:hover .ns-arr { color:var(--gold); transform:translateX(3px); }
+
 </style>
 </head>
 <body>
 
 <div id="loading-overlay">
   <div class="loading-name">MA-ZEN</div>
-  <div class="loading-sub">INITIALISING PROTOCOL LIBRARY · PHASE 3</div>
+  <div class="loading-sub">INITIALISING PROTOCOL LIBRARY · PHASE 5</div>
   <div class="loading-bar"><div class="loading-bar-fill" id="loading-fill"></div></div>
   <div class="loading-files" id="loading-files">—</div>
 </div>
@@ -787,6 +1035,10 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
     </div>
     <div class="header-meta">
       <div class="season-badge" id="current-season-badge">—</div>
+      <div class="streak-chip" id="streak-chip">
+        <span class="sc-num" id="sc-num">0</span>
+        <span class="sc-lbl">DAY</span>
+      </div>
       <div class="plan-pill FREE" id="plan-pill">FREE</div>
       <button class="account-btn" id="account-btn">
         <span class="account-btn-dot" id="account-btn-dot"></span>
@@ -819,7 +1071,51 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
       </div>
     </div>
 
-    <!-- MY PRACTICE SHELF — shown when user has favorites or recents -->
+    <!-- ── RETURN DASHBOARD (return users) ── -->
+    <div id="return-dash">
+      <div class="rd-top">
+        <div class="rd-g" id="rd-greeting">Good <em id="rd-tod">morning</em>.</div>
+        <span class="rd-sa" id="rd-see-all">ALL PROTOCOLS ↓</span>
+      </div>
+      <div class="rd-body">
+        <div class="rd-sc">
+          <div class="sr" id="rd-ring"><div class="sr-n" id="rd-sn">0</div><div class="sr-u">DAYS</div></div>
+          <div class="sr-lbl">STREAK</div>
+          <div class="week-dots" id="rd-dots"></div>
+        </div>
+        <div class="rd-center" id="rd-center">
+          <!-- JS: continue card + today card embed -->
+        </div>
+        <div class="rd-lc">
+          <div class="rd-ll">SILENCE LADDER</div>
+          <div class="lr-rungs" id="rd-rungs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TODAY CARD (new users / first visits) ── -->
+    <div id="today-card">
+      <div class="tc-inner">
+        <div class="tc-left">
+          <div class="tc-ey">TODAY'S PRACTICE <span class="tc-ey-why" id="tc-why-lbl"></span></div>
+          <div class="tc-hero">
+            <div class="tc-k" id="tc-k">—</div>
+            <div class="tc-n" id="tc-n">—</div>
+          </div>
+          <div class="tc-w" id="tc-w">—</div>
+          <div class="tc-meta">
+            <div class="outcome-badge" id="tc-badge">—</div>
+            <div class="tc-dur" id="tc-dur">—</div>
+          </div>
+        </div>
+        <div class="tc-right">
+          <button class="tc-begin" id="tc-begin"><div class="tc-bg">▶</div><div class="tc-bl">BEGIN</div></button>
+          <div class="tc-vl" id="tc-detail">VIEW DETAILS →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY PRACTICE SHELF -->
     <div id="my-practice">
       <div class="practice-section-label">MY PRACTICE</div>
       <div class="practice-shelves">
@@ -1105,6 +1401,11 @@ input.rt-range::-webkit-slider-thumb { background: var(--rate-color); }
     <div class="complete-kanji" id="c-kanji">—</div>
     <div class="complete-title" id="c-title">SESSION COMPLETE</div>
     <p class="complete-reflection" id="c-reflection">—</p>
+    <div class="habit-nudge" id="habit-nudge"><div class="hn-title">PRACTICE MAINTAINED</div><div class="hn-body" id="hn-body">—</div></div>
+    <div class="next-sugg" id="next-sugg">
+      <div class="ns-lbl">SUGGESTED NEXT</div>
+      <div class="ns-body"><div class="ns-k" id="ns-k">—</div><div class="ns-txt"><div class="ns-name" id="ns-name">—</div><div class="ns-why" id="ns-why">—</div></div><div class="ns-arr">→</div></div>
+    </div>
     <div class="preview-upsell" id="preview-upsell">
       <div class="preview-upsell-title">PREVIEW ENDED</div>
       <div class="preview-upsell-body">You experienced 5 minutes of this protocol. A full session runs 20–45 minutes and includes parameter control, resonance tails, and a post-session reflection prompt.<br><br>Start your 14-day trial to access all 12 protocols.</div>
@@ -1550,11 +1851,75 @@ const PROTOCOLS = {
 };
 
 /* ════════════════════════════════════════════
-   ACCOUNT SYSTEM — Phase 4
-   Plans: FREE | TRIAL | SUBSCRIBER
-   FREE protocols: KAZE, SEIJAKU, TAKE
-   TRIAL: all protocols, 20min max, 14-day expiry
-   SUBSCRIBER: all, full durations, full params
+   SILENCE LADDER — Phase 5
+════════════════════════════════════════════ */
+const LADDER = [
+  { rung:1, name:'INITIATION',  min:0,   max:40,       silRange:[65,75], desc:'First encounter with governed silence. Short sessions with active material.', protos:['KAZE','HI','KEIRO'] },
+  { rung:2, name:'PRESENCE',    min:40,  max:120,      silRange:[72,82], desc:'The mind begins to accept the interval between sounds.', protos:['SEIJAKU','MIYABI','TAKE','MIZU','AKANE'] },
+  { rung:3, name:'DISCIPLINE',  min:120, max:300,      silRange:[78,86], desc:'30-minute sessions. Silence becomes structural rather than empty.', protos:['GAKE','SHINKIRO','MIZU','KEIRO'] },
+  { rung:4, name:'ABSORPTION',  min:300, max:600,      silRange:[82,92], desc:'45-minute sessions. Events become rare interventions in deep silence.', protos:['YUKI','FUSOKU','SHINKIRO','SEIJAKU'] },
+  { rung:5, name:'DISSOLUTION', min:600, max:Infinity, silRange:[88,95], desc:'Maximum silence density. The practitioner no longer waits for sound.', protos:['YUKI','FUSOKU','SEIJAKU'] }
+];
+
+/* ════════════════════════════════════════════
+   PRACTICE ENGINE — daily recommendation
+════════════════════════════════════════════ */
+const PracticeEngine = {
+  timeCtx() {
+    const h = new Date().getHours();
+    if (h>=5  && h<10)  return { tod:'morning',   outcome:'REFLECTION',    reason:'Morning clarity' };
+    if (h>=10 && h<13)  return { tod:'morning',   outcome:'FOCUS',         reason:'Peak attention window' };
+    if (h>=13 && h<15)  return { tod:'afternoon', outcome:'RESET',         reason:'Post-lunch reset' };
+    if (h>=15 && h<18)  return { tod:'afternoon', outcome:'FOCUS',         reason:'Afternoon work window' };
+    if (h>=18 && h<21)  return { tod:'evening',   outcome:'DECOMPRESSION', reason:'End-of-day release' };
+    return                     { tod:'night',     outcome:'REFLECTION',    reason:'Night contemplation' };
+  },
+  suggestDur() {
+    const h=new Date().getHours();
+    if (h>=5&&h<8)   return 20;
+    if (h>=8&&h<10)  return 30;
+    if (h>=12&&h<14) return 15;
+    if (h>=18&&h<21) return 30;
+    return 20;
+  },
+  recommend(outcome, season, rungN, lastId, accessible) {
+    let pool = Object.values(PROTOCOLS).filter(p=>p.outcome===outcome && accessible.has(p.id) && p.id!==lastId);
+    const seasonal = pool.filter(p=>p.seasons.includes(season));
+    if (seasonal.length) pool = seasonal;
+    const rung = LADDER[Math.min(rungN-1, LADDER.length-1)];
+    const ladderMatch = pool.filter(p=>(rung.protos||[]).includes(p.id));
+    if (ladderMatch.length) return ladderMatch[0];
+    return pool[0] || PROTOCOLS['KAZE'];
+  },
+  daily(account) {
+    const ctx = this.timeCtx();
+    const rungN = account.ladderRung();
+    const lastId = account.recentSessions[0]?.id;
+    const accessible = new Set(Object.keys(PROTOCOLS).filter(id=>account.canAccess(id)));
+    const proto = this.recommend(ctx.outcome, CURRENT_SEASON, rungN, lastId, accessible);
+    const sugDur = Math.min(this.suggestDur(), account.maxDuration(proto.id));
+    const dur = proto.durations.reduce((b,d)=>d<=sugDur?d:b, proto.durations[0]);
+    return { proto, dur, reason:ctx.reason, tod:ctx.tod };
+  },
+  nextAfter(justDone, account) {
+    const map = { FOCUS:'DECOMPRESSION', DECOMPRESSION:'REFLECTION', RESET:'FOCUS', TRANSITION:'REFLECTION', REFLECTION:'FOCUS' };
+    const accessible = new Set(Object.keys(PROTOCOLS).filter(id=>account.canAccess(id)));
+    return this.recommend(map[justDone.outcome]||'FOCUS', CURRENT_SEASON, account.ladderRung(), justDone.id, accessible);
+  },
+  streakMsg(n) {
+    if (n===1)  return 'First practice today. The habit begins.';
+    if (n===2)  return 'Two consecutive days. A pattern is forming.';
+    if (n===3)  return 'Three days. This is becoming a practice.';
+    if (n===7)  return 'Seven days. One week of governed silence.';
+    if (n===14) return 'Fourteen days. The habit is structural.';
+    if (n===30) return 'Thirty days. The silence is yours.';
+    if (n>30)   return `${n} consecutive days. The practice sustains itself.`;
+    return `${n} consecutive days. Keep going.`;
+  }
+};
+
+/* ════════════════════════════════════════════
+   ACCOUNT SYSTEM — Phase 5
 ════════════════════════════════════════════ */
 const FREE_PROTOCOLS = new Set(['KAZE','SEIJAKU','TAKE']);
 const FREE_MAX_DURATION  = 20;
@@ -1563,121 +1928,108 @@ const TRIAL_DAYS         = 14;
 
 class AccountSystem {
   constructor() {
-    this.plan         = 'FREE';    // FREE | TRIAL | SUBSCRIBER
-    this.trialExpiry  = null;
-    this.favorites    = new Set();
-    this.recentSessions = [];      // [{id,name,kanji,outcome,duration,date}] max 3
-    this.totalSessions  = 0;
-    this.totalMinutes   = 0;
-    this.streak         = 0;
+    this.plan='FREE'; this.trialExpiry=null;
+    this.favorites=new Set(); this.recentSessions=[];
+    this.totalSessions=0; this.totalMinutes=0;
+    this.sessionDates=[]; // YYYY-MM-DD array for streak
+    this.onboardingDone=false;
     this._load();
   }
-
-  /* ── Persistence ── */
   _load() {
     try {
-      const raw = localStorage.getItem('mazen_account_v4');
+      const raw=localStorage.getItem('mazen_v5');
       if (!raw) return;
-      const d = JSON.parse(raw);
-      this.plan           = d.plan || 'FREE';
-      this.trialExpiry    = d.trialExpiry ? new Date(d.trialExpiry) : null;
-      this.favorites      = new Set(d.favorites || []);
-      this.recentSessions = d.recentSessions || [];
-      this.totalSessions  = d.totalSessions || 0;
-      this.totalMinutes   = d.totalMinutes || 0;
-      this.streak         = d.streak || 0;
-      // auto-expire trial
-      if (this.plan === 'TRIAL' && this.trialExpiry && new Date() > this.trialExpiry) {
-        this.plan = 'FREE'; this._save();
-      }
-    } catch(e) {}
+      const d=JSON.parse(raw);
+      this.plan=d.plan||'FREE';
+      this.trialExpiry=d.trialExpiry?new Date(d.trialExpiry):null;
+      this.favorites=new Set(d.favorites||[]);
+      this.recentSessions=d.recentSessions||[];
+      this.totalSessions=d.totalSessions||0;
+      this.totalMinutes=d.totalMinutes||0;
+      this.sessionDates=d.sessionDates||[];
+      this.onboardingDone=d.onboardingDone||false;
+      if (this.plan==='TRIAL'&&this.trialExpiry&&new Date()>this.trialExpiry){ this.plan='FREE'; this._save(); }
+    } catch(e){}
   }
   _save() {
     try {
-      localStorage.setItem('mazen_account_v4', JSON.stringify({
-        plan: this.plan, trialExpiry: this.trialExpiry?.toISOString(),
-        favorites: [...this.favorites], recentSessions: this.recentSessions,
-        totalSessions: this.totalSessions, totalMinutes: this.totalMinutes, streak: this.streak
+      localStorage.setItem('mazen_v5', JSON.stringify({
+        plan:this.plan, trialExpiry:this.trialExpiry?.toISOString(),
+        favorites:[...this.favorites], recentSessions:this.recentSessions,
+        totalSessions:this.totalSessions, totalMinutes:this.totalMinutes,
+        sessionDates:this.sessionDates, onboardingDone:this.onboardingDone
       }));
-    } catch(e) {}
+    } catch(e){}
   }
+  _today() { return new Date().toISOString().slice(0,10); }
+  _prevDay(ds) { const d=new Date(ds+'T12:00:00Z'); d.setDate(d.getDate()-1); return d.toISOString().slice(0,10); }
 
-  /* ── Entitlement checks ── */
-  canAccess(protocolId) {
-    if (this.plan === 'SUBSCRIBER') return true;
-    if (this.plan === 'TRIAL')      return !this._trialExpired();
-    return FREE_PROTOCOLS.has(protocolId);
+  streak() {
+    if (!this.sessionDates.length) return 0;
+    const sorted=[...new Set(this.sessionDates)].sort().reverse();
+    let s=0, check=this._today();
+    if (!sorted.includes(check)) check=this._prevDay(check);
+    for (const d of sorted) {
+      if (d===check){ s++; check=this._prevDay(check); }
+      else if (d<check) break;
+    }
+    return s;
   }
-  canPreview(protocolId) {
-    // Anyone can preview any protocol for 5 min
-    return true;
+  weekDots() {
+    const today=this._today(); const out=[];
+    for (let i=6;i>=0;i--) {
+      const dt=new Date(); dt.setDate(dt.getDate()-i);
+      const ds=dt.toISOString().slice(0,10);
+      out.push({date:ds, done:this.sessionDates.includes(ds), today:ds===today});
+    }
+    return out;
   }
-  canCustomize() {
-    return this.plan === 'SUBSCRIBER' || (this.plan === 'TRIAL' && !this._trialExpired());
+  ladderRung() {
+    for (let i=LADDER.length-1;i>=0;i--) if(this.totalMinutes>=LADDER[i].min) return LADDER[i].rung;
+    return 1;
   }
-  maxDuration(protocolId) {
-    if (this.plan === 'SUBSCRIBER') return 999;
-    if (this.plan === 'TRIAL')      return TRIAL_MAX_DURATION;
-    if (FREE_PROTOCOLS.has(protocolId)) return FREE_MAX_DURATION;
-    return 5; // preview only
+  ladderProgress() {
+    const r=LADDER[this.ladderRung()-1];
+    if (!r||r.max===Infinity) return 1;
+    return Math.min(1,Math.max(0,(this.totalMinutes-r.min)/(r.max-r.min)));
   }
-  _trialExpired() {
-    return this.trialExpiry && new Date() > this.trialExpiry;
+  canAccess(id) {
+    if (this.plan==='SUBSCRIBER') return true;
+    if (this.plan==='TRIAL') return !this._trialExpired();
+    return FREE_PROTOCOLS.has(id);
   }
-  trialDaysRemaining() {
-    if (!this.trialExpiry) return 0;
-    return Math.max(0, Math.ceil((this.trialExpiry - new Date()) / 86400000));
+  canCustomize() { return this.plan==='SUBSCRIBER'||(this.plan==='TRIAL'&&!this._trialExpired()); }
+  maxDuration(id) {
+    if (this.plan==='SUBSCRIBER') return 999;
+    if (this.plan==='TRIAL') return TRIAL_MAX_DURATION;
+    if (FREE_PROTOCOLS.has(id)) return FREE_MAX_DURATION;
+    return 5;
   }
-  trialProgress() {
-    if (!this.trialExpiry) return 0;
-    const start = new Date(this.trialExpiry - TRIAL_DAYS * 86400000);
-    const elapsed = (new Date() - start) / (TRIAL_DAYS * 86400000);
-    return Math.min(1, Math.max(0, elapsed));
-  }
+  _trialExpired() { return this.trialExpiry&&new Date()>this.trialExpiry; }
+  trialDaysRemaining() { if(!this.trialExpiry)return 0; return Math.max(0,Math.ceil((this.trialExpiry-new Date())/86400000)); }
+  trialProgress() { if(!this.trialExpiry)return 0; const s=new Date(this.trialExpiry-TRIAL_DAYS*86400000); return Math.min(1,Math.max(0,(new Date()-s)/(TRIAL_DAYS*86400000))); }
 
-  /* ── Plan changes ── */
-  startTrial() {
-    this.plan = 'TRIAL';
-    this.trialExpiry = new Date(Date.now() + TRIAL_DAYS * 86400000);
-    this._save();
-  }
-  subscribe() {
-    this.plan = 'SUBSCRIBER';
-    this.trialExpiry = null;
-    this._save();
-  }
-  downgrade() {
-    this.plan = 'FREE';
-    this.trialExpiry = null;
-    this._save();
-  }
+  startTrial()  { this.plan='TRIAL'; this.trialExpiry=new Date(Date.now()+TRIAL_DAYS*86400000); this._save(); }
+  subscribe()   { this.plan='SUBSCRIBER'; this.trialExpiry=null; this._save(); }
+  downgrade()   { this.plan='FREE'; this.trialExpiry=null; this._save(); }
 
-  /* ── Favorites ── */
-  toggleFavorite(id) {
-    if (this.favorites.has(id)) this.favorites.delete(id);
-    else this.favorites.add(id);
-    this._save();
-    return this.favorites.has(id);
-  }
+  toggleFavorite(id) { if(this.favorites.has(id))this.favorites.delete(id); else this.favorites.add(id); this._save(); return this.favorites.has(id); }
   isFavorite(id) { return this.favorites.has(id); }
 
-  /* ── Session history ── */
-  recordSession(protocol, duration, events) {
-    this.recentSessions.unshift({
-      id: protocol.id, name: protocol.name, kanji: protocol.kanji,
-      outcome: protocol.outcome, duration, date: new Date().toISOString()
-    });
-    if (this.recentSessions.length > 3) this.recentSessions.pop();
-    this.totalSessions++;
-    this.totalMinutes += duration;
+  recordSession(proto, dur) {
+    const today=this._today();
+    this.recentSessions.unshift({id:proto.id,name:proto.name,kanji:proto.kanji,outcome:proto.outcome,duration:dur,date:new Date().toISOString()});
+    if (this.recentSessions.length>5) this.recentSessions.pop();
+    this.totalSessions++; this.totalMinutes+=dur;
+    if (!this.sessionDates.includes(today)) this.sessionDates.push(today);
+    if (this.sessionDates.length>90) this.sessionDates=this.sessionDates.slice(-90);
     this._save();
   }
-
+  completeOnboarding() { this.onboardingDone=true; this._save(); }
   planLabel() {
-    if (this.plan === 'FREE')        return 'FREE';
-    if (this.plan === 'TRIAL')       return `TRIAL · ${this.trialDaysRemaining()}d left`;
-    if (this.plan === 'SUBSCRIBER')  return 'SUBSCRIBER';
-    return 'FREE';
+    if (this.plan==='FREE') return 'FREE';
+    if (this.plan==='TRIAL') return `TRIAL · ${this.trialDaysRemaining()}d`;
+    return 'SUBSCRIBER';
   }
   planShort() { return this.plan; }
 }
@@ -2095,8 +2447,9 @@ const App = (() => {
 
     // Stats
     $('ap-sessions').textContent = Account.totalSessions;
+    $('ap-streak').textContent = Account.streak();
     $('ap-minutes').textContent  = Account.totalMinutes;
-    $('ap-streak').textContent   = Account.streak;
+    $('ap-streak').textContent   = Account.streak();
     $('ap-favcount').textContent = Account.favorites.size;
 
     // Favs in panel
@@ -2537,15 +2890,14 @@ const App = (() => {
 
   function showComplete() {
     $('view-session').classList.remove('active');
-    // Re-enable sliders
     ['live-silence','live-entropy','live-rate'].forEach(id=>{ $(id).disabled=false; $(id).style.opacity=''; });
     setEngineStatus('STANDBY',false);
 
-    // Record session if not preview
     if (!isPreviewMode && currentProtocol) {
-      Account.recordSession(currentProtocol, sessionStats.duration, sessionStats.events);
-      refreshPracticeShelf();
+      Account.recordSession(currentProtocol, sessionStats.duration);
       refreshAccountUI();
+      refreshPracticeShelf();
+      refreshFloorDash();
     }
 
     $('c-kanji').textContent   = currentProtocol?.kanji||'—';
@@ -2553,20 +2905,35 @@ const App = (() => {
     $('c-events').textContent  = sessionStats.events;
     $('c-tails').textContent   = sessionStats.tails;
     $('c-ma').textContent      = `${sessionStats.density}%`;
-    $('c-reflection').textContent = isPreviewMode ? 'This was a 5-minute preview.' : (currentProtocol?.reflection||'—');
-    $('c-title').textContent   = isPreviewMode ? 'PREVIEW COMPLETE' : 'SESSION COMPLETE';
+    $('c-reflection').textContent = isPreviewMode?'This was a 5-minute preview.':(currentProtocol?.reflection||'—');
+    $('c-title').textContent   = isPreviewMode?'PREVIEW COMPLETE':'SESSION COMPLETE';
 
-    // Preview upsell
-    const upsell=$('preview-upsell');
-    upsell.classList.toggle('visible', isPreviewMode);
-    $('preview-upsell-btn').onclick=()=>{
-      Account.startTrial(); refreshAccountUI(); buildGrid();
-      $('view-complete').classList.remove('active');
-      showView('floor');
-    };
+    $('preview-upsell').classList.toggle('visible', isPreviewMode);
+    $('preview-upsell-btn').onclick=()=>{ Account.startTrial(); refreshAccountUI(); buildGrid(); $('view-complete').classList.remove('active'); showView('floor'); };
+    $('c-again-btn').style.display = isPreviewMode?'none':'';
 
-    // Hide repeat button for preview (can't repeat a preview)
-    $('c-again-btn').style.display = isPreviewMode ? 'none' : '';
+    if (!isPreviewMode && currentProtocol) {
+      // Habit nudge — streak
+      const s = Account.streak();
+      if (s >= 1) {
+        $('habit-nudge').classList.add('vis');
+        const msg = PracticeEngine.streakMsg(s).replace(String(s), `<span class="hn-num">${s}</span>`);
+        $('hn-body').innerHTML = msg;
+      } else { $('habit-nudge').classList.remove('vis'); }
+
+      // Next suggestion
+      const nextP = PracticeEngine.nextAfter(currentProtocol, Account);
+      if (nextP) {
+        $('next-sugg').classList.add('vis');
+        $('ns-k').textContent   = nextP.kanji;
+        $('ns-name').textContent = nextP.name;
+        $('ns-why').textContent  = nextP.whenToUse[0];
+        $('next-sugg').onclick = ()=>{ $('view-complete').classList.remove('active'); openDetail(nextP); };
+      } else { $('next-sugg').classList.remove('vis'); }
+    } else {
+      $('habit-nudge').classList.remove('vis');
+      $('next-sugg').classList.remove('vis');
+    }
   }
 
   /* ── Keyboard ── */
@@ -2586,12 +2953,259 @@ const App = (() => {
   });
   function nudge(id,delta,min,max) { const sl=$(id); sl.value=Math.max(min,Math.min(max,parseInt(sl.value)+delta)); sl.dispatchEvent(new Event('input')); }
 
+  /* ════════════════════════════════════════════
+     PHASE 5 SYSTEMS
+  ════════════════════════════════════════════ */
+
+  /* ── Ladder section in account panel ── */
+  function renderLadderInPanel(container) {
+    const rungN = Account.ladderRung();
+    const prog  = Account.ladderProgress();
+    const mins  = Account.totalMinutes;
+    container.innerHTML='';
+    const wrap = document.createElement('div'); wrap.className='ladder-full';
+    LADDER.forEach(r=>{
+      const done = mins >= r.max && r.max !== Infinity;
+      const cur  = r.rung === rungN;
+      const lk   = r.rung > rungN;
+      const d = document.createElement('div');
+      d.className='lf-r'+(done?' done':cur?' cur':lk?' lk':'');
+      const fillPct = done?100:cur?Math.round(prog*100):0;
+      const minsNeeded = r.max===Infinity?'':''+r.max+'min';
+      d.innerHTML=`<div class="lf-top"><span class="lf-name">RUNG ${r.rung} · ${r.name}</span><span class="lf-rn">${minsNeeded}</span></div><div class="lf-desc">${r.desc}</div><div class="lf-bar"><div class="lf-fill" style="width:${fillPct}%"></div></div><div class="lf-protos">${(r.protos||[]).map(p=>`<span class="lf-p">${p}</span>`).join('')}</div>`;
+      wrap.appendChild(d);
+    });
+    container.appendChild(wrap);
+  }
+
+  /* ── Ladder mini rungs in return dash ── */
+  function renderLadderMini(container) {
+    const rungN = Account.ladderRung();
+    const prog  = Account.ladderProgress();
+    const mins  = Account.totalMinutes;
+    container.innerHTML='';
+    LADDER.forEach(r=>{
+      const done = mins >= r.max && r.max !== Infinity;
+      const cur  = r.rung === rungN;
+      const lk   = r.rung > rungN;
+      const fillPct = done?100:cur?Math.round(prog*100):0;
+      const el = document.createElement('div');
+      el.className='lr'+(done?' done':cur?' cur':lk?' lk':'');
+      el.innerHTML=`<div class="lr-n">${r.rung}</div><div class="lr-trk"><div class="lr-fill" style="width:${fillPct}%"></div></div><div class="lr-name">${r.name}</div>`;
+      container.appendChild(el);
+    });
+  }
+
+  /* ── Return Dashboard ── */
+  function refreshFloorDash() {
+    const hasHistory = Account.recentSessions.length > 0;
+    const rec = PracticeEngine.daily(Account);
+
+    // Choose layout: return dash vs today card
+    const dash = $('return-dash');
+    const todayCard = $('today-card');
+
+    if (hasHistory) {
+      dash.classList.add('vis');
+      todayCard.classList.remove('vis');
+      renderReturnDash(rec);
+    } else {
+      dash.classList.remove('vis');
+      todayCard.classList.add('vis');
+      renderTodayCard(rec);
+    }
+
+    // Streak chip in header
+    const s = Account.streak();
+    const chip = $('streak-chip');
+    if (s >= 1) { chip.classList.add('vis'); $('sc-num').textContent=s; }
+    else chip.classList.remove('vis');
+  }
+
+  function renderReturnDash(rec) {
+    // Greeting
+    const { tod } = PracticeEngine.timeCtx();
+    $('rd-tod').textContent = tod;
+
+    // Streak ring
+    const s = Account.streak();
+    const ring = $('rd-ring');
+    $('rd-sn').textContent = s;
+    ring.classList.toggle('lit', s >= 1);
+
+    // Week dots
+    const dots = $('rd-dots'); dots.innerHTML='';
+    Account.weekDots().forEach(({done, today})=>{
+      const el = document.createElement('div');
+      el.className = 'wd' + (today&&done?' today-done':today?' today-open':done?' done':'');
+      dots.appendChild(el);
+    });
+
+    // Center: continue card + today rec
+    const center = $('rd-center'); center.innerHTML='';
+    const last = Account.recentSessions[0];
+    if (last) {
+      const p = PROTOCOLS[last.id];
+      if (p) {
+        const cont = document.createElement('div'); cont.className='rd-cont';
+        const ago = (() => {
+          const mins = Math.round((Date.now()-new Date(last.date))/60000);
+          if (mins<60) return `${mins}min ago`;
+          if (mins<1440) return `${Math.round(mins/60)}h ago`;
+          return `${Math.round(mins/1440)}d ago`;
+        })();
+        cont.innerHTML=`<div class="rd-ck">${p.kanji}</div><div class="rd-cb"><div class="rd-cl">CONTINUE WHERE YOU LEFT OFF</div><div class="rd-cn">${p.name}</div><div class="rd-cd">${last.duration}′ · ${ago}</div></div><div class="rd-ca">→</div>`;
+        cont.addEventListener('click',()=>openDetail(p));
+        center.appendChild(cont);
+      }
+    }
+    // Embed today card mini in center
+    const todayMini = document.createElement('div');
+    todayMini.className='rd-cont';
+    todayMini.style.borderColor='var(--gold)';
+    todayMini.style.background='var(--gold-glow)';
+    const oc = rec.proto.outcome;
+    const ocColors = {FOCUS:'var(--outcome-focus)',DECOMPRESSION:'var(--outcome-decomp)',RESET:'var(--outcome-reset)',TRANSITION:'var(--outcome-transition)',REFLECTION:'var(--outcome-reflection)'};
+    todayMini.innerHTML=`<div class="rd-ck" style="color:${ocColors[oc]||'var(--gold)'}">${rec.proto.kanji}</div><div class="rd-cb"><div class="rd-cl" style="color:var(--gold)">TODAY'S PRACTICE · ${rec.reason.toUpperCase()}</div><div class="rd-cn">${rec.proto.name} · ${rec.dur}′</div><div class="rd-cd">${rec.proto.subtitle}</div></div><div class="rd-ca">▶</div>`;
+    todayMini.addEventListener('click',()=>{ currentProtocol=rec.proto; selectedDuration=rec.dur; openDetail(rec.proto); });
+    center.appendChild(todayMini);
+
+    // Ladder mini
+    renderLadderMini($('rd-rungs'));
+
+    // See all link
+    $('rd-see-all').onclick = ()=>{ $('return-dash').classList.remove('vis'); $('today-card').classList.remove('vis'); };
+  }
+
+  function renderTodayCard(rec) {
+    const oc = rec.proto.outcome;
+    const META = { FOCUS:'var(--outcome-focus)', DECOMPRESSION:'var(--outcome-decomp)', RESET:'var(--outcome-reset)', TRANSITION:'var(--outcome-transition)', REFLECTION:'var(--outcome-reflection)' };
+    $('tc-k').textContent   = rec.proto.kanji;
+    $('tc-n').textContent   = rec.proto.name;
+    $('tc-w').textContent   = rec.proto.description;
+    $('tc-why-lbl').textContent = '· ' + rec.reason.toUpperCase();
+    $('tc-dur').textContent = `${rec.dur}′`;
+    const badge = $('tc-badge');
+    badge.textContent = oc;
+    badge.style.color = META[oc]||'var(--gold)';
+    badge.style.borderColor = META[oc]||'var(--gold)';
+    badge.style.background = `rgba(196,148,74,0.06)`;
+    $('tc-begin').onclick = ()=>{ currentProtocol=rec.proto; selectedDuration=rec.dur; selectedSilence=rec.proto.defaultSilence; selectedEntropy=rec.proto.defaultEntropy; selectedRate=rec.proto.defaultRate; beginSession(false); };
+    $('tc-detail').onclick = ()=>openDetail(rec.proto);
+  }
+
+  /* ── Next Action Bar ── */
+  let _nabDismissed = false;
+  function showNab(text, btnText, btnCb) {
+    if (_nabDismissed) return;
+    $('nab-t').innerHTML = text;
+    $('nab-btn').textContent = btnText;
+    $('nab-btn').onclick = btnCb;
+    $('nab').classList.add('vis');
+  }
+  function hideNab() { $('nab').classList.remove('vis'); }
+
+  /* ── ONBOARDING ── */
+  let _obOutcome=null, _obProtoId=null, _obMins=20, _obScreen=0;
+
+  function initOnboarding() {
+    if (Account.onboardingDone) { refreshFloorDash(); showNabIfNeeded(); return; }
+    $('ob-overlay').classList.add('active');
+
+    // Screen 0: outcome cards
+    document.querySelectorAll('.ob-card').forEach(card=>{
+      card.addEventListener('click',()=>{
+        document.querySelectorAll('.ob-card').forEach(c=>c.classList.remove('sel'));
+        card.classList.add('sel');
+        _obOutcome = card.dataset.oc;
+        _obProtoId = card.dataset.op;
+        $('ob-n0').disabled = false;
+      });
+    });
+
+    // Screen 1: time buttons
+    document.querySelectorAll('.ob-tb').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.ob-tb').forEach(b=>b.classList.remove('sel'));
+        btn.classList.add('sel');
+        _obMins = parseInt(btn.dataset.m);
+        $('ob-n1').disabled = false;
+      });
+    });
+
+    $('ob-n0').addEventListener('click',()=>obGo(1));
+    $('ob-n1').addEventListener('click',()=>obGo(2));
+    $('ob-bk1').addEventListener('click',()=>obGo(0));
+    $('ob-skip').addEventListener('click',obSkip);
+    $('ob-begin').addEventListener('click',()=>{
+      obClose();
+      if (!currentProtocol && _obProtoId) {
+        const p = PROTOCOLS[_obProtoId];
+        if (p) { currentProtocol=p; selectedDuration=Math.min(_obMins,Account.maxDuration(p.id)); selectedSilence=p.defaultSilence; selectedEntropy=p.defaultEntropy; selectedRate=p.defaultRate; beginSession(false); }
+      }
+    });
+    $('ob-explore').addEventListener('click',obSkip);
+  }
+
+  function obGo(screen) {
+    _obScreen = screen;
+    document.querySelectorAll('.ob-scr').forEach(s=>s.classList.remove('active'));
+    $(`ob-s${screen}`).classList.add('active');
+    $('ob-slbl').textContent = `${screen+1} OF 3`;
+    ['ob-d0','ob-d1','ob-d2'].forEach((id,i)=>{
+      const el=$(`ob-d${i}`);
+      el.className = 'ob-dot' + (i<screen?' done':i===screen?' active':'');
+    });
+    if (screen === 2) populateObRec();
+  }
+
+  function populateObRec() {
+    const accessible = new Set(Object.keys(PROTOCOLS).filter(id=>Account.canAccess(id)));
+    const proto = PROTOCOLS[_obProtoId] || PracticeEngine.recommend(_obOutcome||'FOCUS', CURRENT_SEASON, 1, null, accessible);
+    const maxDur = Account.maxDuration(proto.id);
+    const dur = proto.durations.reduce((b,d)=>d<=Math.min(_obMins,maxDur)?d:b, proto.durations[0]);
+    currentProtocol = proto;
+    selectedDuration = dur;
+    selectedSilence = proto.defaultSilence;
+    selectedEntropy = proto.defaultEntropy;
+    selectedRate    = proto.defaultRate;
+    const META = {FOCUS:'var(--outcome-focus)',DECOMPRESSION:'var(--outcome-decomp)',RESET:'var(--outcome-reset)',TRANSITION:'var(--outcome-transition)',REFLECTION:'var(--outcome-reflection)'};
+    $('ob-rk').textContent  = proto.kanji;
+    $('ob-rey').textContent = proto.outcome + ' PROTOCOL';
+    $('ob-rn').textContent  = proto.name + ' · ' + proto.subtitle;
+    $('ob-rw').textContent  = proto.description;
+    $('ob-rd').textContent  = `${dur}min`;
+    const badge=$('ob-ro'); badge.textContent=proto.outcome; badge.style.color=META[proto.outcome]||'var(--gold)'; badge.style.borderColor=META[proto.outcome]||'var(--gold)'; badge.style.background='rgba(196,148,74,0.06)';
+  }
+
+  function obClose() {
+    $('ob-overlay').classList.remove('active');
+    Account.completeOnboarding();
+    refreshFloorDash();
+    showNabIfNeeded();
+  }
+  function obSkip() { obClose(); }
+
+  function showNabIfNeeded() {
+    if (Account.totalSessions === 0 && Account.onboardingDone) {
+      const rec = PracticeEngine.daily(Account);
+      showNab(`Ready to begin? <em>${rec.proto.name}</em> is matched to this moment.`, 'BEGIN →', ()=>{
+        hideNab(); _nabDismissed=true;
+        currentProtocol=rec.proto; selectedDuration=rec.dur;
+        selectedSilence=rec.proto.defaultSilence; selectedEntropy=rec.proto.defaultEntropy; selectedRate=rec.proto.defaultRate;
+        beginSession(false);
+      });
+    }
+  }
+
   /* ── INIT ── */
   function init() {
     $('current-season-badge').textContent=SEASON_NAMES[CURRENT_SEASON];
     refreshAccountUI();
     buildGrid();
     refreshPracticeShelf();
+    refreshFloorDash();
+    initOnboarding();
 
     // Outcome filter
     document.querySelectorAll('.outcome-tab').forEach(tab=>{
@@ -2608,11 +3222,12 @@ const App = (() => {
       });
     });
 
-    // Account panel
-    $('account-btn').addEventListener('click',openAccountPanel);
+    // Account panel — add ladder section
+    $('account-btn').addEventListener('click',()=>{ openAccountPanel(); renderLadderInAccountPanel(); });
     $('account-panel-close').addEventListener('click',closeAccountPanel);
     $('account-overlay').addEventListener('click',closeAccountPanel);
-    $('plan-pill').addEventListener('click',openAccountPanel);
+    $('plan-pill').addEventListener('click',()=>{ openAccountPanel(); renderLadderInAccountPanel(); });
+    $('streak-chip').addEventListener('click',()=>{ openAccountPanel(); renderLadderInAccountPanel(); });
 
     // Paywall
     $('paywall-close').addEventListener('click',closePaywall);
@@ -2623,8 +3238,26 @@ const App = (() => {
     $('c-return-btn').addEventListener('click',()=>{ $('view-complete').classList.remove('active'); showView('floor'); });
     $('c-again-btn').addEventListener('click',()=>{ $('view-complete').classList.remove('active'); if(currentProtocol) beginSession(false); });
 
+    // NAB dismiss
+    $('nab-x').addEventListener('click',()=>{ hideNab(); _nabDismissed=true; });
+
     setTimeout(()=>$('loading-overlay').classList.add('hidden'),900);
   }
+
+  function renderLadderInAccountPanel() {
+    // Add ladder section to account panel if not present
+    let ladderSec = $('ap-ladder-section');
+    if (!ladderSec) {
+      ladderSec = document.createElement('div');
+      ladderSec.className='account-section'; ladderSec.id='ap-ladder-section';
+      ladderSec.innerHTML='<div class="account-section-label">SILENCE LADDER</div><div id="ap-ladder-content"></div>';
+      $('account-panel').appendChild(ladderSec);
+    }
+    renderLadderInPanel($('ap-ladder-content'));
+    // Update streak display
+    $('ap-streak').textContent = Account.streak();
+  }
+
   return { init };
 })();
 
@@ -2720,6 +3353,96 @@ window.addEventListener('DOMContentLoaded',()=>App.init());
   <div class="account-section">
     <div class="account-section-label">PROTOCOL ACCESS</div>
     <div class="entitlement-list" id="ap-entitlements"></div>
+  </div>
+</div>
+
+
+<!-- ─── NEXT ACTION BAR ─── -->
+<div id="nab">
+  <div class="nab-t" id="nab-t">—</div>
+  <button class="nab-btn" id="nab-btn">BEGIN →</button>
+  <span class="nab-x" id="nab-x">✕</span>
+</div>
+
+<!-- ─── ONBOARDING OVERLAY ─── -->
+<div id="ob-overlay">
+  <div class="ob-wrap">
+    <div class="ob-hd"><span class="ob-logo">MA-ZEN</span><span class="ob-step-lbl" id="ob-slbl">1 OF 3</span></div>
+    <div class="ob-dots">
+      <div class="ob-dot active" id="ob-d0"></div>
+      <div class="ob-dot" id="ob-d1"></div>
+      <div class="ob-dot" id="ob-d2"></div>
+    </div>
+
+    <!-- Screen 0: What do you need? -->
+    <div class="ob-scr active" id="ob-s0">
+      <div class="ob-eyebrow">GETTING STARTED</div>
+      <div class="ob-h">What do you need<br><em>right now?</em></div>
+      <div class="ob-sub">Your answer selects your first protocol. You can change this any time.</div>
+      <div class="ob-cards">
+        <div class="ob-card" data-oc="FOCUS" data-op="SEIJAKU">
+          <div class="ob-card-gl">静</div>
+          <div class="ob-card-t">FOCUS</div>
+          <div class="ob-card-d">I need to concentrate — work, study, or sustained thinking.</div>
+        </div>
+        <div class="ob-card" data-oc="DECOMPRESSION" data-op="AKANE">
+          <div class="ob-card-gl">茜</div>
+          <div class="ob-card-t">DECOMPRESSION</div>
+          <div class="ob-card-d">I've been running hard. I need to release what I'm carrying.</div>
+        </div>
+        <div class="ob-card" data-oc="RESET" data-op="KAZE">
+          <div class="ob-card-gl">風</div>
+          <div class="ob-card-t">RESET</div>
+          <div class="ob-card-d">I'm between things. I need a clean, structural break.</div>
+        </div>
+        <div class="ob-card" data-oc="REFLECTION" data-op="TAKE">
+          <div class="ob-card-gl">竹</div>
+          <div class="ob-card-t">REFLECTION</div>
+          <div class="ob-card-d">I want space to think without being directed anywhere.</div>
+        </div>
+      </div>
+      <div class="ob-nav">
+        <span class="ob-skip" id="ob-skip">SKIP — BROWSE LIBRARY</span>
+        <button class="ob-next" id="ob-n0" disabled>NEXT →</button>
+      </div>
+    </div>
+
+    <!-- Screen 1: How much time? -->
+    <div class="ob-scr" id="ob-s1">
+      <div class="ob-eyebrow">GETTING STARTED</div>
+      <div class="ob-h">How much time<br><em>do you have?</em></div>
+      <div class="ob-sub">The session ends when the time ends. Time is structure — not suggestion.</div>
+      <div class="ob-time-grid">
+        <div class="ob-tb" data-m="10"><span class="ob-tnum">10</span><span class="ob-tunit">MIN</span><span class="ob-tdesc">Quick reset</span></div>
+        <div class="ob-tb" data-m="20"><span class="ob-tnum">20</span><span class="ob-tunit">MIN</span><span class="ob-tdesc">Standard</span></div>
+        <div class="ob-tb" data-m="30"><span class="ob-tnum">30</span><span class="ob-tunit">MIN</span><span class="ob-tdesc">Deeper practice</span></div>
+        <div class="ob-tb" data-m="45"><span class="ob-tnum">45+</span><span class="ob-tunit">MIN</span><span class="ob-tdesc">Full dissolution</span></div>
+      </div>
+      <div class="ob-nav">
+        <span class="ob-back" id="ob-bk1">← BACK</span>
+        <button class="ob-next" id="ob-n1" disabled>NEXT →</button>
+      </div>
+    </div>
+
+    <!-- Screen 2: Your starting protocol -->
+    <div class="ob-scr" id="ob-s2">
+      <div class="ob-eyebrow">YOUR STARTING PROTOCOL</div>
+      <div class="ob-h">Start <em>here.</em></div>
+      <div class="ob-sub">Matched to your context. Adjust everything before beginning.</div>
+      <div class="ob-rec">
+        <div class="ob-rec-k" id="ob-rk">—</div>
+        <div class="ob-rec-b">
+          <div class="ob-rec-ey" id="ob-rey">—</div>
+          <div class="ob-rec-n" id="ob-rn">—</div>
+          <div class="ob-rec-w" id="ob-rw">—</div>
+          <div class="ob-rec-m"><div class="outcome-badge" id="ob-ro">—</div><div class="ob-rec-d" id="ob-rd">—</div></div>
+        </div>
+      </div>
+      <div class="ob-btn-row">
+        <button class="ob-btn-pri" id="ob-begin"><span>BEGIN THIS SESSION</span></button>
+        <button class="ob-btn-sec" id="ob-explore">EXPLORE LIBRARY</button>
+      </div>
+    </div>
   </div>
 </div>
 
