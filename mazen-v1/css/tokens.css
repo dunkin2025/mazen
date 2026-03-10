@@ -1,0 +1,22 @@
+/* ═══════════════════════════════════════════════════════
+   MA-ZEN — DESIGN TOKENS
+   Single source of truth for all visual properties
+═══════════════════════════════════════════════════════ */
+:root {
+  --void:#06080F; --navy:#0A0F1A; --signal:#0E1E30; --deep:#121C2E;
+  --gold:#C4944A; --gold-dim:#8A6432; --gold-glow:rgba(196,148,74,0.10); --gold-line:rgba(196,148,74,0.18);
+  --type:#F0EDE8; --type-dim:#A09A92; --type-faint:#4A4540;
+  --border:rgba(196,148,74,0.14);
+  --focus:#C4944A; --decomp:#7BA8C0; --reset:#C09878; --trans:#8BA87B; --refl:#9E8BBB;
+  --outcome-focus:#C4944A; --outcome-focus-glow:rgba(196,148,74,0.10);
+  --outcome-decomp:#7BA8C0; --outcome-decomp-glow:rgba(123,168,192,0.10);
+  --outcome-reset:#C09878; --outcome-reset-glow:rgba(192,152,120,0.10);
+  --outcome-transition:#8BA87B; --outcome-transition-glow:rgba(139,168,123,0.10);
+  --outcome-reflection:#9E8BBB; --outcome-reflection-glow:rgba(158,139,187,0.10);
+  --font-d:'Cormorant Garamond',Georgia,serif;
+  --font-m:'DM Mono','Courier New',monospace;
+  --font-j:'Shippori Mincho',serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --dur-fast:180ms; --dur-mid:280ms; --dur-slow:520ms;
+  --z-nav:100; --z-overlay:200; --z-modal:300; --z-toast:400; --z-grain:9999;
+}

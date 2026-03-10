@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library — MA-ZEN</title>
+
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<style>
+/* Search + Discovery — Module 12 */
+.library-header {
+  padding: var(--gap-xl) 0 var(--gap-lg);
+  border-bottom: 1px solid var(--signal-mute);
+  margin-bottom: var(--gap-xl);
+}
+
+/* Search box */
+.search-wrap {
+  position: relative;
+  margin-bottom: var(--gap-lg);
+}
+.search-input {
+  width: 100%;
+  background: var(--void-2);
+  border: 1px solid var(--signal-mute);
+  border-radius: var(--radius);
+  padding: 14px 48px 14px var(--gap-lg);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--signal);
+  transition: border-color var(--transition);
+  letter-spacing: 0.02em;
+}
+.search-input:focus { border-color: var(--gold-dim); outline: none; }
+.search-input::placeholder { color: var(--signal-mute); }
+.search-icon {
+  position: absolute;
+  right: var(--gap);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--signal-mute);
+  font-size: 1rem;
+  pointer-events: none;
+}
+.search-clear {
+  position: absolute;
+  right: var(--gap);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--signal-mute);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  display: none;
+}
+.search-clear:hover { color: var(--signal); }
+
+/* Suggestions dropdown */
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--void-2);
+  border: 1px solid var(--signal-mute);
+  border-radius: var(--radius);
+  overflow: hidden;
+  z-index: 50;
+  display: none;
+}
+.suggestions.visible { display: block; }
+.suggestion-item {
+  padding: 10px var(--gap-lg);
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--signal-dim);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+.suggestion-item:hover, .suggestion-item.focused { background: var(--void-3); color: var(--signal); }
+.suggestion-type { font-size: 0.56rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--signal-mute); margin-left: auto; }
+.recent-icon { color: var(--signal-mute); font-size: 0.7rem; }
+
+/* Facet filter bar */
+.facet-bar {
+  display: flex;
+  gap: var(--gap-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--gap-lg);
+  align-items: center;
+}
+.facet-group {
+  display: flex;
+  gap: 3px;
+  background: var(--void-2);
+  border: 1px solid var(--signal-mute);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+}
+.facet-label { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--signal-mute); padding: 4px 6px; align-self: center; }
+.facet-btn {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--signal-mute);
+  padding: 4px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.facet-btn:hover { color: var(--signal); background: var(--void-3); }
+.facet-btn.active { color: var(--gold); background: var(--gold-trace); }
+
+/* Result count + sort */
+.result-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--gap);
+  padding-bottom: var(--gap-sm);
+  border-bottom: 1px solid var(--void-3);
+}
+.result-count { font-size: 0.62rem; letter-spacing: 0.1em; color: var(--signal-mute); }
+.sort-select {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--signal-dim);
+  background: transparent;
+  border: 1px solid var(--signal-mute);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.sort-select option { background: var(--void-2); color: var(--signal); }
+
+/* Results grid */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--gap);
+}
+
+/* Protocol result card */
+.result-card {
+  background: var(--void-2);
+  border: 1px solid var(--signal-mute);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  position: relative;
+  overflow: hidden;
+}
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  opacity: 0;
+  transition: var(--transition);
+}
+.result-card:hover { border-color: var(--gold-dim); background: var(--void-3); transform: translateY(-1px); }
+.result-card:hover::before { opacity: 1; }
+
+.rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--gap-sm); }
+.rc-title-jp { font-family: var(--font-jp); font-size: 1.3rem; color: var(--signal); letter-spacing: 0.06em; }
+.rc-roman { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-top: 2px; }
+.rc-subtitle { font-family: var(--font-display); font-size: 0.85rem; font-style: italic; color: var(--signal-dim); }
+.rc-intent { font-size: 0.72rem; color: var(--signal-mute); line-height: 1.5; margin-top: 2px; }
+.rc-meta { display: flex; gap: var(--gap-sm); flex-wrap: wrap; align-items: center; margin-top: auto; padding-top: var(--gap-sm); border-top: 1px solid var(--void-3); }
+.rc-density { display: flex; align-items: center; gap: 4px; }
+.rc-density-bar { width: 32px; height: 2px; background: var(--signal-mute); border-radius: 1px; }
+.rc-density-fill { height: 100%; background: var(--gold); border-radius: 1px; }
+
+.fav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  flex-shrink: 0;
+}
+.fav-dot.filled { background: var(--gold); }
+
+/* Empty state */
+.no-results {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--gap-2xl) 0;
+  text-align: center;
+  gap: var(--gap);
+}
+.no-results-jp { font-family: var(--font-jp); font-size: 3rem; color: var(--signal-mute); opacity: 0.4; }
+.no-results-title { font-family: var(--font-display); font-size: 1.1rem; font-style: italic; color: var(--signal-dim); }
+.no-results-body { font-size: 0.72rem; color: var(--signal-mute); }
+.suggestions-recommend { display: flex; flex-wrap: wrap; gap: var(--gap-sm); justify-content: center; margin-top: var(--gap-sm); }
+
+/* Recent searches row */
+.recents-row { display: flex; gap: var(--gap-sm); flex-wrap: wrap; align-items: center; margin-bottom: var(--gap-lg); }
+.recents-label { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--signal-mute); }
+</style>
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="search">
+<nav class="topbar">
+  <span class="topbar-brand">間</span>
+  <div class="topbar-nav">
+    <span class="topbar-trial" id="trialBadge">▸ FREE TRIAL</span>
+    <a href="app.html" class="topbar-link">HOME</a>
+    <a href="search.html" class="topbar-link active">LIBRARY</a>
+    <a href="history.html" class="topbar-link">HISTORY</a>
+    <a href="favorites.html" class="topbar-link">SAVED</a>
+    <button class="topbar-user standby" id="oauthBtn">◎ STANDBY</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="container-wide">
+
+    <div class="library-header">
+      <div class="label" style="margin-bottom:8px">Search + Discovery</div>
+      <div class="display-title" style="font-size:2rem">Protocol Library</div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-wrap">
+      <input type="text" id="searchInput" class="search-input" aria-label="Search protocols"
+        placeholder="Search protocols…" autocomplete="off"
+        oninput="onSearchInput()" onkeydown="onSearchKey(event)" onfocus="showSuggestions()">
+      <span class="search-icon" id="searchIcon">◎</span>
+      <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+      <div class="suggestions" id="suggestionsBox"></div>
+    </div>
+
+    <!-- Recent searches -->
+    <div class="recents-row" id="recentsRow" style="display:none">
+      <span class="recents-label">Recent:</span>
+      <div id="recentsList"></div>
+    </div>
+
+    <!-- Facet filters -->
+    <div class="facet-bar">
+      <span class="facet-label">Season</span>
+      <div class="facet-group">
+        <button class="facet-btn active" onclick="setFacet('season',null)" id="fSeason-null">ALL</button>
+        <button class="facet-btn" onclick="setFacet('season','winter')" id="fSeason-winter">WINTER</button>
+        <button class="facet-btn" onclick="setFacet('season','spring')" id="fSeason-spring">SPRING</button>
+        <button class="facet-btn" onclick="setFacet('season','summer')" id="fSeason-summer">SUMMER</button>
+        <button class="facet-btn" onclick="setFacet('season','autumn')" id="fSeason-autumn">AUTUMN</button>
+        <button class="facet-btn" onclick="setFacet('season','experimental')" id="fSeason-experimental">EXP.</button>
+      </div>
+      <span class="facet-label">Duration</span>
+      <div class="facet-group">
+        <button class="facet-btn active" onclick="setFacet('duration',null)" id="fDuration-null">ANY</button>
+        <button class="facet-btn" onclick="setFacet('duration','short')" id="fDuration-short">&lt;20M</button>
+        <button class="facet-btn" onclick="setFacet('duration','medium')" id="fDuration-medium">20–30M</button>
+        <button class="facet-btn" onclick="setFacet('duration','long')" id="fDuration-long">&gt;30M</button>
+      </div>
+      <span class="facet-label">Density</span>
+      <div class="facet-group">
+        <button class="facet-btn active" onclick="setFacet('density',null)" id="fDensity-null">ANY</button>
+        <button class="facet-btn" onclick="setFacet('density','low')" id="fDensity-low">LOW</button>
+        <button class="facet-btn" onclick="setFacet('density','medium')" id="fDensity-medium">MED</button>
+        <button class="facet-btn" onclick="setFacet('density','high')" id="fDensity-high">HIGH</button>
+      </div>
+    </div>
+
+    <!-- Result header -->
+    <div class="result-bar">
+      <label class="sr-only" for="sortSelect">Sort search results</label>
+      <span class="result-count" id="resultCount">— protocols</span>
+      <select class="sort-select" id="sortSelect" aria-label="Sort search results" onchange="doSearch()">
+        <option value="default">Sort: Default</option>
+        <option value="duration-asc">Duration ↑</option>
+        <option value="duration-desc">Duration ↓</option>
+        <option value="density-asc">Density ↑</option>
+        <option value="density-desc">Density ↓</option>
+      </select>
+    </div>
+
+    <!-- Results -->
+    <div class="results-grid" id="resultsGrid"></div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container"><div class="toast" id="toast"></div></div>
+
+<script src="js/db.js?v=20260309p6"></script>
+<script>
+// Search + Discovery — Module 12
+const RECENTS_KEY = 'mz:recent-searches';
+let filters = { season: null, duration: null, density: null, tag: null };
+let lastQuery = '';
+let suggestIdx = -1;
+
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function getRecents() {
+  try { return JSON.parse(localStorage.getItem(RECENTS_KEY) || '[]'); } catch { return []; }
+}
+function saveRecent(q) {
+  if (!q || q.length < 2) return;
+  const arr = getRecents().filter(r => r !== q);
+  arr.unshift(q);
+  localStorage.setItem(RECENTS_KEY, JSON.stringify(arr.slice(0, 8)));
+}
+
+function renderTrialBadge() {
+  const user = MAZEN_DB.getUser();
+  if (user.tier !== 'free_trial') document.getElementById('trialBadge').style.display = 'none';
+  else document.getElementById('trialBadge').textContent = `▸ ${user.trial_days_remaining} DAY FREE TRIAL`;
+}
+
+function onSearchInput() {
+  const q = document.getElementById('searchInput').value;
+  const clearBtn = document.getElementById('searchClear');
+  const icon = document.getElementById('searchIcon');
+  clearBtn.style.display = q ? 'block' : 'none';
+  icon.style.display = q ? 'none' : 'block';
+  updateSuggestions(q);
+  doSearch();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchClear').style.display = 'none';
+  document.getElementById('searchIcon').style.display = 'block';
+  hideSuggestions();
+  doSearch();
+}
+
+function onSearchKey(e) {
+  const box = document.getElementById('suggestionsBox');
+  const items = box.querySelectorAll('.suggestion-item');
+  if (e.key === 'ArrowDown') { suggestIdx = Math.min(suggestIdx+1, items.length-1); highlightSuggestion(items); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { suggestIdx = Math.max(suggestIdx-1, -1); highlightSuggestion(items); e.preventDefault(); }
+  else if (e.key === 'Enter') {
+    if (suggestIdx >= 0 && items[suggestIdx]) { items[suggestIdx].click(); }
+    else { const q = document.getElementById('searchInput').value.trim(); if(q) saveRecent(q); hideSuggestions(); doSearch(); }
+  }
+  else if (e.key === 'Escape') { hideSuggestions(); }
+}
+
+function highlightSuggestion(items) {
+  items.forEach((el, i) => el.classList.toggle('focused', i === suggestIdx));
+}
+
+function showSuggestions() {
+  const q = document.getElementById('searchInput').value;
+  updateSuggestions(q);
+}
+
+function updateSuggestions(q) {
+  const box = document.getElementById('suggestionsBox');
+  suggestIdx = -1;
+
+  if (!q || q.length === 0) {
+    // Show recent searches
+    const recents = getRecents();
+    if (recents.length === 0) { hideSuggestions(); return; }
+    box.innerHTML = recents.slice(0,6).map(r => `
+      <div class="suggestion-item" onclick="applySearch('${r}')">
+        <span class="recent-icon">↺</span> ${r}
+        <span class="suggestion-type">Recent</span>
+      </div>
+    `).join('');
+    box.classList.add('visible');
+    return;
+  }
+
+  // Live suggestions from protocols
+  const protocols = MAZEN_DB.getProtocols();
+  const ql = q.toLowerCase();
+  const matches = protocols.filter(p =>
+    p.romanji.toLowerCase().includes(ql) ||
+    p.subtitle.toLowerCase().includes(ql) ||
+    p.tags.some(t => t.includes(ql))
+  ).slice(0, 6);
+
+  if (matches.length === 0) { hideSuggestions(); return; }
+
+  box.innerHTML = matches.map(p => `
+    <div class="suggestion-item" onclick="applySearch('${p.romanji}')">
+      <span style="font-family:var(--font-jp);font-size:0.9rem">${p.title}</span>
+      ${p.romanji}
+      <span class="suggestion-type">${p.season}</span>
+    </div>
+  `).join('');
+  box.classList.add('visible');
+}
+
+function hideSuggestions() {
+  document.getElementById('suggestionsBox').classList.remove('visible');
+}
+
+function applySearch(q) {
+  document.getElementById('searchInput').value = q;
+  document.getElementById('searchClear').style.display = 'block';
+  document.getElementById('searchIcon').style.display = 'none';
+  saveRecent(q);
+  hideSuggestions();
+  doSearch();
+}
+
+function setFacet(type, value) {
+  filters[type] = value;
+  // Update button states
+  const facetIds = {
+    season: [null,'winter','spring','summer','autumn','experimental'],
+    duration: [null,'short','medium','long'],
+    density: [null,'low','medium','high']
+  };
+  (facetIds[type] || []).forEach(v => {
+    const btn = document.getElementById(`f${type.charAt(0).toUpperCase()+type.slice(1)}-${v}`);
+    if (btn) btn.className = `facet-btn${filters[type] === v ? ' active' : ''}`;
+  });
+  doSearch();
+}
+
+function applyTag(tag) {
+  filters.tag = filters.tag === tag ? null : tag;
+  doSearch();
+}
+
+function sortResults(results) {
+  const sort = document.getElementById('sortSelect').value;
+  const arr = [...results];
+  if (sort === 'duration-asc')  return arr.sort((a,b) => a.duration_min - b.duration_min);
+  if (sort === 'duration-desc') return arr.sort((a,b) => b.duration_min - a.duration_min);
+  if (sort === 'density-asc')   return arr.sort((a,b) => a.silence_density - b.silence_density);
+  if (sort === 'density-desc')  return arr.sort((a,b) => b.silence_density - a.silence_density);
+  return arr;
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value;
+  let results = MAZEN_DB.search(q, filters);
+  results = sortResults(results);
+
+  const grid = document.getElementById('resultsGrid');
+  document.getElementById('resultCount').textContent = `${results.length} protocol${results.length !== 1 ? 's' : ''}`;
+  renderRecents();
+
+  if (results.length === 0) {
+    grid.innerHTML = renderNoResults(q);
+    return;
+  }
+
+  grid.innerHTML = results.map(p => renderResultCard(p)).join('');
+}
+
+function renderResultCard(p) {
+  const fav = MAZEN_DB.isFavorite(p.id);
+  const sessions = MAZEN_DB.getSessionsByProtocol(p.id).length;
+  return `
+    <div class="result-card" onclick="window.location.href='protocol.html?id=${p.id}'">
+      <div class="rc-top">
+        <div>
+          <div class="rc-roman">${p.id} · ${p.romanji}</div>
+          <div class="rc-title-jp">${p.title}</div>
+        </div>
+        <div class="fav-dot ${fav?'filled':''}" title="${fav?'Favorited':''}" 
+          onclick="event.stopPropagation();toggleFav('${p.id}',this)"></div>
+      </div>
+      <div class="rc-subtitle">${p.subtitle}</div>
+      <div class="rc-intent">${p.intent}</div>
+      <div class="rc-meta">
+        <span class="season-tag season-${p.season}">${p.season.toUpperCase()}</span>
+        <span class="card-duration">${p.duration_min}min</span>
+        <div class="rc-density" title="Silence density ${Math.round(p.silence_density*100)}%">
+          <div class="rc-density-bar"><div class="rc-density-fill" style="width:${p.silence_density*100}%"></div></div>
+          <span style="font-size:0.58rem;color:var(--signal-mute)">${Math.round(p.silence_density*100)}%</span>
+        </div>
+        ${sessions > 0 ? `<span style="font-size:0.58rem;color:var(--signal-mute)">×${sessions}</span>` : ''}
+        ${p.tags.map(t => `<span class="tag" style="cursor:pointer" onclick="event.stopPropagation();applyTag('${t}')">${t}</span>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function toggleFav(id, dotEl) {
+  const added = MAZEN_DB.toggleFavorite(id);
+  dotEl.className = `fav-dot ${added ? 'filled' : ''}`;
+  toast(added ? 'Added to favorites' : 'Removed from favorites', added ? 'gold' : '');
+}
+
+function renderNoResults(q) {
+  const protocols = MAZEN_DB.getProtocols();
+  const suggestions = protocols.slice(0, 3);
+  return `
+    <div class="no-results">
+      <div class="no-results-jp">無</div>
+      <div class="no-results-title">No protocols found${q ? ` for "${q}"` : ''}</div>
+      <div class="no-results-body">Try different search terms, or explore by season or duration.</div>
+      <div class="suggestions-recommend">
+        ${suggestions.map(p => `<button class="tag" onclick="applySearch('${p.romanji}')">${p.romanji}</button>`).join('')}
+        <button class="tag" onclick="clearSearch()">CLEAR FILTERS</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderRecents() {
+  const recents = getRecents();
+  const row = document.getElementById('recentsRow');
+  const list = document.getElementById('recentsList');
+  if (recents.length === 0) { row.style.display = 'none'; return; }
+  row.style.display = 'flex';
+  list.innerHTML = recents.slice(0,5).map(r => `
+    <button class="tag" onclick="applySearch('${r}')">${r}</button>
+  `).join('');
+}
+
+// Close suggestions on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrap')) hideSuggestions();
+});
+
+document.getElementById('oauthBtn').addEventListener('click', function() {
+  toast('Opening simulated sign-in…');
+});
+
+async function init() {
+  renderTrialBadge();
+  await MAZEN_DB.loadProtocols();
+  doSearch();
+  renderRecents();
+}
+
+init();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin CMS — MA-ZEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<link rel="stylesheet" href="css/modules.css?v=20260309p6">
+<style>
+.admin-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+.admin-tab { padding: 10px 20px; font-family: var(--font-mono); font-size: .6rem; letter-spacing: .14em; color: var(--type-faint); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; transition: all .2s; }
+.admin-tab:hover { color: var(--type-dim); }
+.admin-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.admin-panel { display: none; }
+.admin-panel.active { display: block; }
+</style>
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="admin" data-page="admin">
+
+<nav style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(6,8,15,.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100">
+  <span style="font-family:var(--font-display);font-size:1.1rem;letter-spacing:.2em;color:var(--type-faint)">MA-ZEN <span style="font-family:var(--font-mono);font-size:.5rem;color:var(--gold);letter-spacing:.2em">ADMIN</span></span>
+  <a href="app.html" style="font-size:.58rem;letter-spacing:.14em;color:var(--type-faint)">← BACK TO APP</a>
+</nav>
+
+<div class="container" style="padding-top:40px;padding-bottom:64px;">
+
+  <div class="admin-tabs">
+    <div class="admin-tab active" data-panel="cms">CMS / PUBLISHING</div>
+    <div class="admin-tab" data-panel="qa">QUALITY CHECKS</div>
+    <div class="admin-tab" data-panel="cdn">AUDIO DELIVERY</div>
+  </div>
+
+  <div class="admin-panel active" id="panel-cms">
+    <div id="admin-cms-container"></div>
+  </div>
+
+  <div class="admin-panel" id="panel-qa">
+    <div id="admin-qa-container"></div>
+  </div>
+
+  <div class="admin-panel" id="panel-cdn">
+    <div id="admin-cdn-container"></div>
+  </div>
+
+</div>
+
+<script src="js/db.js?v=20260309p6"></script>
+<script src="js/qa.js?v=20260309p6"></script>
+<script src="js/admin.js?v=20260309p6"></script>
+<script src="js/audio-delivery.js?v=20260309p6"></script>
+<script>
+(function() {
+  // ── TAB SWITCHING ──
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+
+      // Lazy-render panels on first open
+      if (tab.dataset.panel === 'qa' && !document.getElementById('panel-qa').dataset.rendered) {
+        document.getElementById('panel-qa').dataset.rendered = '1';
+        QAModule.renderPanel('admin-qa-container', MAZEN_DB.getProtocols());
+      }
+      if (tab.dataset.panel === 'cdn' && !document.getElementById('panel-cdn').dataset.rendered) {
+        document.getElementById('panel-cdn').dataset.rendered = '1';
+        AudioDeliveryModule.renderStatusPanel('admin-cdn-container');
+      }
+    });
+  });
+
+  // ── INITIAL RENDER ──
+  AdminModule.renderDashboard('admin-cms-container');
+})();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+/* MA-ZEN — catalog.css  (catalog layout, filter sidebar)
+   Requires: tokens.css
+------------------------------------------------------- */
+
+/* ── CATALOG LAYOUT ── */
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 52px);
+}
+.catalog-sidebar {
+  border-right: 1px solid var(--border);
+  padding: 28px 20px;
+  background: var(--navy, #0A0F1A);
+  position: sticky; top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+}
+.catalog-main { padding: 28px 32px; }
+
+/* ── CATALOG HEADER ── */
+.catalog-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 28px;
+}
+.catalog-title {
+  font-family: var(--font-display, 'Cormorant Garamond', serif);
+  font-size: 1.8rem; font-weight: 300; letter-spacing: 0.04em;
+}
+.catalog-title em { font-style: italic; color: var(--gold); }
+.catalog-count {
+  font-size: 0.62rem; letter-spacing: 0.1em;
+  color: var(--type-faint);
+}
+
+/* ── FILTER CONTROLS ── */
+.filter-section { margin-bottom: 24px; }
+.filter-section-label {
+  font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--type-faint); margin-bottom: 10px; display: block;
+}
+.filter-option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.2s; font-size: 0.63rem; color: var(--type-faint);
+}
+.filter-option:hover { color: var(--type-dim); border-left-color: var(--border); }
+.filter-option.active { color: var(--gold); border-left-color: var(--gold); }
+.filter-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--border); flex-shrink: 0;
+  transition: background 0.2s;
+}
+.filter-option.active .filter-dot { background: var(--gold); }
+
+/* Outcome filter dots */
+.filter-option[data-val="FOCUS"] .filter-dot         { background: var(--outcome-focus); }
+.filter-option[data-val="DECOMPRESSION"] .filter-dot { background: var(--outcome-decomp); }
+.filter-option[data-val="RESET"] .filter-dot         { background: var(--outcome-reset); }
+.filter-option[data-val="TRANSITION"] .filter-dot    { background: var(--outcome-transition); }
+.filter-option[data-val="REFLECTION"] .filter-dot    { background: var(--outcome-reflection); }
+
+.filter-clear {
+  font-size: 0.54rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--type-faint); cursor: pointer; transition: color 0.2s;
+  padding: 4px 0;
+}
+.filter-clear:hover { color: var(--gold); }
+
+/* ── CATALOG METADATA (in drawer) ── */
+.catalog-meta-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.catalog-meta-label {
+  font-size: 0.52rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--type-faint); flex-shrink: 0; width: 80px;
+}
+.catalog-meta-val { font-size: 0.63rem; color: var(--type-dim); }
+.catalog-dur-option {
+  font-size: 0.56rem; letter-spacing: 0.08em;
+  padding: 2px 8px; background: var(--signal, #0E1E30);
+  color: var(--type-faint); border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* ── SORT ── */
+.catalog-sort-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.catalog-sort-label { font-size: 0.56rem; letter-spacing: 0.14em; color: var(--type-faint); }
+.catalog-sort-select {
+  font-family: var(--font-mono, 'DM Mono', monospace); font-size: 0.58rem;
+  background: var(--navy, #0A0F1A); border: 1px solid var(--border);
+  color: var(--type-faint); padding: 4px 8px; cursor: pointer; outline: none;
+}
+
+@media (max-width: 760px) {
+  .catalog-layout { grid-template-columns: 1fr; }
+  .catalog-sidebar {
+    position: static; height: auto;
+    border-right: none; border-bottom: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 16px; padding: 16px;
+  }
+  .filter-section { margin-bottom: 0; min-width: 160px; }
+}

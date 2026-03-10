@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player — MA-ZEN</title>
+
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<style>
+/* Player — Module 9: Ritual Mode */
+body {
+  background: var(--void);
+  overflow: hidden;
+}
+
+.player-wrap {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Background grain */
+.player-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Top exit bar */
+.player-topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--gap-lg) var(--gap-xl);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+.player-wrap:hover .player-topbar,
+.player-wrap.controls-visible .player-topbar { opacity: 1; }
+
+.player-exit {
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--signal-dim);
+  border: 1px solid var(--signal-mute);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.player-exit:hover { color: var(--signal); border-color: var(--signal-dim); }
+
+.player-proto-id {
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--signal-mute);
+  text-transform: uppercase;
+}
+
+/* Main center stage */
+.player-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  padding: 80px var(--gap-xl) 120px;
+  cursor: pointer;
+}
+
+.ritual-kanji {
+  font-family: var(--font-jp);
+  font-size: clamp(4rem, 15vw, 10rem);
+  color: var(--signal);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  transition: opacity 1.2s ease, transform 1.2s ease;
+  animation: breathe 8s ease-in-out infinite;
+  text-align: center;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.ritual-phase {
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: var(--gap-lg);
+  transition: opacity var(--transition-slow);
+}
+
+.ritual-cue {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  font-style: italic;
+  color: var(--signal-dim);
+  max-width: 520px;
+  text-align: center;
+  line-height: 1.7;
+  margin-top: var(--gap);
+  transition: opacity 0.8s ease;
+}
+
+/* Time display */
+.ritual-time {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--signal-mute);
+  margin-top: var(--gap-xl);
+}
+
+/* Phase progress dots */
+.phase-dots {
+  display: flex;
+  gap: var(--gap-sm);
+  margin-top: var(--gap);
+}
+.phase-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid var(--signal-mute);
+  background: transparent;
+  transition: all var(--transition);
+}
+.phase-dot.done { background: var(--signal-mute); border-color: var(--signal-mute); }
+.phase-dot.active { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 6px var(--gold-dim); }
+
+/* Bottom timeline + controls */
+.player-footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 20;
+  padding: var(--gap-lg) var(--gap-xl);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+.player-wrap:hover .player-footer,
+.player-wrap.controls-visible .player-footer { opacity: 1; }
+
+/* Session progress bar */
+.session-progress {
+  margin-bottom: var(--gap);
+}
+.progress-track {
+  height: 2px;
+  background: var(--signal-mute);
+  border-radius: 1px;
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  border-radius: 1px;
+  transition: width 1s linear;
+  position: relative;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: -2px;
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+/* Phase markers on timeline */
+.phase-markers {
+  position: absolute;
+  top: -4px;
+  left: 0; right: 0; height: 10px;
+  pointer-events: none;
+}
+.phase-marker {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--signal-mute);
+}
+
+/* Controls row */
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-xl);
+}
+.ctrl-btn {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal-dim);
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+}
+.ctrl-btn:hover { color: var(--signal); }
+.ctrl-btn.main {
+  font-size: 0.72rem;
+  color: var(--signal);
+  border: 1px solid var(--signal-mute);
+  padding: 8px 24px;
+  min-width: 100px;
+  text-align: center;
+}
+.ctrl-btn.main:hover { border-color: var(--signal-dim); background: var(--void-3); }
+
+/* End screen */
+.end-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: var(--void);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap-xl);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+}
+.end-screen.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.end-kanji { font-family: var(--font-jp); font-size: 5rem; color: var(--gold); margin-bottom: var(--gap-lg); opacity: 0.6; }
+.end-title { font-family: var(--font-display); font-size: 2rem; font-style: italic; color: var(--signal); margin-bottom: var(--gap); }
+.end-meta { font-size: 0.68rem; letter-spacing: 0.1em; color: var(--signal-dim); margin-bottom: var(--gap-xl); }
+.end-stats { display: flex; gap: var(--gap-xl); margin-bottom: var(--gap-xl); }
+.end-stat { text-align: center; }
+.end-stat-val { font-family: var(--font-display); font-size: 2rem; color: var(--gold); }
+.end-stat-label { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--signal-mute); margin-top: 4px; }
+.end-actions { display: flex; gap: var(--gap); flex-wrap: wrap; justify-content: center; }
+
+/* State: paused */
+.player-wrap.paused .ritual-kanji { opacity: 0.3; animation: none; }
+.player-wrap.paused .ritual-cue { opacity: 0.4; }
+</style>
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="player">
+
+<div class="player-wrap" id="playerWrap" tabindex="0">
+
+  <!-- Top bar -->
+  <div class="player-topbar">
+    <button class="player-exit" onclick="exitPlayer()">← EXIT</button>
+    <span class="player-proto-id" id="topProtoId">—</span>
+    <span style="font-size:0.58rem;color:var(--signal-mute)" id="topPhaseInfo">—</span>
+  </div>
+
+  <!-- Main stage -->
+  <div class="player-stage" onclick="toggleControls()" id="playerStage">
+    <div class="ritual-kanji" id="ritualKanji">間</div>
+    <div class="ritual-phase" id="ritualPhase">—</div>
+    <div class="ritual-cue" id="ritualCue">—</div>
+    <div class="ritual-time" id="ritualTime">00:00 · 00:00</div>
+    <div class="phase-dots" id="phaseDots"></div>
+  </div>
+
+  <!-- Footer controls -->
+  <div class="player-footer">
+    <div class="session-progress">
+      <div class="progress-track" id="progressTrack">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        <div class="phase-markers" id="phaseMarkers"></div>
+      </div>
+    </div>
+    <div class="controls-row">
+      <button class="ctrl-btn" onclick="prevPhase()">← PREV</button>
+      <button class="ctrl-btn main" id="playPauseBtn" onclick="togglePlay()">PAUSE</button>
+      <button class="ctrl-btn" onclick="nextPhase()">NEXT →</button>
+    </div>
+  </div>
+
+  <!-- End screen -->
+  <div class="end-screen" id="endScreen">
+    <div class="end-kanji">了</div>
+    <div class="end-title">Session Complete</div>
+    <div class="end-meta" id="endMeta">—</div>
+    <div class="end-stats" id="endStats"></div>
+    <div class="end-actions">
+      <a href="history.html" class="btn btn-ghost">VIEW HISTORY</a>
+      <button class="btn btn-outline-gold" onclick="restartSession()">RUN AGAIN</button>
+      <a href="search.html" class="btn btn-ghost">BROWSE LIBRARY</a>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/db.js?v=20260309p6"></script>
+<script>
+// Player — Module 9: Ritual Mode
+let protocol = null;
+let sessionId = null;
+let currentPhaseIdx = 0;
+let elapsed = 0;        // seconds within current phase
+let totalElapsed = 0;   // session-wide seconds
+let totalDuration = 0;  // total session seconds
+let isPlaying = true;
+let controlsVisible = false;
+let controlsTimer = null;
+let ticker = null;
+
+function fmtTime(sec) {
+  const m = Math.floor(Math.abs(sec)/60).toString().padStart(2,'0');
+  const s = (Math.abs(sec)%60).toString().padStart(2,'0');
+  return `${m}:${s}`;
+}
+
+function params() {
+  return new URLSearchParams(window.location.search);
+}
+
+async function init() {
+  await MAZEN_DB.loadProtocols();
+  const id = params().get('id') || 'fuyugare';
+  sessionId = params().get('sess') || `sess-${Date.now()}`;
+  protocol = MAZEN_DB.getProtocolById(id);
+
+  if (!protocol) {
+    document.getElementById('ritualCue').textContent = 'Protocol not found.';
+    return;
+  }
+
+  // Compute total duration
+  totalDuration = protocol.phases.reduce((sum, ph) => sum + (ph.duration_sec || 0), 0);
+  if (totalDuration === 0) totalDuration = protocol.duration_min * 60;
+
+  // Check for resume
+  const sessions = MAZEN_DB.getSessions();
+  const existing = sessions.find(s => s.id === sessionId);
+  if (existing && !existing.completed) {
+    currentPhaseIdx = existing.phase || 0;
+    totalElapsed = existing.elapsed || 0;
+  }
+
+  // Render static elements
+  document.getElementById('topProtoId').textContent = `${protocol.id} · ${protocol.romanji}`;
+  renderPhaseDots();
+  renderPhaseMarkers();
+
+  // Begin
+  renderPhase(currentPhaseIdx);
+  if (isPlaying) startTicker();
+}
+
+function renderPhaseDots() {
+  document.getElementById('phaseDots').innerHTML = protocol.phases.map((_, i) => `
+    <div class="phase-dot ${i < currentPhaseIdx ? 'done' : i === currentPhaseIdx ? 'active' : ''}" id="dot-${i}"></div>
+  `).join('');
+}
+
+function renderPhaseMarkers() {
+  const container = document.getElementById('phaseMarkers');
+  let acc = 0;
+  container.innerHTML = '';
+  protocol.phases.forEach((ph, i) => {
+    acc += ph.duration_sec || 0;
+    if (i < protocol.phases.length - 1 && totalDuration > 0) {
+      const pct = (acc / totalDuration) * 100;
+      const marker = document.createElement('div');
+      marker.className = 'phase-marker';
+      marker.style.left = pct + '%';
+      container.appendChild(marker);
+    }
+  });
+}
+
+function renderPhase(idx) {
+  if (!protocol || idx >= protocol.phases.length) return;
+  const phase = protocol.phases[idx];
+
+  // Update kanji with animation
+  const kanji = document.getElementById('ritualKanji');
+  kanji.style.opacity = '0';
+  kanji.style.transform = 'scale(0.95)';
+  setTimeout(() => {
+    kanji.textContent = protocol.title;
+    kanji.style.opacity = '';
+    kanji.style.transform = '';
+  }, 400);
+
+  document.getElementById('ritualPhase').textContent = phase.label;
+  document.getElementById('ritualCue').textContent = phase.cue;
+
+  // Update dots
+  protocol.phases.forEach((_, i) => {
+    const dot = document.getElementById(`dot-${i}`);
+    if (!dot) return;
+    dot.className = `phase-dot ${i < idx ? 'done' : i === idx ? 'active' : ''}`;
+  });
+
+  // Phase info in topbar
+  document.getElementById('topPhaseInfo').textContent = `Phase ${idx+1} / ${protocol.phases.length}`;
+}
+
+function startTicker() {
+  clearInterval(ticker);
+  ticker = setInterval(() => {
+    if (!isPlaying) return;
+
+    elapsed++;
+    totalElapsed++;
+
+    // Update time display
+    const remaining = totalDuration - totalElapsed;
+    document.getElementById('ritualTime').textContent =
+      `${fmtTime(totalElapsed)} · ${fmtTime(remaining)} remaining`;
+
+    // Update progress
+    const pct = Math.min(100, (totalElapsed / totalDuration) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // Check phase advance
+    const phase = protocol.phases[currentPhaseIdx];
+    if (phase.duration_sec > 0 && elapsed >= phase.duration_sec) {
+      advancePhase();
+    }
+
+    // Auto-save progress every 10s
+    if (totalElapsed % 10 === 0) saveProgress();
+
+    // Session complete
+    if (totalElapsed >= totalDuration && totalDuration > 0) {
+      completeSession();
+    }
+
+  }, 1000);
+}
+
+function advancePhase() {
+  if (currentPhaseIdx < protocol.phases.length - 1) {
+    currentPhaseIdx++;
+    elapsed = 0;
+    renderPhase(currentPhaseIdx);
+  }
+}
+
+function prevPhase() {
+  if (currentPhaseIdx > 0) {
+    currentPhaseIdx--;
+    elapsed = 0;
+    renderPhase(currentPhaseIdx);
+    showControls();
+  }
+}
+
+function nextPhase() {
+  if (currentPhaseIdx < protocol.phases.length - 1) {
+    advancePhase();
+    showControls();
+  }
+}
+
+function togglePlay() {
+  isPlaying = !isPlaying;
+  const wrap = document.getElementById('playerWrap');
+  const btn = document.getElementById('playPauseBtn');
+  if (isPlaying) {
+    wrap.classList.remove('paused');
+    btn.textContent = 'PAUSE';
+    startTicker();
+  } else {
+    wrap.classList.add('paused');
+    btn.textContent = 'RESUME';
+    clearInterval(ticker);
+    saveProgress();
+  }
+}
+
+function toggleControls() {
+  if (controlsVisible) hideControls();
+  else showControls();
+}
+
+function showControls() {
+  controlsVisible = true;
+  document.getElementById('playerWrap').classList.add('controls-visible');
+  clearTimeout(controlsTimer);
+  controlsTimer = setTimeout(hideControls, 4000);
+}
+
+function hideControls() {
+  controlsVisible = false;
+  document.getElementById('playerWrap').classList.remove('controls-visible');
+}
+
+function saveProgress() {
+  if (!protocol) return;
+  const pct = totalDuration > 0 ? Math.round((totalElapsed / totalDuration) * 100) : 0;
+  MAZEN_DB.saveSession({
+    id: sessionId,
+    protocolId: protocol.id,
+    protocolTitle: protocol.romanji,
+    phase: currentPhaseIdx,
+    elapsed: totalElapsed,
+    progressPct: pct,
+    completed: false
+  });
+}
+
+function completeSession() {
+  clearInterval(ticker);
+  const pct = 100;
+  const durationMin = Math.round(totalElapsed / 60);
+
+  MAZEN_DB.saveSession({
+    id: sessionId,
+    protocolId: protocol.id,
+    protocolTitle: protocol.romanji,
+    phase: protocol.phases.length - 1,
+    elapsed: totalElapsed,
+    progressPct: pct,
+    completed: true,
+    durationMin
+  });
+
+  // Show end screen
+  const endScreen = document.getElementById('endScreen');
+  document.getElementById('endMeta').textContent =
+    `${protocol.romanji} · ${durationMin} minutes · ${protocol.phases.length} phases`;
+
+  const streak = MAZEN_DB.getStreak();
+  document.getElementById('endStats').innerHTML = `
+    <div class="end-stat">
+      <div class="end-stat-val">${durationMin}</div>
+      <div class="end-stat-label">Minutes</div>
+    </div>
+    <div class="end-stat">
+      <div class="end-stat-val">${protocol.phases.length}</div>
+      <div class="end-stat-label">Phases</div>
+    </div>
+    <div class="end-stat">
+      <div class="end-stat-val">${streak.current}</div>
+      <div class="end-stat-label">Day Streak</div>
+    </div>
+  `;
+
+  setTimeout(() => endScreen.classList.add('visible'), 800);
+}
+
+function exitPlayer() {
+  saveProgress();
+  const params = new URLSearchParams(location.search); const pid = params.get('id'); window.location.href = pid ? ('protocol.html?id=' + encodeURIComponent(pid)) : 'app.html';
+}
+
+function restartSession() {
+  document.getElementById('endScreen').classList.remove('visible');
+  currentPhaseIdx = 0;
+  elapsed = 0;
+  totalElapsed = 0;
+  isPlaying = true;
+  sessionId = `sess-${Date.now()}`;
+  document.getElementById('playerWrap').classList.remove('paused');
+  document.getElementById('playPauseBtn').textContent = 'PAUSE';
+  renderPhaseDots();
+  renderPhase(0);
+  startTicker();
+}
+
+// Keyboard shortcuts
+document.getElementById('playerWrap').addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'ArrowRight') nextPhase();
+  if (e.code === 'ArrowLeft') prevPhase();
+  if (e.code === 'Escape') exitPlayer();
+});
+document.getElementById('playerWrap').focus();
+
+init();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

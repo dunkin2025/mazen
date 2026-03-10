@@ -1,0 +1,168 @@
+{
+  "_meta": {
+    "schema_version": "1.0",
+    "description": "MA-ZEN plans, entitlements, and paywall rules. Migration path → PostgreSQL: plans, entitlements, user_entitlements, trial_states tables.",
+    "tables_mapped_to": ["plans", "features", "plan_features", "user_subscriptions", "trial_states"]
+  },
+  "plans": [
+    {
+      "id":              "free",
+      "name":            "PREVIEW",
+      "display_name":    "Free",
+      "price_monthly":   0,
+      "price_annual":    0,
+      "protocol_access": ["SEIJAKU","GAKE","AKANE"],
+      "max_duration_min": 10,
+      "ladder_rungs":    [1,2],
+      "lab_access":      false,
+      "export_access":   false,
+      "b2b_access":      false,
+      "session_history": false,
+      "streak_tracking": false,
+      "cta_label":       "START FREE",
+      "cta_style":       "ghost"
+    },
+    {
+      "id":              "trial",
+      "name":            "TRIAL",
+      "display_name":    "14-Day Trial",
+      "price_monthly":   0,
+      "price_annual":    0,
+      "trial_days":      14,
+      "protocol_access": "all",
+      "max_duration_min": 45,
+      "ladder_rungs":    [1,2,3,4,5,6],
+      "lab_access":      true,
+      "export_access":   false,
+      "b2b_access":      false,
+      "session_history": true,
+      "streak_tracking": true,
+      "cta_label":       "START TRIAL",
+      "cta_style":       "gold"
+    },
+    {
+      "id":              "founding",
+      "name":            "FOUNDING MEMBER",
+      "display_name":    "Founding",
+      "price_monthly":   7.99,
+      "price_annual":    79.99,
+      "seats_total":     100,
+      "seats_remaining": 87,
+      "price_locked":    true,
+      "protocol_access": "all",
+      "max_duration_min": 45,
+      "ladder_rungs":    [1,2,3,4,5,6],
+      "lab_access":      true,
+      "export_access":   true,
+      "b2b_access":      false,
+      "session_history": true,
+      "streak_tracking": true,
+      "cta_label":       "CLAIM FOUNDING SEAT",
+      "cta_style":       "gold"
+    },
+    {
+      "id":              "standard",
+      "name":            "STANDARD",
+      "display_name":    "Standard",
+      "price_monthly":   9.99,
+      "price_annual":    99.99,
+      "protocol_access": "all",
+      "max_duration_min": 45,
+      "ladder_rungs":    [1,2,3,4,5,6],
+      "lab_access":      false,
+      "export_access":   false,
+      "b2b_access":      false,
+      "session_history": true,
+      "streak_tracking": true,
+      "cta_label":       "START 14-DAY TRIAL",
+      "cta_style":       "default"
+    },
+    {
+      "id":              "creator",
+      "name":            "CREATOR",
+      "display_name":    "Creator",
+      "price_monthly":   24.99,
+      "price_annual":    249.99,
+      "protocol_access": "all",
+      "max_duration_min": 45,
+      "ladder_rungs":    [1,2,3,4,5,6],
+      "lab_access":      true,
+      "export_access":   true,
+      "b2b_access":      true,
+      "session_history": true,
+      "streak_tracking": true,
+      "cta_label":       "CONTACT US",
+      "cta_style":       "default"
+    }
+  ],
+  "features": [
+    { "id": "protocol_access",  "label": "Protocol library access",      "category": "core"    },
+    { "id": "max_duration",     "label": "Max session duration",          "category": "core"    },
+    { "id": "ladder_rungs",     "label": "Silence Ladder rungs",          "category": "core"    },
+    { "id": "session_history",  "label": "Session history + streaks",     "category": "data"    },
+    { "id": "lab_access",       "label": "Lab + research tools",          "category": "power"   },
+    { "id": "export_access",    "label": "Export (JSON/CSV)",             "category": "power"   },
+    { "id": "b2b_access",       "label": "THE CASH — B2B branding",       "category": "enterprise"},
+    { "id": "seasonal_drops",   "label": "Early seasonal protocol drops", "category": "benefit" }
+  ],
+  "entitlement_rules": {
+    "free_protocol_ids": ["SEIJAKU","GAKE","AKANE"],
+    "paid_protocol_ids": ["MIYABI","SHINKIRO","KOMOREBI"],
+    "free_max_duration_min": 10,
+    "free_ladder_max_rung":  2,
+    "trial_duration_days":   14,
+    "paywall_trigger_points": [
+      "protocol_click_locked",
+      "duration_select_locked",
+      "ladder_rung_locked",
+      "lab_access_attempt",
+      "export_attempt",
+      "account_panel_upgrade"
+    ]
+  },
+  "paywall_copy": {
+    "protocol_locked": {
+      "title":    "This protocol requires <em>The Floor</em>",
+      "subtitle": "Access all 25 protocols with a 14-day free trial.",
+      "benefits": [
+        "Unlock all 25 governed protocols",
+        "All session durations up to 45 minutes",
+        "Full Silence Ladder (all 6 rungs)",
+        "Session history and streak tracking"
+      ]
+    },
+    "duration_locked": {
+      "title":    "Sessions beyond 10 min require <em>an upgrade</em>",
+      "subtitle": "Start a 14-day free trial to access 20, 30, and 45-minute sessions.",
+      "benefits": [
+        "20-minute standard sessions",
+        "30-minute deeper practice",
+        "45-minute full dissolution sessions"
+      ]
+    },
+    "ladder_locked": {
+      "title":    "Rungs 3–6 are <em>practice-gated</em>",
+      "subtitle": "Higher rungs are unlocked with a paid plan and rung progression.",
+      "benefits": [
+        "Progress through all 6 Silence Ladder rungs",
+        "Rung 6: near-pure silence sessions",
+        "Track rung advancement over time"
+      ]
+    },
+    "lab_locked": {
+      "title":    "The Lab requires <em>a Creator plan</em>",
+      "subtitle": "Research tools, export, and protocol authoring for The Floor creators.",
+      "benefits": [
+        "Export session data as JSON or CSV",
+        "Access adaptive pattern insights",
+        "Protocol authoring tools"
+      ]
+    }
+  },
+  "upgrade_prompts": {
+    "soft_limit_threshold":  3,
+    "max_per_session":       2,
+    "cool_down_hours":       24,
+    "style":                 "tasteful"
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "_meta": {
+    "schema_version": "1.0",
+    "description": "MA-ZEN Stripe payment configuration and billing schema. Migration: real Stripe keys replace REPLACE_ values; webhooks handled server-side (Netlify/Vercel function or dedicated backend).",
+    "tables_mapped_to": [
+      "customers",
+      "subscriptions",
+      "invoices",
+      "payment_methods",
+      "webhook_events"
+    ]
+  },
+  "stripe": {
+    "publishable_key": "REPLACE_WITH_STRIPE_PUBLISHABLE_KEY",
+    "webhook_secret": "REPLACE_WITH_STRIPE_WEBHOOK_SECRET",
+    "billing_portal_url": "https://billing.stripe.com/p/login/REPLACE",
+    "success_url": "https://dunkin2025.github.io/mazen/checkout.html?status=success&session_id={CHECKOUT_SESSION_ID}",
+    "cancel_url": "https://dunkin2025.github.io/mazen/checkout.html?status=cancel"
+  },
+  "products": [
+    {
+      "id": "prod_founding",
+      "stripe_id": "REPLACE_WITH_STRIPE_PRODUCT_ID_FOUNDING",
+      "name": "MA-ZEN Founding Member",
+      "plan_tier": "founding",
+      "prices": [
+        {
+          "id": "price_founding_monthly",
+          "stripe_id": "REPLACE_WITH_STRIPE_PRICE_ID_FOUNDING_MONTHLY",
+          "interval": "month",
+          "amount_cents": 799,
+          "currency": "usd",
+          "lookup_key": "mazen_founding_monthly"
+        },
+        {
+          "id": "price_founding_annual",
+          "stripe_id": "REPLACE_WITH_STRIPE_PRICE_ID_FOUNDING_ANNUAL",
+          "interval": "year",
+          "amount_cents": 7999,
+          "currency": "usd",
+          "lookup_key": "mazen_founding_annual"
+        }
+      ]
+    },
+    {
+      "id": "prod_standard",
+      "stripe_id": "REPLACE_WITH_STRIPE_PRODUCT_ID_STANDARD",
+      "name": "MA-ZEN Standard",
+      "plan_tier": "standard",
+      "prices": [
+        {
+          "id": "price_standard_monthly",
+          "stripe_id": "REPLACE_WITH_STRIPE_PRICE_ID_STANDARD_MONTHLY",
+          "interval": "month",
+          "amount_cents": 999,
+          "currency": "usd",
+          "lookup_key": "mazen_standard_monthly"
+        },
+        {
+          "id": "price_standard_annual",
+          "stripe_id": "REPLACE_WITH_STRIPE_PRICE_ID_STANDARD_ANNUAL",
+          "interval": "year",
+          "amount_cents": 9999,
+          "currency": "usd",
+          "lookup_key": "mazen_standard_annual"
+        }
+      ]
+    },
+    {
+      "id": "prod_creator",
+      "stripe_id": "REPLACE_WITH_STRIPE_PRODUCT_ID_CREATOR",
+      "name": "MA-ZEN Creator",
+      "plan_tier": "creator",
+      "prices": [
+        {
+          "id": "price_creator_monthly",
+          "stripe_id": "REPLACE_WITH_STRIPE_PRICE_ID_CREATOR_MONTHLY",
+          "interval": "month",
+          "amount_cents": 2499,
+          "currency": "usd",
+          "lookup_key": "mazen_creator_monthly"
+        },
+        {
+          "id": "price_creator_annual",
+          "stripe_id": "REPLACE_WITH_STRIPE_PRICE_ID_CREATOR_ANNUAL",
+          "interval": "year",
+          "amount_cents": 24999,
+          "currency": "usd",
+          "lookup_key": "mazen_creator_annual"
+        }
+      ]
+    }
+  ],
+  "schema": {
+    "customer": {
+      "id": "uuid",
+      "user_id": "uuid (FK: users.id)",
+      "stripe_customer_id": "string",
+      "email": "string",
+      "created_at": "ISO8601"
+    },
+    "subscription": {
+      "id": "uuid",
+      "customer_id": "uuid",
+      "stripe_subscription_id": "string",
+      "stripe_price_id": "string",
+      "plan_tier": "founding | standard | creator",
+      "status": "active | trialing | past_due | canceled | paused",
+      "current_period_start": "ISO8601",
+      "current_period_end": "ISO8601",
+      "cancel_at_period_end": "boolean",
+      "trial_end": "ISO8601 | null",
+      "created_at": "ISO8601",
+      "canceled_at": "ISO8601 | null"
+    },
+    "invoice": {
+      "id": "uuid",
+      "subscription_id": "uuid",
+      "stripe_invoice_id": "string",
+      "amount_cents": "integer",
+      "currency": "string",
+      "status": "draft | open | paid | void | uncollectible",
+      "period_start": "ISO8601",
+      "period_end": "ISO8601",
+      "paid_at": "ISO8601 | null",
+      "hosted_invoice_url": "string | null",
+      "created_at": "ISO8601"
+    },
+    "payment_method": {
+      "id": "uuid",
+      "customer_id": "uuid",
+      "stripe_payment_method_id": "string",
+      "type": "card | bank_account",
+      "card_brand": "visa | mastercard | amex | ...",
+      "card_last4": "string",
+      "card_exp_month": "integer",
+      "card_exp_year": "integer",
+      "is_default": "boolean"
+    }
+  },
+  "webhook_events": {
+    "handled": [
+      "checkout.session.completed",
+      "customer.subscription.created",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "invoice.payment_succeeded",
+      "invoice.payment_failed",
+      "invoice.upcoming",
+      "customer.subscription.trial_will_end"
+    ]
+  },
+  "grace_period_days": 3,
+  "retry_schedule_days": [
+    1,
+    3,
+    7
+  ],
+  "local_storage_keys": {
+    "billing_state": "mazen_billing_state",
+    "invoice_history": "mazen_invoice_history",
+    "checkout_pending": "mazen_checkout_pending"
+  }
+}

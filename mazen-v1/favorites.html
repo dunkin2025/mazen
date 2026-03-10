@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saved — MA-ZEN</title>
+
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<style>
+/* Favorites + Collections — Module 11 */
+.saved-header {
+  padding: var(--gap-xl) 0 var(--gap-lg);
+  border-bottom: 1px solid var(--signal-mute);
+  margin-bottom: var(--gap-xl);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+/* Tab bar */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--signal-mute);
+  margin-bottom: var(--gap-xl);
+}
+.tab {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--signal-dim);
+  padding: 10px var(--gap-lg);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: var(--transition);
+}
+.tab:hover { color: var(--signal); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* Favorites grid */
+.favs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--gap);
+}
+
+/* Protocol card with actions */
+.fav-card {
+  background: var(--void-2);
+  border: 1px solid var(--signal-mute);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+.fav-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  opacity: 0;
+  transition: var(--transition);
+}
+.fav-card:hover { border-color: var(--gold-dim); background: var(--void-3); }
+.fav-card:hover::before { opacity: 1; }
+
+.fav-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.fav-title-jp {
+  font-family: var(--font-jp);
+  font-size: 1.4rem;
+  color: var(--signal);
+  letter-spacing: 0.06em;
+}
+.fav-title-roman {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 2px;
+}
+.fav-subtitle { font-family: var(--font-display); font-size: 0.85rem; font-style: italic; color: var(--signal-dim); }
+
+.fav-meta { display: flex; gap: var(--gap-sm); flex-wrap: wrap; align-items: center; }
+
+.fav-actions {
+  display: flex;
+  gap: var(--gap-sm);
+  margin-top: var(--gap-sm);
+  padding-top: var(--gap-sm);
+  border-top: 1px solid var(--void-3);
+}
+.fav-action {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal-mute);
+  cursor: pointer;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  flex: 1;
+  text-align: center;
+}
+.fav-action:hover { color: var(--signal); border-color: var(--signal-mute); }
+.fav-action.danger:hover { color: #d47070; border-color: #5c3020; }
+
+/* Pin indicator */
+.pin-indicator {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 4px var(--gold-dim);
+}
+
+/* Collections panel */
+.collections-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--gap-xl);
+  align-items: start;
+}
+@media (max-width: 640px) { .collections-layout { grid-template-columns: 1fr; } }
+
+.col-sidebar { position: sticky; top: 60px; }
+.col-sidebar-title {
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--signal-mute);
+  margin-bottom: var(--gap);
+  padding-bottom: var(--gap-sm);
+  border-bottom: 1px solid var(--signal-mute);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.col-list { display: flex; flex-direction: column; gap: 2px; }
+.col-item {
+  padding: 8px var(--gap-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+}
+.col-item:hover { background: var(--void-3); }
+.col-item.active { background: var(--gold-trace); }
+.col-item-name { font-size: 0.75rem; color: var(--signal-dim); transition: color var(--transition); }
+.col-item:hover .col-item-name,
+.col-item.active .col-item-name { color: var(--signal); }
+.col-item-count { font-size: 0.58rem; color: var(--signal-mute); }
+
+.col-content {}
+.col-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--gap);
+  padding-bottom: var(--gap);
+  border-bottom: 1px solid var(--void-3);
+  gap: var(--gap);
+}
+.col-content-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--signal);
+}
+.col-actions { display: flex; gap: var(--gap-sm); }
+
+/* Create collection form */
+.create-col-form {
+  display: flex;
+  gap: var(--gap-sm);
+  margin-top: var(--gap);
+  padding-top: var(--gap);
+  border-top: 1px solid var(--signal-mute);
+}
+.create-col-input {
+  flex: 1;
+  background: var(--void-3);
+  border: 1px solid var(--signal-mute);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  color: var(--signal);
+  transition: border-color var(--transition);
+}
+.create-col-input:focus { border-color: var(--gold-dim); outline: none; }
+.create-col-input::placeholder { color: var(--signal-mute); }
+
+/* Pinned section in favorites */
+.pinned-section { margin-bottom: var(--gap-xl); }
+.pinned-header {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  margin-bottom: var(--gap);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--signal-mute);
+}
+.pinned-header::after { content: ''; flex: 1; height: 1px; background: var(--void-3); }
+</style>
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="favorites">
+<nav class="topbar">
+  <span class="topbar-brand">間</span>
+  <div class="topbar-nav">
+    <span class="topbar-trial" id="trialBadge">▸ FREE TRIAL</span>
+    <a href="app.html" class="topbar-link">HOME</a>
+    <a href="search.html" class="topbar-link">LIBRARY</a>
+    <a href="history.html" class="topbar-link">HISTORY</a>
+    <a href="favorites.html" class="topbar-link active">SAVED</a>
+    <button class="topbar-user standby" id="oauthBtn">◎ STANDBY</button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="container">
+
+    <div class="saved-header">
+      <div>
+        <div class="label" style="margin-bottom:8px">Favorites + Collections</div>
+        <div class="display-title" style="font-size:2rem">Saved</div>
+      </div>
+      <div style="font-size:0.68rem;color:var(--signal-mute)" id="savedCount">—</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab active" id="tabFavs" onclick="showTab('favs')">Favorites</button>
+      <button class="tab" id="tabCols" onclick="showTab('cols')">Collections</button>
+      <button class="tab" id="tabPinned" onclick="showTab('pinned')">Pinned</button>
+    </div>
+
+    <!-- FAVORITES panel -->
+    <div id="panelFavs">
+      <div class="favs-grid" id="favsGrid"></div>
+      <div id="favsEmpty" style="display:none">
+        <div class="empty-state">
+          <div class="empty-glyph">好</div>
+          <div class="empty-title">No favorites yet</div>
+          <div class="empty-body">Save protocols you return to. Favorites are kept for quick access.</div>
+          <a href="search.html" class="btn btn-ghost" style="margin-top:16px">BROWSE LIBRARY</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLLECTIONS panel -->
+    <div id="panelCols" style="display:none">
+      <div class="collections-layout">
+        <div class="col-sidebar">
+          <div class="col-sidebar-title">
+            Collections
+            <button class="btn btn-ghost btn-sm" onclick="focusCreate()">+ NEW</button>
+          </div>
+          <div class="col-list" id="colList"></div>
+          <div class="create-col-form">
+            <input type="text" id="createColInput" class="create-col-input" placeholder="Collection name…" 
+              onkeydown="if(event.key==='Enter') createCol()">
+            <button class="btn btn-ghost btn-sm" onclick="createCol()">CREATE</button>
+          </div>
+        </div>
+        <div class="col-content" id="colContent">
+          <div class="empty-state" style="padding-top:var(--gap-xl)">
+            <div class="empty-glyph">集</div>
+            <div class="empty-title">Select a collection</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PINNED panel -->
+    <div id="panelPinned" style="display:none">
+      <div class="pinned-header">Pinned Protocols</div>
+      <div id="pinnedGrid" class="favs-grid"></div>
+      <div id="pinnedEmpty" style="display:none">
+        <div class="empty-state">
+          <div class="empty-glyph">◎</div>
+          <div class="empty-title">No pinned protocols</div>
+          <div class="empty-body">Pin protocols for instant access from any page.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container"><div class="toast" id="toast"></div></div>
+
+<script src="js/db.js?v=20260309p6"></script>
+<script>
+// Favorites + Collections — Module 11
+let currentTab = 'favs';
+let selectedColId = null;
+let protocols = [];
+// Pinned is stored in localStorage as subset of favorites
+const PINNED_KEY = 'mz:pinned';
+
+function getPinned() {
+  try { return JSON.parse(localStorage.getItem(PINNED_KEY) || '[]'); } catch { return []; }
+}
+function setPinned(arr) { localStorage.setItem(PINNED_KEY, JSON.stringify(arr)); }
+function togglePin(id) {
+  const pins = getPinned();
+  const idx = pins.indexOf(id);
+  if (idx >= 0) { pins.splice(idx,1); setPinned(pins); return false; }
+  else { pins.push(id); setPinned(pins); return true; }
+}
+function isPinned(id) { return getPinned().includes(id); }
+
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+function renderTrialBadge() {
+  const user = MAZEN_DB.getUser();
+  const badge = document.getElementById('trialBadge');
+  if (user.tier !== 'free_trial') badge.style.display = 'none';
+  else badge.textContent = `▸ ${user.trial_days_remaining} DAY FREE TRIAL`;
+}
+
+function showTab(tab) {
+  currentTab = tab;
+  ['favs','cols','pinned'].forEach(t => {
+    document.getElementById(`tab${t.charAt(0).toUpperCase()+t.slice(1)}`).className = `tab${t===tab?' active':''}`;
+    document.getElementById(`panel${t.charAt(0).toUpperCase()+t.slice(1)}`).style.display = t===tab ? 'block' : 'none';
+  });
+  if (tab === 'favs') renderFavs();
+  if (tab === 'cols') renderCols();
+  if (tab === 'pinned') renderPinned();
+}
+
+function buildCard(p, options = {}) {
+  const { showPin = true, showRemoveFav = true, colId = null } = options;
+  const pinned = isPinned(p.id);
+  const sessions = MAZEN_DB.getSessionsByProtocol(p.id).length;
+  return `
+    <div class="fav-card" id="card-${p.id}">
+      <div class="fav-card-top">
+        <div>
+          <div class="fav-title-jp">${p.title}</div>
+          <div class="fav-title-roman">${p.romanji}</div>
+        </div>
+        ${pinned && showPin ? '<div class="pin-indicator" title="Pinned"></div>' : ''}
+      </div>
+      <div class="fav-subtitle">${p.subtitle}</div>
+      <div class="fav-meta">
+        <span class="season-tag season-${p.season}">${p.season.toUpperCase()}</span>
+        <span class="card-duration">${p.duration_min}min</span>
+        ${sessions > 0 ? `<span style="font-size:0.6rem;color:var(--signal-mute)">×${sessions} sessions</span>` : ''}
+      </div>
+      <div class="fav-actions">
+        <button class="fav-action" onclick="goProtocol('${p.id}')">VIEW</button>
+        <button class="fav-action" onclick="startSession('${p.id}')">▶ START</button>
+        ${showPin ? `<button class="fav-action" onclick="togglePinCard('${p.id}')">${pinned?'UNPIN':'PIN'}</button>` : ''}
+        ${showRemoveFav ? `<button class="fav-action danger" onclick="removeFav('${p.id}')">REMOVE</button>` : ''}
+        ${colId ? `<button class="fav-action danger" onclick="removeFromCol('${colId}','${p.id}')">REMOVE</button>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderFavs() {
+  const favIds = MAZEN_DB.getFavorites();
+  const grid = document.getElementById('favsGrid');
+  const empty = document.getElementById('favsEmpty');
+
+  document.getElementById('savedCount').textContent = `${favIds.length} saved`;
+
+  if (favIds.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  const favProtocols = favIds.map(id => protocols.find(p => p.id === id)).filter(Boolean);
+  grid.innerHTML = favProtocols.map(p => buildCard(p)).join('');
+}
+
+function renderPinned() {
+  const pinIds = getPinned();
+  const grid = document.getElementById('pinnedGrid');
+  const empty = document.getElementById('pinnedEmpty');
+  if (pinIds.length === 0) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  const pinProtocols = pinIds.map(id => protocols.find(p => p.id === id)).filter(Boolean);
+  grid.innerHTML = pinProtocols.map(p => buildCard(p, { showRemoveFav: false })).join('');
+}
+
+function renderCols() {
+  const cols = MAZEN_DB.getCollections();
+  const list = document.getElementById('colList');
+  if (cols.length === 0) {
+    list.innerHTML = `<div style="font-size:0.7rem;color:var(--signal-mute);padding:8px 0">No collections yet.</div>`;
+    return;
+  }
+  list.innerHTML = cols.map(c => `
+    <div class="col-item ${selectedColId === c.id ? 'active' : ''}" onclick="selectCol('${c.id}')">
+      <span class="col-item-name">${c.name}</span>
+      <span class="col-item-count">${c.items.length}</span>
+    </div>
+  `).join('');
+  if (selectedColId) renderColContent(selectedColId);
+}
+
+function selectCol(id) {
+  selectedColId = id;
+  renderCols();
+}
+
+function renderColContent(colId) {
+  const col = MAZEN_DB.getCollections().find(c => c.id === colId);
+  const content = document.getElementById('colContent');
+  if (!col) return;
+
+  const colProtocols = col.items.map(id => protocols.find(p => p.id === id)).filter(Boolean);
+
+  content.innerHTML = `
+    <div class="col-content-header">
+      <div class="col-content-name">${col.name}</div>
+      <div class="col-actions">
+        <button class="btn btn-ghost btn-sm" onclick="renameCol('${col.id}')">RENAME</button>
+        <button class="btn btn-ghost btn-sm" style="color:#d47070" onclick="deleteCol('${col.id}')">DELETE</button>
+      </div>
+    </div>
+    ${col.items.length === 0
+      ? `<div class="empty-state" style="padding-top:var(--gap-xl)">
+           <div class="empty-glyph">空</div>
+           <div class="empty-title">Collection is empty</div>
+           <div class="empty-body">Add protocols from any protocol detail page.</div>
+         </div>`
+      : `<div class="favs-grid">${colProtocols.map(p => buildCard(p, { showRemoveFav: false, showPin: false, colId })).join('')}</div>`
+    }
+  `;
+}
+
+// Actions
+function goProtocol(id) { window.location.href = `protocol.html?id=${id}`; }
+function startSession(id) { 
+  const sess = { id: `sess-${Date.now()}`, protocolId: id, protocolTitle: id, phase: 0, progressPct: 0, completed: false, startedAt: Date.now() };
+  MAZEN_DB.saveSession(sess);
+  window.location.href = `player.html?id=${id}&sess=${sess.id}`;
+}
+
+function removeFav(id) {
+  MAZEN_DB.toggleFavorite(id);
+  toast('Removed from favorites');
+  renderFavs();
+}
+
+function togglePinCard(id) {
+  const added = togglePin(id);
+  toast(added ? 'Pinned' : 'Unpinned', added ? 'gold' : '');
+  if (currentTab === 'favs') renderFavs();
+  else if (currentTab === 'pinned') renderPinned();
+}
+
+function createCol() {
+  const input = document.getElementById('createColInput');
+  const name = input.value.trim();
+  if (!name) return;
+  MAZEN_DB.createCollection(name);
+  input.value = '';
+  toast(`Collection "${name}" created`, 'gold');
+  renderCols();
+}
+
+function focusCreate() { document.getElementById('createColInput').focus(); }
+
+function deleteCol(id) {
+  if (!confirm('Delete this collection?')) return;
+  MAZEN_DB.deleteCollection(id);
+  if (selectedColId === id) selectedColId = null;
+  toast('Collection deleted');
+  renderCols();
+}
+
+function renameCol(id) {
+  const name = prompt('New collection name:');
+  if (!name) return;
+  MAZEN_DB.updateCollection(id, { name });
+  renderCols();
+}
+
+function removeFromCol(colId, protocolId) {
+  MAZEN_DB.removeFromCollection(colId, protocolId);
+  toast('Removed from collection');
+  renderColContent(colId);
+}
+
+document.getElementById('oauthBtn').addEventListener('click', function() {
+  toast('Opening simulated sign-in…');
+});
+
+async function init() {
+  renderTrialBadge();
+  await MAZEN_DB.loadProtocols();
+  protocols = MAZEN_DB.getProtocols();
+  showTab('favs');
+}
+
+init();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

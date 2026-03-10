@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN — Protocol Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-size:16px;}
+body{background:var(--void);color:var(--type);font-family:var(--font-m,'DM Mono',monospace);font-size:.75rem;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+/* ── Protocol card (shared with app.html) ── */
+.protocol-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);}
+.protocol-card{background:var(--navy);padding:24px 26px 22px;cursor:pointer;transition:background var(--transition,.25s);position:relative;overflow:hidden;animation:fadeUp .4s both;}
+.protocol-card:hover{background:var(--deep,#121C2E);}
+.protocol-card.locked{opacity:.7;}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.card-kanji{font-family:var(--font-j,'Shippori Mincho',serif);font-size:1.8rem;line-height:1;font-weight:400;}
+.card-name{font-size:.72rem;letter-spacing:.14em;color:var(--type-dim);margin-bottom:4px;}
+.card-subtitle{font-size:.58rem;letter-spacing:.04em;color:var(--type-faint);line-height:1.55;margin-bottom:10px;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;border-top:1px solid var(--border);}
+.card-durs{font-size:.58rem;letter-spacing:.1em;color:var(--type-faint);}
+.card-arrow{position:absolute;bottom:20px;right:20px;font-size:.7rem;color:var(--type-faint);opacity:0;transition:opacity .2s,right .2s;}
+.protocol-card:hover .card-arrow{opacity:.6;right:16px;}
+.outcome-badge{font-size:.48rem;letter-spacing:.16em;padding:2px 8px;border:1px solid;}
+.outcome-badge[data-outcome="FOCUS"]{color:var(--focus,#C4944A);border-color:rgba(196,148,74,.3);}
+.outcome-badge[data-outcome="DECOMPRESSION"]{color:var(--decomp,#7BA8C0);border-color:rgba(123,168,192,.3);}
+.outcome-badge[data-outcome="RESET"]{color:var(--reset,#C09878);border-color:rgba(192,152,120,.3);}
+.outcome-badge[data-outcome="TRANSITION"]{color:var(--trans,#8BA87B);border-color:rgba(139,168,123,.3);}
+.outcome-badge[data-outcome="REFLECTION"]{color:var(--refl,#9E8BBB);border-color:rgba(158,139,187,.3);}
+/* ── NAV ── */
+#lib-nav{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(6,8,15,.94);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;}
+.lib-nav-brand{font-family:var(--font-d,'Cormorant Garamond',serif);font-size:1.1rem;letter-spacing:.22em;}
+.lib-nav-links{display:flex;align-items:center;gap:20px;}
+.lib-nav-link{font-size:.56rem;letter-spacing:.14em;color:var(--type-faint);transition:color .2s;}
+.lib-nav-link:hover{color:var(--type-dim);}
+.lib-nav-link.active{color:var(--gold);}
+/* ── DETAIL DRAWER ── */
+#detail-drawer{position:fixed;top:52px;right:-480px;bottom:0;width:460px;background:var(--navy);border-left:1px solid var(--border);z-index:200;transition:right .35s var(--ease,cubic-bezier(.16,1,.3,1));overflow-y:auto;display:flex;flex-direction:column;}
+#detail-drawer.open{right:0;}
+#detail-drawer-backdrop{position:fixed;inset:0;z-index:190;background:rgba(6,8,15,.4);display:none;}
+#detail-drawer-backdrop.show{display:block;}
+.dd-header{padding:24px 28px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.dd-close{font-size:.7rem;color:var(--type-faint);cursor:pointer;transition:color .2s;padding:4px 8px;}
+.dd-close:hover{color:var(--type);}
+.dd-kanji{font-family:var(--font-j,'Shippori Mincho',serif);font-size:3rem;font-weight:400;line-height:1;}
+.dd-name{font-size:.72rem;letter-spacing:.16em;color:var(--type-dim);margin:6px 0 2px;}
+.dd-subtitle{font-size:.6rem;letter-spacing:.04em;color:var(--type-faint);line-height:1.6;}
+.dd-body{padding:24px 28px;display:flex;flex-direction:column;gap:20px;flex:1;}
+.dd-section-label{font-size:.48rem;letter-spacing:.2em;color:var(--type-faint);margin-bottom:8px;}
+.dd-when-list{display:flex;flex-direction:column;gap:6px;}
+.dd-when-item{font-size:.6rem;letter-spacing:.04em;color:var(--type-faint);line-height:1.6;padding-left:12px;border-left:1px solid var(--border);}
+.dd-reflection{font-family:var(--font-d,'Cormorant Garamond',serif);font-size:1.15rem;font-weight:300;line-height:1.6;color:var(--type-dim);font-style:italic;}
+.dd-footer{padding:20px 28px;border-top:1px solid var(--border);}
+.dd-begin-btn{display:flex;width:100%;padding:13px;justify-content:center;align-items:center;background:var(--gold-glow);border:1px solid var(--gold);color:var(--gold);font-family:var(--font-m,'DM Mono',monospace);font-size:.62rem;letter-spacing:.2em;cursor:pointer;transition:all .35s;position:relative;overflow:hidden;}
+.dd-begin-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform .4s var(--ease,cubic-bezier(.16,1,.3,1));}
+.dd-begin-btn:hover::before{transform:translateX(0);}
+.dd-begin-btn span{position:relative;z-index:1;}
+.dd-begin-btn:hover span{color:var(--void);}
+.dd-begin-btn.locked-btn{border-color:var(--border);color:var(--type-faint);background:none;}
+.dd-begin-btn.locked-btn::before{background:var(--signal);}
+</style>
+<link rel="stylesheet" href="css/plans.css?v=20260309p6">
+<link rel="stylesheet" href="css/catalog.css?v=20260309p6">
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="library">
+
+<!-- ── NAV ── -->
+<nav id="lib-nav">
+  <a href="app.html" class="lib-nav-brand">MA-ZEN</a>
+  <div class="lib-nav-links">
+    <span class="lib-nav-link active">LIBRARY</span>
+    <a href="app.html" class="lib-nav-link">THE FLOOR →</a>
+    <span id="lib-plan-badge" class="plan-badge free" style="cursor:pointer">FREE</span>
+  </div>
+</nav>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="catalog-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="catalog-sidebar">
+    <div id="catalog-filter-controls"></div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="catalog-main">
+    <div class="catalog-header">
+      <div>
+        <p style="font-size:.48rem;letter-spacing:.22em;color:var(--gold);margin-bottom:6px">THE FLOOR</p>
+        <h1 class="catalog-title">Protocol <em>Library</em></h1>
+      </div>
+      <div class="catalog-count">
+        <span id="catalog-count">—</span> protocols
+      </div>
+    </div>
+
+    <!-- Protocol grid -->
+    <div id="library-grid" class="protocol-grid"></div>
+  </main>
+</div>
+
+<!-- ── DETAIL DRAWER ── -->
+<div id="detail-drawer-backdrop"></div>
+<div id="detail-drawer">
+  <div class="dd-header">
+    <div id="dd-header-content">
+      <div class="dd-kanji" id="dd-kanji">—</div>
+      <div class="dd-name" id="dd-name">—</div>
+      <div class="dd-subtitle" id="dd-subtitle">—</div>
+    </div>
+    <button class="dd-close" id="dd-close">✕</button>
+  </div>
+  <div class="dd-body">
+    <div>
+      <p class="dd-section-label">OUTCOME</p>
+      <span class="outcome-badge" id="dd-outcome" data-outcome="FOCUS">—</span>
+    </div>
+    <div id="dd-metadata-container"></div>
+    <div id="dd-when-section">
+      <p class="dd-section-label">USE THIS WHEN</p>
+      <div class="dd-when-list" id="dd-when-list"></div>
+    </div>
+    <div>
+      <p class="dd-section-label">REFLECTION</p>
+      <p class="dd-reflection" id="dd-reflection">—</p>
+    </div>
+  </div>
+  <div class="dd-footer">
+    <button class="dd-begin-btn" id="dd-begin-btn"><span>BEGIN SESSION →</span></button>
+    <p style="font-size:.52rem;letter-spacing:.06em;color:var(--type-faint);text-align:center;margin-top:10px" id="dd-begin-note"></p>
+  </div>
+</div>
+
+<!-- ── SCRIPTS ── -->
+<script src="js/db.js?v=20260309p6"></script>
+<script src="js/auth.js?v=20260309p6"></script>
+<script src="js/plans.js?v=20260309p6"></script>
+<script src="js/payments.js?v=20260309p6"></script>
+<script src="js/entitlement.js?v=20260309p6"></script>
+<script src="js/catalog.js?v=20260309p6"></script>
+<script>
+(function() {
+  'use strict';
+
+  // ── PROTOCOL DATA (inline for GitHub Pages / file:// compat) ──
+  // In production: fetch('/api/protocols') — same format
+  const PROTOCOLS_LIB = {
+    SEIJAKU: { id:'SEIJAKU', name:'SEIJAKU', kanji:'静寂', subtitle:'Deep stillness · the silence beneath silence', outcome:'FOCUS', durations:[20,30,45], seasons:['WINTER'], whenToUse:['Before sustained cognitive work','Opening a deep-work block','When you need to clear mental noise before reading or writing'], reflection:'What you seek is already present. You are learning to stop covering it.', defaultSilence:68 },
+    MIYABI:  { id:'MIYABI', name:'MIYABI', kanji:'雅', subtitle:'Elegant refinement · precision without effort', outcome:'FOCUS', durations:[30,45], seasons:['SPRING'], whenToUse:['Long writing or deep research sessions','When precision and sustained attention are required','Creative work requiring structural thought'], reflection:'Refinement is not addition. It is the removal of what does not belong.', defaultSilence:72 },
+    YUKI:    { id:'YUKI', name:'YUKI', kanji:'雪', subtitle:'Snow silence · the weight of white', outcome:'FOCUS', durations:[30,45], seasons:['WINTER'], whenToUse:['Extended deep work requiring extreme quiet','Rung 4+ practitioners in sustained work','Long-form creative or analytical sessions'], reflection:'The snow does not fall. It arrives.', defaultSilence:86 },
+    AKANE:   { id:'AKANE', name:'AKANE', subtitle:'Madder red · dusk glow releasing', kanji:'茜', outcome:'DECOMPRESSION', durations:[10,20,30], seasons:['SUMMER'], whenToUse:['Midday reset between meetings','When carrying emotional residue from a difficult interaction','Pre-commute decompression'], reflection:'Red becomes amber becomes the nothing that holds everything.', defaultSilence:48 },
+    MIZU:    { id:'MIZU', name:'MIZU', kanji:'水', subtitle:'Water · flowing release', outcome:'DECOMPRESSION', durations:[20,30,45], seasons:['SUMMER','AUTUMN'], whenToUse:['End-of-day decompression','After sustained emotional labour','Releasing the accumulated weight of the day'], reflection:'Water does not hold its shape. This is its power.', defaultSilence:58 },
+    GAKE:    { id:'GAKE', name:'GAKE', kanji:'崖', subtitle:'The cliff edge · suspension before release', outcome:'DECOMPRESSION', durations:[20,30,45], seasons:['AUTUMN'], whenToUse:['After high-intensity meetings or presentations','End of a demanding workday','Transition from urgency to rest'], reflection:'The drop is not failure. The drop is the thing.', defaultSilence:55 },
+    KAZE:    { id:'KAZE', name:'KAZE', kanji:'風', subtitle:'Wind and force · entry protocol', outcome:'FOCUS', durations:[15,20,30], seasons:['SPRING','SUMMER','AUTUMN','WINTER'], whenToUse:['First session — no prior experience needed','Any time of day as a short practice reset','Before a meeting or decision'], reflection:'The wind does not choose its direction. It is the direction.', defaultSilence:62 },
+    KEIRO:   { id:'KEIRO', name:'KEIRO', kanji:'径', subtitle:'Path · the route through difficult terrain', outcome:'TRANSITION', durations:[20,30,45], seasons:['AUTUMN','SPRING'], whenToUse:['Before or after a difficult decision','Navigating uncertainty about a path forward','Significant context switch or role change'], reflection:'The path does not end at the obstacle. The path goes through it.', defaultSilence:63 },
+    HI:      { id:'HI', name:'HI', kanji:'火', subtitle:'Fire · complete clearing', outcome:'RESET', durations:[20,30], seasons:['SUMMER','AUTUMN'], whenToUse:['When you need to fully clear and reset','After a significant failure or ending','The session before beginning something entirely new'], reflection:'Fire does not apologise for what it consumes.', defaultSilence:70 },
+    SHINKIRO:{ id:'SHINKIRO', name:'SHINKIRO', kanji:'蜃気楼', subtitle:'Mirage · the shimmer at the threshold of reality', outcome:'REFLECTION', durations:[20,30,45], seasons:['EXPERIMENTAL'], whenToUse:['Journaling or reflective writing sessions','After making a difficult decision','When integrating a significant experience'], reflection:'The mirage does not lie. It shows you what you are looking for.', defaultSilence:78 },
+    FUSOKU:  { id:'FUSOKU', name:'FUSOKU', kanji:'不足', subtitle:'Insufficiency · not-enough as a teacher', outcome:'REFLECTION', durations:[30,45], seasons:['WINTER'], whenToUse:['Rung 5 practitioners only','Extended introspective sessions','When sitting with the feeling of incompleteness'], reflection:'Not-enough is not a failure state. It is the original condition.', defaultSilence:88 },
+    TAKE:    { id:'TAKE', name:'TAKE', kanji:'竹', subtitle:'Bamboo clarity · morning intention', outcome:'REFLECTION', durations:[15,20,30], seasons:['SPRING','SUMMER'], whenToUse:['Beginning of the day with intention','You have a question to hold for the day','The morning or early session — light is present'], reflection:'The bamboo does not bend to prepare for the storm. It bends in the storm and returns.', defaultSilence:60 }
+  };
+
+  const FREE_PROTOCOLS = new Set(['KAZE', 'SEIJAKU', 'TAKE', 'GAKE', 'AKANE']);
+
+  let currentProto = null;
+
+  // ── INIT ──────────────────────────────────────────────────────
+  async function init() {
+    // Sync plan badge
+    const tier = EntitlementEngine.getEffectiveTier();
+    const badge = document.getElementById('lib-plan-badge');
+    if (badge) { badge.className = `plan-badge ${tier}`; badge.textContent = tier.toUpperCase(); }
+    badge?.addEventListener('click', () => {
+      if (typeof PlansModule !== 'undefined') PlansModule.openUpgradeModal();
+    });
+
+    // Init catalog with library protocol data
+    await CatalogModule.init({
+      containerId: 'library-grid',
+      protocols:   PROTOCOLS_LIB,
+      onSelect:    openDetail
+    });
+
+    // Render filter controls
+    await CatalogModule.renderFilterControls('catalog-filter-controls', () => {
+      CatalogModule.renderGrid();
+    });
+
+    // Initial render
+    CatalogModule.renderGrid();
+  }
+
+  // ── DETAIL DRAWER ─────────────────────────────────────────────
+  function openDetail(p) {
+    const locked = !EntitlementEngine.checkProtocol(p.id);
+    currentProto = p;
+
+    document.getElementById('dd-kanji').textContent   = p.kanji;
+    document.getElementById('dd-name').textContent    = p.name;
+    document.getElementById('dd-subtitle').textContent= p.subtitle || '';
+    const outEl = document.getElementById('dd-outcome');
+    outEl.textContent    = p.outcome;
+    outEl.dataset.outcome = p.outcome;
+
+    // When to use
+    const whenList = document.getElementById('dd-when-list');
+    const whenArr  = p.whenToUse || p.when || [];
+    whenList.innerHTML = whenArr.map(w => `<div class="dd-when-item">${w}</div>`).join('');
+
+    document.getElementById('dd-reflection').textContent = p.reflection || '—';
+
+    // Catalog metadata
+    CatalogModule.renderMetadata(p.id, 'dd-metadata-container');
+
+    // Begin button state
+    const beginBtn  = document.getElementById('dd-begin-btn');
+    const beginNote = document.getElementById('dd-begin-note');
+    if (locked) {
+      beginBtn.querySelector('span').textContent = 'REQUIRES THE FLOOR →';
+      beginBtn.classList.add('locked-btn');
+      if (beginNote) beginNote.textContent = 'Start a 14-day free trial to access this protocol.';
+      beginBtn.onclick = () => {
+        if (typeof PlansModule !== 'undefined') {
+          PlansModule.openPaywall('protocol_locked', { protocolId: p.id, protocolKanji: p.kanji, protocolName: p.name });
+        }
+      };
+    } else {
+      beginBtn.querySelector('span').textContent = 'BEGIN IN THE FLOOR →';
+      beginBtn.classList.remove('locked-btn');
+      if (beginNote) beginNote.textContent = '';
+      beginBtn.onclick = () => {
+        window.location.href = `app.html?protocol=${p.id}`;
+      };
+    }
+
+    // Open drawer
+    document.getElementById('detail-drawer').classList.add('open');
+    document.getElementById('detail-drawer-backdrop').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    document.getElementById('detail-drawer').classList.remove('open');
+    document.getElementById('detail-drawer-backdrop').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('dd-close').addEventListener('click', closeDrawer);
+  document.getElementById('detail-drawer-backdrop').addEventListener('click', closeDrawer);
+
+  // ── BOOT ──────────────────────────────────────────────────────
+  init();
+
+})();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

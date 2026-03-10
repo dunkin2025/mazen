@@ -1,0 +1,343 @@
+{
+  "version": "1.1",
+  "public": {
+    "brand": {
+      "label": "MA-ZEN",
+      "href": "index.html"
+    },
+    "links": [
+      {
+        "label": "Protocols",
+        "href": "#protocols-section",
+        "index_only": true
+      },
+      {
+        "label": "Pricing",
+        "href": "#pricing",
+        "index_only": true
+      },
+      {
+        "label": "FAQ",
+        "href": "#faq",
+        "index_only": true
+      },
+      {
+        "label": "Help",
+        "href": "help.html"
+      },
+      {
+        "label": "Legal",
+        "href": "legal.html"
+      },
+      {
+        "label": "Sign in",
+        "href": "auth.html?next=app.html",
+        "cta": true
+      }
+    ],
+    "footer": [
+      {
+        "label": "Help",
+        "href": "help.html"
+      },
+      {
+        "label": "Privacy",
+        "href": "legal.html#privacy"
+      },
+      {
+        "label": "Terms",
+        "href": "legal.html#terms"
+      },
+      {
+        "label": "Status",
+        "href": "status.html"
+      }
+    ]
+  },
+  "app": {
+    "brand": {
+      "label": "MA-ZEN",
+      "href": "app.html"
+    },
+    "links": [
+      {
+        "label": "App",
+        "href": "app.html"
+      },
+      {
+        "label": "Library",
+        "href": "library.html"
+      },
+      {
+        "label": "Search",
+        "href": "search.html"
+      },
+      {
+        "label": "History",
+        "href": "history.html"
+      },
+      {
+        "label": "Favorites",
+        "href": "favorites.html"
+      },
+      {
+        "label": "Help",
+        "href": "help.html"
+      },
+      {
+        "label": "Practice",
+        "href": "preferences.html"
+      }
+    ],
+    "footer": [
+      {
+        "label": "Help",
+        "href": "help.html"
+      },
+      {
+        "label": "Privacy",
+        "href": "legal.html#privacy"
+      },
+      {
+        "label": "Terms",
+        "href": "legal.html#terms"
+      },
+      {
+        "label": "Status",
+        "href": "status.html"
+      }
+    ]
+  },
+  "utility": {
+    "brand": {
+      "label": "MA-ZEN",
+      "href": "index.html"
+    },
+    "links": [
+      {
+        "label": "Help",
+        "href": "help.html"
+      },
+      {
+        "label": "Legal",
+        "href": "legal.html"
+      },
+      {
+        "label": "Status",
+        "href": "status.html"
+      }
+    ],
+    "footer": [
+      {
+        "label": "Help",
+        "href": "help.html"
+      },
+      {
+        "label": "Privacy",
+        "href": "legal.html#privacy"
+      },
+      {
+        "label": "Terms",
+        "href": "legal.html#terms"
+      },
+      {
+        "label": "Status",
+        "href": "status.html"
+      }
+    ]
+  },
+  "admin": {
+    "brand": {
+      "label": "MA-ZEN ADMIN",
+      "href": "admin.html"
+    },
+    "links": [
+      {
+        "label": "Back to app",
+        "href": "app.html"
+      }
+    ]
+  },
+  "pages": {
+    "index.html": {
+      "shell": "public",
+      "json": [
+        "content.json",
+        "plans.json"
+      ],
+      "state_keys": [],
+      "notes": "Landing routes protected CTAs through auth."
+    },
+    "auth.html": {
+      "shell": "public",
+      "json": [
+        "auth.json",
+        "users.json"
+      ],
+      "state_keys": [
+        "mz:user"
+      ],
+      "notes": "Auth gate and redirect to app."
+    },
+    "app.html": {
+      "shell": "app",
+      "json": [
+        "content.json",
+        "protocols.json",
+        "plans.json",
+        "payments.json"
+      ],
+      "state_keys": [
+        "mz:user",
+        "mazen.account.state"
+      ],
+      "notes": "Authenticated hub with entitlements and upgrade links."
+    },
+    "library.html": {
+      "shell": "app",
+      "json": [
+        "catalog.json",
+        "protocols.json",
+        "plans.json"
+      ],
+      "state_keys": [
+        "mz:favorites",
+        "mz:lastProtocol"
+      ],
+      "notes": "Browse and filter protocols."
+    },
+    "search.html": {
+      "shell": "app",
+      "json": [
+        "catalog.json",
+        "protocols.json"
+      ],
+      "state_keys": [
+        "mz:lastProtocol",
+        "mz:lastPage"
+      ],
+      "notes": "Search routes into protocol detail."
+    },
+    "protocol.html": {
+      "shell": "app",
+      "json": [
+        "protocols.json"
+      ],
+      "state_keys": [
+        "mz:lastProtocol",
+        "mz:lastPage",
+        "mz:favorites",
+        "mz:continueSession"
+      ],
+      "notes": "Protocol detail, save, and start session."
+    },
+    "player.html": {
+      "shell": "app",
+      "json": [
+        "protocols.json"
+      ],
+      "state_keys": [
+        "mz:sessions",
+        "mz:continueSession",
+        "mz:lastProtocol"
+      ],
+      "notes": "Session execution and progress continuation."
+    },
+    "history.html": {
+      "shell": "app",
+      "json": [
+        "protocols.json"
+      ],
+      "state_keys": [
+        "mz:sessions",
+        "mz:streak",
+        "mz:continueSession"
+      ],
+      "notes": "Resume incomplete or replay complete sessions."
+    },
+    "favorites.html": {
+      "shell": "app",
+      "json": [
+        "protocols.json"
+      ],
+      "state_keys": [
+        "mz:favorites",
+        "mz:collections",
+        "mz:lastProtocol"
+      ],
+      "notes": "Saved protocols and collections."
+    },
+    "field-report.html": {
+      "shell": "app",
+      "json": [
+        "protocols.json"
+      ],
+      "state_keys": [
+        "mz:reports",
+        "mz:continueSession"
+      ],
+      "notes": "Post-session check-ins."
+    },
+    "checkout.html": {
+      "shell": "app",
+      "json": [
+        "payments.json",
+        "plans.json",
+        "entitlement.json"
+      ],
+      "state_keys": [
+        "mz:user",
+        "mz:billing",
+        "mz:checkout_pending"
+      ],
+      "notes": "Simulated billing and plan change flow."
+    },
+    "preferences.html": {
+      "shell": "app",
+      "json": [
+        "users.json",
+        "entitlement.json"
+      ],
+      "state_keys": [
+        "mz:user",
+        "mz:prefs",
+        "mz:lastPage"
+      ],
+      "notes": "Account and practice hub."
+    },
+    "help.html": {
+      "shell": "utility",
+      "json": [],
+      "state_keys": [
+        "mz:lastPage"
+      ],
+      "notes": "Support and trust layer."
+    },
+    "legal.html": {
+      "shell": "utility",
+      "json": [],
+      "state_keys": [
+        "mz:lastPage"
+      ],
+      "notes": "Privacy, terms, and boundary framing."
+    },
+    "status.html": {
+      "shell": "utility",
+      "json": [],
+      "state_keys": [
+        "mz:lastPage"
+      ],
+      "notes": "Observability/status utility page."
+    },
+    "admin.html": {
+      "shell": "admin",
+      "json": [
+        "protocols.json"
+      ],
+      "state_keys": [
+        "mz:user"
+      ],
+      "notes": "Admin-only internal surface."
+    }
+  }
+}

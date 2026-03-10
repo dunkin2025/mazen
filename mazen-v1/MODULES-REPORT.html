@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MA-ZEN — Module Checklist Report (1–18)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #06080F; color: #F0EDE8; font-family: 'DM Mono', monospace, sans-serif; font-size: .72rem; line-height: 1.6; padding: 40px 32px; }
+  h1 { font-family: Georgia, serif; font-size: 2.2rem; font-weight: 300; color: #C4944A; margin-bottom: 6px; letter-spacing: .02em; }
+  .sub { font-size: .6rem; color: #4A4540; letter-spacing: .14em; margin-bottom: 40px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: .52rem; letter-spacing: .18em; text-align: left; padding: 8px 12px; background: #0A0F1A; border-bottom: 1px solid rgba(196,148,74,.14); color: #8A6432; }
+  td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: top; font-size: .64rem; }
+  tr:hover td { background: rgba(196,148,74,.03); }
+  .mod-num { font-family: monospace; color: #4A4540; width: 36px; }
+  .mod-name { color: #F0EDE8; font-weight: 500; white-space: nowrap; }
+  .badge { display: inline-block; padding: 2px 8px; border: 1px solid; font-size: .5rem; letter-spacing: .12em; white-space: nowrap; }
+  .done     { color: #8BA87B; border-color: #8BA87B; }
+  .new      { color: #C4944A; border-color: #C4944A; }
+  .partial  { color: #C09878; border-color: #C09878; }
+  .file-list { font-size: .58rem; color: #A09A92; margin-top: 4px; }
+  .file-list span { display: inline-block; background: #0E1E30; padding: 1px 6px; margin: 2px 2px 0 0; border: 1px solid rgba(255,255,255,.06); font-family: monospace; font-size: .56rem; }
+  .section-divider td { background: #0A0F1A; color: #8A6432; font-size: .52rem; letter-spacing: .2em; padding: 6px 12px; }
+  .cap-list { color: #A09A92; font-size: .62rem; }
+  .cap-list li { margin-left: 14px; }
+  .integration-note { background: #0A0F1A; border: 1px solid rgba(196,148,74,.18); border-left: 3px solid #C4944A; padding: 20px 24px; margin-top: 36px; }
+  .integration-note h2 { color: #C4944A; font-family: Georgia, serif; font-weight: 300; font-size: 1.2rem; margin-bottom: 12px; }
+  .integration-note p { color: #A09A92; font-size: .65rem; line-height: 1.8; margin-bottom: 8px; }
+  .integration-note code { font-family: monospace; font-size: .62rem; color: #F0EDE8; background: rgba(255,255,255,.05); padding: 1px 5px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(196,148,74,.14); border: 1px solid rgba(196,148,74,.14); margin-bottom: 32px; }
+  .summary-cell { background: #0A0F1A; padding: 16px; text-align: center; }
+  .summary-cell .n { font-family: Georgia, serif; font-size: 2rem; color: #C4944A; display: block; }
+  .summary-cell small { font-size: .52rem; letter-spacing: .14em; color: #4A4540; }
+</style>
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body>
+
+<h1>MA-ZEN — Module Checklist</h1>
+<div class="sub">MODULES 1–18 · DEPLOYMENT STATUS · GENERATED 2025</div>
+
+<div class="summary-grid">
+  <div class="summary-cell"><span class="n">18</span><small>TOTAL MODULES</small></div>
+  <div class="summary-cell"><span class="n" style="color:#8BA87B">15</span><small>COMPLETE</small></div>
+  <div class="summary-cell"><span class="n" style="color:#C09878">2</span><small>PARTIAL</small></div>
+  <div class="summary-cell"><span class="n">14</span><small>JS FILES</small></div>
+</div>
+
+<table>
+<thead>
+  <tr>
+    <th>#</th>
+    <th>MODULE</th>
+    <th>STATUS</th>
+    <th>FILES</th>
+    <th>CAPABILITIES</th>
+  </tr>
+</thead>
+<tbody>
+
+  <tr class="section-divider"><td colspan="5">── FOUNDATION MODULES 1–6 ──</td></tr>
+
+  <tr>
+    <td class="mod-num">01</td>
+    <td class="mod-name">Session Engine</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>app.html</span><span>js/db.js</span></div></td>
+    <td class="cap-list"><ul><li>Tone.js synthesis engine (brown/pink/white noise)</li><li>Phase-based entropy curves (compound/sigmoid/linear)</li><li>Anti-chaos guard (density &lt; 0.7 clamp)</li><li>Timer, silence frames, event triggering</li><li>Pause/resume with proper AudioNode lifecycle</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">02</td>
+    <td class="mod-name">Onboarding &amp; Ritual Entry</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>js/onboarding.js</span><span>css/onboarding.css</span></div></td>
+    <td class="cap-list"><ul><li>4-step ritual entry flow</li><li>Goal / environment / time selection</li><li>Returning user shortcut</li><li>Protocol recommendation from prefs</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">03</td>
+    <td class="mod-name">Database (localStorage)</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>js/db.js</span><span>data/users.json</span><span>data/protocols.json</span></div></td>
+    <td class="cap-list"><ul><li>MazenDB + MAZEN_DB dual exports</li><li>12 protocols inline (no fetch needed)</li><li>Session CRUD, favorites, collections, search</li><li>Streak tracking, pinned protocols</li><li>localStorage schema — PostgreSQL migration path documented</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">04</td>
+    <td class="mod-name">Auth System</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>js/auth.js</span><span>js/data/auth.json</span><span>auth.html</span></div></td>
+    <td class="cap-list"><ul><li>Email/password login + signup (simulated)</li><li>OAuth Google + Apple (simulated — buttons now clickable)</li><li>Password strength meter</li><li>Email verify + forgot password flows</li><li>Header UI sync (plan pill, account dot)</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">05</td>
+    <td class="mod-name">Entitlement Engine</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>js/entitlement.js</span><span>data/entitlement.json</span></div></td>
+    <td class="cap-list"><ul><li>Free / trial / founding / standard / creator tiers</li><li>Protocol gating (free: KAZE, SEIJAKU, TAKE, GAKE, AKANE)</li><li>Feature gates (lab, export, duration, ladder rungs)</li><li>Grace period + trial tracking</li><li>Access audit log</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">06</td>
+    <td class="mod-name">Subscription / Plans</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>js/plans.js</span><span>js/payments.js</span><span>data/plans.json</span><span>data/payments.json</span><span>checkout.html</span></div></td>
+    <td class="cap-list"><ul><li>3 paid tiers: Founding ($7.99), Standard ($9.99), Creator ($24.99)</li><li>Paywall modal with contextual copy</li><li>14-day trial initiation</li><li>Stripe schema + webhook event list</li><li>Billing portal stub</li></ul></td>
+  </tr>
+
+  <tr class="section-divider"><td colspan="5">── CONTENT MODULES 7–12 ──</td></tr>
+
+  <tr>
+    <td class="mod-num">07</td>
+    <td class="mod-name">Protocol System</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>data/protocols.json</span><span>protocol.html</span></div></td>
+    <td class="cap-list"><ul><li>7 protocols in protocols.json + 12 in db.js inline data</li><li>Phase definitions (label, duration, silence_ratio, cue)</li><li>For/not-for, constraints, setup notes</li><li>Protocol card page</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">08</td>
+    <td class="mod-name">Protocol Card (Module 8)</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>protocol.html</span><span>css/main.css</span></div></td>
+    <td class="cap-list"><ul><li>Full protocol detail view</li><li>Phase timeline visualization</li><li>For/not-for guidance</li><li>Favorite toggle, start session CTA</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">09</td>
+    <td class="mod-name">Player / Ritual Mode</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>player.html</span><span>js/ladder.js</span><span>js/field-report.js</span></div></td>
+    <td class="cap-list"><ul><li>Full-screen ritual player</li><li>Phase cues, progress arc, countdown</li><li>Session complete → ladder recording → field report trigger</li><li>Keyboard shortcuts</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">10</td>
+    <td class="mod-name">History / Continue</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>history.html</span></div></td>
+    <td class="cap-list"><ul><li>Session log with protocol, duration, date</li><li>Streak visualization</li><li>Continue last session shortcut</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">11</td>
+    <td class="mod-name">Favorites / Collections</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>favorites.html</span></div></td>
+    <td class="cap-list"><ul><li>Saved protocol library</li><li>Custom collections (create, rename, delete)</li><li>Add/remove protocols from collections</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">12</td>
+    <td class="mod-name">Search / Discovery</td>
+    <td><span class="badge done">COMPLETE</span></td>
+    <td><div class="file-list"><span>search.html</span><span>js/catalog.js</span><span>data/catalog.json</span></div></td>
+    <td class="cap-list"><ul><li>Full-text search across protocols</li><li>Filter by season, density, difficulty, duration</li><li>Sort options (recommended, most used, etc.)</li><li>Recent search history</li></ul></td>
+  </tr>
+
+  <tr class="section-divider"><td colspan="5">── ADVANCED MODULES 13–18 (THIS SESSION) ──</td></tr>
+
+  <tr>
+    <td class="mod-num">13</td>
+    <td class="mod-name">Personalization</td>
+    <td><span class="badge new">NEW ✓</span></td>
+    <td><div class="file-list"><span>js/personalization.js</span><span>css/modules.css</span></div></td>
+    <td class="cap-list"><ul><li>Time-of-day contextual recommendations</li><li>Goal × environment × time matching matrix</li><li>Rotation guard (avoids repeating last 3 sessions)</li><li>Ladder-aware next step suggestions</li><li>Renders as rec-strip on home, library, post-session</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">14</td>
+    <td class="mod-name">Silence Density Ladder</td>
+    <td><span class="badge new">NEW ✓</span></td>
+    <td><div class="file-list"><span>js/ladder.js</span><span>ladder.html</span><span>css/modules.css</span></div></td>
+    <td class="cap-list"><ul><li>6 rungs: Presence → Stillness → Depth → Dissolution → Integration → Void</li><li>Sessions-required progression (3–5 per rung)</li><li>Kanji + density range labels per rung</li><li>Full ladder page + compact sidebar widget</li><li>Educational framing for skeptics</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">15</td>
+    <td class="mod-name">Field Report (Post-Session)</td>
+    <td><span class="badge new">NEW ✓</span></td>
+    <td><div class="file-list"><span>js/field-report.js</span><span>field-report.html</span><span>css/modules.css</span></div></td>
+    <td class="cap-list"><ul><li>5 neutral sliders (clarity, presence, activation, readiness, density feel)</li><li>Optional notes (500 char max)</li><li>Skip option — not forced</li><li>Persisted log with history view</li><li>CSV export</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">16</td>
+    <td class="mod-name">Quality + Governance</td>
+    <td><span class="badge new">NEW ✓</span></td>
+    <td><div class="file-list"><span>js/qa.js</span><span>admin.html</span><span>css/modules.css</span></div></td>
+    <td class="cap-list"><ul><li>Protocol validator: required fields, phase count, silence density bounds</li><li>Phase-level checks: silence_ratio range, cue length</li><li>Warnings for missing metadata (for, not_for, expected_effect)</li><li>QA record history with version tracking</li><li>Publish readiness gate</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">17</td>
+    <td class="mod-name">Admin CMS (Publishing)</td>
+    <td><span class="badge new">NEW ✓</span></td>
+    <td><div class="file-list"><span>js/admin.js</span><span>admin.html</span><span>css/modules.css</span></div></td>
+    <td class="cap-list"><ul><li>Admin login (token-gated)</li><li>Draft protocol creation with full form editor</li><li>QA check before publish</li><li>Publish / unpublish / version history</li><li>Activity log (last 500 entries)</li><li>Tabbed dashboard: CMS / QA / CDN</li></ul></td>
+  </tr>
+
+  <tr>
+    <td class="mod-num">18</td>
+    <td class="mod-name">Audio Delivery (CDN)</td>
+    <td><span class="badge new">NEW ✓</span></td>
+    <td><div class="file-list"><span>js/audio-delivery.js</span><span>admin.html</span><span>css/modules.css</span></div></td>
+    <td class="cap-list"><ul><li>Asset registry (field layers, texture layers, synthesis fallbacks)</li><li>Signed URL generation (HMAC simulation — production: R2 + Worker)</li><li>URL expiry verification</li><li>Protocol preload strategy</li><li>Format registry (MP3/AAC/HLS)</li><li>Admin CDN status panel</li></ul></td>
+  </tr>
+
+</tbody>
+</table>
+
+<div class="integration-note">
+  <h2>Integration Notes</h2>
+  <p><strong>OAuth Fix:</strong> <code>auth.js</code> MazenDB references hardened to <code>(window.MazenDB||window.MAZEN_DB)</code>. OAuth buttons have explicit <code>pointer-events:all; cursor:pointer</code> in <code>modules.css</code>.</p>
+  <p><strong>New module scripts loaded in:</strong> <code>app.html</code> (ladder.js, personalization.js, field-report.js), <code>player.html</code> (ladder.js, field-report.js, personalization.js), <code>library.html</code> (ladder.js, personalization.js).</p>
+  <p><strong>CSS integration:</strong> <code>modules.css</code> added to all module pages. Extracted CSS files had trailing <code>------------------------</code> separators removed. All 14 JS files pass <code>node --check</code>.</p>
+  <p><strong>Account panel augmented:</strong> Ladder widget (<code>LadderModule.renderWidget</code>) + recommendation strip (<code>PersonalizationModule.renderStrip</code>) injected into app.html's MY PRACTICE panel.</p>
+  <p><strong>Session complete events:</strong> <code>mazen:session-complete</code> now records ladder progression + shows advancement toast. <code>mazen:show-field-report</code> triggers inline field report overlay.</p>
+  <p><strong>Admin:</strong> Available at <code>admin.html</code>. Default credentials: <code>admin@ma-zen.io</code> / token <code>mz-admin-2025</code>. Tabs: CMS Publishing, QA Checks, Audio Delivery registry.</p>
+  <p><strong>Next:</strong> PostgreSQL migration (all localStorage schemas documented in <code>data/*.json</code> with <code>tables_mapped_to</code> fields). Cloudflare R2: replace <code>CDN_BASE</code> in <code>audio-delivery.js</code> and implement HMAC signing in a Worker.</p>
+</div>
+
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

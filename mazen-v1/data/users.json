@@ -1,0 +1,97 @@
+{
+  "_meta": {
+    "schema_version": "1.0",
+    "description": "MA-ZEN user data schema. Currently stored in localStorage under 'mazen_db'. Migration path: replace with PostgreSQL users + user_prefs + sessions tables.",
+    "storage_key": "mazen_db",
+    "tables_mapped_to": ["users", "user_prefs", "sessions", "ladder_progress", "waitlist"]
+  },
+
+  "schema": {
+    "user": {
+      "id": "string (uuid-v4)",
+      "created_at": "ISO8601",
+      "onboarded": "boolean",
+      "onboarded_at": "ISO8601 | null",
+      "subscription_tier": "free | founding | standard | creator",
+      "trial_started_at": "ISO8601 | null",
+      "trial_ends_at": "ISO8601 | null"
+    },
+    "user_prefs": {
+      "user_id": "string",
+      "goal": "FOCUS | DECOMPRESSION | RESET | TRANSITION | REFLECTION",
+      "time_available_minutes": "number (10|20|30|45)",
+      "audio_device": "headphones | speakers",
+      "posture": "seated | standing | walking | lying",
+      "environment": "quiet | moderate | noisy",
+      "silence_ladder_rung": "number (1-6)",
+      "recommended_protocol_id": "string",
+      "updated_at": "ISO8601"
+    },
+    "session": {
+      "id": "string (uuid-v4)",
+      "user_id": "string",
+      "protocol_id": "string",
+      "duration_planned_minutes": "number",
+      "duration_actual_seconds": "number",
+      "completed": "boolean",
+      "silence_ratio_used": "number (0-1)",
+      "ladder_rung": "number (1-6)",
+      "started_at": "ISO8601",
+      "ended_at": "ISO8601 | null",
+      "outcome": "FOCUS | DECOMPRESSION | RESET | TRANSITION | REFLECTION"
+    },
+    "ladder_progress": {
+      "user_id": "string",
+      "rung_1_sessions": "number",
+      "rung_2_sessions": "number",
+      "rung_3_sessions": "number",
+      "rung_4_sessions": "number",
+      "rung_5_sessions": "number",
+      "rung_6_sessions": "number",
+      "current_rung": "number (1-6)",
+      "sessions_to_advance": "number (3 per rung)"
+    },
+    "waitlist": {
+      "email": "string",
+      "joined_at": "ISO8601",
+      "source": "string"
+    }
+  },
+
+  "defaults": {
+    "user_prefs": {
+      "goal": "FOCUS",
+      "time_available_minutes": 20,
+      "audio_device": "headphones",
+      "posture": "seated",
+      "environment": "quiet",
+      "silence_ladder_rung": 1,
+      "recommended_protocol_id": "SEIJAKU"
+    },
+    "ladder_progress": {
+      "rung_1_sessions": 0,
+      "rung_2_sessions": 0,
+      "rung_3_sessions": 0,
+      "rung_4_sessions": 0,
+      "rung_5_sessions": 0,
+      "rung_6_sessions": 0,
+      "current_rung": 1,
+      "sessions_to_advance": 3
+    }
+  },
+
+  "recommendation_matrix": {
+    "description": "Maps (goal x environment x time) → recommended protocol_id",
+    "rules": [
+      { "goal": "FOCUS",         "env": ["quiet","moderate"], "min_time": 20, "protocol": "SEIJAKU" },
+      { "goal": "FOCUS",         "env": ["quiet"],            "min_time": 30, "protocol": "MIYABI" },
+      { "goal": "DECOMPRESSION", "env": ["any"],              "min_time": 20, "protocol": "GAKE" },
+      { "goal": "DECOMPRESSION", "env": ["any"],              "min_time": 10, "protocol": "AKANE" },
+      { "goal": "RESET",         "env": ["any"],              "min_time": 10, "protocol": "AKANE" },
+      { "goal": "TRANSITION",    "env": ["any"],              "min_time": 10, "protocol": "KOMOREBI" },
+      { "goal": "REFLECTION",    "env": ["quiet"],            "min_time": 20, "protocol": "SHINKIRO" },
+      { "goal": "REFLECTION",    "env": ["any"],              "min_time": 20, "protocol": "GAKE" }
+    ],
+    "fallback": "SEIJAKU"
+  }
+}

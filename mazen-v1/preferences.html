@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice — MA-ZEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="preferences">
+<main class="mz-utility-main">
+  <div class="mz-utility-card">
+    <div class="mz-utility-eyebrow">Account + practice</div>
+    <div class="mz-utility-title">Practice</div>
+    <div class="mz-utility-copy" id="practiceSummary">Signed-out state. Sign in to continue across the Floor, favorites, and session history.</div>
+    <div class="mz-info-grid">
+      <div class="mz-info-box"><strong>Billing</strong><div class="mz-utility-copy">Manage plan and upgrade path.</div><div style="margin-top:12px"><a class="mz-button" href="checkout.html">Open checkout</a></div></div>
+      <div class="mz-info-box"><strong>Support</strong><div class="mz-utility-copy">Need help or want to review trust information?</div><div style="margin-top:12px"><a class="mz-button" href="help.html">Open help</a></div></div>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap">
+      <a class="mz-button" href="app.html">Return to app</a>
+      <button class="mz-button" id="logoutBtn" type="button">Sign out</button>
+    </div>
+<script src="js/db.js?v=20260309p6"></script><script src="js/auth.js?v=20260309p6"></script><script>
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    const user = JSON.parse(localStorage.getItem('mz:user') || 'null');
+    const el = document.getElementById('practiceSummary');
+    if (user && user.id) {
+      el.textContent = `Signed in as ${user.name || user.email}. Tier: ${user.tier || 'free_trial'}. Use this page as the canonical account and practice hub.`;
+    }
+  } catch(e){}
+  document.getElementById('logoutBtn').addEventListener('click', async function(){
+    if (window.AuthModule) await window.AuthModule.logout();
+    location.href = 'auth.html';
+  });
+});
+</script>
+  </div>
+</main>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

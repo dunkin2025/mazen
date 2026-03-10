@@ -1,0 +1,176 @@
+/* MA-ZEN phone blocker fixes (Phase 1 closeout) */
+html, body { overflow-x: hidden; }
+
+@media (max-width: 900px) {
+  .mz-route-strip, .mz-public-strip, .mz-normalized-topbar, #nav, .checkout-topbar, .auth-nav {
+    z-index: 130;
+  }
+  .mz-route-links.is-open,
+  .topbar-nav.is-open,
+  .lib-nav-links.is-open,
+  .checkout-toplinks.is-open,
+  #nav .nav-links.is-open {
+    background: rgba(6,8,15,0.98);
+    padding: 12px 0 4px;
+  }
+  .page, .container, .container-wide {
+    max-width: 100%;
+  }
+
+  /* Search / history / favorites / protocol become stricter one-column */
+  body[data-page="search"] .results-grid,
+  body[data-page="favorites"] .favs-grid,
+  body[data-page="favorites"] .collections-layout,
+  body[data-page="protocol"] .fit-grid,
+  body[data-page="protocol"] .proto-content,
+  body[data-page="history"] .streak-grid,
+  body[data-page="history"] .stats-strip {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+  body[data-page="protocol"] .proto-main,
+  body[data-page="protocol"] .proto-sidebar {
+    width: 100% !important;
+  }
+  body[data-page="protocol"] .action-stack,
+  body[data-page="favorites"] .fav-actions,
+  body[data-page="history"] .continue-info {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  body[data-page="history"] .session-row,
+  body[data-page="favorites"] .fav-card,
+  body[data-page="protocol"] .proto-hero,
+  body[data-page="protocol"] .action-card,
+  body[data-page="search"] .result-card {
+    padding: 16px !important;
+  }
+
+  /* Checkout phone clarity */
+  body[data-page="checkout"] .checkout-trustbar,
+  body[data-page="checkout"] .checkout-success-grid,
+  body[data-page="checkout"] .checkout-assurance-grid,
+  body[data-page="checkout"] .checkout-summary-meta {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+  body[data-page="checkout"] .plan-option {
+    grid-template-columns: 1fr !important;
+  }
+  body[data-page="checkout"] .plan-option-pricewrap {
+    align-items: flex-start !important;
+    min-width: 0 !important;
+  }
+  body[data-page="checkout"] .checkout-state,
+  body[data-page="checkout"] .checkout-panel-left,
+  body[data-page="checkout"] .checkout-summary-card {
+    padding: 18px !important;
+  }
+
+  /* Player: always show controls on touch-sized widths */
+  body[data-page="player"] .player-wrap {
+    min-height: 100svh !important;
+    height: 100svh !important;
+  }
+  body[data-page="player"] .player-topbar,
+  body[data-page="player"] .player-footer {
+    opacity: 1 !important;
+  }
+  body[data-page="player"] .player-stage {
+    padding: 76px 14px 144px !important;
+  }
+  body[data-page="player"] .player-footer {
+    padding: 12px 14px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  body[data-page="player"] .ritual-time,
+  body[data-page="player"] .ritual-cue {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Auth: hide proof rail entirely on small phone */
+  body[data-page="auth"] .auth-panel-right {
+    display: none !important;
+  }
+  body[data-page="auth"] .auth-layout {
+    padding: 18px 14px 32px !important;
+    gap: 18px !important;
+  }
+  body[data-page="auth"] .auth-title {
+    font-size: clamp(1.8rem, 9vw, 2.2rem) !important;
+  }
+  body[data-page="auth"] .auth-links,
+  body[data-page="auth"] .auth-oauth-btns,
+  body[data-page="auth"] .auth-verify-code {
+    gap: 10px !important;
+  }
+
+  /* App & utility breathing room */
+  body[data-page="app"] #view-floor,
+  body[data-page="help"] .mz-utility-main,
+  body[data-page="legal"] .mz-utility-main,
+  body[data-page="status"] .mz-utility-main {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  /* Library/search/history/favorites tighten density */
+  body[data-page="library"] .catalog-main,
+  body[data-page="search"] .page,
+  body[data-page="history"] .page,
+  body[data-page="favorites"] .page,
+  body[data-page="protocol"] .page,
+  body[data-page="field-report"] .page {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+  body[data-page="library"] .catalog-sidebar {
+    display: block !important;
+    padding: 14px !important;
+  }
+  body[data-page="library"] .filter-section {
+    min-width: 100% !important;
+  }
+  body[data-page="search"] .facet-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Protocol detail + actions */
+  body[data-page="protocol"] .proto-title-roman,
+  body[data-page="protocol"] .proto-subtitle,
+  body[data-page="protocol"] .outcome-text {
+    max-width: 100% !important;
+  }
+  body[data-page="protocol"] .btn,
+  body[data-page="history"] .btn,
+  body[data-page="favorites"] .btn,
+  body[data-page="checkout"] .checkout-cta-btn,
+  body[data-page="checkout"] .checkout-secondary-btn,
+  body[data-page="checkout"] .checkout-primary-link {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Player tighter but safer */
+  body[data-page="player"] .ritual-kanji {
+    font-size: clamp(3rem, 22vw, 5.4rem) !important;
+  }
+  body[data-page="player"] .ritual-cue {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Checkout reduce density */
+  body[data-page="checkout"] .checkout-title,
+  body[data-page="checkout"] .checkout-state-title {
+    line-height: 1.08 !important;
+  }
+  body[data-page="checkout"] .checkout-secondary-actions,
+  body[data-page="checkout"] .checkout-state-actions {
+    flex-direction: column !important;
+  }
+}
