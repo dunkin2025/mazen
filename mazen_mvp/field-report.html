@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Reports — MA-ZEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<link rel="stylesheet" href="css/modules.css?v=20260309p6">
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="field-report">
+
+<nav class="topbar">
+  <span class="topbar-brand">MA-ZEN</span>
+  <div class="topbar-nav">
+    <a href="app.html"     class="topbar-link">APP</a>
+    <a href="library.html" class="topbar-link">LIBRARY</a>
+    <a href="history.html" class="topbar-link">HISTORY</a>
+    <a href="search.html" class="topbar-link">SEARCH</a>
+    <a href="favorites.html" class="topbar-link">SAVED</a>
+    <a href="field-report.html" class="topbar-link active">REPORTS</a>
+    <a href="help.html" class="topbar-link">HELP</a>
+    <a href="preferences.html" class="topbar-link">PRACTICE</a>
+    <button class="topbar-user standby" id="standby-btn">◎ STANDBY</button>
+  </div>
+</nav>
+
+<div class="page container" style="padding-top:40px; padding-bottom:64px;">
+  <div style="margin-bottom:28px;">
+    <span style="font-size:.54rem;letter-spacing:.2em;color:var(--gold);display:block;margin-bottom:8px">MODULE 15</span>
+    <h1 style="font-family:var(--font-display);font-size:2.4rem;font-weight:300;color:var(--type);margin-bottom:8px">Field <em style="font-style:italic;color:var(--gold)">Reports</em></h1>
+    <p style="font-size:.65rem;color:var(--type-faint);max-width:480px;line-height:1.75">Post-session check-ins. Neutral observation, not therapy. Export your data any time.</p>
+  </div>
+
+  <!-- Demo: test check-in -->
+  <div style="margin-bottom:32px;padding:20px;background:var(--navy);border:1px solid var(--border);">
+    <p style="font-size:.56rem;letter-spacing:.16em;color:var(--type-faint);margin-bottom:12px">DEMO — SUBMIT A FIELD REPORT</p>
+    <div id="fr-demo-container"></div>
+  </div>
+
+  <div id="fr-log-container"></div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<script src="js/db.js?v=20260309p6"></script>
+<script src="js/ladder.js?v=20260309p6"></script>
+<script src="js/field-report.js?v=20260309p6"></script>
+<script>
+(function() {
+  // Render demo check-in
+  FieldReportModule.renderCheckIn('fr-demo-container', 'demo-' + Date.now(), 'SEIJAKU', (report) => {
+    if (report) {
+      document.getElementById('fr-demo-container').innerHTML =
+        '<p style="font-size:.65rem;color:var(--outcome-transition);padding:12px 0">✓ Report saved. See log below.</p>';
+    } else {
+      document.getElementById('fr-demo-container').innerHTML =
+        '<p style="font-size:.65rem;color:var(--type-faint);padding:12px 0">Skipped.</p>';
+    }
+    FieldReportModule.renderLog('fr-log-container');
+  });
+
+  // Render existing log
+  FieldReportModule.renderLog('fr-log-container');
+
+  document.getElementById('standby-btn')?.addEventListener('click', () => {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = 'Session data saved locally.';
+    document.getElementById('toast-container').appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+  });
+})();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+/* Phase 1 validity fixes: auth access, completion escape, typography consistency */
+:root{
+  --ui-micro: .68rem;
+  --ui-small: .8rem;
+  --ui-body: .95rem;
+  --ui-track: .12em;
+}
+
+body{ line-height:1.5; }
+button,input,select,textarea{ font-size:max(16px,.95rem); }
+
+/* System chrome typography */
+.nav-link,.nav-cta,.land-footer-link,.auth-nav-link,.auth-nav-brand,.shell-link,.shell-cta,.shell-footer-link,.utility-link,.utility-back,.topbar a,.lib-nav a,.checkout-nav a,.plan-pill,.account-btn,.practice-section-label,.shelf-label,.stat-lbl,.ns-lbl,.pc-title,.pc-subtitle,.btn-primary,.btn-secondary{
+  font-size:var(--ui-micro) !important;
+  letter-spacing:var(--ui-track) !important;
+}
+
+.complete-reflection,.ns-name,.ns-why,.pc-subtitle,.auth-kicker,.auth-note,.ap-plan-desc,.panel-empty,.support-intro,.policy-intro{
+  font-size:var(--ui-small) !important;
+  line-height:1.6 !important;
+}
+
+/* Make completion view escapable and usable */
+#view-complete{
+  overflow-y:auto !important;
+  justify-content:flex-start !important;
+  align-items:stretch !important;
+  padding:16px 16px calc(28px + env(safe-area-inset-bottom)) !important;
+}
+.complete-inner{
+  width:min(100%, 620px);
+  margin:auto;
+  padding:8px 0 16px;
+}
+.complete-close{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  margin-left:auto;margin-bottom:12px;padding:10px 14px;
+  border:1px solid var(--border);color:var(--type-dim);background:rgba(9,15,22,.72);
+  font-size:var(--ui-micro);letter-spacing:var(--ui-track);font-family:var(--font-mono);
+  position:sticky;top:0;z-index:2;backdrop-filter:blur(8px);
+}
+.complete-close:hover,.complete-close:focus-visible{ border-color:var(--gold-dim); color:var(--gold); outline:none; }
+.complete-btns{
+  position:sticky;bottom:0;z-index:2;flex-wrap:wrap;
+  padding:12px 0 calc(6px + env(safe-area-inset-bottom));
+  background:linear-gradient(to bottom, rgba(7,12,18,0), rgba(7,12,18,.96) 35%);
+}
+#next-sugg{ cursor:pointer; }
+
+@media (max-width: 860px){
+  .complete-kanji{ font-size:3.6rem !important; }
+  .complete-reflection{ font-size:.9rem !important; margin-bottom:18px !important; }
+  .complete-stats{ grid-template-columns:1fr 1fr !important; }
+}
+@media (max-width: 540px){
+  .complete-inner{ width:100%; }
+  .complete-title{ font-size:.72rem !important; }
+  .complete-btns{ gap:8px; }
+  .complete-btns .btn-primary,.complete-btns .btn-secondary,.complete-close{ width:100%; }
+  .stat-cell{ padding:14px 8px !important; }
+  .stat-val{ font-size:1.24rem !important; }
+}
+
+/* p5 typography consistency layer */
+:root{--type-ui-xs:0.75rem;--type-ui-sm:0.875rem;--type-ui-md:1rem;--type-ui-lg:1.125rem;--type-ui-xl:1.5rem;}
+body{font-size:var(--type-ui-md);line-height:1.5;}
+.topbar,.lib-nav,.checkout-topbar,.utility-topbar,.shell-header,.shell-footer,.page-footer,footer,.nav,.top-nav{font-size:var(--type-ui-sm)!important;}
+.topbar a,.lib-nav a,.checkout-topbar a,.utility-topbar a,.shell-header a,.shell-footer a,.page-footer a,button,.btn,.pill{font-size:var(--type-ui-sm)!important;}
+.small,.micro,.meta,.eyebrow,.subtle,.hint,.supporting,.tagline,.policy-note,.footnote,.kicker,.plan-note,.tiny{font-size:var(--type-ui-xs)!important;line-height:1.45!important;}
+input,select,textarea{font-size:1rem!important;}
+.complete-title,.modal-title,.hero-title,.session-title{font-size:clamp(1.5rem,4vw,2rem)!important;}
+.complete-sub,.section-title,h1,h2{line-height:1.2;}
+
+
+/* p5b completion and consistency overrides */
+#view-complete .complete-inner{max-width:min(820px,100%)!important;width:min(820px,100%)!important;padding-bottom:8px;}
+#view-complete .complete-reflection,#view-complete .next-sugg,#view-complete .post-checkin,#view-complete .habit-nudge{max-width:100%!important;}
+#view-complete .complete-actions,#view-complete .complete-btns{display:flex!important;flex-wrap:wrap!important;gap:12px!important;justify-content:center!important;position:sticky;bottom:0;background:linear-gradient(to top, rgba(6,8,15,.96), rgba(6,8,15,.65));padding-top:12px;z-index:2;}
+#view-complete .complete-actions > *,#view-complete .complete-btns > *{min-width:180px;}
+.topbar a,.lib-nav a,.checkout-topbar a,.utility-topbar a,.shell-header a,.shell-footer a,.page-footer a,.btn,.pill,.button,button{font-size:.875rem!important;}
+.stat-lbl,.plan-note,.pc-subtitle,.ns-lbl,.hn-title,.pc-saved-msg,.kicker,.eyebrow,.subtle,.hint,.supporting,.policy-note,.footnote,.tiny{font-size:.75rem!important;}

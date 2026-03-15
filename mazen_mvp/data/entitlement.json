@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "schema_version": "1.0",
+    "description": "MA-ZEN entitlement engine rules and audit log schema. Migration: audit_log table in PostgreSQL; gate checks become server middleware.",
+    "tables_mapped_to": ["entitlements", "access_logs", "grace_periods"]
+  },
+
+  "schema": {
+    "entitlement": {
+      "user_id":          "uuid",
+      "plan_tier":        "free | trial | founding | standard | creator",
+      "status":           "active | grace | expired | suspended",
+      "valid_from":       "ISO8601",
+      "valid_until":      "ISO8601 | null (null = active subscription, no expiry)",
+      "grace_until":      "ISO8601 | null",
+      "source":           "subscription | trial | founding | manual",
+      "last_verified_at": "ISO8601"
+    },
+    "access_log": {
+      "id":            "uuid",
+      "user_id":       "uuid | null",
+      "session_id":    "uuid | null",
+      "resource_type": "protocol | feature | page | export | stream",
+      "resource_id":   "string (e.g. SEIJAKU, lab, export_csv)",
+      "decision":      "granted | denied | grace | preview",
+      "reason":        "string (e.g. active_subscription, trial_active, grace_period, not_entitled)",
+      "plan_at_time":  "string",
+      "created_at":    "ISO8601"
+    },
+    "grace_period": {
+      "user_id":    "uuid",
+      "reason":     "payment_failed | subscription_lapsed | webhook_delay",
+      "granted_at": "ISO8601",
+      "expires_at": "ISO8601",
+      "resolved":   "boolean"
+    }
+  },
+
+  "gates": {
+    "protocol": {
+      "free_ids":    ["KAZE", "SEIJAKU", "TAKE", "GAKE", "AKANE"],
+      "paid_ids":    ["MIYABI", "YUKI", "MIZU", "KEIRO", "HI", "SHINKIRO", "FUSOKU"],
+      "creator_ids": []
+    },
+    "feature": {
+      "duration_max_free_min": 20,
+      "lab":                   ["founding", "creator"],
+      "export":                ["founding", "creator"],
+      "b2b":                   ["creator"],
+      "history":               ["trial", "founding", "standard", "creator"],
+      "ladder_rungs_all":      ["trial", "founding", "standard", "creator"],
+      "seasonal_early":        ["founding", "creator"]
+    },
+    "page": {
+      "library":   "all",
+      "app":       "all",
+      "lab":       ["founding", "creator"],
+      "admin":     ["admin"]
+    }
+  },
+
+  "grace_period_config": {
+    "payment_failed_days": 3,
+    "webhook_delay_days":  1,
+    "manual_max_days":     7
+  },
+
+  "audit": {
+    "max_local_entries":  500,
+    "local_storage_key":  "mazen_access_log",
+    "retention_days":     90
+  }
+}

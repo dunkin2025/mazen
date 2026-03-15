@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocol — MA-ZEN</title>
+
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<style>
+/* Protocol Card styles — Module 8 */
+.proto-hero {
+  padding: var(--gap-2xl) 0 var(--gap-xl);
+  border-bottom: 1px solid var(--signal-mute);
+  position: relative;
+  overflow: hidden;
+}
+.proto-hero::after {
+  content: attr(data-jp);
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-jp);
+  font-size: 10rem;
+  color: var(--signal-mute);
+  opacity: 0.08;
+  pointer-events: none;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.proto-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+.proto-title-jp {
+  font-family: var(--font-jp);
+  font-size: 3.5rem;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--signal);
+  margin-bottom: 6px;
+}
+.proto-title-roman {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.proto-subtitle {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--signal-dim);
+}
+.proto-stats {
+  display: flex;
+  gap: var(--gap-xl);
+  margin-top: var(--gap-lg);
+  padding-top: var(--gap-lg);
+  border-top: 1px solid var(--void-3);
+}
+.stat-block { display: flex; flex-direction: column; gap: 4px; }
+.stat-value { font-size: 1.4rem; font-family: var(--font-display); color: var(--signal); }
+.stat-label { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--signal-mute); }
+
+/* density meter */
+.density-meter {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+.density-track {
+  width: 80px;
+  height: 4px;
+  background: var(--signal-mute);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.density-level {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  border-radius: 2px;
+}
+
+/* content grid */
+.proto-content {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--gap-xl);
+  padding: var(--gap-xl) 0;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .proto-content { grid-template-columns: 1fr; }
+  .proto-sidebar { order: -1; }
+}
+
+/* sections */
+.section { margin-bottom: var(--gap-xl); }
+.section-title {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal-mute);
+  margin-bottom: var(--gap);
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--void-3);
+}
+
+/* phase timeline */
+.timeline {
+  position: relative;
+}
+.timeline-item {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: var(--gap);
+  position: relative;
+  padding-bottom: var(--gap);
+}
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--gold-dim);
+  border-radius: 50%;
+  background: var(--void);
+  flex-shrink: 0;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+.timeline-item:not(:last-child) .timeline-dot::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 3px;
+  width: 1px;
+  height: calc(100% + var(--gap));
+  background: var(--signal-mute);
+}
+.timeline-body {}
+.timeline-phase { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+.timeline-cue {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--signal);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.timeline-meta { display: flex; gap: var(--gap); }
+.timeline-dur, .timeline-ratio { font-size: 0.6rem; color: var(--signal-mute); letter-spacing: 0.08em; }
+
+/* sidebar card */
+.proto-sidebar {}
+.action-card {
+  background: var(--void-2);
+  border: 1px solid var(--signal-mute);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  margin-bottom: var(--gap);
+}
+.action-card-title { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--signal-mute); margin-bottom: var(--gap); }
+.action-stack { display: flex; flex-direction: column; gap: var(--gap-sm); }
+
+/* outcome & constraints */
+.outcome-block {
+  background: var(--gold-trace);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius);
+  padding: var(--gap);
+  margin-bottom: var(--gap);
+}
+.outcome-text {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--gold);
+  line-height: 1.5;
+}
+.constraints-list { display: flex; flex-direction: column; gap: 6px; }
+.constraint-item {
+  display: flex;
+  gap: var(--gap-sm);
+  font-size: 0.72rem;
+  color: var(--signal-dim);
+  line-height: 1.4;
+}
+.constraint-bullet {
+  width: 4px;
+  height: 4px;
+  background: var(--signal-mute);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* for / not for */
+.fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+.fit-block {}
+.fit-label { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+.fit-label.for { color: #7ab8d8; }
+.fit-label.not-for { color: #d47070; }
+.fit-text { font-size: 0.75rem; color: var(--signal-dim); line-height: 1.5; }
+
+/* tag row */
+.proto-tags { display: flex; flex-wrap: wrap; gap: var(--gap-sm); }
+
+/* toast */
+.fav-btn.active { color: var(--gold); border-color: var(--gold-dim); }
+</style>
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="protocol">
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <span class="topbar-brand">間</span>
+  <div class="topbar-nav">
+    <span class="topbar-trial" id="trialBadge">▸ FREE TRIAL</span>
+    <a href="app.html" class="topbar-link">HOME</a>
+    <a href="search.html" class="topbar-link">LIBRARY</a>
+    <a href="history.html" class="topbar-link">HISTORY</a>
+    <a href="favorites.html" class="topbar-link">SAVED</a>
+    <button class="topbar-user standby" id="oauthBtn" title="Open practice">
+      ◎ STANDBY
+    </button>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="proto-hero" id="protoHero" data-jp="">
+      <div class="proto-eyebrow">
+        <span class="label" id="protoId">—</span>
+        <span class="season-tag" id="protoSeason">—</span>
+        <div class="proto-tags" id="protoTags"></div>
+      </div>
+      <div class="proto-title-roman" id="protoRoman">—</div>
+      <div class="proto-title-jp" id="protoTitleJp">—</div>
+      <div class="proto-subtitle" id="protoSubtitle">—</div>
+      <div class="proto-stats">
+        <div class="stat-block">
+          <span class="stat-value" id="statDuration">—</span>
+          <span class="stat-label">Minutes</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-value" id="statPhases">—</span>
+          <span class="stat-label">Phases</span>
+        </div>
+        <div class="stat-block">
+          <div class="density-meter">
+            <div class="density-track"><div class="density-level" id="densityBar" style="width:0%"></div></div>
+            <span class="stat-value" id="statDensity">—</span>
+          </div>
+          <span class="stat-label">Silence Density</span>
+        </div>
+        <div class="stat-block">
+          <span class="stat-value" id="statSessions">0</span>
+          <span class="stat-label">Sessions Run</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="proto-content">
+
+      <!-- LEFT: phases + detail -->
+      <div class="proto-main">
+
+        <!-- Intent -->
+        <div class="section">
+          <div class="section-title">Intent</div>
+          <p style="font-family:var(--font-display);font-size:1.15rem;font-style:italic;color:var(--signal);line-height:1.6" id="protoIntent">—</p>
+        </div>
+
+        <!-- Phases -->
+        <div class="section">
+          <div class="section-title">Phase Structure</div>
+          <div class="timeline" id="phaseTimeline"></div>
+        </div>
+
+        <!-- Outcome -->
+        <div class="section">
+          <div class="section-title">Expected Effect</div>
+          <div class="outcome-block">
+            <p class="outcome-text" id="protoEffect">—</p>
+          </div>
+          <div class="fit-grid" id="fitGrid"></div>
+        </div>
+
+        <!-- Constraints -->
+        <div class="section">
+          <div class="section-title">Constraints</div>
+          <div class="constraints-list" id="constraintsList"></div>
+        </div>
+
+        <!-- Setup -->
+        <div class="section">
+          <div class="section-title">Setup Notes</div>
+          <p style="font-size:0.78rem;color:var(--signal-dim);line-height:1.7" id="protoSetup">—</p>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: sidebar actions -->
+      <div class="proto-sidebar">
+
+        <div class="action-card">
+          <div class="action-card-title">Actions</div>
+          <div class="action-stack">
+            <button class="btn btn-primary" id="startBtn" onclick="startSession()">
+              ▶ BEGIN SESSION
+            </button>
+            <button class="btn btn-ghost fav-btn" id="favBtn" onclick="toggleFav()">
+              ♡ SAVE TO FAVORITES
+            </button>
+            <button class="btn btn-ghost" onclick="showCollectionModal()">
+              + ADD TO COLLECTION
+            </button>
+            <button class="btn btn-ghost" onclick="shareProtocol()">
+              ↗ SHARE PROTOCOL
+            </button>
+          </div>
+        </div>
+
+        <!-- Session history for this protocol -->
+        <div class="action-card" id="sessionHistoryCard" style="display:none">
+          <div class="action-card-title">Your History</div>
+          <div id="sessionHistoryList"></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- COLLECTION MODAL -->
+<div id="colModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--void-2);border:1px solid var(--signal-mute);border-radius:var(--radius);padding:var(--gap-lg);min-width:280px;max-width:360px;width:90%">
+    <div style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--signal-mute);margin-bottom:var(--gap)">Add to Collection</div>
+    <div id="colList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:var(--gap)"></div>
+    <div style="display:flex;gap:var(--gap-sm);padding-top:var(--gap);border-top:1px solid var(--signal-mute)">
+      <input type="text" id="newColInput" placeholder="New collection name…" 
+        style="flex:1;background:var(--void-3);border:1px solid var(--signal-mute);padding:8px 10px;border-radius:var(--radius-sm);font-size:0.72rem;color:var(--signal)">
+      <button class="btn btn-ghost btn-sm" onclick="createAndAdd()">CREATE</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="closeCollectionModal()" style="margin-top:var(--gap-sm);width:100%">CANCEL</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container"><div class="toast" id="toast"></div></div>
+
+<script src="js/db.js?v=20260309p6"></script>
+<script>
+// Protocol Card logic — Module 8
+let currentProtocol = null;
+
+function fmtSec(s) {
+  if (!s || s === 0) return 'Open';
+  const m = Math.floor(s/60), sec = s%60;
+  return sec > 0 ? `${m}m ${sec}s` : `${m}m`;
+}
+
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (type ? ' '+type : '');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function getProtocolFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id') || params.get('slug') || 'fuyugare';
+}
+
+function renderProtocol(p) {
+  currentProtocol = p;
+  document.title = `${p.romanji} — MA-ZEN`;
+
+  // Hero
+  document.getElementById('protoHero').dataset.jp = p.title;
+  document.getElementById('protoId').textContent = p.id;
+  document.getElementById('protoRoman').textContent = p.romanji;
+  document.getElementById('protoTitleJp').textContent = p.title;
+  document.getElementById('protoSubtitle').textContent = p.subtitle;
+
+  const season = document.getElementById('protoSeason');
+  season.textContent = p.season.toUpperCase();
+  season.className = `season-tag season-${p.season}`;
+
+  // Tags
+  const tagsEl = document.getElementById('protoTags');
+  tagsEl.innerHTML = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+  // Stats
+  document.getElementById('statDuration').textContent = p.duration_min;
+  document.getElementById('statPhases').textContent = p.phases.length;
+  document.getElementById('densityBar').style.width = (p.silence_density * 100) + '%';
+  document.getElementById('statDensity').textContent = Math.round(p.silence_density * 100) + '%';
+
+  // Sessions count for this protocol
+  const sessions = MAZEN_DB.getSessionsByProtocol(p.id);
+  document.getElementById('statSessions').textContent = sessions.length;
+
+  // Intent
+  document.getElementById('protoIntent').textContent = p.intent;
+
+  // Phases
+  const timeline = document.getElementById('phaseTimeline');
+  timeline.innerHTML = p.phases.map(ph => `
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-body">
+        <div class="timeline-phase">${ph.label}</div>
+        <div class="timeline-cue">${ph.cue}</div>
+        <div class="timeline-meta">
+          <span class="timeline-dur">⏱ ${fmtSec(ph.duration_sec)}</span>
+          <span class="timeline-ratio">◌ ${Math.round(ph.silence_ratio*100)}% silence</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Effect
+  document.getElementById('protoEffect').textContent = p.expected_effect;
+
+  // For / Not For
+  document.getElementById('fitGrid').innerHTML = `
+    <div class="fit-block">
+      <div class="fit-label for">FOR</div>
+      <div class="fit-text">${p.for}</div>
+    </div>
+    <div class="fit-block">
+      <div class="fit-label not-for">NOT FOR</div>
+      <div class="fit-text">${p.not_for}</div>
+    </div>
+  `;
+
+  // Constraints
+  document.getElementById('constraintsList').innerHTML = p.constraints.map(c => `
+    <div class="constraint-item"><div class="constraint-bullet"></div><span>${c}</span></div>
+  `).join('');
+
+  // Setup
+  document.getElementById('protoSetup').textContent = p.setup_notes;
+
+  // Favorite state
+  updateFavBtn();
+
+  // Session history
+  if (sessions.length > 0) {
+    const card = document.getElementById('sessionHistoryCard');
+    card.style.display = 'block';
+    document.getElementById('sessionHistoryList').innerHTML = sessions.slice(0, 5).map(s => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--void-3)">
+        <span style="font-size:0.68rem;color:var(--signal-dim)">${new Date(s.createdAt).toLocaleDateString()}</span>
+        <span style="font-size:0.6rem;color:${s.completed?'var(--gold)':'var(--signal-mute)'}">
+          ${s.completed ? '✓ COMPLETE' : `${s.progressPct||0}%`}
+        </span>
+      </div>
+    `).join('');
+  }
+}
+
+function updateFavBtn() {
+  if (!currentProtocol) return;
+  const btn = document.getElementById('favBtn');
+  const isFav = MAZEN_DB.isFavorite(currentProtocol.id);
+  btn.textContent = isFav ? '♥ SAVED' : '♡ SAVE TO FAVORITES';
+  btn.className = `btn btn-ghost fav-btn${isFav ? ' active' : ''}`;
+}
+
+function toggleFav() {
+  if (!currentProtocol) return;
+  const added = MAZEN_DB.toggleFavorite(currentProtocol.id);
+  updateFavBtn();
+  toast(added ? 'Added to favorites' : 'Removed from favorites', added ? 'gold' : '');
+}
+
+function startSession() {
+  if (!currentProtocol) return;
+  const sess = {
+    id: `sess-${Date.now()}`,
+    protocolId: currentProtocol.id,
+    protocolTitle: currentProtocol.romanji,
+    phase: 0,
+    progressPct: 0,
+    completed: false,
+    startedAt: Date.now()
+  };
+  MAZEN_DB.saveSession(sess);
+  window.location.href = `player.html?id=${currentProtocol.id}&sess=${sess.id}`;
+}
+
+function shareProtocol() {
+  const url = window.location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => toast('Link copied'));
+  } else {
+    toast('Copy URL: ' + url);
+  }
+}
+
+// Collection modal
+function showCollectionModal() {
+  const modal = document.getElementById('colModal');
+  modal.style.display = 'flex';
+  renderColList();
+}
+function closeCollectionModal() {
+  document.getElementById('colModal').style.display = 'none';
+}
+function renderColList() {
+  const cols = MAZEN_DB.getCollections();
+  document.getElementById('colList').innerHTML = cols.length === 0
+    ? '<span style="font-size:0.72rem;color:var(--signal-mute)">No collections yet.</span>'
+    : cols.map(c => `
+      <button onclick="addToCol('${c.id}')" class="btn btn-ghost btn-sm" style="justify-content:flex-start">
+        ${c.name} <span style="margin-left:auto;font-size:0.6rem;color:var(--signal-mute)">${c.items.length}</span>
+      </button>
+    `).join('');
+}
+function addToCol(colId) {
+  if (!currentProtocol) return;
+  MAZEN_DB.addToCollection(colId, currentProtocol.id);
+  closeCollectionModal();
+  toast('Added to collection', 'gold');
+}
+function createAndAdd() {
+  const name = document.getElementById('newColInput').value.trim();
+  if (!name) return;
+  const col = MAZEN_DB.createCollection(name);
+  if (currentProtocol) MAZEN_DB.addToCollection(col.id, currentProtocol.id);
+  closeCollectionModal();
+  toast(`Collection "${name}" created`, 'gold');
+}
+
+// Trial badge
+function renderTrialBadge() {
+  const user = MAZEN_DB.getUser();
+  const badge = document.getElementById('trialBadge');
+  if (user.tier === 'free_trial') {
+    badge.textContent = `▸ ${user.trial_days_remaining} DAY FREE TRIAL`;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// OAuth button — simulated sign-in / practice access
+document.getElementById('oauthBtn').addEventListener('click', function() {
+  toast('Opening simulated sign-in…', '');
+  this.classList.remove('standby');
+  setTimeout(() => this.classList.add('standby'), 3000);
+});
+
+// Init
+async function init() {
+  renderTrialBadge();
+  await MAZEN_DB.loadProtocols();
+  const id = getProtocolFromUrl();
+  const protocol = MAZEN_DB.getProtocolById(id);
+  if (protocol) {
+    renderProtocol(protocol);
+  } else {
+    // Show first available
+    const all = MAZEN_DB.getProtocols();
+    if (all.length > 0) renderProtocol(all[0]);
+    else document.querySelector('.container').innerHTML = `
+      <div class="empty-state" style="padding-top:120px">
+        <div class="empty-glyph">間</div>
+        <div class="empty-title">Protocol not found</div>
+        <a href="search.html" class="btn btn-ghost" style="margin-top:16px">BROWSE LIBRARY</a>
+      </div>
+    `;
+  }
+}
+
+init();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

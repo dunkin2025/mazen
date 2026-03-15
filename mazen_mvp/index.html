@@ -1,1 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN — Governed Silence Protocols</title>
+<meta name="description" content="MA-ZEN is a protocol system for structured silence. Not ambient audio. Not meditation music. A library of governed acoustic protocols designed to produce specific cognitive outcomes.">
+<meta property="og:title" content="MA-ZEN — Governed Silence Protocols">
+<meta property="og:description" content="25 acoustic protocols. Each one ends. None of them sound like wellness.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://dunkin2025.github.io/mazen/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Design system -->
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<link rel="stylesheet" href="css/main.css?v=20260309p6">
+<link rel="stylesheet" href="css/landing.css?v=20260309p6">
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="public" data-page="index">
 
+<!-- ── TOAST CONTAINER ── -->
+<div id="toast-container"></div>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <div class="nav-brand">MA-ZEN<span>GOVERNED SILENCE</span></div>
+  <div class="nav-links">
+    <a href="auth.html?next=app.html" class="nav-link">SIGN IN</a>
+    <a href="#protocols-section" class="nav-link">PROTOCOLS</a>
+    <a href="#pricing" class="nav-link">PRICING</a>
+    <a href="#faq" class="nav-link">FAQ</a>
+    <a href="auth.html?next=app.html" class="nav-cta"><span>SIGN IN</span></a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-orb"></div>
+  <p class="hero-eyebrow">ACOUSTIC ARCHITECTURE FOR COGNITIVE RECOVERY</p>
+  <h1 class="hero-title">Governed<br><em>Silence.</em></h1>
+  <div class="hero-kanji-row">
+    <span class="hero-kanji" title="Ma — interval">間</span>
+    <span class="hero-kanji-sep"></span>
+    <span class="hero-kanji" title="Sunyata — void">空</span>
+    <span class="hero-kanji-sep"></span>
+    <span class="hero-kanji" title="Wu Wei — governed flow">無為</span>
+  </div>
+  <p class="hero-sub">Not ambient audio. Not meditation music. <strong>A protocol system for structured silence.</strong> 25 finite acoustic sessions engineered to produce specific cognitive outcomes.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" data-cta="onboard" data-href="auth.html?next=app.html"><span>BEGIN YOUR FIRST SESSION</span></button>
+    <button class="btn-ghost" data-cta="floor" data-href="auth.html?next=app.html">VIEW THE FLOOR</button>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── COUNTER STRIP ── -->
+<div id="counter-strip">
+  <div class="counter-cell reveal"><span class="counter-n">25</span><span class="counter-l">GOVERNED PROTOCOLS</span></div>
+  <div class="counter-cell reveal"><span class="counter-n">6</span><span class="counter-l">SILENCE LADDER RUNGS</span></div>
+  <div class="counter-cell reveal"><span class="counter-n">100<em>%</em></span><span class="counter-l">SESSIONS THAT END</span></div>
+  <div class="counter-cell reveal"><span class="counter-n">0</span><span class="counter-l">INFINITE LOOPS</span></div>
+</div>
+
+<hr class="divider">
+
+<!-- ── DISTINCTION ── -->
+<section id="distinction">
+  <div class="section">
+    <!-- Populated by LandingModule.renderDistinction() -->
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how">
+  <div class="section">
+    <!-- Populated by LandingModule.renderHowItWorks() -->
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── PROTOCOLS PREVIEW ── -->
+<section id="protocols-section">
+  <div class="section">
+    <span class="section-eyebrow reveal">THE PROTOCOL LIBRARY</span>
+    <h2 class="section-title reveal">Six <em>core protocols</em></h2>
+    <p class="section-body reveal">Each protocol is named for its acoustic function — not a metaphor. Select by outcome or browse all.</p>
+    <div class="outcome-filters reveal" id="outcome-filters"></div>
+    <div class="proto-grid" id="proto-grid"></div>
+    <div style="margin-top:24px;text-align:center">
+      <a href="auth.html?next=app.html" class="btn-ghost reveal" style="display:inline-block;margin-top:8px">VIEW ALL 25 PROTOCOLS IN THE FLOOR →</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROTOCOL MODAL -->
+<div id="proto-modal">
+  <div class="pm-wrap">
+    <button class="pm-close" id="pm-close">✕</button>
+    <div class="pm-kanji" id="pm-kanji">—</div>
+    <div class="pm-name" id="pm-name">—</div>
+    <div class="pm-sub" id="pm-sub">—</div>
+    <div class="pm-meta">
+      <span class="pm-badge" id="pm-badge">—</span>
+      <span class="pm-stat-val" id="pm-oclabel" style="font-size:.58rem;letter-spacing:.08em;color:var(--type-faint)">—</span>
+    </div>
+    <div class="pm-when-label">USE THIS PROTOCOL WHEN</div>
+    <ul class="pm-when" id="pm-when"></ul>
+    <div class="pm-stat">
+      <span class="pm-stat-lbl">SILENCE RATIO</span>
+      <span class="pm-stat-val" id="pm-sil-val">—</span>
+    </div>
+    <div class="pm-refl" id="pm-refl">—</div>
+    <div class="pm-actions">
+      <a href="auth.html?next=app.html" class="pm-try" id="pm-try">TRY THIS PROTOCOL →</a>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div class="section">
+    <!-- Populated by LandingModule.renderTestimonials() -->
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── ENTROPY DEMO ── -->
+<section id="demo">
+  <div class="section">
+    <span class="section-eyebrow reveal">LIVE PROTOCOL VISUALISER</span>
+    <h2 class="section-title reveal">The <em>entropy curve</em></h2>
+    <p class="section-body reveal">This is how a protocol evolves over time. Adjust the parameters to see how governed randomness shapes acoustic density.</p>
+    <div class="demo-canvas-wrap reveal">
+      <canvas id="demo-canvas"></canvas>
+    </div>
+    <div class="ec-controls reveal">
+      <div class="ec-control">
+        <div class="ec-label">SILENCE RATIO <span id="ec-sv">62%</span></div>
+        <input type="range" class="ec-slider" id="ec-silence" min="20" max="90" value="62">
+      </div>
+      <div class="ec-control">
+        <div class="ec-label">ENTROPY AMPLITUDE <span id="ec-ev">55%</span></div>
+        <input type="range" class="ec-slider" id="ec-entropy" min="10" max="100" value="55">
+      </div>
+      <div class="ec-control">
+        <div class="ec-label">PHASE RATE <span id="ec-rv">40%</span></div>
+        <input type="range" class="ec-slider" id="ec-rate" min="0" max="100" value="40">
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── SOCIAL PROOF ── -->
+<section id="social-proof">
+  <!-- Populated by LandingModule.renderSocialProof() -->
+</section>
+
+<hr class="divider">
+
+<!-- ── PRICING ── -->
+<section id="pricing">
+  <div class="section">
+    <!-- Populated by LandingModule.renderPricingBlocks() -->
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── FAQ ── -->
+<section id="faq">
+  <div class="section">
+    <!-- Populated by LandingModule.renderFAQAccordion() -->
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ── WAITLIST ── -->
+<section id="waitlist">
+  <!-- Populated by LandingModule.renderWaitlist() -->
+</section>
+
+<hr class="divider">
+
+<!-- ── FOOTER ── -->
+<footer id="footer">
+  <!-- Populated by LandingModule.renderFooter() -->
+</footer>
+
+<!-- ── SCRIPTS ── -->
+<script src="js/db.js?v=20260309p6"></script>
+<script src="js/landing.js?v=20260309p6"></script>
+<script>
+// ── PROTOCOL PREVIEW DATA (inline fallback, mirrors protocols.json) ──
+// Used for the preview grid on landing. Full data in data/protocols.json.
+const PREVIEW_PROTOCOLS = [
+  { id:'SEIJAKU', k:'静寂', n:'SEIJAKU', s:'Deep stillness', oc:'FOCUS',         sil:'68%', r:'What you seek is already present.',         when:['Before deep work','Opening a focus block','Clearing mental noise'],            dur:'20–45 MIN' },
+  { id:'GAKE',    k:'崖',   n:'GAKE',    s:'The cliff edge', oc:'DECOMPRESSION',  sil:'55%', r:'The drop is not failure. The drop is the thing.', when:['After intense meetings','End of demanding day','Transition from urgency'], dur:'20–45 MIN' },
+  { id:'AKANE',   k:'茜',   n:'AKANE',   s:'Madder red',     oc:'DECOMPRESSION',  sil:'48%', r:'Red becomes amber becomes the nothing.',      when:['Midday reset','Emotional residue','Pre-commute decompression'],               dur:'10–30 MIN' },
+  { id:'MIYABI',  k:'雅',   n:'MIYABI',  s:'Elegant refinement', oc:'FOCUS',      sil:'72%', r:'Refinement is the removal of what does not belong.', when:['Long writing sessions','Precision work','Creative structure'],           dur:'30–45 MIN' },
+  { id:'SHINKIRO',k:'蜃気楼',n:'SHINKIRO',s:'Mirage',        oc:'REFLECTION',     sil:'78%', r:'The mirage shows you what you are looking for.', when:['Reflective writing','After a hard decision','Integration'],                 dur:'20–45 MIN' },
+  { id:'KOMOREBI',k:'木漏れ日',n:'KOMOREBI',s:'Light through leaves',oc:'TRANSITION',sil:'60%',r:'The light does not try to pass through.',     when:['Between tasks','Morning activation','Post-lunch reset'],                    dur:'10–20 MIN' }
+];
+
+const OCC = { FOCUS:'var(--focus)', DECOMPRESSION:'var(--decomp)', RESET:'var(--reset)', TRANSITION:'var(--trans)', REFLECTION:'var(--refl)' };
+const OCB = { FOCUS:'rgba(196,148,74,.3)', DECOMPRESSION:'rgba(123,168,192,.3)', RESET:'rgba(192,152,120,.3)', TRANSITION:'rgba(139,168,123,.3)', REFLECTION:'rgba(158,139,187,.3)' };
+
+// ── RENDER PROTOCOL GRID ──
+function renderProtoGrid(filter) {
+  const grid = document.getElementById('proto-grid');
+  if (!grid) return;
+  const protos = filter && filter !== 'ALL' ? PREVIEW_PROTOCOLS.filter(p => p.oc === filter) : PREVIEW_PROTOCOLS;
+  grid.innerHTML = protos.map(p => `
+    <div class="proto-card" data-id="${p.id}">
+      <div class="proto-kanji">${p.k}</div>
+      <div class="proto-name">${p.n}</div>
+      <div class="proto-dur">${p.dur}</div>
+      <div class="proto-desc">${p.s}</div>
+      <div class="proto-oc-dot" style="background:${OCC[p.oc]}"></div>
+    </div>`).join('');
+
+  grid.querySelectorAll('.proto-card').forEach(c => {
+    c.addEventListener('click', () => openProtoModal(c.dataset.id));
+  });
+}
+
+function openProtoModal(id) {
+  const d = PREVIEW_PROTOCOLS.find(p => p.id === id);
+  if (!d) return;
+  document.getElementById('pm-kanji').textContent = d.k;
+  document.getElementById('pm-name').textContent  = d.n;
+  document.getElementById('pm-sub').textContent   = d.s;
+  const b = document.getElementById('pm-badge');
+  b.textContent = d.oc; b.style.color = OCC[d.oc]; b.style.borderColor = OCB[d.oc];
+  document.getElementById('pm-oclabel').textContent = d.oc + ' OUTCOME';
+  document.getElementById('pm-when').innerHTML = d.when.map(w => `<li>${w}</li>`).join('');
+  document.getElementById('pm-sil-val').textContent = d.sil;
+  document.getElementById('pm-refl').textContent = `"${d.r}"`;
+  const tryBtn = document.getElementById('pm-try');
+  if (tryBtn) tryBtn.href = `app.html?protocol=${id}&onboarded=1`;
+  document.getElementById('proto-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// Outcome filter buttons
+(function initFilters() {
+  const filtersEl = document.getElementById('outcome-filters');
+  if (!filtersEl) return;
+  const outcomes = ['ALL','FOCUS','DECOMPRESSION','RESET','TRANSITION','REFLECTION'];
+  filtersEl.innerHTML = outcomes.map(oc =>
+    `<button class="of-btn ${oc === 'ALL' ? 'active' : ''}" data-oc="${oc}">${oc}</button>`
+  ).join('');
+  filtersEl.querySelectorAll('.of-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filtersEl.querySelectorAll('.of-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProtoGrid(btn.dataset.oc);
+    });
+  });
+  renderProtoGrid('ALL');
+})();
+
+// Modal close
+document.getElementById('pm-close').onclick = () => { document.getElementById('proto-modal').classList.remove('open'); document.body.style.overflow=''; };
+document.getElementById('proto-modal').onclick = e => { if(e.target===document.getElementById('proto-modal')){ document.getElementById('proto-modal').classList.remove('open'); document.body.style.overflow=''; } };
+
+// ── ENTROPY CANVAS ──
+function drawDemo() {
+  const canvas = document.getElementById('demo-canvas');
+  if (!canvas) return;
+  const W = canvas.offsetWidth * (window.devicePixelRatio||1);
+  const H = 96;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const sR = parseInt(document.getElementById('ec-silence').value) / 100;
+  const eA = parseInt(document.getElementById('ec-entropy').value) / 100;
+  const eR = parseInt(document.getElementById('ec-rate').value) / 100;
+  const ph = 2.618, total = 1800;
+  const amp = 0.15 + eA * 0.85;
+  function curve(t) {
+    const p1 = Math.sin(t*.019+ph)*amp, p2 = Math.sin(t*.034+ph*1.618)*amp*.7, p3 = Math.sin(t*.011+ph*2.414)*amp*.3;
+    return ((p1*.5+p2*.35+p3*.15)+1)/2;
+  }
+  const mainH=64, rH=16, tH=16;
+  ctx.fillStyle='#06080F'; ctx.fillRect(0,0,W,H);
+  for(let px=0;px<W;px++){ const t=(px/W)*total,v=curve(t),sil=v>sR; ctx.fillStyle=sil?`rgba(14,30,48,${.25+v*.55})`:`rgba(196,148,74,${.05+(1-v)*.22})`; ctx.fillRect(px,0,1,mainH); }
+  ctx.beginPath(); ctx.strokeStyle='rgba(123,158,192,.6)'; ctx.lineWidth=1.5;
+  for(let px=0;px<W;px++){ const t=(px/W)*total,v=curve(t),y=mainH-v*(mainH-4)-2; px===0?ctx.moveTo(px,y):ctx.lineTo(px,y); }
+  ctx.stroke();
+  const thY=mainH-sR*(mainH-4)-2;
+  ctx.beginPath();ctx.strokeStyle='rgba(196,148,74,.25)';ctx.lineWidth=1;ctx.setLineDash([4,6]);ctx.moveTo(0,thY);ctx.lineTo(W,thY);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(6,8,15,.8)';ctx.fillRect(0,mainH,W,rH);
+  const rW=Math.round(eR*W),rG=ctx.createLinearGradient(0,mainH,rW,mainH);
+  rG.addColorStop(0,'rgba(158,139,187,.12)');rG.addColorStop(1,'rgba(158,139,187,.42)');
+  ctx.fillStyle=rG;ctx.fillRect(0,mainH+2,rW,rH-4);
+  ctx.fillStyle='rgba(6,8,15,.8)';ctx.fillRect(0,mainH+rH,W,tH);
+  for(let px=0;px<W;px++){ const t=(px/W)*total,v=curve(t); if(v<=sR){ctx.fillStyle=`rgba(123,158,192,${v*.5*eA*.55})`;ctx.fillRect(px,mainH+rH+2,1,tH-4);} }
+  const nX=Math.floor(.42*W);
+  ctx.fillStyle='#C4944A';ctx.fillRect(nX-1,0,2,H);
+}
+['ec-silence','ec-entropy','ec-rate'].forEach(id => {
+  const el = document.getElementById(id);
+  const vId = {'ec-silence':'ec-sv','ec-entropy':'ec-ev','ec-rate':'ec-rv'}[id];
+  el.addEventListener('input', () => { document.getElementById(vId).textContent = el.value+'%'; drawDemo(); });
+});
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt=setTimeout(drawDemo,150); });
+drawDemo();
+
+// ── BOOT MODULE 1 ──
+document.addEventListener('DOMContentLoaded', () => {
+  LandingModule.init();
+});
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

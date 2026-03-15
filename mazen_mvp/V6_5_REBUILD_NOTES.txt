@@ -1,0 +1,14 @@
+MA-ZEN v6.5 rebuilt web system
+
+Root cause fixed:
+- Experiment Lab was outside #app in the DOM
+- #app has min-height: 100vh
+- This created an entire blank viewport before the Lab content
+
+Fix applied:
+- moved <div id="view-lab" class="view"> ... </div> inside <div id="app">
+- kept the rest of the system intact
+- added a small top-spacing safeguard for #view-lab
+
+Main file changed:
+- app.html

@@ -1,0 +1,171 @@
+{
+  "protocols": [
+    {
+      "id": "MZ-W01",
+      "slug": "fuyugare",
+      "title": "冬枯れ",
+      "romanji": "FUYUGARE",
+      "subtitle": "Winter Withering",
+      "season": "winter",
+      "duration_min": 20,
+      "silence_density": 0.72,
+      "tags": ["stillness", "release", "low-density"],
+      "intent": "Dissolution of accumulated tension",
+      "for": "End of day. After long output cycles. Before sleep.",
+      "not_for": "Morning sessions. High-focus work preparation.",
+      "phases": [
+        { "id": "ph1", "label": "ENTRY", "duration_sec": 120, "silence_ratio": 0.6, "cue": "Locate the weight in your body. Do not move it." },
+        { "id": "ph2", "label": "DESCENT", "duration_sec": 480, "silence_ratio": 0.82, "cue": "Let each exhale remove one thing from the foreground." },
+        { "id": "ph3", "label": "FLOOR", "duration_sec": 600, "silence_ratio": 0.94, "cue": "Nothing is required of you here." },
+        { "id": "ph4", "label": "RETURN", "duration_sec": 0, "silence_ratio": 0.5, "cue": "When ready. Not before." }
+      ],
+      "constraints": ["No modification of posture during FLOOR phase", "Session ends at natural completion only"],
+      "setup_notes": "Dim or absent light preferred. Seated or supine. No screen contact during session.",
+      "expected_effect": "Reduced cortical arousal. Transition readiness. Not relaxation — departure.",
+      "layer_config": { "field": "winter-field-01", "texture": "stone-breath", "events": "sparse" }
+    },
+    {
+      "id": "MZ-W02",
+      "slug": "kansei",
+      "title": "寒声",
+      "romanji": "KANSEI",
+      "subtitle": "Cold Voice",
+      "season": "winter",
+      "duration_min": 35,
+      "silence_density": 0.65,
+      "tags": ["focus", "cold", "medium-density"],
+      "intent": "Sustained single-task attention without drift",
+      "for": "Deep work sessions. Writing. Analytical thinking.",
+      "not_for": "Creative ideation. Social preparation.",
+      "phases": [
+        { "id": "ph1", "label": "CALIBRATION", "duration_sec": 180, "silence_ratio": 0.5, "cue": "Define the one thing. Write it if necessary." },
+        { "id": "ph2", "label": "LOCK", "duration_sec": 900, "silence_ratio": 0.65, "cue": "Return to the one thing. Return again." },
+        { "id": "ph3", "label": "DEPTH", "duration_sec": 900, "silence_ratio": 0.78, "cue": "You are inside the problem now." },
+        { "id": "ph4", "label": "SURFACE", "duration_sec": 120, "silence_ratio": 0.45, "cue": "Emerge slowly. Note what remains." }
+      ],
+      "constraints": ["Single task only", "Physical stillness during DEPTH", "No external notification during session"],
+      "setup_notes": "Seated upright. Task materials prepared before session start. Cold room preferred.",
+      "expected_effect": "Sustained attention bandwidth. Reduced context-switching reflex.",
+      "layer_config": { "field": "winter-field-02", "texture": "ice-resonance", "events": "rhythmic" }
+    },
+    {
+      "id": "MZ-S01",
+      "slug": "hazakura",
+      "title": "葉桜",
+      "romanji": "HAZAKURA",
+      "subtitle": "Cherry After Bloom",
+      "season": "spring",
+      "duration_min": 25,
+      "silence_density": 0.58,
+      "tags": ["transition", "lightness", "medium-density"],
+      "intent": "Clearing after a completion. Making room for next.",
+      "for": "Post-project. After presentations. Between modes.",
+      "not_for": "Mid-task. During active problem-solving.",
+      "phases": [
+        { "id": "ph1", "label": "ACKNOWLEDGMENT", "duration_sec": 120, "silence_ratio": 0.4, "cue": "Name what just ended. Silently." },
+        { "id": "ph2", "label": "DISPERSION", "duration_sec": 600, "silence_ratio": 0.62, "cue": "Let it become background." },
+        { "id": "ph3", "label": "OPEN", "duration_sec": 600, "silence_ratio": 0.7, "cue": "What arrives without invitation?" },
+        { "id": "ph4", "label": "SET", "duration_sec": 180, "silence_ratio": 0.35, "cue": "One clear direction. Nothing more." }
+      ],
+      "constraints": ["No task initiation during session", "No reviewing previous work"],
+      "setup_notes": "Natural light if available. Standing or walking permitted during OPEN phase.",
+      "expected_effect": "Cognitive reset. Reduced completion fixation. Forward-ready state.",
+      "layer_config": { "field": "spring-field-01", "texture": "wind-scatter", "events": "transitional" }
+    },
+    {
+      "id": "MZ-S02",
+      "slug": "komorebi",
+      "title": "木漏れ日",
+      "romanji": "KOMOREBI",
+      "subtitle": "Light Through Leaves",
+      "season": "spring",
+      "duration_min": 15,
+      "silence_density": 0.52,
+      "tags": ["creative", "light", "low-density"],
+      "intent": "Soft attention. Receptivity without pressure.",
+      "for": "Morning. Before creative sessions. Gentle reentry.",
+      "not_for": "Crisis management. Deadline pressure.",
+      "phases": [
+        { "id": "ph1", "label": "SOFTEN", "duration_sec": 180, "silence_ratio": 0.45, "cue": "Nothing needs to be solved right now." },
+        { "id": "ph2", "label": "RECEIVE", "duration_sec": 540, "silence_ratio": 0.58, "cue": "Notice without categorizing." },
+        { "id": "ph3", "label": "BEGIN", "duration_sec": 180, "silence_ratio": 0.4, "cue": "What wants to happen?" }
+      ],
+      "constraints": ["No planning permitted", "Loose posture preferred"],
+      "setup_notes": "Natural light strongly preferred. No specific task orientation.",
+      "expected_effect": "Receptive baseline. Reduced performance orientation.",
+      "layer_config": { "field": "spring-field-02", "texture": "light-scatter", "events": "gentle" }
+    },
+    {
+      "id": "MZ-SU01",
+      "slug": "natsukage",
+      "title": "夏陰",
+      "romanji": "NATSUKAGE",
+      "subtitle": "Summer Shadow",
+      "season": "summer",
+      "duration_min": 30,
+      "silence_density": 0.61,
+      "tags": ["grounding", "heat", "medium-density"],
+      "intent": "Anchoring during high-activity periods.",
+      "for": "Midday reset. After intense meetings. Thermal grounding.",
+      "not_for": "Evening use. Pre-sleep.",
+      "phases": [
+        { "id": "ph1", "label": "ARRIVE", "duration_sec": 90, "silence_ratio": 0.4, "cue": "Feel the ground beneath you completely." },
+        { "id": "ph2", "label": "ANCHOR", "duration_sec": 720, "silence_ratio": 0.65, "cue": "The center does not move." },
+        { "id": "ph3", "label": "RADIATE", "duration_sec": 720, "silence_ratio": 0.72, "cue": "Stability extends outward." },
+        { "id": "ph4", "label": "REENTER", "duration_sec": 270, "silence_ratio": 0.38, "cue": "Carry the center with you." }
+      ],
+      "constraints": ["Seated only", "No lying position", "Eyes open or half-open preferred"],
+      "setup_notes": "Cool space if available. Natural ventilation. Mid-session hydration acceptable.",
+      "expected_effect": "Reduced reactivity. Stable emotional baseline. Reentry capacity.",
+      "layer_config": { "field": "summer-field-01", "texture": "heat-shimmer", "events": "grounded" }
+    },
+    {
+      "id": "MZ-A01",
+      "slug": "ochiba",
+      "title": "落ち葉",
+      "romanji": "OCHIBA",
+      "subtitle": "Falling Leaves",
+      "season": "autumn",
+      "duration_min": 40,
+      "silence_density": 0.78,
+      "tags": ["release", "depth", "high-density"],
+      "intent": "Deep release of what is no longer needed.",
+      "for": "End of cycles. Quarter endings. Major transitions.",
+      "not_for": "Regular use. High frequency. Under 48hr intervals.",
+      "phases": [
+        { "id": "ph1", "label": "INVENTORY", "duration_sec": 240, "silence_ratio": 0.45, "cue": "What are you still carrying that is finished?" },
+        { "id": "ph2", "label": "HOLD", "duration_sec": 600, "silence_ratio": 0.75, "cue": "Hold it without judgment. Just look at it." },
+        { "id": "ph3", "label": "RELEASE", "duration_sec": 900, "silence_ratio": 0.92, "cue": "Nothing needs to be done. It falls on its own." },
+        { "id": "ph4", "label": "WINTER", "duration_sec": 600, "silence_ratio": 0.96, "cue": "The tree is not diminished." },
+        { "id": "ph5", "label": "CLOSE", "duration_sec": 60, "silence_ratio": 0.5, "cue": "Note the difference." }
+      ],
+      "constraints": ["Minimum 48hr between sessions", "Do not truncate RELEASE or WINTER phases", "Do not use if emotionally destabilized"],
+      "setup_notes": "Full privacy required. 40 minutes uninterrupted. Low light. Lying down acceptable.",
+      "expected_effect": "Substantial discharge of accumulated emotional weight. Not pleasant — effective.",
+      "layer_config": { "field": "autumn-field-01", "texture": "dry-resonance", "events": "minimal" }
+    },
+    {
+      "id": "MZ-E01",
+      "slug": "ma",
+      "title": "間",
+      "romanji": "MA",
+      "subtitle": "The Interval",
+      "season": "experimental",
+      "duration_min": 10,
+      "silence_density": 0.88,
+      "tags": ["interval", "pure-silence", "high-density"],
+      "intent": "Direct encounter with structured silence as material.",
+      "for": "Advanced practitioners only. Research purposes.",
+      "not_for": "First sessions. Without prior FLOOR LIBRARY experience.",
+      "phases": [
+        { "id": "ph1", "label": "MA-1", "duration_sec": 200, "silence_ratio": 0.85, "cue": "." },
+        { "id": "ph2", "label": "MA-2", "duration_sec": 200, "silence_ratio": 0.92, "cue": ".." },
+        { "id": "ph3", "label": "MA-3", "duration_sec": 200, "silence_ratio": 0.98, "cue": "..." }
+      ],
+      "constraints": ["No modification permitted", "Session is the protocol"],
+      "setup_notes": "No preparation required. No guidance beyond what is given.",
+      "expected_effect": "Variable. Document what occurs.",
+      "layer_config": { "field": "null", "texture": "null", "events": "null" }
+    }
+  ]
+}

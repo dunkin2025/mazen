@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN — Upgrade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@0,300;0,400;0,500;1,300&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--void);color:var(--type);font-family:var(--font-m,'DM Mono',monospace);font-size:.75rem;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.018;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+.animate-up{animation:fadeUp .4s var(--ease,cubic-bezier(.16,1,.3,1)) both;}
+</style>
+<link rel="stylesheet" href="css/auth.css?v=20260309p6">
+<link rel="stylesheet" href="css/plans.css?v=20260309p6">
+<link rel="stylesheet" href="css/catalog.css?v=20260309p6">
+<link rel="stylesheet" href="css/checkout.css?v=20260309p6">
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body data-shell="app" data-page="checkout">
+
+<!-- ── NAV ── -->
+<nav class="checkout-topbar">
+  <div class="checkout-topbar-inner">
+    <a href="app.html" class="checkout-brand">MA-ZEN</a>
+    <div class="checkout-toplinks">
+      <a href="app.html">App</a>
+      <a href="library.html">Practice</a>
+      <a href="help.html">Help</a>
+    </div>
+    <a href="app.html" class="checkout-backlink">← Back to App</a>
+  </div>
+</nav>
+
+<!-- ── BILLING ISSUE BANNER ── -->
+<div id="billing-issue-banner">
+  <span class="bib-text">Payment issue detected.</span>
+  <div class="bib-actions">
+    <button class="bib-update-btn" id="bib-update-btn">UPDATE PAYMENT METHOD</button>
+    <button class="bib-dismiss" id="bib-dismiss-btn">✕</button>
+  </div>
+</div>
+
+<!-- ── DYNAMIC CONTENT ── -->
+<div id="checkout-content" style="min-height:calc(100vh - 52px);"></div>
+
+<!-- ── SCRIPTS ── -->
+<script src="js/db.js?v=20260309p6"></script>
+<script src="js/auth.js?v=20260309p6"></script>
+<script src="js/plans.js?v=20260309p6"></script>
+<script src="js/payments.js?v=20260309p6"></script>
+<script src="js/entitlement.js?v=20260309p6"></script>
+<script>
+(function() {
+  'use strict';
+
+  const params   = new URLSearchParams(window.location.search);
+  const status   = params.get('status');
+  const view     = params.get('view');
+  const content  = document.getElementById('checkout-content');
+
+  // ── SELECTED STATE ──
+  let selectedPlan     = params.get('plan') || 'mazen_standard_monthly';
+  let selectedInterval = 'monthly';
+
+  const PLANS = [
+    {
+      id:        'mazen_founding_monthly',
+      id_annual: 'mazen_founding_annual',
+      name:      'FOUNDING MEMBER',
+      featured:  false,
+      price_mo:  7.99,
+      price_yr:  79.99,
+      seats:     '87 seats remaining',
+      features:  ['All 12 protocols','45-minute sessions','Full Silence Ladder','Lab + export tools','Price locked forever'],
+      note:      'Price is locked for life once claimed.'
+    },
+    {
+      id:        'mazen_standard_monthly',
+      id_annual: 'mazen_standard_annual',
+      name:      'STANDARD',
+      featured:  true,
+      price_mo:  9.99,
+      price_yr:  99.99,
+      seats:     null,
+      features:  ['All 12 protocols','45-minute sessions','Full Silence Ladder','Session history & streaks'],
+      note:      '14-day free trial. Cancel any time.'
+    },
+    {
+      id:        'mazen_creator_monthly',
+      id_annual: 'mazen_creator_annual',
+      name:      'CREATOR',
+      featured:  false,
+      price_mo:  24.99,
+      price_yr:  249.99,
+      seats:     null,
+      features:  ['Everything in Standard','Lab + research tools','Export (JSON/CSV)','THE CASH — B2B branding access'],
+      note:      'For practitioners building with MA-ZEN.'
+    }
+  ];
+
+  // ── ROUTING ──────────────────────────────────────────────────
+  async function route() {
+    try {
+      if (status === 'success' || (status === 'pending' && params.get('simulated'))) {
+        await showSuccess();
+      } else if (status === 'cancel') {
+        showCancel();
+      } else if (view === 'billing') {
+        showBillingManagement();
+      } else {
+        showCheckout();
+      }
+    } catch (err) {
+      console.error('[checkout route]', err);
+      showRenderFallback(err);
+    }
+
+    const banner = document.getElementById('billing-issue-banner');
+    const billing = PaymentsModule.getBillingStatus();
+    if (banner && billing.is_past_due) banner.classList.add('show');
+    document.getElementById('bib-dismiss-btn')?.addEventListener('click', () => banner?.classList.remove('show'));
+    document.getElementById('bib-update-btn')?.addEventListener('click', () => PaymentsModule.openBillingPortal());
+  }
+
+  function money(cents) {
+    return '$' + ((cents || 0) / 100).toFixed(2);
+  }
+
+  function labelForPlan(plan) {
+    return plan ? `MA-ZEN ${plan.name}` : 'MA-ZEN STANDARD';
+  }
+
+  function trialLine() {
+    return '14-day free trial · cancel any time';
+  }
+
+  function showRenderFallback(err) {
+    content.innerHTML = `
+      <div class="checkout-state checkout-state--error animate-up">
+        <div class="checkout-state-icon">!</div>
+        <p class="checkout-eyebrow">CHECKOUT ISSUE</p>
+        <h1 class="checkout-state-title">Something interrupted the <em>checkout view</em></h1>
+        <p class="checkout-state-copy">The page did not finish rendering. You can safely return to the plans screen and try again.</p>
+        <div class="checkout-state-actions">
+          <a class="checkout-secondary-btn" href="checkout.html">Back to plans</a>
+          <a class="checkout-primary-link" href="app.html">Return to app →</a>
+        </div>
+        <p class="checkout-error-detail">${String(err && err.message || err || 'Unknown error')}</p>
+      </div>`;
+  }
+
+  // ── CHECKOUT SCREEN ────────────────────────────────────────────
+  function showCheckout() {
+    const activeBilling = PaymentsModule.getBillingStatus();
+    const activeNote = activeBilling.is_active
+      ? `<div class="checkout-inline-alert"><span>Active plan detected:</span> ${labelForPlan(PLANS.find(p => p.id === activeBilling.plan_id || p.id_annual === activeBilling.plan_id))} · <a href="checkout.html?view=billing">manage billing</a></div>`
+      : '';
+
+    content.innerHTML = `
+      <section class="checkout-hero animate-up">
+        <div>
+          <p class="checkout-eyebrow">CHOOSE YOUR PLAN</p>
+          <h1 class="checkout-title">The <em>Floor</em> — full access without leaving the ritual flow</h1>
+          <p class="checkout-copy">Choose the tier that matches your practice. The selection updates instantly, the trial is clear, and billing stays manageable from one place.</p>
+          ${activeNote}
+        </div>
+        <div class="checkout-trustbar">
+          <div><strong>14 days free</strong><span>No charge until trial ends</span></div>
+          <div><strong>Cancel any time</strong><span>Billing view stays available</span></div>
+          <div><strong>Simulation mode</strong><span>Stripe is mocked for GitHub demo</span></div>
+        </div>
+      </section>
+
+      <div class="checkout-layout animate-up">
+        <div class="checkout-panel-left">
+          <div class="checkout-section-head">
+            <p class="checkout-section-label">MEMBERSHIP TIERS</p>
+            <div class="billing-interval" aria-label="Billing interval">
+              <button class="billing-interval-btn active" id="interval-monthly" data-interval="monthly">MONTHLY</button>
+              <button class="billing-interval-btn" id="interval-annual" data-interval="annual">ANNUAL <span class="billing-save-badge">SAVE ~17%</span></button>
+            </div>
+          </div>
+          <div class="plan-selector" id="plan-selector">
+            ${PLANS.map(p => _planOptionHTML(p)).join('')}
+          </div>
+          <div class="checkout-assurance-grid">
+            <div class="checkout-assurance-card"><strong>All plans include</strong><span>Silence Ladder, full session engine, governed protocol access, session memory.</span></div>
+            <div class="checkout-assurance-card"><strong>Before you are charged</strong><span>You see the trial, billing cadence, and a route into billing management.</span></div>
+          </div>
+        </div>
+
+        <aside class="checkout-panel-right">
+          <div class="checkout-summary-card">
+            <p class="checkout-summary-label">ORDER SUMMARY</p>
+            <div id="checkout-summary-content"></div>
+            <div class="checkout-summary-meta">
+              <div><span>Risk</span><strong>No charge for 14 days</strong></div>
+              <div><span>Control</span><strong>Manage or cancel in billing view</strong></div>
+            </div>
+            <button class="checkout-cta-btn" id="checkout-btn"><span>Start free trial →</span></button>
+            <div class="checkout-secondary-actions">
+              <a href="checkout.html?view=billing">View billing</a>
+              <a href="help.html">Payment help</a>
+            </div>
+            <p class="checkout-fine">Demo note: this is a simulated Stripe flow for static deployment testing. No real payment is captured here.</p>
+          </div>
+        </aside>
+      </div>`;
+
+    renderSummary();
+    bindCheckoutEvents();
+  }
+
+  function _planOptionHTML(p) {
+    const isSelected = selectedPlan === p.id;
+    const price = selectedInterval === 'annual' && p.price_yr ? p.price_yr / 12 : p.price_mo;
+    const cadence = selectedInterval === 'annual' && p.price_yr
+      ? `Billed ${money(Math.round(p.price_yr * 100))}/yr`
+      : 'Billed monthly';
+    return `
+      <div class="plan-option${isSelected ? ' selected' : ''}${p.featured ? ' featured-plan' : ''}" data-plan-id="${p.id}" data-plan-id-annual="${p.id_annual}" role="button" tabindex="0" aria-pressed="${isSelected ? 'true' : 'false'}">
+        <div class="plan-option-left">
+          <div class="plan-option-name${p.featured ? ' featured' : ''}">${p.name}${p.featured ? ' <span class="plan-badge">Most popular</span>' : ''}</div>
+          <div class="plan-option-desc">${p.features.slice(0,2).join(' · ')}</div>
+          <div class="plan-option-note">${p.note}</div>
+          ${p.seats ? `<div class="plan-option-seats">${p.seats}</div>` : ''}
+        </div>
+        <div class="plan-option-pricewrap">
+          <div class="plan-option-price">
+            <div class="plan-price-main">$<em>${price.toFixed(2)}</em></div>
+            <div class="plan-price-per">/mo</div>
+          </div>
+          <div class="plan-option-cadence">${cadence}</div>
+          <div class="plan-option-radio"></div>
+        </div>
+      </div>`;
+  }
+
+  function renderSummary() {
+    const plan = PLANS.find(p => p.id === selectedPlan || p.id_annual === selectedPlan);
+    if (!plan) return;
+    const annual = selectedInterval === 'annual' && plan.price_yr;
+    const amountCents = annual ? Math.round(plan.price_yr * 100) : Math.round(plan.price_mo * 100);
+    const cadenceText = annual ? `Annual billing · ${money(amountCents)} / year` : `Monthly billing · ${money(amountCents)} / month`;
+    const trialEnds = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString();
+    const sumEl = document.getElementById('checkout-summary-content');
+    if (!sumEl) return;
+
+    sumEl.innerHTML = `
+      <div class="checkout-summary-plan">${labelForPlan(plan)}</div>
+      <div class="checkout-summary-cadence">${cadenceText}</div>
+      <div class="checkout-summary-row"><span>Trial starts today</span><span>FREE</span></div>
+      <div class="checkout-summary-row"><span>First charge date</span><span>${trialEnds}</span></div>
+      <div class="checkout-summary-row"><span>Then</span><span>${annual ? money(amountCents) + '/year' : money(amountCents) + '/month'}</span></div>
+      <div class="checkout-features">
+        ${plan.features.map(f => `<div class="checkout-feat">${f}</div>`).join('')}
+      </div>
+      <div class="checkout-summary-assurance">
+        <strong>${trialLine()}</strong>
+        <span>${plan.note}</span>
+      </div>`;
+  }
+
+  function bindCheckoutEvents() {
+    // Interval toggle
+    ['monthly','annual'].forEach(interval => {
+      document.getElementById(`interval-${interval}`)?.addEventListener('click', (e) => {
+        document.querySelectorAll('.billing-interval-btn').forEach(b => b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        selectedInterval = interval;
+        // Re-render plan options with new prices
+        const planSel = document.getElementById('plan-selector');
+        if (planSel) planSel.innerHTML = PLANS.map(p => _planOptionHTML(p)).join('');
+        bindPlanOptionEvents();
+        renderSummary();
+      });
+    });
+    bindPlanOptionEvents();
+
+    // Checkout button
+    document.getElementById('checkout-btn')?.addEventListener('click', () => {
+      const key = selectedInterval === 'annual'
+        ? (PLANS.find(p => p.id === selectedPlan)?.id_annual || selectedPlan)
+        : selectedPlan;
+      PaymentsModule.startCheckout(key);
+    });
+  }
+
+  function bindPlanOptionEvents() {
+    document.querySelectorAll('.plan-option').forEach(opt => {
+      const activate = () => {
+        document.querySelectorAll('.plan-option').forEach(o => {
+          o.classList.remove('selected');
+          o.setAttribute('aria-pressed','false');
+        });
+        opt.classList.add('selected');
+        opt.setAttribute('aria-pressed','true');
+        selectedPlan = opt.dataset.planId;
+        renderSummary();
+      };
+      opt.addEventListener('click', activate);
+      opt.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          activate();
+        }
+      });
+    });
+  }
+
+  // ── SUCCESS SCREEN ────────────────────────────────────────────
+  async function showSuccess() {
+    const result = await PaymentsModule.handleCheckoutReturn();
+    const tier = result.plan_tier || 'standard';
+    const tierLabel = { founding:'Founding Member', standard:'Standard', creator:'Creator' }[tier] || 'Standard';
+    PaymentsModule._seedInvoiceHistory(tier, result.amount_cents || (tier === 'founding' ? 799 : tier === 'creator' ? 2499 : 999));
+
+    content.innerHTML = `
+      <div class="checkout-state checkout-state--success animate-up">
+        <div class="checkout-state-icon">✦</div>
+        <p class="checkout-eyebrow">ACCESS ACTIVATED</p>
+        <h1 class="checkout-state-title">Your <em>${tierLabel}</em> plan is ready</h1>
+        <p class="checkout-state-copy">The Floor is unlocked. You can start a session now, or review billing before you leave checkout. ${result.simulated ? 'No real payment was processed in this demo.' : ''}</p>
+        <div class="checkout-success-grid">
+          <div class="checkout-success-card"><span>Trial</span><strong>14 days free</strong></div>
+          <div class="checkout-success-card"><span>Plan</span><strong>${tierLabel}</strong></div>
+          <div class="checkout-success-card"><span>Billing</span><strong>${result.interval === 'year' ? 'Annual' : 'Monthly'}</strong></div>
+        </div>
+        <div class="checkout-state-actions">
+          <a href="app.html" class="checkout-cta-btn" style="display:flex;text-decoration:none"><span>Open the Floor →</span></a>
+          <a href="checkout.html?view=billing" class="checkout-secondary-btn">Review billing</a>
+        </div>
+      </div>`;
+  }
+
+  // ── CANCEL SCREEN ─────────────────────────────────────────────
+  function showCancel() {
+    content.innerHTML = `
+      <div class="checkout-state checkout-state--cancel animate-up">
+        <div class="checkout-state-icon">—</div>
+        <p class="checkout-eyebrow">CHECKOUT PAUSED</p>
+        <h1 class="checkout-state-title">No <em>charge</em> was made</h1>
+        <p class="checkout-state-copy">Your session access was not changed. You can return to the plans screen, compare tiers again, or go back to the app.</p>
+        <div class="checkout-state-actions">
+          <a href="checkout.html" class="checkout-secondary-btn">Back to plans</a>
+          <a href="app.html" class="checkout-primary-link">Return to app →</a>
+        </div>
+      </div>`;
+  }
+
+  // ── BILLING MANAGEMENT ────────────────────────────────────────
+  function showBillingManagement() {
+    content.innerHTML = `
+      <div class="checkout-billing-view animate-up">
+        <div class="checkout-billing-head">
+          <div>
+            <p class="checkout-eyebrow">BILLING MANAGEMENT</p>
+            <h1 class="checkout-title checkout-title--billing">Your <em>subscription</em> and access state</h1>
+            <p class="checkout-copy">Review the active plan, next billing date, invoices, and the entitlement log from one place.</p>
+          </div>
+          <div class="checkout-state-actions">
+            <a href="checkout.html" class="checkout-secondary-btn">Back to plans</a>
+            <a href="app.html" class="checkout-primary-link">Return to app →</a>
+          </div>
+        </div>
+        <div id="billing-status-container"></div>
+        <div class="checkout-audit-card">
+          <p class="checkout-section-label">ENTITLEMENT AUDIT LOG</p>
+          <div id="audit-log-mini"></div>
+          <p class="checkout-audit-note">Access decisions are stored locally in this demo. In production they should be stored server-side.</p>
+        </div>
+      </div>`;
+
+    PaymentsModule.renderBillingStatus('billing-status-container');
+    EntitlementEngine.renderAuditLog('audit-log-mini', 20);
+  }
+
+  // ── BOOT ──────────────────────────────────────────────────────
+  route();
+
+})();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+{
+  "index.html": {
+    "shell": "public",
+    "json": [
+      "content.json",
+      "plans.json"
+    ],
+    "state_keys": [],
+    "notes": "Landing routes protected CTAs through auth."
+  },
+  "auth.html": {
+    "shell": "public",
+    "json": [
+      "auth.json",
+      "users.json"
+    ],
+    "state_keys": [
+      "mz:user"
+    ],
+    "notes": "Auth gate and redirect to app."
+  },
+  "app.html": {
+    "shell": "app",
+    "json": [
+      "content.json",
+      "protocols.json",
+      "plans.json",
+      "payments.json"
+    ],
+    "state_keys": [
+      "mz:user",
+      "mazen.account.state"
+    ],
+    "notes": "Authenticated hub with entitlements and upgrade links."
+  },
+  "library.html": {
+    "shell": "app",
+    "json": [
+      "catalog.json",
+      "protocols.json",
+      "plans.json"
+    ],
+    "state_keys": [
+      "mz:favorites",
+      "mz:lastProtocol"
+    ],
+    "notes": "Browse and filter protocols."
+  },
+  "search.html": {
+    "shell": "app",
+    "json": [
+      "catalog.json",
+      "protocols.json"
+    ],
+    "state_keys": [
+      "mz:lastProtocol",
+      "mz:lastPage"
+    ],
+    "notes": "Search routes into protocol detail."
+  },
+  "protocol.html": {
+    "shell": "app",
+    "json": [
+      "protocols.json"
+    ],
+    "state_keys": [
+      "mz:lastProtocol",
+      "mz:lastPage",
+      "mz:favorites",
+      "mz:continueSession"
+    ],
+    "notes": "Protocol detail, save, and start session."
+  },
+  "player.html": {
+    "shell": "app",
+    "json": [
+      "protocols.json"
+    ],
+    "state_keys": [
+      "mz:sessions",
+      "mz:continueSession",
+      "mz:lastProtocol"
+    ],
+    "notes": "Session execution and progress continuation."
+  },
+  "history.html": {
+    "shell": "app",
+    "json": [
+      "protocols.json"
+    ],
+    "state_keys": [
+      "mz:sessions",
+      "mz:streak",
+      "mz:continueSession"
+    ],
+    "notes": "Resume incomplete or replay complete sessions."
+  },
+  "favorites.html": {
+    "shell": "app",
+    "json": [
+      "protocols.json"
+    ],
+    "state_keys": [
+      "mz:favorites",
+      "mz:collections",
+      "mz:lastProtocol"
+    ],
+    "notes": "Saved protocols and collections."
+  },
+  "field-report.html": {
+    "shell": "app",
+    "json": [
+      "protocols.json"
+    ],
+    "state_keys": [
+      "mz:reports",
+      "mz:continueSession"
+    ],
+    "notes": "Post-session check-ins."
+  },
+  "checkout.html": {
+    "shell": "app",
+    "json": [
+      "payments.json",
+      "plans.json",
+      "entitlement.json"
+    ],
+    "state_keys": [
+      "mz:user",
+      "mz:billing",
+      "mz:checkout_pending"
+    ],
+    "notes": "Simulated billing and plan change flow."
+  },
+  "preferences.html": {
+    "shell": "app",
+    "json": [
+      "users.json",
+      "entitlement.json"
+    ],
+    "state_keys": [
+      "mz:user",
+      "mz:prefs",
+      "mz:lastPage"
+    ],
+    "notes": "Account and practice hub."
+  },
+  "help.html": {
+    "shell": "utility",
+    "json": [],
+    "state_keys": [
+      "mz:lastPage"
+    ],
+    "notes": "Support and trust layer."
+  },
+  "legal.html": {
+    "shell": "utility",
+    "json": [],
+    "state_keys": [
+      "mz:lastPage"
+    ],
+    "notes": "Privacy, terms, and boundary framing."
+  },
+  "status.html": {
+    "shell": "utility",
+    "json": [],
+    "state_keys": [
+      "mz:lastPage"
+    ],
+    "notes": "Observability/status utility page."
+  },
+  "admin.html": {
+    "shell": "admin",
+    "json": [
+      "protocols.json"
+    ],
+    "state_keys": [
+      "mz:user"
+    ],
+    "notes": "Admin-only internal surface."
+  }
+}

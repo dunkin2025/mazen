@@ -1,0 +1,244 @@
+{
+  "_meta": {
+    "schema_version": "1.0",
+    "description": "MA-ZEN landing page CMS content. Migration path: replace with PostgreSQL content table.",
+    "tables_mapped_to": ["page_content", "faqs", "pricing_tiers", "testimonials"]
+  },
+
+  "hero": {
+    "eyebrow": "ACOUSTIC ARCHITECTURE FOR COGNITIVE RECOVERY",
+    "title_line1": "Governed",
+    "title_line2": "Silence.",
+    "kanji": [
+      { "char": "間", "label": "Ma — interval" },
+      { "char": "空", "label": "Sunyata — void" },
+      { "char": "無為", "label": "Wu Wei — governed flow" }
+    ],
+    "subtitle": "Not ambient audio. Not meditation music. <strong>A protocol system for structured silence.</strong> 12 finite acoustic sessions engineered to produce specific cognitive outcomes.",
+    "cta_primary": { "label": "BEGIN YOUR FIRST SESSION", "href": "app.html" },
+    "cta_secondary": { "label": "VIEW THE FLOOR", "href": "app.html" }
+  },
+
+  "counters": [
+    { "value": "12", "suffix": "", "label": "GOVERNED PROTOCOLS" },
+    { "value": "6", "suffix": "", "label": "SILENCE LADDER RUNGS" },
+    { "value": "100", "suffix": "%", "label": "SESSIONS THAT END" },
+    { "value": "0", "suffix": "", "label": "INFINITE LOOPS" }
+  ],
+
+  "distinction": {
+    "eyebrow": "THE DISTINCTION",
+    "title": "This is not <em>wellness audio</em>",
+    "body": "Every product in this category treats silence as a volume knob. MA-ZEN treats it as structural material — governed by mathematical phase curves, assigned duration, and acoustic intention.",
+    "them": [
+      { "title": "Infinite loops", "body": "Sessions never end. Passive consumption with no cognitive resolution." },
+      { "title": "Decorative randomness", "body": "Events placed arbitrarily. No difference between meaningful and incidental." },
+      { "title": "Filler silence", "body": "Silence used to pad content, not to produce outcomes." },
+      { "title": "Mood-based naming", "body": "Rain, Forest, Ocean. Metaphor without mechanism." }
+    ],
+    "us": [
+      { "title": "Every session ends", "body": "Session termination is a design feature. Finitude creates structure." },
+      { "title": "Governed entropy", "body": "Mathematical phase curves (compound / sigmoid / linear) control acoustic density." },
+      { "title": "Silence as material", "body": "Silence ratio is a parameter — not absence of sound." },
+      { "title": "Protocol naming", "body": "Named for acoustic function. SEIJAKU, GAKE, AKANE. Precision over metaphor." }
+    ]
+  },
+
+  "how_it_works": {
+    "eyebrow": "THE PROTOCOL SYSTEM",
+    "title": "How governed silence <em>works</em>",
+    "body": "Each protocol is a composition of three acoustic layers — FIELD, TEXTURE, and EVENT — governed by entropy phase curves that determine density over time.",
+    "steps": [
+      { "title": "SELECT A PROTOCOL", "body": "Choose by cognitive outcome (Focus, Decompression, Reset, Transition, Reflection) or browse by season." },
+      { "title": "SET YOUR DURATION", "body": "10, 20, 30, or 45 minutes. The session ends at that point. Time is structure, not suggestion." },
+      { "title": "ENTER THE FIELD", "body": "Three acoustic layers activate. The FIELD layer anchors space. TEXTURE adds grain. EVENTS mark time." },
+      { "title": "THE SESSION CLOSES", "body": "The protocol resolves to silence. Not fade. Governed termination — the acoustic equivalent of a period at the end of a sentence." }
+    ]
+  },
+
+  "testimonials": {
+    "eyebrow": "EARLY PRACTITIONERS",
+    "title": "What changes when <em>silence ends</em>",
+    "items": [
+      {
+        "quote": "I've used every ambient app. This is the only one I can't play in the background — it demands the kind of attention that actually resolves something.",
+        "name": "M. TANAKA",
+        "role": "Product Lead, Tokyo"
+      },
+      {
+        "quote": "The fact that it ends is the whole thing. There's no passive consumption. You sit with it, and when it closes, you're done. Clean.",
+        "name": "R. CHEN",
+        "role": "Researcher, Singapore"
+      },
+      {
+        "quote": "SEIJAKU at 20 minutes before deep work. I've tried to explain why it works and I can't. The protocol just creates conditions the other apps don't.",
+        "name": "S. WOLF",
+        "role": "Engineer, Berlin"
+      }
+    ],
+    "founder": {
+      "label": "FOUNDER NOTE",
+      "quote": "Silence isn't the absence of sound. It's a ratio — a structural parameter. When you govern it mathematically, you get something that ambient audio never produces: resolution.",
+      "name": "ZHUANG — FOUNDER, MA-ZEN",
+      "credentials": [
+        { "icon": "△", "text": "Built on 3 philosophical pillars: Ma (間), Sunyata (空), Wu Wei (無為)" },
+        { "icon": "○", "text": "Entropy governed by compound, sigmoid, and linear phase curves" },
+        { "icon": "□", "text": "Every session architectured to terminate — not fade, not loop" }
+      ]
+    }
+  },
+
+  "pricing": {
+    "eyebrow": "ACCESS TIERS",
+    "title": "The <em>Floor</em>",
+    "body": "Subscription access to the full protocol library. Founding members locked at $7.99 — 100 seats only.",
+    "billing_periods": ["MONTHLY", "ANNUAL"],
+    "tiers": [
+      {
+        "id": "free",
+        "name": "PREVIEW",
+        "price_monthly": 0,
+        "price_annual": 0,
+        "period_label": "forever",
+        "badge": null,
+        "featured": false,
+        "features": [
+          { "text": "3 protocols: SEIJAKU, GAKE, AKANE", "included": true },
+          { "text": "10-minute sessions only", "included": true },
+          { "text": "Silence Ladder: Rungs 1–2", "included": true },
+          { "text": "Full protocol library (25)", "included": false },
+          { "text": "Session history + streaks", "included": false },
+          { "text": "Export + lab tools", "included": false }
+        ],
+        "cta": { "label": "ENTER FREE", "style": "default", "href": "app.html" }
+      },
+      {
+        "id": "founding",
+        "name": "FOUNDING MEMBER",
+        "price_monthly": 7.99,
+        "price_annual": 79.99,
+        "period_label": "/ month, locked",
+        "badge": "100 SEATS",
+        "featured": true,
+        "features": [
+          { "text": "Full library: all 25 protocols", "included": true },
+          { "text": "All session durations", "included": true },
+          { "text": "Full Silence Ladder (6 rungs)", "included": true },
+          { "text": "Session history + streaks", "included": true },
+          { "text": "Export + lab research tools", "included": true },
+          { "text": "Price locked forever at $7.99", "included": true }
+        ],
+        "cta": { "label": "CLAIM FOUNDING SEAT", "style": "gold", "href": "#waitlist" }
+      },
+      {
+        "id": "standard",
+        "name": "STANDARD",
+        "price_monthly": 9.99,
+        "price_annual": 99.99,
+        "period_label": "/ month",
+        "badge": null,
+        "featured": false,
+        "features": [
+          { "text": "Full library: all 25 protocols", "included": true },
+          { "text": "All session durations", "included": true },
+          { "text": "Full Silence Ladder (6 rungs)", "included": true },
+          { "text": "Session history + streaks", "included": true },
+          { "text": "Export + lab research tools", "included": false },
+          { "text": "Price locked forever", "included": false }
+        ],
+        "cta": { "label": "START 14-DAY TRIAL", "style": "default", "href": "app.html?trial=1" }
+      },
+      {
+        "id": "creator",
+        "name": "CREATOR",
+        "price_monthly": 24.99,
+        "price_annual": 249.99,
+        "period_label": "/ month",
+        "badge": null,
+        "featured": false,
+        "features": [
+          { "text": "Everything in Standard", "included": true },
+          { "text": "Export + lab research tools", "included": true },
+          { "text": "Protocol authoring tools", "included": true },
+          { "text": "B2B audio branding access (THE CASH)", "included": true },
+          { "text": "Priority support", "included": true },
+          { "text": "Early seasonal drops", "included": true }
+        ],
+        "cta": { "label": "CONTACT US", "style": "default", "href": "mailto:hello@ma-zen.io" }
+      }
+    ]
+  },
+
+  "faq": {
+    "eyebrow": "QUESTIONS",
+    "title": "What people <em>ask first</em>",
+    "items": [
+      {
+        "q": "How is this different from ambient sound apps like Calm or Brain.fm?",
+        "a": "Three structural differences: (1) every MA-ZEN session ends — no infinite loops; (2) silence is a parameter with a value (silence ratio), not an absence; (3) acoustic events are governed by mathematical phase curves, not randomness. Calm and Brain.fm are designed for passive background consumption. MA-ZEN protocols are designed to be used actively and to terminate."
+      },
+      {
+        "q": "What does 'governed entropy' mean in practice?",
+        "a": "Each protocol has an entropy phase curve — compound, sigmoid, or linear — that determines how acoustic density evolves over the session. A compound curve front-loads density then releases. A sigmoid curve builds slowly then resolves. Linear curves maintain consistent density. This is not a random generator. It is a composed acoustic architecture with a defined shape."
+      },
+      {
+        "q": "Do I need headphones?",
+        "a": "Headphones are strongly recommended for protocols in the FOCUS and REFLECTION outcomes. For RESET and DECOMPRESSION, open speakers are acceptable. The onboarding environment check will make a specific recommendation based on your protocol selection."
+      },
+      {
+        "q": "What is the Silence Ladder?",
+        "a": "The Silence Ladder is a six-rung progressive practice system. Rung 1 starts at low silence density (more acoustic content). Rung 6 approaches pure silence with minimal events. Advancing through the ladder develops tolerance for unstructured cognitive space — the core skill MA-ZEN is designed to cultivate."
+      },
+      {
+        "q": "Can I use MA-ZEN while working?",
+        "a": "Yes — FOCUS outcome protocols (SEIJAKU, MIYABI) are specifically designed for concurrent deep work. They create acoustic conditions without demanding attention. DECOMPRESSION and REFLECTION protocols are not designed for concurrent use — they require your full presence."
+      },
+      {
+        "q": "What is the Founding Member price lock?",
+        "a": "The first 100 subscribers join at $7.99/month, locked forever. This price will never increase for founding members, regardless of future pricing changes. There are <em id='founding-seats-left'>fewer than 100 seats remaining</em>."
+      },
+      {
+        "q": "What is THE CASH?",
+        "a": "THE CASH is the B2B arm of MA-ZEN — governed silence protocols licensed for enterprise audio branding. Hospitality, workspace design, retail environments. If you are interested in a B2B arrangement, use the Creator tier to open a conversation."
+      }
+    ]
+  },
+
+  "social_proof": {
+    "phrases": [
+      { "copy": "I've been using MA-ZEN's governed silence protocols to anchor my deep work blocks. SEIJAKU at 20 minutes is the cleanest focus tool I've found." },
+      { "copy": "Not ambient audio. Not wellness. MA-ZEN protocols are acoustic architecture — they actually end, which is the whole point." },
+      { "copy": "The silence ladder concept alone is worth the subscription. Rung 3 already changed how I handle transitions between work sessions." }
+    ]
+  },
+
+  "waitlist": {
+    "title": "Join the <em>waitlist</em>",
+    "subtitle": "MA-ZEN is in limited early access. Founding member seats are capped at 100. Enter your email to be notified when your seat is ready.",
+    "placeholder": "YOUR EMAIL ADDRESS",
+    "cta": "JOIN WAITLIST",
+    "success_message": "YOU'RE ON THE LIST. We'll notify you when your founding seat is ready."
+  },
+
+  "nav": {
+    "brand": "MA-ZEN",
+    "brand_sub": "GOVERNED SILENCE",
+    "links": [
+      { "label": "THE FLOOR", "href": "app.html" },
+      { "label": "PROTOCOLS", "href": "#protocols-section" },
+      { "label": "PRICING", "href": "#pricing" },
+      { "label": "FAQ", "href": "#faq" }
+    ],
+    "cta": { "label": "BEGIN SESSION", "href": "app.html" }
+  },
+
+  "footer": {
+    "links": [
+      { "label": "PRIVACY", "href": "#" },
+      { "label": "TERMS", "href": "#" },
+      { "label": "CONTACT", "href": "mailto:hello@ma-zen.io" },
+      { "label": "GITHUB", "href": "https://dunkin2025.github.io/mazen/" }
+    ],
+    "copy": "© 2025 MA-ZEN. All sessions end."
+  }
+}

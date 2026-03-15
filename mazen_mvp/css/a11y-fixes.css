@@ -1,0 +1,285 @@
+
+/* MA-ZEN — a11y-fixes.css
+   Focus, labeling support, and readable text-size overrides for Phase 1 closeout.
+*/
+
+:root {
+  --a11y-focus-ring: rgba(196,148,74,.9);
+  --a11y-focus-glow: rgba(196,148,74,.22);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Stronger keyboard focus coverage beyond shell/nav */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible,
+.auth-link:focus-visible,
+.auth-pw-toggle:focus-visible,
+.facet-btn:focus-visible,
+.search-clear:focus-visible,
+.mz-route-link:focus-visible,
+.mz-route-back:focus-visible,
+.mz-shell-footer a:focus-visible,
+.nav-link:focus-visible,
+.nav-cta:focus-visible,
+.land-footer-link:focus-visible,
+.player-control:focus-visible,
+.player-exit:focus-visible,
+.sort-select:focus-visible,
+.plan-option:focus-visible,
+.auth-oauth-btn:focus-visible,
+.land-plan-cta:focus-visible {
+  outline: 2px solid var(--a11y-focus-ring) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 4px var(--a11y-focus-glow) !important;
+}
+
+/* Safer readable text defaults for known weak areas */
+.mz-route-link,
+.mz-route-back,
+.mz-shell-footer a,
+.mz-shell-subcopy,
+.mz-route-pill,
+.land-footer-link,
+.land-footer-copy,
+.nav-link,
+.nav-cta,
+.auth-label,
+.auth-link,
+.auth-divider-text,
+.auth-pw-label,
+.auth-field-error,
+.auth-oauth-btn,
+.result-count,
+.sort-select,
+.recents-label,
+.suggestion-type,
+.facet-label,
+.rc-roman,
+.rc-intent,
+.no-results-body,
+.proto-eyebrow,
+.proto-subtitle,
+.stat-label,
+.timeline-phase,
+.timeline-dur,
+.timeline-ratio,
+.fit-label,
+.fit-text,
+.action-card-title,
+.player-proto-id,
+.ritual-phase,
+.end-title,
+.end-stat-label,
+.end-meta,
+.fav-subtitle,
+.fav-action,
+.col-sidebar-title,
+.col-item-name,
+.col-item-count,
+.plan-name,
+.plan-desc,
+.paywall-locked-why,
+.paywall-fine,
+.ob-eyebrow,
+.ob-sub,
+.ob-hd,
+.ob-card-d,
+.ob-card-gl,
+.ob-tdesc,
+.ob-step-lbl,
+.ob-skip,
+.ob-back,
+.ob-tunit,
+.land-waitlist-input,
+#waitlist-confirm,
+.auth-sub,
+.auth-proof-attr,
+.auth-proof-eyebrow,
+.auth-stat-l {
+  font-size: max(0.74rem, 12.5px) !important;
+}
+
+.auth-input,
+.search-input,
+.search-input::placeholder,
+.land-waitlist-input,
+.land-waitlist-input::placeholder,
+.create-col-input,
+.sort-select,
+textarea,
+select,
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  font-size: 16px;
+}
+
+.auth-input,
+.land-waitlist-input,
+.search-input,
+.sort-select,
+.create-col-input,
+textarea,
+select {
+  min-height: 48px;
+}
+
+/* Improve muted text contrast where it was especially faint */
+.mz-route-link,
+.mz-route-back,
+.mz-shell-footer a,
+.land-footer-link,
+.land-footer-copy,
+.auth-label,
+.auth-link,
+.auth-sub,
+.auth-proof-attr,
+.auth-stat-l,
+.result-count,
+.facet-label,
+.recents-label,
+.suggestion-type,
+.rc-intent,
+.no-results-body,
+.sort-select,
+.proto-subtitle,
+.stat-label,
+.timeline-phase,
+.timeline-dur,
+.timeline-ratio,
+.fit-label,
+.fit-text,
+.end-stat-label,
+.end-meta,
+.fav-subtitle,
+.fav-action,
+.col-sidebar-title,
+.col-item-name,
+.col-item-count,
+.plan-desc,
+.paywall-locked-why,
+.paywall-fine {
+  color: var(--type-dim, #d5d0c8) !important;
+}
+
+/* Search-specific readability */
+body[data-page="search"] .facet-btn,
+body[data-page="search"] .suggestion-item,
+body[data-page="search"] .rc-subtitle,
+body[data-page="search"] .suggestion-type,
+body[data-page="search"] .recent-icon {
+  font-size: max(0.76rem, 12.5px) !important;
+}
+
+body[data-page="search"] .sort-select,
+body[data-page="search"] .facet-btn,
+body[data-page="search"] .search-clear {
+  min-height: 44px;
+}
+
+/* Auth-specific readability */
+body[data-page="auth"] .auth-label,
+body[data-page="auth"] .auth-link,
+body[data-page="auth"] .auth-divider-text,
+body[data-page="auth"] .auth-proof-eyebrow,
+body[data-page="auth"] .auth-proof-attr,
+body[data-page="auth"] .auth-stat-l {
+  font-size: max(0.76rem, 12.5px) !important;
+}
+
+body[data-page="auth"] .auth-sub,
+body[data-page="auth"] .auth-alert,
+body[data-page="auth"] .bib-text,
+body[data-page="auth"] .bib-update-btn {
+  font-size: max(0.84rem, 13.5px) !important;
+}
+
+body[data-page="auth"] .auth-pw-toggle,
+body[data-page="auth"] .auth-field-error {
+  font-size: max(0.78rem, 12.5px) !important;
+}
+
+body[data-page="auth"] .auth-input,
+body[data-page="auth"] .auth-submit,
+body[data-page="auth"] .auth-oauth-btn {
+  min-height: 48px;
+}
+
+/* Tight phone overrides for tiny nav/footer text */
+@media (max-width: 760px) {
+  .mz-route-link,
+  .mz-route-back,
+  .mz-shell-footer a,
+  .land-footer-link,
+  .land-footer-copy,
+  .nav-link,
+  .nav-cta,
+  .mz-route-pill,
+  .mz-shell-subcopy {
+    font-size: 0.8rem !important;
+  }
+
+  .auth-label,
+  .auth-link,
+  .auth-divider-text,
+  .facet-label,
+  .result-count,
+  .sort-select,
+  .recents-label,
+  .suggestion-type,
+  .proto-eyebrow,
+  .proto-subtitle,
+  .stat-label,
+  .timeline-phase,
+  .timeline-dur,
+  .timeline-ratio,
+  .fit-label,
+  .fit-text,
+  .end-title,
+  .end-stat-label,
+  .end-meta,
+  .fav-subtitle,
+  .fav-action,
+  .col-sidebar-title,
+  .col-item-name,
+  .col-item-count,
+  .plan-name,
+  .plan-desc,
+  .paywall-locked-why,
+  .paywall-fine,
+  .ob-eyebrow,
+  .ob-sub,
+  .ob-hd,
+  .ob-card-d,
+  .ob-card-gl,
+  .ob-tdesc,
+  .ob-step-lbl,
+  .ob-skip,
+  .ob-back,
+  .ob-tunit,
+  .rc-roman,
+  .rc-intent,
+  .no-results-body,
+  .auth-proof-attr,
+  .auth-proof-eyebrow,
+  .auth-stat-l,
+  #waitlist-confirm {
+    font-size: 0.82rem !important;
+  }
+}

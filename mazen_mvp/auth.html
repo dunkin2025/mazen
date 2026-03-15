@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA-ZEN — Sign In</title>
+<meta name="description" content="Sign in or create your MA-ZEN account to access governed silence protocols.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css?v=20260309p6">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-size:16px;height:100%;}
+body{background:var(--void);color:var(--type);font-family:var(--font-m,'DM Mono',monospace);font-size:.75rem;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.018;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;}
+::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);}
+@keyframes dotPulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+</style>
+<link rel="stylesheet" href="css/auth.css?v=20260309p6">
+<link rel="stylesheet" href="css/plans.css?v=20260309p6">
+  <link rel="stylesheet" href="css/shell.css?v=20260309p6">
+  <link rel="stylesheet" href="css/responsive.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phone-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/a11y-fixes.css?v=20260309p6">
+  <link rel="stylesheet" href="css/phase1-validity-fixes.css?v=20260309p6">
+  <link rel="icon" href="favicon.ico?v=20260309p6">
+</head>
+<body class="auth-page" data-shell="public" data-page="auth">
+
+<!-- ── NAV ── -->
+<nav class="auth-nav">
+  <a href="index.html" class="auth-nav-brand" style="font-family:var(--font-d,'Cormorant Garamond',serif)">MA-ZEN</a>
+  <div style="display:flex;gap:14px;align-items:center"><a href="help.html" class="auth-nav-link">HELP</a><a href="legal.html" class="auth-nav-link">LEGAL</a><a href="index.html" class="auth-nav-link">← BACK TO SITE</a></div>
+</nav>
+
+<!-- ── LAYOUT ── -->
+<div class="auth-layout">
+
+  <!-- ── LEFT: FORM PANEL ── -->
+  <div class="auth-panel auth-panel-left">
+
+    <!-- TAB SWITCHER -->
+    <div style="display:flex;gap:0;border:1px solid var(--border);width:fit-content;margin-bottom:36px;">
+      <button class="auth-tab-btn active" id="tab-login" style="padding:7px 22px;font-size:.56rem;letter-spacing:.14em;font-family:inherit;background:none;color:var(--gold);border:none;cursor:pointer;transition:all .2s;border-right:1px solid var(--border);">SIGN IN</button>
+      <button class="auth-tab-btn" id="tab-signup" style="padding:7px 22px;font-size:.56rem;letter-spacing:.14em;font-family:inherit;background:none;color:var(--type-faint);border:none;cursor:pointer;transition:all .2s;">CREATE ACCOUNT</button>
+    </div>
+
+    <!-- ALERT -->
+    <div class="auth-alert" id="auth-alert"></div>
+
+    <!-- ── LOGIN FORM ── -->
+    <div id="form-login">
+      <p class="auth-eyebrow">RETURNING PRACTITIONER</p>
+      <h1 class="auth-title">Sign <em>in</em></h1>
+      <p class="auth-sub">Access your protocols, session history, and Silence Ladder progress.</p>
+
+      <div class="auth-form" id="login-form">
+        <div class="auth-field">
+          <label class="auth-label" for="login-email">EMAIL ADDRESS</label>
+          <input class="auth-input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
+          <span class="auth-field-error" id="login-email-error"></span>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="login-password">PASSWORD</label>
+          <div class="auth-input-wrap">
+            <input class="auth-input" id="login-password" type="password" placeholder="Your password" autocomplete="current-password">
+            <span class="auth-pw-toggle" id="login-pw-toggle">SHOW</span>
+          </div>
+          <span class="auth-field-error" id="login-pw-error"></span>
+        </div>
+        <button class="auth-submit" id="login-submit"><span>SIGN IN →</span></button>
+        <div class="auth-links">
+          <span class="auth-link" id="forgot-link" role="button" tabindex="0">FORGOT PASSWORD?</span>
+          <span class="auth-link primary" id="switch-to-signup" role="button" tabindex="0">CREATE ACCOUNT</span>
+        </div>
+      </div>
+
+      <div class="auth-divider"><div class="auth-divider-line"></div><span class="auth-divider-text">OR</span><div class="auth-divider-line"></div></div>
+      <div class="auth-oauth-btns">
+        <button class="auth-oauth-btn" id="oauth-google-login">
+          <svg class="auth-oauth-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          CONTINUE WITH GOOGLE
+        </button>
+        <button class="auth-oauth-btn" id="oauth-apple-login">
+          <svg class="auth-oauth-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"/></svg>
+          CONTINUE WITH APPLE
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SIGNUP FORM ── -->
+    <div id="form-signup" style="display:none;">
+      <p class="auth-eyebrow">NEW PRACTITIONER</p>
+      <h1 class="auth-title">Create <em>account</em></h1>
+      <p class="auth-sub">Join MA-ZEN. Begin your first governed silence session in under 60 seconds.</p>
+
+      <div class="auth-form" id="signup-form">
+        <div class="auth-field">
+          <label class="auth-label" for="signup-name">DISPLAY NAME <span style="opacity:.4">(optional)</span></label>
+          <input class="auth-input" id="signup-name" type="text" placeholder="How you'll appear" autocomplete="name">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="signup-email">EMAIL ADDRESS</label>
+          <input class="auth-input" id="signup-email" type="email" placeholder="you@example.com" autocomplete="email">
+          <span class="auth-field-error" id="signup-email-error"></span>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="signup-password">PASSWORD</label>
+          <div class="auth-input-wrap">
+            <input class="auth-input" id="signup-password" type="password" placeholder="Min. 8 characters" autocomplete="new-password">
+            <span class="auth-pw-toggle" id="signup-pw-toggle">SHOW</span>
+          </div>
+          <div class="auth-pw-strength">
+            <div class="auth-pw-bar"><div class="auth-pw-bar-fill" id="pw-strength-bar"></div></div>
+            <span class="auth-pw-label" id="pw-strength-label"></span>
+          </div>
+          <span class="auth-field-error" id="signup-pw-error"></span>
+        </div>
+        <div class="auth-field" style="flex-direction:row;align-items:flex-start;gap:10px;">
+          <input type="checkbox" id="signup-terms" style="margin-top:3px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;">
+          <label for="signup-terms" style="font-size:.58rem;letter-spacing:.04em;color:var(--type-faint);line-height:1.65;cursor:pointer;">
+            I understand MA-ZEN sessions end. I accept that silence is a structural parameter, not an absence.
+          </label>
+        </div>
+        <button class="auth-submit" id="signup-submit"><span>CREATE ACCOUNT →</span></button>
+        <div class="auth-links">
+          <span class="auth-link primary" id="switch-to-login" role="button" tabindex="0">ALREADY HAVE AN ACCOUNT?</span>
+        </div>
+      </div>
+
+      <div class="auth-divider"><div class="auth-divider-line"></div><span class="auth-divider-text">OR</span><div class="auth-divider-line"></div></div>
+      <div class="auth-oauth-btns">
+        <button class="auth-oauth-btn" id="oauth-google-signup">
+          <svg class="auth-oauth-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          SIGN UP WITH GOOGLE
+        </button>
+      </div>
+    </div>
+
+    <!-- ── FORGOT PASSWORD FORM ── -->
+    <div id="form-forgot" style="display:none;">
+      <p class="auth-eyebrow">ACCOUNT RECOVERY</p>
+      <h1 class="auth-title">Reset <em>password</em></h1>
+      <p class="auth-sub">Enter your email. If an account exists, we'll send a reset link.</p>
+      <div class="auth-form">
+        <div class="auth-field">
+          <label class="auth-label" for="forgot-email">EMAIL ADDRESS</label>
+          <input class="auth-input" id="forgot-email" type="email" placeholder="you@example.com" autocomplete="email">
+          <span class="auth-field-error" id="forgot-email-error"></span>
+        </div>
+        <button class="auth-submit" id="forgot-submit"><span>SEND RESET LINK →</span></button>
+        <div class="auth-links">
+          <span class="auth-link primary" id="back-to-login" role="button" tabindex="0">← BACK TO SIGN IN</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EMAIL VERIFICATION ── -->
+    <div id="form-verify" style="display:none;">
+      <p class="auth-eyebrow">VERIFY YOUR EMAIL</p>
+      <h1 class="auth-title">Check your <em>inbox</em></h1>
+      <p class="auth-sub">We sent a 6-digit code to <strong id="verify-email-target">your email</strong>. Enter it below.</p>
+      <div class="auth-verify-code">
+        <input class="auth-code-digit" id="code-0" maxlength="1" type="text" inputmode="numeric" aria-label="Verification code digit 1" autocomplete="one-time-code">
+        <input class="auth-code-digit" id="code-1" maxlength="1" type="text" inputmode="numeric" aria-label="Verification code digit 2">
+        <input class="auth-code-digit" id="code-2" maxlength="1" type="text" inputmode="numeric" aria-label="Verification code digit 3">
+        <input class="auth-code-digit" id="code-3" maxlength="1" type="text" inputmode="numeric" aria-label="Verification code digit 4">
+        <input class="auth-code-digit" id="code-4" maxlength="1" type="text" inputmode="numeric" aria-label="Verification code digit 5">
+        <input class="auth-code-digit" id="code-5" maxlength="1" type="text" inputmode="numeric" aria-label="Verification code digit 6">
+      </div>
+      <button class="auth-submit" id="verify-submit"><span>VERIFY →</span></button>
+      <div class="auth-links" style="justify-content:center;margin-top:14px;">
+        <span class="auth-link" id="resend-code" role="button" tabindex="0" aria-label="Resend verification code">RESEND CODE</span>
+      </div>
+    </div>
+
+  </div><!-- end left panel -->
+
+  <!-- ── RIGHT: SOCIAL PROOF PANEL ── -->
+  <div class="auth-panel auth-panel-right">
+    <p class="auth-proof-eyebrow">WHY PRACTITIONERS JOIN</p>
+    <div class="auth-proof-quote">
+      "The only tool I've used that treats silence as <em>architecture</em>, not decoration."
+    </div>
+    <p class="auth-proof-attr">— R. CHEN, Researcher</p>
+    <div class="auth-proof-stats">
+      <div class="auth-stat"><div class="auth-stat-n">25</div><div class="auth-stat-l">GOVERNED PROTOCOLS</div></div>
+      <div class="auth-stat"><div class="auth-stat-n">6</div><div class="auth-stat-l">SILENCE LADDER RUNGS</div></div>
+      <div class="auth-stat"><div class="auth-stat-n">100<em>%</em></div><div class="auth-stat-l">SESSIONS THAT END</div></div>
+      <div class="auth-stat"><div class="auth-stat-n">0</div><div class="auth-stat-l">INFINITE LOOPS</div></div>
+    </div>
+    <div style="margin-top:32px;padding:20px;background:var(--void);border:1px solid var(--border);">
+      <p style="font-size:.5rem;letter-spacing:.18em;color:var(--gold);margin-bottom:10px;">FOUNDING MEMBER OFFER</p>
+      <p style="font-size:.64rem;letter-spacing:.05em;color:var(--type-faint);line-height:1.8;">
+        Create your account today and lock in a founding member seat at <strong style="color:var(--type)">$7.99/month — forever.</strong> 
+        Only 87 seats remaining.
+      </p>
+    </div>
+  </div>
+
+</div><!-- end layout -->
+
+<!-- ── SCRIPTS ── -->
+<script src="js/db.js?v=20260309p6"></script>
+<script src="js/auth.js?v=20260309p6"></script>
+<script>
+(function() {
+  'use strict';
+
+  // ── ROUTING: show form based on URL params or tab ──
+  const params  = new URLSearchParams(window.location.search);
+  const showForm = params.get('form') || 'login'; // login | signup | forgot | verify
+
+  function switchTo(formId) {
+    ['login','signup','forgot','verify'].forEach(id => {
+      document.getElementById('form-' + id).style.display = id === formId ? 'block' : 'none';
+    });
+    // Update tabs
+    document.getElementById('tab-login').style.color  = formId === 'login'  ? 'var(--gold)' : 'var(--type-faint)';
+    document.getElementById('tab-signup').style.color = formId === 'signup' ? 'var(--gold)' : 'var(--type-faint)';
+  }
+
+  switchTo(showForm);
+
+  // ── TABS ──
+  document.getElementById('tab-login').addEventListener('click',  () => switchTo('login'));
+  document.getElementById('tab-signup').addEventListener('click', () => switchTo('signup'));
+  document.getElementById('switch-to-signup')?.addEventListener('click', () => switchTo('signup'));
+  document.getElementById('switch-to-login')?.addEventListener('click',  () => switchTo('login'));
+  document.getElementById('forgot-link')?.addEventListener('click',      () => switchTo('forgot'));
+  document.getElementById('back-to-login')?.addEventListener('click',    () => switchTo('login'));
+
+  // ── PASSWORD SHOW/HIDE ──
+  function bindPwToggle(toggleId, inputId) {
+    const toggle = document.getElementById(toggleId);
+    const input  = document.getElementById(inputId);
+    if (!toggle || !input) return;
+    toggle.addEventListener('click', () => {
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      toggle.textContent = show ? 'HIDE' : 'SHOW';
+    });
+  }
+  bindPwToggle('login-pw-toggle', 'login-password');
+  bindPwToggle('signup-pw-toggle', 'signup-password');
+
+  // ── PASSWORD STRENGTH ──
+  AuthModule.bindPasswordStrength(
+    document.getElementById('signup-password'),
+    document.getElementById('pw-strength-bar'),
+    document.getElementById('pw-strength-label')
+  );
+
+  // ── LOGIN SUBMIT ──
+  const loginBtn = document.getElementById('login-submit');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', async () => {
+      AuthModule.hideAlert('auth-alert');
+      const email = document.getElementById('login-email').value.trim();
+      const pw    = document.getElementById('login-password').value;
+
+      if (!AuthModule.validateEmail(email)) {
+        return AuthModule.showAlert('auth-alert', 'Please enter a valid email address.', 'error');
+      }
+      if (!pw) return AuthModule.showAlert('auth-alert', 'Password is required.', 'error');
+
+      AuthModule.setSubmitLoading(loginBtn, true, 'SIGNING IN');
+      const result = await AuthModule.login(email, pw);
+      AuthModule.setSubmitLoading(loginBtn, false);
+
+      if (result.success) {
+        AuthModule.showAlert('auth-alert', 'Signed in. Redirecting…', 'success');
+        setTimeout(() => window.location.href = params.get('next') || 'app.html', 800);
+      } else {
+        AuthModule.showAlert('auth-alert', result.message || 'Sign in failed.', 'error');
+      }
+    });
+  }
+
+  // ── SIGNUP SUBMIT ──
+  const signupBtn = document.getElementById('signup-submit');
+  if (signupBtn) {
+    signupBtn.addEventListener('click', async () => {
+      AuthModule.hideAlert('auth-alert');
+      const name  = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const pw    = document.getElementById('signup-password').value;
+      const terms = document.getElementById('signup-terms').checked;
+
+      if (!AuthModule.validateEmail(email)) return AuthModule.showAlert('auth-alert', 'Please enter a valid email address.', 'error');
+      if (pw.length < 8)    return AuthModule.showAlert('auth-alert', 'Password must be at least 8 characters.', 'error');
+      if (!terms)           return AuthModule.showAlert('auth-alert', 'Please accept the terms to continue.', 'error');
+
+      AuthModule.setSubmitLoading(signupBtn, true, 'CREATING ACCOUNT');
+      const result = await AuthModule.signUpEmail(email, pw, name);
+      AuthModule.setSubmitLoading(signupBtn, false);
+
+      if (result.success) {
+        if (result.needs_verification) {
+          await AuthModule.sendVerificationEmail(email);
+          document.getElementById('verify-email-target').textContent = email;
+          switchTo('verify');
+          AuthModule.showAlert('auth-alert', 'Account created. Check your email for a verification code.', 'success');
+        } else {
+          setTimeout(() => window.location.href = 'app.html?onboard=1', 800);
+        }
+      } else {
+        AuthModule.showAlert('auth-alert', result.message || 'Sign up failed.', 'error');
+      }
+    });
+  }
+
+  // ── FORGOT PASSWORD ──
+  const forgotBtn = document.getElementById('forgot-submit');
+  if (forgotBtn) {
+    forgotBtn.addEventListener('click', async () => {
+      AuthModule.hideAlert('auth-alert');
+      const email = document.getElementById('forgot-email').value.trim();
+      AuthModule.setSubmitLoading(forgotBtn, true, 'SENDING');
+      const result = await AuthModule.sendPasswordReset(email);
+      AuthModule.setSubmitLoading(forgotBtn, false);
+      AuthModule.showAlert('auth-alert', result.message, result.success ? 'success' : 'error');
+    });
+  }
+
+  // ── EMAIL VERIFICATION ──
+  // Auto-advance digit inputs
+  document.querySelectorAll('.auth-code-digit').forEach((input, idx, all) => {
+    input.addEventListener('input', () => {
+      if (input.value && idx < all.length - 1) all[idx+1].focus();
+    });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) all[idx-1].focus();
+    });
+  });
+
+  const verifyBtn = document.getElementById('verify-submit');
+  if (verifyBtn) {
+    verifyBtn.addEventListener('click', async () => {
+      const code = [...document.querySelectorAll('.auth-code-digit')].map(i => i.value).join('');
+      if (code.length < 6) return AuthModule.showAlert('auth-alert', 'Enter the full 6-digit code.', 'error');
+      AuthModule.setSubmitLoading(verifyBtn, true, 'VERIFYING');
+      const result = await AuthModule.verifyEmail(code);
+      AuthModule.setSubmitLoading(verifyBtn, false);
+      if (result.success) {
+        AuthModule.showAlert('auth-alert', 'Email verified! Redirecting…', 'success');
+        setTimeout(() => window.location.href = 'app.html?onboard=1', 800);
+      } else {
+        AuthModule.showAlert('auth-alert', result.message, 'error');
+      }
+    });
+  }
+
+  document.getElementById('resend-code')?.addEventListener('click', async () => {
+    const email = document.getElementById('verify-email-target').textContent;
+    await AuthModule.sendVerificationEmail(email);
+    AuthModule.showAlert('auth-alert', 'New code sent. Check your inbox.', 'info');
+  });
+
+  // ── OAUTH ──
+  ['google','apple'].forEach(provider => {
+    ['login','signup'].forEach(mode => {
+      const btn = document.getElementById(`oauth-${provider}-${mode}`);
+      if (btn) btn.addEventListener('click', async () => {
+        const result = await AuthModule.initiateOAuth(provider);
+        if (result && result.success) {
+          AuthModule.showAlert('auth-alert', `Signed in with ${provider}. Redirecting…`, 'success');
+          setTimeout(() => window.location.href = result.user.created_at === result.user.last_seen_at ? 'app.html?onboard=1' : 'app.html', 800);
+        }
+      });
+    });
+  });
+
+  // ── REDIRECT IF ALREADY LOGGED IN ──
+  if (AuthModule.isLoggedIn()) {
+    const next = params.get('next') || 'app.html';
+    // Only redirect if not explicitly on this page for settings
+    if (!params.has('settings')) {
+      window.location.href = next;
+    }
+  }
+
+  // ── PRE-FILL FROM URL MSG PARAM ──
+  const msg = params.get('msg');
+  if (msg === 'all_signed_out') AuthModule.showAlert('auth-alert', 'All devices signed out successfully.', 'success');
+
+})();
+</script>
+<script src="js/state.js?v=20260309p6"></script>
+<script src="js/shell.js?v=20260309p6"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+/* Phase 1 flow fixes — onboarding + state-machine support */
+#ob-overlay .ob-wrap{
+  position:relative;
+  background:linear-gradient(180deg, rgba(7,12,24,.96), rgba(4,8,18,.985));
+  border:1px solid var(--border);
+  padding:28px 36px 32px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+#ob-overlay .ob-close-btn{
+  position:absolute;
+  top:16px;
+  right:18px;
+  background:none;
+  border:none;
+  color:var(--type-faint);
+  font-family:var(--font-mono);
+  font-size:.82rem;
+  letter-spacing:.14em;
+  cursor:pointer;
+}
+#ob-overlay .ob-close-btn:hover,
+#ob-overlay .ob-close-btn:focus-visible{ color:var(--gold); outline:none; }
+.ob-env-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:0 0 22px; }
+@media (max-width: 620px){ .ob-env-grid{ grid-template-columns:1fr; } }
+.ob-env-group{ background:var(--navy); border:1px solid var(--border); padding:14px; }
+.ob-env-label{ font-size:.52rem; letter-spacing:.16em; color:var(--gold); margin-bottom:10px; }
+.ob-env-options{ display:flex; flex-direction:column; gap:8px; }
+.ob-env-opt{
+  width:100%; text-align:left; background:none; border:1px solid var(--border); color:var(--type-dim);
+  padding:11px 12px; display:flex; align-items:center; gap:10px; cursor:pointer;
+  font-family:var(--font-mono); font-size:.58rem; letter-spacing:.08em; transition:all var(--transition);
+}
+.ob-env-opt:hover{ border-color:var(--gold-dim); color:var(--type); }
+.ob-env-opt.sel{ border-color:var(--gold); background:var(--gold-glow); color:var(--gold); }
+.ob-env-marker{ width:10px; height:10px; border-radius:50%; border:1px solid var(--border); background:transparent; flex-shrink:0; }
+.ob-env-opt.sel .ob-env-marker{ border-color:var(--gold); background:var(--gold); }
+.ob-rec{ min-height:160px; }
+.ob-btn-row{ margin-top:16px; }
+#view-complete .complete-inner{ position:relative; z-index:1; }
+#view-complete .complete-backdrop{ position:absolute; inset:0; background:transparent; }
+#view-complete .complete-btns{ position:sticky; bottom:0; background:linear-gradient(180deg, rgba(4,8,18,0), rgba(4,8,18,.96) 28%); padding-top:16px; }
