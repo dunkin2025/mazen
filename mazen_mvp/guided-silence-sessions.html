@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE PROOF — Guided Silence Sessions · MA-ZEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0c0b09; --bg-card:#131109; --bg-hover:#1a1814;
+  --border:rgba(200,180,130,0.07); --border-md:rgba(200,180,130,0.13); --border-g:rgba(184,147,58,0.28);
+  --text:#ddd8cc; --text-dim:#9a9080; --text-mute:#5a5448;
+  --gold:#b8933a; --gold-lt:#d4ab4a; --gold-bg:rgba(184,147,58,0.07);
+  --font-d:'Cormorant Garamond',Georgia,serif; --font-m:'DM Mono','Courier New',monospace;
+  --ease:200ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-d);font-size:1.05rem;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+::selection{background:var(--gold-bg);color:var(--gold-lt);}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+
+/* Nav */
+.app-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:52px;display:flex;align-items:center;border-bottom:1px solid var(--border);background:rgba(12,11,9,0.95);backdrop-filter:blur(16px);}
+.nav-inner{width:100%;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:var(--font-d);font-size:0.9rem;letter-spacing:0.12em;color:var(--text);text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-label{font-family:var(--font-m);font-size:0.6rem;color:var(--text-mute);letter-spacing:0.2em;}
+.nav-links{display:flex;align-items:center;gap:24px;}
+.nav-links a{font-family:var(--font-m);font-size:0.65rem;font-weight:300;color:var(--text-dim);text-decoration:none;letter-spacing:0.08em;transition:color var(--ease);}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+
+/* App Layout */
+.app-layout{display:grid;grid-template-columns:220px 1fr 220px;height:100vh;padding-top:52px;}
+.sidebar-left,.sidebar-right{overflow-y:auto;}
+.sidebar-left{border-right:1px solid var(--border);}
+.sidebar-right{border-left:1px solid var(--border);}
+.main-field{overflow:hidden;position:relative;display:flex;flex-direction:column;}
+
+/* Sidebar Pieces */
+.sidebar-section{border-bottom:1px solid var(--border);}
+.sidebar-header{padding:14px 18px 10px;display:flex;align-items:center;justify-content:space-between;}
+.sidebar-title{font-family:var(--font-m);font-size:0.56rem;font-weight:300;letter-spacing:0.18em;color:var(--text-mute);text-transform:uppercase;}
+.sidebar-count{font-family:var(--font-m);font-size:0.54rem;color:var(--text-mute);}
+
+/* Preset List */
+.preset-item{padding:13px 18px;cursor:pointer;transition:background var(--ease);border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:3px;}
+.preset-item:last-child{border-bottom:none;}
+.preset-item:hover{background:var(--bg-hover);}
+.preset-item.active{background:var(--bg-hover);border-left:2px solid var(--gold);padding-left:16px;}
+.preset-item-name{font-size:1rem;font-weight:300;color:var(--text);}
+.preset-item-concept{font-family:var(--font-m);font-size:0.54rem;color:var(--text-mute);letter-spacing:0.1em;}
+.preset-item-tags{font-family:var(--font-m);font-size:0.5rem;color:var(--text-mute);}
+
+/* Session List */
+.session-item{padding:9px 18px;cursor:pointer;transition:background var(--ease);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.session-item:last-child{border-bottom:none;}
+.session-item:hover{background:var(--bg-hover);}
+.session-item.active{background:var(--bg-hover);border-left:2px solid var(--gold);padding-left:16px;}
+.session-item-left{display:flex;align-items:center;gap:9px;}
+.session-num{font-family:var(--font-m);font-size:0.54rem;color:var(--text-mute);min-width:18px;}
+.session-name{font-size:0.88rem;font-weight:300;color:var(--text-dim);}
+.session-item.active .session-name{color:var(--text);}
+.session-dur{font-family:var(--font-m);font-size:0.54rem;color:var(--text-mute);}
+
+/* Main Field */
+.field-top{padding:20px 36px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
+.field-session-info{display:flex;align-items:center;gap:14px;}
+.field-session-num{font-family:var(--font-m);font-size:0.6rem;color:var(--text-mute);letter-spacing:0.12em;}
+.field-session-name{font-size:1.05rem;font-weight:300;color:var(--text);}
+.field-controls-top{display:flex;gap:10px;align-items:center;}
+.field-toggle{font-family:var(--font-m);font-size:0.58rem;font-weight:300;color:var(--text-mute);background:transparent;border:1px solid var(--border);padding:5px 12px;cursor:pointer;letter-spacing:0.1em;transition:all var(--ease);}
+.field-toggle:hover{border-color:var(--border-md);color:var(--text-dim);}
+.field-toggle.active{border-color:var(--border-g);color:var(--gold);background:var(--gold-bg);}
+
+/* Canvas */
+.canvas-wrap{flex:1;position:relative;overflow:hidden;}
+#fieldCanvas{width:100%;height:100%;display:block;}
+.field-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;padding:40px;}
+.field-phase{font-family:var(--font-m);font-size:0.63rem;font-weight:300;letter-spacing:0.22em;color:var(--text-mute);text-transform:uppercase;margin-bottom:14px;transition:opacity 1s ease;min-height:1em;}
+.field-timer{font-family:var(--font-m);font-size:clamp(2.5rem,6vw,5rem);font-weight:300;color:var(--text-mute);letter-spacing:0.08em;line-height:1;margin-bottom:10px;transition:color 500ms ease;}
+.field-timer.running{color:var(--text);}
+.field-phase-qual{font-size:0.88rem;font-weight:300;font-style:italic;color:var(--text-dim);min-height:1.5em;}
+
+/* Bottom */
+.field-actions{padding:0 36px 16px;display:flex;gap:10px;flex-shrink:0;}
+.btn-start{font-family:var(--font-m);font-size:0.7rem;font-weight:300;letter-spacing:0.14em;color:var(--bg);background:var(--gold);border:none;cursor:pointer;padding:11px 28px;transition:all var(--ease);}
+.btn-start:hover{background:var(--gold-lt);}
+.btn-stop{font-family:var(--font-m);font-size:0.66rem;font-weight:300;letter-spacing:0.12em;color:var(--text-dim);background:transparent;border:1px solid var(--border-md);cursor:pointer;padding:11px 22px;transition:all var(--ease);}
+.btn-stop:hover{border-color:var(--border-g);color:var(--text);}
+.btn-stop:disabled{opacity:0.3;cursor:default;}
+.field-bottom{flex-shrink:0;padding:14px 36px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.status-strip{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--text-mute);flex-shrink:0;}
+.status-dot.playing{background:var(--gold);}
+.status-text{font-family:var(--font-m);font-size:0.58rem;color:var(--text-mute);letter-spacing:0.1em;}
+.events-count{font-family:var(--font-m);font-size:0.58rem;color:var(--text-mute);letter-spacing:0.08em;}
+.validity-note{font-family:var(--font-m);font-size:0.56rem;color:var(--text-mute);font-style:italic;text-align:right;max-width:220px;line-height:1.5;}
+
+/* Right Sidebar */
+.bias-display{padding:14px 18px;border-bottom:1px solid var(--border);}
+.bias-value{font-size:2.4rem;font-weight:300;color:var(--gold);line-height:1;margin-bottom:3px;}
+.bias-bar{height:2px;background:var(--border-md);margin-top:10px;}
+.bias-fill{height:100%;background:var(--gold);transition:width 500ms ease;}
+.bias-label-row{display:flex;justify-content:space-between;margin-top:5px;}
+.bias-lbl{font-family:var(--font-m);font-size:0.52rem;color:var(--text-mute);letter-spacing:0.06em;}
+.control-group{padding:14px 18px;border-bottom:1px solid var(--border);}
+.control-label{font-family:var(--font-m);font-size:0.52rem;color:var(--text-mute);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:8px;}
+.slider-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.ctrl-slider{flex:1;height:2px;appearance:none;background:var(--border-md);outline:none;cursor:pointer;}
+.ctrl-slider::-webkit-slider-thumb{appearance:none;width:10px;height:10px;background:var(--gold);border-radius:50%;}
+.ctrl-slider::-moz-range-thumb{width:10px;height:10px;background:var(--gold);border-radius:50%;border:none;}
+.slider-val{font-family:var(--font-m);font-size:0.52rem;color:var(--text-mute);min-width:28px;text-align:right;}
+.texture-opts{padding:10px 18px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:3px;}
+.texture-opt{font-family:var(--font-m);font-size:0.58rem;color:var(--text-mute);padding:7px 10px;cursor:pointer;transition:all var(--ease);border:1px solid transparent;letter-spacing:0.06em;background:none;text-align:left;}
+.texture-opt:hover{color:var(--text-dim);border-color:var(--border);}
+.texture-opt.active{color:var(--gold);border-color:var(--border-g);background:var(--gold-bg);}
+
+/* Phase Seq */
+.phase-seq{padding:14px 18px;}
+.phase-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);}
+.phase-item:last-child{border-bottom:none;}
+.phase-item-left{display:flex;align-items:center;gap:7px;}
+.phase-dot{width:5px;height:5px;border-radius:50%;background:var(--border-md);flex-shrink:0;}
+.phase-item.current .phase-dot{background:var(--gold);}
+.phase-item.done .phase-dot{background:var(--text-mute);}
+.phase-item-name{font-family:var(--font-m);font-size:0.58rem;color:var(--text-mute);letter-spacing:0.08em;}
+.phase-item.current .phase-item-name{color:var(--gold);}
+.phase-item-detail{font-family:var(--font-m);font-size:0.52rem;color:var(--text-mute);text-align:right;}
+
+/* Ledger */
+.ledger-item{padding:9px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-family:var(--font-m);font-size:0.56rem;color:var(--text-mute);}
+.ledger-item:last-child{border-bottom:none;}
+.ledger-left{display:flex;flex-direction:column;gap:2px;}
+.ledger-preset{color:var(--text-dim);font-size:0.58rem;}
+.ledger-empty{padding:12px 18px;font-family:var(--font-m);font-size:0.56rem;color:var(--text-mute);font-style:italic;}
+
+/* Method Drawer */
+.method-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.65);display:none;align-items:flex-start;justify-content:flex-end;padding-top:52px;}
+.method-overlay.open{display:flex;}
+.method-drawer{width:540px;max-width:100%;height:calc(100vh - 52px);background:var(--bg-card);border-left:1px solid var(--border);overflow-y:auto;padding:36px;}
+.method-drawer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
+.method-drawer h2{font-size:1.7rem;font-weight:300;}
+.method-drawer h2 em{font-style:italic;color:var(--gold);}
+.close-btn{background:transparent;border:none;color:var(--text-dim);cursor:pointer;font-size:1.1rem;font-family:var(--font-m);padding:4px;}
+.method-table{width:100%;border-collapse:collapse;margin-bottom:28px;}
+.method-table th,.method-table td{padding:10px 0;border-bottom:1px solid var(--border);font-size:0.88rem;text-align:left;vertical-align:top;}
+.method-table th{font-family:var(--font-m);font-size:0.56rem;color:var(--text-mute);letter-spacing:0.14em;font-weight:300;padding-right:14px;}
+.method-table td{color:var(--text-dim);padding-right:14px;}
+.method-table td:first-child{color:var(--gold);font-family:var(--font-m);font-size:0.66rem;min-width:80px;}
+
+/* Ritual Mode */
+.ritual-overlay{position:fixed;inset:0;z-index:400;background:#0a0908;display:none;flex-direction:column;align-items:center;justify-content:center;}
+.ritual-overlay.active{display:flex;}
+.ritual-timer{font-family:var(--font-m);font-size:clamp(4rem,12vw,9rem);font-weight:300;color:rgba(221,216,204,0.10);letter-spacing:0.08em;line-height:1;transition:color 2s ease;}
+.ritual-timer.playing{color:rgba(221,216,204,0.20);}
+.ritual-phase{font-family:var(--font-m);font-size:0.62rem;font-weight:300;letter-spacing:0.24em;color:rgba(184,147,58,0.25);text-transform:uppercase;margin-top:22px;min-height:1em;}
+.ritual-preset{font-family:var(--font-m);font-size:0.52rem;color:rgba(90,84,72,0.5);letter-spacing:0.18em;margin-top:56px;}
+.ritual-hint{font-family:var(--font-m);font-size:0.48rem;color:rgba(90,84,72,0.3);letter-spacing:0.14em;margin-top:10px;}
+.ritual-tagline{font-family:var(--font-d);font-size:0.82rem;font-style:italic;font-weight:300;color:rgba(154,144,128,0.18);position:absolute;bottom:36px;}
+
+/* Responsive */
+@media(max-width:1000px){.app-layout{grid-template-columns:180px 1fr 180px;}}
+@media(max-width:800px){
+  .app-layout{grid-template-columns:1fr;height:auto;min-height:100vh;}
+  .sidebar-left{border-right:none;border-bottom:1px solid var(--border);max-height:260px;overflow-y:auto;}
+  .sidebar-right{border-left:none;border-top:1px solid var(--border);}
+  .main-field{height:55vh;min-height:360px;}
+  .field-top,.field-bottom,.field-actions{padding-left:18px;padding-right:18px;}
+  .nav-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav class="app-nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">MA<span>·</span>ZEN</a>
+    <div class="nav-label mono">// THE PROOF</div>
+    <div class="nav-links">
+      <a href="guided-silence-sessions.html" class="active">THE PROOF</a>
+      <a href="the-floor-library.html">THE FLOOR</a>
+      <a href="the-cash-b2b.html">THE CASH</a>
+    </div>
+  </div>
+</nav>
+
+<div class="app-layout" role="main">
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar-left" aria-label="Preset and session selection">
+
+    <div class="sidebar-section">
+      <div class="sidebar-header"><span class="sidebar-title mono">Presets</span></div>
+      <div role="list" aria-label="Preset selection">
+        <div class="preset-item active" onclick="selectPreset('ma',this)" tabindex="0" role="listitem" aria-selected="true">
+          <div class="preset-item-name">Ma</div>
+          <div class="preset-item-concept mono">間 · Negative Space</div>
+          <div class="preset-item-tags mono">Interval · Pause · Presence</div>
+        </div>
+        <div class="preset-item" onclick="selectPreset('sunyata',this)" tabindex="0" role="listitem" aria-selected="false">
+          <div class="preset-item-name">Sunyata</div>
+          <div class="preset-item-concept mono">शून्यता · Emptiness</div>
+          <div class="preset-item-tags mono">Void · Groundlessness · Pure Field</div>
+        </div>
+        <div class="preset-item" onclick="selectPreset('wuwei',this)" tabindex="0" role="listitem" aria-selected="false">
+          <div class="preset-item-name">Wu Wei</div>
+          <div class="preset-item-concept mono">無為 · Non-Action</div>
+          <div class="preset-item-tags mono">Flow · Effortless · Alignment</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-header"><span class="sidebar-title mono">Sessions</span><span class="sidebar-count mono">8</span></div>
+      <div role="list" aria-label="Session selection">
+        <div class="session-item" data-dur="4" onclick="selectSession(1,'Introduction',4,this)" tabindex="0" role="listitem"><div class="session-item-left"><span class="session-num mono">01</span><span class="session-name">Introduction</span></div><span class="session-dur mono">04:00</span></div>
+        <div class="session-item" data-dur="6" onclick="selectSession(2,'Open Field',6,this)" tabindex="0" role="listitem"><div class="session-item-left"><span class="session-num mono">02</span><span class="session-name">Open Field</span></div><span class="session-dur mono">06:00</span></div>
+        <div class="session-item" data-dur="8" onclick="selectSession(3,'Settle',8,this)" tabindex="0" role="listitem"><div class="session-item-left"><span class="session-num mono">03</span><span class="session-name">Settle</span></div><span class="session-dur mono">08:00</span></div>
+        <div class="session-item" data-dur="10" onclick="selectSession(4,'Deep Hold',10,this)" tabindex="0" role="listitem"><div class="session-item-left"><span class="session-num mono">04</span><span class="session-name">Deep Hold</span></div><span class="session-dur mono">10:00</span></div>
+        <div class="session-item" data-dur="12" onclick="selectSession(5,'Sunyata Field',12,this)" tabindex="0" role="listitem"><div class="session-item-left"><span class="session-num mono">05</span><span class="session-name">Sunyata Field</span></div><span class="session-dur mono">12:00</span></div>
+        <div class="session-item" data-dur="15" onclick="selectSession(6,'Wu Wei Flow',15,this)" tabindex="0" role="listitem"><div class="session-item-left"><span class="session-num mono">06</span><span class="session-name">Wu Wei Flow</span></div><span class="session-dur mono">15:00</span></div>
+        <div class="session-item" data-dur="20" onclick="selectSession(7,'Dissolution',20,this)" tabindex="0" role="listitem"><div class="session-item-left"><span class="session-num mono">07</span><span class="session-name">Dissolution</span></div><span class="session-dur mono">20:00</span></div>
+        <div class="session-item active" data-dur="8" onclick="selectSession(8,'Demonstration',8,this)" tabindex="0" role="listitem" aria-selected="true"><div class="session-item-left"><span class="session-num mono">08</span><span class="session-name">Demonstration</span></div><span class="session-dur mono">08:00</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-header"><span class="sidebar-title mono">Session Ledger</span></div>
+      <div id="ledgerList" aria-live="polite">
+        <div class="ledger-empty" id="ledgerEmpty">No sessions recorded yet.</div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Main Field -->
+  <section class="main-field" aria-label="Session field">
+
+    <div class="field-top">
+      <div class="field-session-info">
+        <span class="field-session-num mono" id="fieldSessionNum">Session 8</span>
+        <span class="field-session-name" id="fieldSessionName">Demonstration</span>
+      </div>
+      <div class="field-controls-top">
+        <button class="field-toggle active" id="labelsToggle" onclick="toggleLabels(this)">Labels On</button>
+        <button class="field-toggle" id="ritualToggle" onclick="enterRitual()" title="Ritual Mode (R)">Ritual Mode</button>
+        <button class="field-toggle" onclick="openMethod()">Method ↗</button>
+      </div>
+    </div>
+
+    <div class="canvas-wrap" aria-hidden="true">
+      <canvas id="fieldCanvas"></canvas>
+      <div class="field-overlay" id="fieldOverlay">
+        <div class="field-phase" id="phaseLabel">— Waiting —</div>
+        <div class="field-timer" id="mainTimer">00:00</div>
+        <div class="field-phase-qual" id="phaseQual"></div>
+      </div>
+    </div>
+
+    <div class="field-actions">
+      <button class="btn-start" id="startBtn" onclick="toggleSession()">Start Session</button>
+      <button class="btn-stop" id="stopBtn" onclick="stopSession()" disabled aria-label="End session">End Session</button>
+    </div>
+
+    <div class="field-bottom">
+      <div class="status-strip" role="status" aria-live="polite">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Stopped</span>
+        <span class="status-text" style="color:var(--text-mute);">·</span>
+        <span class="status-text" id="statusPreset">Pure Silence</span>
+        <span class="status-text" style="color:var(--text-mute);">·</span>
+        <span class="events-count" id="eventsCount">Events: 0</span>
+      </div>
+      <div class="validity-note">Session is valid even if nothing "happens". This is not performance tracking.</div>
+    </div>
+
+  </section>
+
+  <!-- Right Sidebar -->
+  <aside class="sidebar-right" aria-label="Session controls">
+
+    <div class="bias-display sidebar-section">
+      <div class="control-label mono">Silence Bias</div>
+      <div class="bias-value" id="biasValue">85%</div>
+      <div style="font-family:var(--font-m);font-size:0.56rem;color:var(--text-mute);margin-top:3px;">Silence Tendency</div>
+      <div class="bias-bar"><div class="bias-fill" id="biasFill" style="width:85%"></div></div>
+      <div class="bias-label-row"><span class="bias-lbl mono">More Silence</span><span class="bias-lbl mono">More Events</span></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-header"><span class="sidebar-title mono">Optional Texture</span></div>
+      <div class="texture-opts" role="radiogroup" aria-label="Texture mode">
+        <button class="texture-opt active" onclick="setTexture('none',this)" role="radio" aria-checked="true">Engine Off (Pure Session)</button>
+        <button class="texture-opt" onclick="setTexture('neutral',this)" role="radio" aria-checked="false">Neutral Field</button>
+        <button class="texture-opt" onclick="setTexture('warm',this)" role="radio" aria-checked="false">Warm Presence</button>
+        <button class="texture-opt" onclick="setTexture('motion',this)" role="radio" aria-checked="false">Motion Sparse</button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="control-label mono">Warmth</div>
+      <div class="slider-row"><input type="range" class="ctrl-slider" id="warmthSlider" min="0" max="1" step="0.01" value="0.4" aria-label="Warmth" oninput="updateParam('warmth',this.value,'warmthVal')"><span class="slider-val mono" id="warmthVal">0.40</span></div>
+      <div class="control-label mono" style="margin-top:10px;">Motion</div>
+      <div class="slider-row"><input type="range" class="ctrl-slider" id="motionSlider" min="0" max="1" step="0.01" value="0.3" aria-label="Motion" oninput="updateParam('motion',this.value,'motionVal')"><span class="slider-val mono" id="motionVal">0.30</span></div>
+      <div class="control-label mono" style="margin-top:10px;">Master Level</div>
+      <div class="slider-row"><input type="range" class="ctrl-slider" id="masterSlider" min="0" max="1" step="0.01" value="0.6" aria-label="Master level" oninput="updateMaster(this.value)"><span class="slider-val mono" id="masterVal">0 dB</span></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-header"><span class="sidebar-title mono">Phase Sequence</span></div>
+      <div class="phase-seq" id="phaseSeq" role="list">
+        <div class="phase-item" data-phase="open" role="listitem"><div class="phase-item-left"><span class="phase-dot"></span><span class="phase-item-name mono">Open</span></div><span class="phase-item-detail mono">Arrival · 8%</span></div>
+        <div class="phase-item" data-phase="settle" role="listitem"><div class="phase-item-left"><span class="phase-dot"></span><span class="phase-item-name mono">Settle</span></div><span class="phase-item-detail mono">Clearing · 15%</span></div>
+        <div class="phase-item" data-phase="hold" role="listitem"><div class="phase-item-left"><span class="phase-dot"></span><span class="phase-item-name mono">Hold</span></div><span class="phase-item-detail mono">Primary · 52%</span></div>
+        <div class="phase-item" data-phase="dissolve" role="listitem"><div class="phase-item-left"><span class="phase-dot"></span><span class="phase-item-name mono">Dissolve</span></div><span class="phase-item-detail mono">Softening · 18%</span></div>
+        <div class="phase-item" data-phase="return" role="listitem"><div class="phase-item-left"><span class="phase-dot"></span><span class="phase-item-name mono">Return</span></div><span class="phase-item-detail mono">Completion · 7%</span></div>
+      </div>
+    </div>
+
+    <div class="control-group" style="border-bottom:none;">
+      <div class="control-label mono">Engine Principle</div>
+      <p style="font-family:var(--font-m);font-size:0.56rem;color:var(--text-mute);line-height:1.7;">Silence first. Texture only supports the boundary. Pure sessions run without the engine. No voice. No "keep going."</p>
+      <button onclick="openMethod()" style="margin-top:10px;background:transparent;border:none;cursor:pointer;font-family:var(--font-m);font-size:0.58rem;color:var(--gold);padding:0;letter-spacing:0.1em;">View Full Method ↗</button>
+    </div>
+
+  </aside>
+</div>
+
+<!-- Ritual Mode -->
+<div class="ritual-overlay" id="ritualOverlay" role="dialog" aria-label="Ritual mode" aria-modal="true">
+  <div class="ritual-timer" id="ritualTimer">00:00</div>
+  <div class="ritual-phase" id="ritualPhase"></div>
+  <div class="ritual-preset" id="ritualPreset" style="margin-top:56px;font-family:var(--font-m);font-size:0.52rem;color:rgba(90,84,72,0.5);letter-spacing:0.18em;"></div>
+  <div style="font-family:var(--font-m);font-size:0.48rem;color:rgba(90,84,72,0.3);letter-spacing:0.14em;margin-top:10px;">Press Esc to exit · Space to pause</div>
+  <div class="ritual-tagline">The boundary is the product.</div>
+</div>
+
+<!-- Method Drawer -->
+<div class="method-overlay" id="methodOverlay" role="dialog" aria-label="Method documentation" aria-modal="true">
+  <div class="method-drawer" role="document">
+    <div class="method-drawer-header">
+      <h2>Module <em>Map</em></h2>
+      <button class="close-btn" onclick="closeMethod()" aria-label="Close">✕</button>
+    </div>
+    <table class="method-table">
+      <thead><tr><th>Module</th><th>Function</th><th>Design Principle</th></tr></thead>
+      <tbody>
+        <tr><td>Preset Engine</td><td>Defines phase sequence, bias range, color signature. Ma / Sunyata / Wu Wei.</td><td>Silence has texture. Presets are containers, not styles.</td></tr>
+        <tr><td>Phase Sequencer</td><td>Open, Settle, Hold, Dissolve, Return. Transitions without narration.</td><td>Time structures experience. No guidance is itself guidance.</td></tr>
+        <tr><td>Silence Bias</td><td>Live readout of session disposition toward pure silence vs. texture.</td><td>The ratio of silence to event is the practice, made visible.</td></tr>
+        <tr><td>Texture Engine</td><td>Canvas-rendered visual events. Web Audio tones when texture mode active.</td><td>Texture supports the boundary. Silence is primary.</td></tr>
+        <tr><td>Ritual Mode</td><td>Fullscreen, control-stripped. All chrome disappears. Only field + clock remain.</td><td>The frame is also content. Removing it changes the session.</td></tr>
+        <tr><td>Session Ledger</td><td>Record of session index, preset, duration, timestamp. Archive, not tracker.</td><td>Completion is not achievement. The record witnesses, not judges.</td></tr>
+        <tr><td>Validity Engine</td><td>Valid at the moment it begins. Zero events valid. Non-completion valid.</td><td>The session is valid even if nothing "happens."</td></tr>
+      </tbody>
+    </table>
+    <h3 style="font-size:1.3rem;font-weight:300;margin-bottom:18px;">Preset <em>Definitions</em></h3>
+    <table class="method-table">
+      <thead><tr><th>Preset</th><th>Concept</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>Ma (間)</td><td>Japanese: negative space, interval, pause. The meaningful emptiness between events.</td><td>High silence bias (85%). Long Hold phases. Warm amber. Very sparse events.</td></tr>
+        <tr><td>Sunyata (शून्यता)</td><td>Sanskrit: emptiness, absence of inherent existence. Buddhist groundlessness.</td><td>Maximum bias (92%). Near-zero events. Cool blue-white. Minimal transitions.</td></tr>
+        <tr><td>Wu Wei (無為)</td><td>Taoist: non-action, effortless action, flowing with what is.</td><td>Moderate bias (78%). Soft flowing events. Natural motion arcs. Green-amber.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="font-size:1.3rem;font-weight:300;margin-bottom:18px;margin-top:28px;">Phase <em>Sequence</em></h3>
+    <table class="method-table">
+      <thead><tr><th>Phase</th><th>Ratio</th><th>Quality</th></tr></thead>
+      <tbody>
+        <tr><td>Open</td><td>8%</td><td>Arrival. The field becomes present.</td></tr>
+        <tr><td>Settle</td><td>15%</td><td>Residue clears. Attention softens.</td></tr>
+        <tr><td>Hold</td><td>52%</td><td>The primary body. Stillness deepens.</td></tr>
+        <tr><td>Dissolve</td><td>18%</td><td>Edges soften. Return becomes possible.</td></tr>
+        <tr><td>Return</td><td>7%</td><td>Reintegration. The session completes.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="font-size:1.3rem;font-weight:300;margin-bottom:18px;margin-top:28px;">Design <em>Principles</em></h3>
+    <table class="method-table">
+      <thead><tr><th>Principle</th><th>Statement</th></tr></thead>
+      <tbody>
+        <tr><td>Silence First</td><td>Every design decision defaults to silence. Texture is added only to serve the boundary, never to fill it.</td></tr>
+        <tr><td>No Performance</td><td>The system does not track, score, reward, or validate behavior. Zero events is a neutral state.</td></tr>
+        <tr><td>Boundary is Product</td><td>The session container — its edges, duration, and structure — is the deliverable. What occurs inside belongs to the user.</td></tr>
+        <tr><td>No Narration</td><td>No voice, no cue, no instruction during the session. Structure guides without speaking.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ── Preset Config ───────────────────────────────────────────── */
+const PRESETS = {
+  ma:      { name:'Ma',      concept:'Ma — Negative Space',  silenceBias:0.85, color:'#b8933a', freqBase:350, freqRange:200, gainBase:0.025, eventInterval:[12,35], ptColor:'rgba(184,147,58,', bg:'rgba(184,147,58,0.028)' },
+  sunyata: { name:'Sunyata', concept:'Sunyata — Emptiness',  silenceBias:0.92, color:'#8ab0c8', freqBase:480, freqRange:120, gainBase:0.015, eventInterval:[22,58], ptColor:'rgba(138,176,200,', bg:'rgba(138,176,200,0.018)' },
+  wuwei:   { name:'Wu Wei',  concept:'Wu Wei — Non-Action',  silenceBias:0.78, color:'#7a9a6a', freqBase:280, freqRange:280, gainBase:0.030, eventInterval:[4,8],   ptColor:'rgba(122,154,106,', bg:'rgba(122,154,106,0.025)' }
+};
+
+const PHASES = [
+  { id:'open',    name:'OPEN',    ratio:0.08, quality:'Arrival. The field becomes present.' },
+  { id:'settle',  name:'SETTLE',  ratio:0.15, quality:'Residue clears. Attention softens.' },
+  { id:'hold',    name:'HOLD',    ratio:0.52, quality:'The primary body. Stillness deepens.' },
+  { id:'dissolve',name:'DISSOLVE',ratio:0.18, quality:'Edges soften. Return becomes possible.' },
+  { id:'return',  name:'RETURN',  ratio:0.07, quality:'Reintegration. The session completes.' }
+];
+
+/* ── State ───────────────────────────────────────────────────── */
+let currentPreset = 'ma';
+let sessionNum = 8, sessionName = 'Demonstration', sessionDurMins = 8;
+let totalSecs = 480, elapsed = 0;
+let running = false, paused = false;
+let timerInt = null, evtTimer = null;
+let evtCount = 0;
+let labelsOn = true, textureMode = 'none';
+let warmth = 0.4, motion = 0.3;
+let ledger = [];
+let audioCtx = null, masterGain = null;
+
+/* ── Canvas ──────────────────────────────────────────────────── */
+const canvas = document.getElementById('fieldCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let rafId;
+
+function resizeCanvas() {
+  const r = canvas.parentElement.getBoundingClientRect();
+  canvas.width = r.width; canvas.height = r.height;
+}
+window.addEventListener('resize', () => { resizeCanvas(); });
+resizeCanvas();
+
+function spawnParticle() {
+  const p = PRESETS[currentPreset];
+  particles.push({
+    x: canvas.width*(0.2+Math.random()*0.6),
+    y: canvas.height*(0.2+Math.random()*0.6),
+    r: 1+Math.random()*(warmth*5), life:0,
+    maxLife:80+motion*120,
+    vx:(Math.random()-0.5)*0.25, vy:(Math.random()-0.5)*0.25,
+    color:p.ptColor, maxR:(1+Math.random()*(warmth*5))*(2+warmth*3)
+  });
+}
+
+function drawFrame() {
+  rafId = requestAnimationFrame(drawFrame);
+  const W=canvas.width, H=canvas.height;
+  const p = PRESETS[currentPreset];
+  ctx.fillStyle='#0c0b09'; ctx.fillRect(0,0,W,H);
+  const g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,W*0.38);
+  g.addColorStop(0,p.bg); g.addColorStop(1,'transparent');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  for(let i=particles.length-1;i>=0;i--){
+    const pt=particles[i]; pt.life++; pt.x+=pt.vx; pt.y+=pt.vy;
+    const prog=pt.life/pt.maxLife;
+    const alpha=Math.sin(prog*Math.PI)*(0.05+warmth*0.1);
+    const r=pt.r+prog*pt.maxR;
+    ctx.beginPath(); ctx.arc(pt.x,pt.y,r,0,Math.PI*2);
+    ctx.fillStyle=`${pt.color}${alpha.toFixed(3)})`; ctx.fill();
+    if(pt.life>=pt.maxLife) particles.splice(i,1);
+  }
+  if(running&&!paused&&textureMode!=='none'&&Math.random()>0.97) spawnParticle();
+  if(running&&labelsOn){
+    ctx.fillStyle='rgba(200,180,130,0.025)';
+    for(let gx=50;gx<W;gx+=90){for(let gy=50;gy<H;gy+=90){ctx.beginPath();ctx.arc(gx,gy,1,0,Math.PI*2);ctx.fill();}}
+  }
+}
+drawFrame();
+
+/* ── Audio ───────────────────────────────────────────────────── */
+function initAudio(){
+  if(audioCtx) return true;
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(!AC) return false;
+  audioCtx=new AC(); masterGain=audioCtx.createGain();
+  masterGain.gain.value=parseFloat(document.getElementById('masterSlider').value);
+  masterGain.connect(audioCtx.destination); return true;
+}
+
+function triggerTone(){
+  if(!audioCtx||!masterGain) return;
+  const p=PRESETS[currentPreset];
+  if(Math.random()<p.silenceBias) return; // respect silence bias
+  const osc=audioCtx.createOscillator(), env=audioCtx.createGain();
+  osc.connect(env); env.connect(masterGain);
+  osc.frequency.value=p.freqBase+(Math.random()-0.5)*p.freqRange;
+  osc.type='sine';
+  const now=audioCtx.currentTime, att=1+warmth*1.5, dec=3+warmth*4;
+  const vol=p.gainBase*(0.5+warmth*1.5);
+  env.gain.setValueAtTime(0,now);
+  env.gain.linearRampToValueAtTime(vol,now+att);
+  env.gain.exponentialRampToValueAtTime(0.0001,now+att+dec);
+  osc.start(now); osc.stop(now+att+dec+0.1);
+  for(let i=0;i<3;i++) spawnParticle();
+  evtCount++;
+  document.getElementById('eventsCount').textContent=`Events: ${evtCount}`;
+}
+
+function scheduleEvent(){
+  if(!running||paused) return;
+  if(textureMode!=='none') triggerTone();
+  const p=PRESETS[currentPreset];
+  const delay=p.eventInterval[0]+Math.random()*(p.eventInterval[1]-p.eventInterval[0]);
+  evtTimer=setTimeout(scheduleEvent,delay*1000);
+}
+
+/* ── Session Control ─────────────────────────────────────────── */
+function toggleSession(){
+  if(!running) startSession();
+  else if(paused) resumeSession();
+  else pauseSession();
+}
+
+function startSession(){
+  initAudio();
+  if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume();
+  running=true; paused=false; elapsed=0; evtCount=0;
+  document.getElementById('startBtn').textContent='Pause Session';
+  document.getElementById('stopBtn').disabled=false;
+  document.getElementById('statusDot').classList.add('playing');
+  document.getElementById('statusText').textContent='Playing';
+  document.getElementById('mainTimer').classList.add('running');
+  document.getElementById('eventsCount').textContent='Events: 0';
+  timerInt=setInterval(()=>{
+    if(paused) return;
+    elapsed++;
+    updateTimerDisplay();
+    updatePhaseDisplay();
+    if(elapsed>=totalSecs) completeSession();
+  },1000);
+  scheduleEvent();
+}
+
+function pauseSession(){
+  paused=true;
+  clearTimeout(evtTimer);
+  document.getElementById('startBtn').textContent='Resume Session';
+  document.getElementById('statusText').textContent='Paused';
+  document.getElementById('statusDot').classList.remove('playing');
+}
+
+function resumeSession(){
+  paused=false;
+  document.getElementById('startBtn').textContent='Pause Session';
+  document.getElementById('statusText').textContent='Playing';
+  document.getElementById('statusDot').classList.add('playing');
+  scheduleEvent();
+}
+
+function stopSession(){
+  if(!running) return;
+  const dur=elapsed;
+  clearInterval(timerInt); clearTimeout(evtTimer);
+  running=false; paused=false; elapsed=0;
+  addToLedger(sessionNum,sessionName,PRESETS[currentPreset].name,dur);
+  document.getElementById('startBtn').textContent='Start Session';
+  document.getElementById('stopBtn').disabled=true;
+  document.getElementById('mainTimer').textContent='00:00';
+  document.getElementById('mainTimer').classList.remove('running');
+  document.getElementById('phaseLabel').textContent='— Waiting —';
+  document.getElementById('phaseQual').textContent='';
+  document.getElementById('statusDot').classList.remove('playing');
+  document.getElementById('statusText').textContent='Stopped';
+  resetPhaseUI();
+  exitRitual();
+}
+
+function completeSession(){
+  clearInterval(timerInt); clearTimeout(evtTimer); running=false;
+  addToLedger(sessionNum,sessionName,PRESETS[currentPreset].name,totalSecs);
+  document.getElementById('phaseLabel').textContent='— Complete —';
+  document.getElementById('phaseQual').textContent='The session is complete.';
+  document.getElementById('startBtn').textContent='Start Session';
+  document.getElementById('stopBtn').disabled=true;
+  document.getElementById('statusDot').classList.remove('playing');
+  document.getElementById('statusText').textContent='Complete';
+  exitRitual();
+}
+
+function updateTimerDisplay(){
+  const e_m=Math.floor(elapsed/60).toString().padStart(2,'0');
+  const e_s=(elapsed%60).toString().padStart(2,'0');
+  const t=`${e_m}:${e_s}`;
+  document.getElementById('mainTimer').textContent=t;
+  document.getElementById('ritualTimer').textContent=t;
+  document.getElementById('ritualTimer').classList.toggle('playing',!paused);
+}
+
+function updatePhaseDisplay(){
+  let cum=0;
+  for(const ph of PHASES){
+    cum+=ph.ratio*totalSecs;
+    if(elapsed<=cum){
+      if(labelsOn){
+        document.getElementById('phaseLabel').textContent=ph.name;
+        document.getElementById('phaseQual').textContent=ph.quality;
+        document.getElementById('ritualPhase').textContent=ph.name;
+      }
+      updatePhaseSeqUI(ph.id); return;
+    }
+  }
+}
+
+function updatePhaseSeqUI(activeId){
+  let found=false;
+  document.querySelectorAll('.phase-item').forEach(item=>{
+    item.classList.remove('current','done');
+    if(item.dataset.phase===activeId){item.classList.add('current');found=true;}
+    else if(!found) item.classList.add('done');
+  });
+}
+
+function resetPhaseUI(){
+  document.querySelectorAll('.phase-item').forEach(item=>item.classList.remove('current','done'));
+}
+
+/* ── Preset & Session Selection ──────────────────────────────── */
+function selectPreset(id,el){
+  currentPreset=id;
+  document.querySelectorAll('.preset-item').forEach(item=>{item.classList.remove('active');item.setAttribute('aria-selected','false');});
+  el.classList.add('active'); el.setAttribute('aria-selected','true');
+  const p=PRESETS[id];
+  document.getElementById('biasValue').textContent=Math.round(p.silenceBias*100)+'%';
+  document.getElementById('biasFill').style.width=(p.silenceBias*100)+'%';
+  document.getElementById('statusPreset').textContent=p.concept;
+  document.getElementById('ritualPreset').textContent=`Preset: ${p.name}`;
+}
+
+function selectSession(num,name,dur,el){
+  sessionNum=num; sessionName=name; sessionDurMins=dur; totalSecs=dur*60;
+  document.querySelectorAll('.session-item').forEach(item=>{item.classList.remove('active');item.setAttribute('aria-selected','false');});
+  el.classList.add('active'); el.setAttribute('aria-selected','true');
+  document.getElementById('fieldSessionNum').textContent=`Session ${num}`;
+  document.getElementById('fieldSessionName').textContent=name;
+  if(!running) document.getElementById('mainTimer').textContent='00:00';
+}
+
+/* ── Controls ────────────────────────────────────────────────── */
+function toggleLabels(btn){
+  labelsOn=!labelsOn;
+  btn.classList.toggle('active',labelsOn);
+  btn.textContent=labelsOn?'Labels On':'Labels Off';
+  if(!labelsOn){document.getElementById('phaseLabel').textContent='';document.getElementById('phaseQual').textContent='';document.getElementById('ritualPhase').textContent='';}
+}
+
+function setTexture(mode,el){
+  textureMode=mode;
+  document.querySelectorAll('.texture-opt').forEach(opt=>{opt.classList.remove('active');opt.setAttribute('aria-checked','false');});
+  el.classList.add('active'); el.setAttribute('aria-checked','true');
+}
+
+function updateParam(param,val,displayId){
+  if(param==='warmth') warmth=parseFloat(val);
+  if(param==='motion') motion=parseFloat(val);
+  document.getElementById(displayId).textContent=parseFloat(val).toFixed(2);
+}
+
+function updateMaster(val){
+  const db=Math.round((parseFloat(val)-0.6)*20);
+  document.getElementById('masterVal').textContent=db>=0?`+${db} dB`:`${db} dB`;
+  if(masterGain) masterGain.gain.setTargetAtTime(parseFloat(val),audioCtx.currentTime,0.05);
+}
+
+/* ── Ritual Mode ─────────────────────────────────────────────── */
+function enterRitual(){
+  const overlay=document.getElementById('ritualOverlay');
+  overlay.classList.add('active');
+  document.getElementById('ritualToggle').classList.add('active');
+  document.getElementById('ritualPreset').textContent=`Preset: ${PRESETS[currentPreset].name}`;
+  overlay.focus();
+}
+
+function exitRitual(){
+  document.getElementById('ritualOverlay').classList.remove('active');
+  document.getElementById('ritualToggle').classList.remove('active');
+}
+
+/* ── Method Drawer ───────────────────────────────────────────── */
+function openMethod(){document.getElementById('methodOverlay').classList.add('open');}
+function closeMethod(){document.getElementById('methodOverlay').classList.remove('open');}
+
+/* ── Ledger ──────────────────────────────────────────────────── */
+function addToLedger(num,name,preset,durSecs){
+  const m=Math.floor(durSecs/60).toString().padStart(2,'0');
+  const s=(durSecs%60).toString().padStart(2,'0');
+  const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  ledger.unshift({num,name,preset,dur:`${m}:${s}`,time:now});
+  renderLedger();
+}
+
+function renderLedger(){
+  const list=document.getElementById('ledgerList');
+  if(!ledger.length){list.innerHTML='<div class="ledger-empty" id="ledgerEmpty">No sessions recorded yet.</div>';return;}
+  list.innerHTML=ledger.slice(0,6).map(e=>`
+    <div class="ledger-item">
+      <div class="ledger-left"><span class="ledger-preset">${e.preset}</span><span>${e.name}</span></div>
+      <div style="text-align:right"><div>${e.dur}</div><div>${e.time}</div></div>
+    </div>`).join('');
+}
+
+/* ── Keyboard ────────────────────────────────────────────────── */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.code==='Space'){e.preventDefault();toggleSession();}
+  if(e.code==='Escape'){
+    if(document.getElementById('ritualOverlay').classList.contains('active')) exitRitual();
+    else if(document.getElementById('methodOverlay').classList.contains('open')) closeMethod();
+  }
+  if(e.code==='KeyR'&&!e.ctrlKey&&!e.metaKey){
+    if(!document.getElementById('ritualOverlay').classList.contains('active')) enterRitual();
+  }
+});
+
+document.getElementById('methodOverlay').addEventListener('click',function(e){if(e.target===this) closeMethod();});
+
+// Keyboard nav for preset/session lists
+document.querySelectorAll('.preset-item,.session-item').forEach(el=>{
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}});
+});
+
+// Initialize
+selectPreset('ma', document.querySelector('.preset-item.active'));
+</script>
+</body>
+</html>
