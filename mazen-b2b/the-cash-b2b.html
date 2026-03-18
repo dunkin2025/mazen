@@ -1045,6 +1045,7 @@ const form = document.getElementById('inquiryForm');
 const briefOutput = document.getElementById('briefOutput');
 const submitBtn = document.getElementById('submitBtn');
 const scriptEndpoint = 'https://script.google.com/macros/s/AKfycbw6FAi7wlxZctBTcfk2q0LsiKMZuAAzLu1Bxvi1NVHnrXpI36BYGiTiGvse4BWLbYd8/exec';
+
 function getFormData() {
   return {
     company: form.company.value.trim(),
@@ -1148,31 +1149,27 @@ function buildClientPayload(d) {
 
 async function submitInquiry(d) {
   const payload = buildClientPayload(d);
-  const body = new URLSearchParams({
-    company: d.company,
-    contact: d.contact,
-    email: d.email,
-    industry: d.industry,
-    useCase: d.useCase,
-    deliverable: d.deliverable,
-    timeline: d.timeline,
-    budget: d.budget,
-    role: d.role,
-    context: d.context,
-    inquiry_public_id: payload.inquiry_public_id,
-    brief_code: payload.brief_code,
-    submitted_at: payload.submitted_at,
-    recommendation_text: payload.recommendation_text,
-    source: window.location.href
-  });
+  const postForm = document.getElementById('gasPostForm');
 
-  await fetch(scriptEndpoint, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-    body: body.toString()
-  });
+  postForm.action = scriptEndpoint;
+  postForm.company.value = d.company;
+  postForm.contact.value = d.contact;
+  postForm.email.value = d.email;
+  postForm.industry.value = d.industry;
+  postForm.useCase.value = d.useCase;
+  postForm.deliverable.value = d.deliverable;
+  postForm.timeline.value = d.timeline;
+  postForm.budget.value = d.budget;
+  postForm.role.value = d.role;
+  postForm.context.value = d.context;
+  postForm.inquiry_public_id.value = payload.inquiry_public_id;
+  postForm.brief_code.value = payload.brief_code;
+  postForm.submitted_at.value = payload.submitted_at;
+  postForm.recommendation_text.value = payload.recommendation_text;
+  postForm.source.value = window.location.href;
 
+  postForm.submit();
+  await new Promise(resolve => setTimeout(resolve, 1200));
   return payload;
 }
 
@@ -1261,5 +1258,26 @@ function showToast(msg) {
   showToast._timer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 </script>
+
+<iframe name="gas_sink" style="display:none;" title="hidden submission target"></iframe>
+
+<form id="gasPostForm" action="https://script.google.com/macros/s/AKfycbw6FAi7wlxZctBTcfk2q0LsiKMZuAAzLu1Bxvi1NVHnrXpI36BYGiTiGvse4BWLbYd8/exec" method="POST" target="gas_sink" style="display:none;">
+  <input name="company">
+  <input name="contact">
+  <input name="email">
+  <input name="industry">
+  <input name="useCase">
+  <input name="deliverable">
+  <input name="timeline">
+  <input name="budget">
+  <input name="role">
+  <input name="context">
+  <input name="inquiry_public_id">
+  <input name="brief_code">
+  <input name="submitted_at">
+  <input name="recommendation_text">
+  <input name="source">
+</form>
+
 </body>
 </html>
